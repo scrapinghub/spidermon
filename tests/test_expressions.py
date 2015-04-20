@@ -149,7 +149,7 @@ class ExpressionInvalid(ExpressionBase):
                 self._test_expression(exp)
 
 
-class Expressionvalid(ExpressionBase):
+class ExpressionValid(ExpressionBase):
     def test_valid_expressions(self):
         for exp in VALID_EXPRESSIONS:
             self._test_expression(exp)
