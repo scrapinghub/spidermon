@@ -53,15 +53,21 @@ class Interpreter(object):
 
     def _check_node(self, node):
         if isinstance(node, list):
-            for x in node:
-                self._check_node(x)
+            self._check_node_list(node)
         elif isinstance(node, ast.AST):
             if not self._is_allowed_ast_node(node):
                 self._raise_not_allowed_node(node)
-            for field in [f for _, f in ast.iter_fields(node)]:
-                self._check_node(field)
+            self._check_node_fields(node)
         elif not isinstance(node, self.allowed_objects):
             self._raise_not_allowed_node(node)
+
+    def _check_node_list(self, node_list):
+        for node in node_list:
+            self._check_node(node)
+
+    def _check_node_fields(self, node):
+        for field in [f for _, f in ast.iter_fields(node)]:
+            self._check_node(field)
 
     def _is_allowed_ast_node(self, node):
         return node.__class__.__name__.lower() in self.ast_allowed_nodes
