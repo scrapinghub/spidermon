@@ -1,8 +1,6 @@
 import pytest
-import unittest
 
 from spidermon import Rule, CallableRule
-from spidermon.context import create_context_dict
 
 
 STATS_01 = {
@@ -30,32 +28,40 @@ def function_rule(stats):
     return stats.scraped_items == 100
 
 
-class RulesTest(unittest.TestCase):
+lambda_rule = lambda stats: stats.scraped_items == 100
 
-    def setUp(self):
-        self.context_stats_01 = create_context_dict(STATS_01)
-        self.context_stats_02 = create_context_dict(STATS_02)
-        self.context_stats_empty = create_context_dict(STATS_EMPTY)
 
-    def test_base_rule(self):
-        rule = Rule()
-        with pytest.raises(NotImplementedError):
-            rule.check(**self.context_stats_empty)
+def test_base_rule():
+    rule = Rule()
+    with pytest.raises(NotImplementedError):
+        rule.run_check(STATS_EMPTY)
 
-    def test_dummy_rule(self):
-        rule = DummyRule()
-        assert rule.check(**self.context_stats_empty) is True
 
-    def test_simple_rule(self):
-        rule = SimpleRule()
-        assert rule.check(**self.context_stats_01) is True
-        assert rule.check(**self.context_stats_02) is False
-        with pytest.raises(AttributeError):
-            rule.check(**self.context_stats_empty)
+def test_dummy_rule():
+    rule = DummyRule()
+    assert rule.run_check(STATS_EMPTY) is True
 
-    def test_function_rule(self):
-        rule = CallableRule(function_rule)
-        assert rule.check(STATS_01) is True
-        assert rule.check(STATS_02) is False
-        with pytest.raises(AttributeError):
-            rule.check(STATS_EMPTY)
+
+def test_simple_rule():
+    rule = SimpleRule()
+    assert rule.run_check(STATS_01) is True  # PASSED
+    assert rule.run_check(STATS_02) is False  # FAILED
+    with pytest.raises(AttributeError):  # ERROR
+        rule.run_check(STATS_EMPTY)
+
+
+def test_function_rule():
+    rule = CallableRule(function_rule)
+    _test_callable_rule(rule)
+
+
+def test_lambda_rule():
+    rule = CallableRule(lambda_rule)
+    _test_callable_rule(rule)
+
+
+def _test_callable_rule(rule):
+    assert rule.run_check(STATS_01) is True  # PASSED
+    assert rule.run_check(STATS_02) is False  # FAILED
+    with pytest.raises(AttributeError):  # ERROR
+        rule.run_check(STATS_EMPTY)
