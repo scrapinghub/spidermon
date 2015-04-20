@@ -34,7 +34,7 @@ class RulesTest(unittest.TestCase):
 
     def setUp(self):
         self.context_stats_01 = create_context_dict(STATS_01)
-        self.context_stats_02 = create_context_dict(STATS_01)
+        self.context_stats_02 = create_context_dict(STATS_02)
         self.context_stats_empty = create_context_dict(STATS_EMPTY)
 
     def test_base_rule(self):
@@ -49,7 +49,7 @@ class RulesTest(unittest.TestCase):
     def test_simple_rule(self):
         rule = SimpleRule()
         assert rule.check(**self.context_stats_01) is True
-        assert rule.check(**self.context_stats_02) is True
+        assert rule.check(**self.context_stats_02) is False
         with pytest.raises(AttributeError):
             rule.check(**self.context_stats_empty)
 
