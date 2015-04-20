@@ -2,14 +2,24 @@ from .stats import Stats
 
 
 class Context(object):
-    pass
+    """
+    Object containing the available values for rule checking
+    """
 
 
 def create_context_dict(stats):
-    return {'stats': Stats(stats)}
+    """
+    Returns a dict with the Context object values
+    """
+    return {
+        'stats': Stats(stats)
+    }
 
 
 def create_context(stats):
+    """
+    Returns a Context object with the proper values
+    """
     context = Context()
     for k, v in create_context_dict(stats).items():
         setattr(context, k, v)
