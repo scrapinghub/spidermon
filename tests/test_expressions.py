@@ -5,15 +5,6 @@ import unittest
 from spidermon.python import Interpreter, InvalidExpression
 
 
-class ExpressionDefinitionBaseTest(unittest.TestCase):
-
-    def setUp(self):
-        self.interpreter = Interpreter()
-
-    def _test_expression(self, expression):
-        self.interpreter.check(expression)
-
-
 SYNTAXERROR_EXPRESSIONS = [
     '?',
     'a string',
@@ -138,8 +129,15 @@ VALID_EXPRESSIONS = [
 ]
 
 
-class ExpressionDefinitionInvalidTest(ExpressionDefinitionBaseTest):
+class ExpressionBase(unittest.TestCase):
+    def setUp(self):
+        self.interpreter = Interpreter()
 
+    def _test_expression(self, expression):
+        self.interpreter.check(expression)
+
+
+class ExpressionInvalid(ExpressionBase):
     def test_syntax_error(self):
         for exp in SYNTAXERROR_EXPRESSIONS:
             with pytest.raises(SyntaxError):
@@ -150,6 +148,8 @@ class ExpressionDefinitionInvalidTest(ExpressionDefinitionBaseTest):
             with pytest.raises(InvalidExpression):
                 self._test_expression(exp)
 
+
+class Expressionvalid(ExpressionBase):
     def test_valid_expressions(self):
         for exp in VALID_EXPRESSIONS:
             self._test_expression(exp)

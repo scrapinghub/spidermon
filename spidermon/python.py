@@ -40,7 +40,7 @@ class Interpreter(object):
         except SyntaxError as e:
             raise e
 
-        if len(tree.body) is 0:
+        if not tree.body:
             raise InvalidExpression('Empty python expression')
         elif len(tree.body) > 1:
             raise InvalidExpression('Python expressions must be a single line expression')
@@ -56,13 +56,15 @@ class Interpreter(object):
             for x in node:
                 self._check_node(x)
         elif isinstance(node, ast.AST):
-            if not node.__class__.__name__.lower() in self.ast_allowed_nodes:
+            if not self._is_allowed_ast_node(node):
                 self._raise_not_allowed_node(node)
             for field in [f for _, f in ast.iter_fields(node)]:
                 self._check_node(field)
-        else:
-            if not isinstance(node, self.allowed_objects):
-                self._raise_not_allowed_node(node)
+        elif not isinstance(node, self.allowed_objects):
+            self._raise_not_allowed_node(node)
+
+    def _is_allowed_ast_node(self, node):
+        return node.__class__.__name__.lower() in self.ast_allowed_nodes
 
     def _raise_not_allowed_node(self, node):
         raise InvalidExpression("'%s' definition not allowed in python expressions" % node.__class__.__name__)
