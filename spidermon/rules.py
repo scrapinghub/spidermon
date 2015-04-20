@@ -18,6 +18,10 @@ class Rule(object):
     def name(self):
         return self.type
 
+    def run_check(self, stats):
+        context_params = create_context_dict(stats)
+        return bool(self.check(**context_params))
+
     def check(self, stats):
         raise NotImplementedError
 
@@ -35,6 +39,5 @@ class CallableRule(Rule):
     def name(self):
         return self.call.func_name
 
-    def check(self, stats):
-        context_dict = create_context_dict(stats)
-        return self.call(**context_dict)
+    def check(self, **context_params):
+        return self.call(**context_params)
