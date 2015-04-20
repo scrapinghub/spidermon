@@ -6,11 +6,12 @@ from .exceptions import InvalidOperation
 class Stats(collections.MutableMapping):
     """
     Immutable stats dict class that allows key access as attributes.
-    ie:
-    >> stats = Stats({'scraped_items': 100})
-    >> stats['scraped_items']
+
+    example:
+    >> s = Stats({'scraped_items': 100})
+    >> s['scraped_items']
     100
-    >> stats.scraped_items
+    >> s.scraped_items
     100
     """
 
