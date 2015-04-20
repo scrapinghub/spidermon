@@ -1,1 +1,1 @@
-from rules import Rule, CallableRule
+from rules import Rule, CallableRule, PythonExpressionRule

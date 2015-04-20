@@ -1,6 +1,7 @@
 import pytest
 
-from spidermon import Rule, CallableRule
+from spidermon import Rule, CallableRule, PythonExpressionRule
+from spidermon.exceptions import InvalidExpression
 
 
 STATS_01 = {
@@ -65,3 +66,12 @@ def _test_callable_rule(rule):
     assert rule.run_check(STATS_02) is False  # FAILED
     with pytest.raises(AttributeError):  # ERROR
         rule.run_check(STATS_EMPTY)
+
+
+def test_python_rule():
+    with pytest.raises(InvalidExpression):
+        rule = PythonExpressionRule(10)
+    with pytest.raises(InvalidExpression):
+        rule = PythonExpressionRule(None)
+    with pytest.raises(InvalidExpression):
+        rule = PythonExpressionRule('')
