@@ -1,7 +1,5 @@
-import six
-
 from .context import create_context_dict
-from .exceptions import InvalidExpression, InvalidCallable
+from .exceptions import InvalidCallable
 from .python import Interpreter
 
 
