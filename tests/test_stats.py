@@ -2,7 +2,7 @@ import pytest
 
 
 from spidermon.stats import Stats
-from spidermon.exceptions import InvalidOperation
+from spidermon.exceptions import InvalidStatsOperation
 
 
 @pytest.fixture
@@ -24,20 +24,20 @@ def test_dictionary_access(stats):
 
 
 def test_attribute_set(stats):
-    with pytest.raises(InvalidOperation):
+    with pytest.raises(InvalidStatsOperation):
         stats.a = 'some value'
 
 
 def test_dictionary_set(stats):
-    with pytest.raises(InvalidOperation):
+    with pytest.raises(InvalidStatsOperation):
         stats['a'] = 'some value'
 
 
 def test_delete(stats):
-    with pytest.raises(InvalidOperation):
+    with pytest.raises(InvalidStatsOperation):
         del stats['a']
 
 
 def test_pop(stats):
-    with pytest.raises(InvalidOperation):
+    with pytest.raises(InvalidStatsOperation):
         stats.pop('a', None)

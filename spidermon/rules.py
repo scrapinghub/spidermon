@@ -1,7 +1,8 @@
 import six
 
 from .context import create_context_dict
-from .exceptions import InvalidExpression
+from .exceptions import InvalidExpression, InvalidCallable
+from .python import Interpreter
 
 
 class Rule(object):
@@ -36,6 +37,7 @@ class CallableRule(Rule):
     __rule_type__ = 'callable'
 
     def __init__(self, call):
+        self._assert_callable(call)
         self.call = call
 
     @property
@@ -44,6 +46,10 @@ class CallableRule(Rule):
 
     def check(self, **context_params):
         return self.call(**context_params)
+
+    def _assert_callable(self, call):
+        if not hasattr(call, '__call__'):
+            raise InvalidCallable('Not a valid callable: %s' % call.__class__.__name__)
 
 
 class PythonExpressionRule(Rule):
@@ -56,14 +62,12 @@ class PythonExpressionRule(Rule):
     __rule_type__ = 'python_expression'
 
     def __init__(self, expression):
-        self.check_valid_expression(expression)
+        self._assert_valid_expression(expression)
         self.expression = expression
 
     def check(self, **context_params):
         return eval(self.expression, context_params)
 
-    def check_valid_expression(self, expression):
-        if not isinstance(expression, six.string_types):
-            raise InvalidExpression('Python expressions must be defined as strings')
-        if not expression:
-            raise InvalidExpression('Empty python expression')
+    def _assert_valid_expression(self, expression):
+        interpreter = Interpreter()
+        interpreter.check(expression)

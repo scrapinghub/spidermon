@@ -1,7 +1,7 @@
 import pytest
 
 from spidermon import Rule, CallableRule, PythonExpressionRule
-from spidermon.exceptions import InvalidExpression
+from spidermon.exceptions import InvalidExpression, InvalidCallable
 
 
 STATS_01 = {
@@ -46,6 +46,11 @@ def test_dummy_rule():
 def test_simple_rule():
     rule = SimpleRule()
     _test__rule_with_stats(rule)
+
+
+def test_not_callable():
+    with pytest.raises(InvalidCallable):
+        CallableRule(None)
 
 
 def test_function_rule():

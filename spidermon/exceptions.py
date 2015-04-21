@@ -16,3 +16,7 @@ class InvalidStatsOperation(SpiderMonException):
 
 class InvalidExpression(SpiderMonException):
     pass
+
+
+class InvalidCallable(SpiderMonException):
+    pass
