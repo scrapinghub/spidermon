@@ -1,6 +1,5 @@
 import pytest
 
-
 from spidermon.stats import Stats
 from spidermon.exceptions import InvalidStatsOperation
 

@@ -1,22 +1,19 @@
 import pytest
 
-
 from spidermon.stats import Stats
 from spidermon.context import Context, create_context, create_context_dict
+
+from fixtures.stats import *
 
 
 @pytest.fixture
 def stats():
-    return Stats({
-        'a': 1,
-        'b': 2,
-    })
+    return Stats(STATS_A)
 
 
 def check_stats(stats):
     assert isinstance(stats, Stats)
-    assert stats.a == 1
-    assert stats.b == 2
+    assert stats.item_scraped_count == 150
 
 
 def test_create_context(stats):
