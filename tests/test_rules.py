@@ -45,7 +45,7 @@ def test_dummy_rule():
 
 def test_simple_rule():
     rule = SimpleRule()
-    _test__rule_with_stats(rule)
+    _test_rule_with_stats(rule)
 
 
 def test_not_callable():
@@ -55,15 +55,15 @@ def test_not_callable():
 
 def test_function_rule():
     rule = CallableRule(function_rule)
-    _test__rule_with_stats(rule)
+    _test_rule_with_stats(rule)
 
 
 def test_lambda_rule():
     rule = CallableRule(lambda_rule)
-    _test__rule_with_stats(rule)
+    _test_rule_with_stats(rule)
 
 
-def _test__rule_with_stats(rule):
+def _test_rule_with_stats(rule):
     assert rule.run_check(STATS_01) is True  # PASSED
     assert rule.run_check(STATS_02) is False  # FAILED
     with pytest.raises(AttributeError):  # ERROR
