@@ -1,0 +1,8 @@
+-Add check results (results?)
+-Add new tests to managers (errors)
+-Handle failures (managers)
+-Add Monitors
+-Add Actions
+-Add docs
+-spidermon-actions repo
+-spidermon-test repo
