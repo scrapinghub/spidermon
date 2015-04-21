@@ -3,7 +3,8 @@ import pytest
 from spidermon import Rule, CallableRule, PythonExpressionRule
 from spidermon.exceptions import InvalidExpression, InvalidCallable
 
-from .test_expressions import SYNTAXERROR_EXPRESSIONS, INVALID_EXPRESSIONS, VALID_EXPRESSIONS
+from .test_expressions import (SYNTAXERROR_EXPRESSIONS, INVALID_EXPRESSIONS, VALID_EXPRESSIONS,
+                               STATS_TO_EVALUATE, EXPRESSIONS_TO_EVALUATE)
 
 
 STATS_01 = {
@@ -77,10 +78,19 @@ def test_python_rule():
     with pytest.raises(SyntaxError):
         for exp in SYNTAXERROR_EXPRESSIONS:
             PythonExpressionRule(exp)
+
     with pytest.raises(InvalidExpression):
         for exp in INVALID_EXPRESSIONS:
             PythonExpressionRule(exp)
+
     for exp in VALID_EXPRESSIONS:
         PythonExpressionRule(exp)
+
     rule = PythonExpressionRule(expression_rule)
     _test_rule_with_stats(rule)
+
+    for expression, result in EXPRESSIONS_TO_EVALUATE:
+        rule = PythonExpressionRule(expression)
+        assert result == rule.run_check(STATS_TO_EVALUATE), \
+            'Expression fails: "%s" != %s' % (expression, result)
+

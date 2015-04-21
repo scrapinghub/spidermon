@@ -62,12 +62,12 @@ class PythonExpressionRule(Rule):
     __rule_type__ = 'python_expression'
 
     def __init__(self, expression):
+        self.interpreter = Interpreter()
         self._assert_valid_expression(expression)
         self.expression = expression
 
     def check(self, **context_params):
-        return eval(self.expression, context_params)
+        return self.interpreter.eval(self.expression, context_params)
 
     def _assert_valid_expression(self, expression):
-        interpreter = Interpreter()
-        interpreter.check(expression)
+        self.interpreter.check(expression)

@@ -51,6 +51,11 @@ class Interpreter(object):
 
         self._check_node(start_node)
 
+    def eval(self, expression, context=None, check=True):
+        if check:
+            self.check(expression)
+        return eval(expression, context)
+
     def _check_node(self, node):
         if isinstance(node, list):
             self._check_node_list(node)
