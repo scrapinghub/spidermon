@@ -1,18 +1,18 @@
-class ScrapyMonException(Exception):
+class SpiderMonException(Exception):
     pass
 
 
-class InvalidDefinition(ScrapyMonException):
+class InvalidRuleDefinition(SpiderMonException):
     pass
 
 
-class InvalidLevel(ScrapyMonException):
+class InvalidRuleLevel(SpiderMonException):
     pass
 
 
-class InvalidOperation(ScrapyMonException):
+class InvalidStatsOperation(SpiderMonException):
     pass
 
 
-class InvalidExpression(ScrapyMonException):
+class InvalidExpression(SpiderMonException):
     pass
