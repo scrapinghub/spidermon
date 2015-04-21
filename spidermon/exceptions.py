@@ -20,3 +20,7 @@ class InvalidExpression(SpiderMonException):
 
 class InvalidCallable(SpiderMonException):
     pass
+
+
+class InvalidTestCase(SpiderMonException):
+    pass

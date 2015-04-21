@@ -1,6 +1,7 @@
 from .context import create_context_dict
-from .exceptions import InvalidCallable
+from .exceptions import InvalidCallable, InvalidTestCase
 from .python import Interpreter
+from .testing import TestCase
 
 
 class Rule(object):
@@ -69,3 +70,26 @@ class PythonExpressionRule(Rule):
 
     def _assert_valid_expression(self, expression):
         self.interpreter.check(expression)
+
+
+class TestCaseRule(CallableRule):
+    """
+    TestCase rule. Must be initialiazed with a TestCase method reference and the TestCase instance.
+    """
+    __rule_type__ = 'test_case'
+
+    def __init__(self, call, test_case):
+        super(TestCaseRule, self).__init__(call)
+        self._assert_test_case(test_case)
+        self.test_case = test_case
+
+    def _assert_test_case(self, test_case):
+        if not isinstance(test_case, TestCase):
+            raise InvalidTestCase("Test cases must subclass TestCase")
+
+    def check(self, **context_params):
+        self.test_case.init_context(**context_params)
+        self.test_case.setUp()
+        result = self.call(self.test_case)
+        self.test_case.tearDown()
+        return result
