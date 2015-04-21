@@ -3,6 +3,8 @@ import pytest
 from spidermon import Rule, CallableRule, PythonExpressionRule
 from spidermon.exceptions import InvalidExpression, InvalidCallable
 
+from .test_expressions import SYNTAXERROR_EXPRESSIONS, INVALID_EXPRESSIONS, VALID_EXPRESSIONS
+
 
 STATS_01 = {
     'scraped_items': 100,
@@ -30,6 +32,7 @@ def function_rule(stats):
 
 
 lambda_rule = lambda stats: stats.scraped_items == 100
+expression_rule = 'stats.scraped_items == 100'
 
 
 def test_base_rule():
@@ -71,9 +74,13 @@ def _test_rule_with_stats(rule):
 
 
 def test_python_rule():
+    with pytest.raises(SyntaxError):
+        for exp in SYNTAXERROR_EXPRESSIONS:
+            PythonExpressionRule(exp)
     with pytest.raises(InvalidExpression):
-        rule = PythonExpressionRule(10)
-    with pytest.raises(InvalidExpression):
-        rule = PythonExpressionRule(None)
-    with pytest.raises(InvalidExpression):
-        rule = PythonExpressionRule('')
+        for exp in INVALID_EXPRESSIONS:
+            PythonExpressionRule(exp)
+    for exp in VALID_EXPRESSIONS:
+        PythonExpressionRule(exp)
+    rule = PythonExpressionRule(expression_rule)
+    _test_rule_with_stats(rule)
