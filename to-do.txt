@@ -6,4 +6,4 @@
 -Scrapy integration
 -Add docs
 -spidermon-actions repo
--spidermon-test repo
+-spidermon-demo repo
