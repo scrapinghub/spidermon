@@ -1,9 +1,10 @@
-[ ] Add check results (results?)
+[X] Add check results (results?)
 [X] Add new tests to managers (errors)
 [ ] Handle failures (managers)
 [ ] Add Monitors
 [ ] Add Actions
 [ ] Scrapy integration
 [ ] Add docs
+[ ] Improve TestCases
 [ ] spidermon-actions repo
 [ ] spidermon-demo repo
