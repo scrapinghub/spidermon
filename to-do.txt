@@ -3,6 +3,7 @@
 -Handle failures (managers)
 -Add Monitors
 -Add Actions
+-Scrapy integration
 -Add docs
 -spidermon-actions repo
 -spidermon-test repo
