@@ -10,28 +10,28 @@ from . import settings
 
 
 class RuleCheckResult(JSONSerializable):
-    def __init__(self, definition=None, result=None, error_message=None, error_traceback=None):
+    def __init__(self, definition=None, state=None, error_message=None, error_traceback=None):
         self.definition = definition
-        self.result = result
+        self.state = state
         self.error_message = error_message or ''
         self.error_traceback = error_traceback or ''
 
     @property
     def passed(self):
-        return self.result == settings.CHECK_RESULT_PASSED
+        return self.state == settings.CHECK_STATE_PASSED
 
     @property
     def failed(self):
-        return self.result == settings.CHECK_RESULT_FAILED
+        return self.state == settings.CHECK_STATE_FAILED
 
     @property
     def error(self):
-        return self.result == settings.CHECK_RESULT_ERROR
+        return self.state == settings.CHECK_STATE_ERROR
 
     def to_json(self):
         data = {
             'rule': self.definition,
-            'result': self.result,
+            'state': self.state,
         }
         if self.error:
             data.update({
@@ -52,9 +52,6 @@ class RuleDefinition(JSONSerializable):
     @property
     def type(self):
         return self.rule.type
-
-    def __str__(self):
-        return '%-20s %-23s %-9s %-20s' % (self.type, self.rule, self.level, self.name)
 
     def _get_rule(self, rule, test_case):
         if isinstance(rule, Rule):
@@ -112,10 +109,10 @@ class RulesManager(object):
     def _check_rule(self, definition, stats):
         result = RuleCheckResult(definition=definition)
         try:
-            check_result = definition.rule.run_check(stats)
-            result.result = settings.CHECK_RESULT_PASSED if check_result else settings.CHECK_RESULT_FAILED
+            check_state = definition.rule.run_check(stats)
+            result.state = settings.CHECK_STATE_PASSED if check_state else settings.CHECK_STATE_FAILED
         except Exception, e:
-            result.result = settings.CHECK_RESULT_ERROR
+            result.state = settings.CHECK_STATE_ERROR
             result.error_message = str(e)
             result.error_traceback = traceback.format_exc()
         return result

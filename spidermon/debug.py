@@ -138,7 +138,7 @@ class MonitorResultsReport(Report):
                 c.definition.name,
                 c.definition.type,
                 c.definition.level,
-                c.result
+                c.state
             ]
             for c in self.result.checks
         ]

@@ -26,15 +26,15 @@ class MonitorResult(JSONSerializable):
 
     @property
     def passed_checks(self):
-        return self._get_checks(settings.CHECK_RESULT_PASSED)
+        return self._get_checks(settings.CHECK_STATE_PASSED)
 
     @property
     def failed_checks(self):
-        return self._get_checks(settings.CHECK_RESULT_FAILED)
+        return self._get_checks(settings.CHECK_STATE_FAILED)
 
     @property
     def error_checks(self):
-        return self._get_checks(settings.CHECK_RESULT_ERROR)
+        return self._get_checks(settings.CHECK_STATE_ERROR)
 
     @property
     def n_passed_checks(self):
@@ -48,14 +48,14 @@ class MonitorResult(JSONSerializable):
     def n_error_checks(self):
         return len(self.error_checks)
 
-    def _get_checks(self, result):
-        return [c for c in self.checks if c.result == result]
+    def _get_checks(self, state):
+        return [c for c in self.checks if c.state == state]
 
-    def _get_check_count(self, result):
-        return len(self._get_checks(result))
+    def _get_check_count(self, state):
+        return len(self._get_checks(state))
 
     def _get_check_counts(self):
-        return dict([(result, self._get_check_count(result)) for result in settings.CHECK_RESULTS])
+        return dict([(state, self._get_check_count(state)) for state in settings.CHECK_STATES])
 
     def debug(self):
         report = MonitorResultsReport(self)

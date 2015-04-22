@@ -8,7 +8,7 @@ CHECK_RESULTS_SCHEMA = {
     "items": {
         "type": "object",
         "properties": {
-            "result": {"enum": list(settings.CHECK_RESULTS)},
+            "state": {"enum": list(settings.CHECK_STATES)},
             "rule": {
                 "type": "object",
                 "properties": {
@@ -27,16 +27,16 @@ CHECK_RESULTS_SCHEMA = {
                 "required": ["message", "traceback"],
             },
         },
-        "required": ["result", "rule"],
+        "required": ["state", "rule"],
     }
 }
 
 CHECK_RESULTS_PASS_SCHEMA = copy.deepcopy(CHECK_RESULTS_SCHEMA)
-CHECK_RESULTS_PASS_SCHEMA['items']['properties']['result']['enum'] = [settings.CHECK_RESULT_PASSED]
+CHECK_RESULTS_PASS_SCHEMA['items']['properties']['state']['enum'] = [settings.CHECK_STATE_PASSED]
 
 CHECK_RESULTS_FAIL_SCHEMA = copy.deepcopy(CHECK_RESULTS_SCHEMA)
-CHECK_RESULTS_FAIL_SCHEMA['items']['properties']['result']['enum'] = [settings.CHECK_RESULT_FAILED]
+CHECK_RESULTS_FAIL_SCHEMA['items']['properties']['state']['enum'] = [settings.CHECK_STATE_FAILED]
 
 CHECK_RESULTS_ERROR_SCHEMA = copy.deepcopy(CHECK_RESULTS_SCHEMA)
-CHECK_RESULTS_ERROR_SCHEMA['items']['properties']['result']['enum'] = [settings.CHECK_RESULT_ERROR]
+CHECK_RESULTS_ERROR_SCHEMA['items']['properties']['state']['enum'] = [settings.CHECK_STATE_ERROR]
 CHECK_RESULTS_ERROR_SCHEMA['items']['required'].append('error')
