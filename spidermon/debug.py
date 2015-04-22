@@ -68,6 +68,7 @@ _________________ action errors ____________________
 
         {% for action in result.error_actions %}
 ACTION: {{ action.definition.name }}
+TRIGGER: {{ action.definition.trigger }}
 ERROR: {{ action.error_message }}
 TRACEBACK: {{ action.error_traceback }}
         {% endfor %}
@@ -191,7 +192,7 @@ class MonitorResultsReport(Report):
         data += [
             [
                 a.definition.name,
-                a.definition.state,
+                a.definition.trigger,
                 a.state,
             ]
             for a in self.result.actions

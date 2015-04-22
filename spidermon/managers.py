@@ -91,7 +91,7 @@ class RuleDefinition(JSONSerializable):
 class ActionRunResult(JSONSerializable):
     def __init__(self, definition=None, state=None, error_message=None, error_traceback=None):
         self.definition = definition
-        self.state = state
+        self.trigger = state
         self.error_message = error_message or ''
         self.error_traceback = error_traceback or ''
 
@@ -123,10 +123,10 @@ class ActionRunResult(JSONSerializable):
 
 
 class ActionDefinition(JSONSerializable):
-    def __init__(self, action, name=None, state=None):
+    def __init__(self, action, name=None, trigger=None):
         self.action = self._get_action(action)
         self.name = self._get_name(name)
-        self.state = self._get_state(state)
+        self.trigger = self._get_trigger(trigger)
 
     def _get_action(self, action):
         if isinstance(action, Action):
@@ -137,15 +137,15 @@ class ActionDefinition(JSONSerializable):
     def _get_name(self, name):
         return name or self.action.name
 
-    def _get_state(self, state):
-        if state and state not in settings.CHECK_STATES:
-            raise InvalidState("Invalid state '%s'" % state)
-        return state or settings.DEFAULT_CHECK_STATE
+    def _get_trigger(self, trigger):
+        if trigger and trigger not in settings.CHECK_STATES:
+            raise InvalidState("Invalid state '%s'" % trigger)
+        return trigger or settings.DEFAULT_CHECK_STATE
 
     def as_dict(self):
         data = {
             'name': self.name,
-            'state': self.state,
+            'trigger': self.trigger,
         }
         return data
 
@@ -216,19 +216,19 @@ class ActionsManager(BaseManager):
 
     @property
     def passed_actions(self):
-        return self._get_actions(settings.CHECK_STATE_PASSED)
+        return self._get_actions_for_trigger(settings.CHECK_STATE_PASSED)
 
     @property
     def failed_actions(self):
-        return self._get_actions(settings.CHECK_STATE_FAILED)
+        return self._get_actions_for_trigger(settings.CHECK_STATE_FAILED)
 
     @property
     def error_actions(self):
-        return self._get_actions(settings.CHECK_STATE_ERROR)
+        return self._get_actions_for_trigger(settings.CHECK_STATE_ERROR)
 
     @property
     def always_actions(self):
-        return self._get_actions(settings.CHECK_STATE_ALWAYS)
+        return self._get_actions_for_trigger(settings.CHECK_STATE_ALWAYS)
 
     @property
     def n_passed_actions(self):
@@ -317,5 +317,5 @@ class ActionsManager(BaseManager):
                                           '(name, action, state)')
         self.add_action(action=action, name=name, state=state)
 
-    def _get_actions(self, state):
-        return [d for d in self.definitions if d.state == state]
+    def _get_actions_for_trigger(self, state):
+        return [d for d in self.definitions if d.trigger == state]
