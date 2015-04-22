@@ -89,9 +89,9 @@ class RuleDefinition(JSONSerializable):
 
 
 class ActionRunResult(JSONSerializable):
-    def __init__(self, definition=None, state=None, error_message=None, error_traceback=None):
+    def __init__(self, definition=None, trigger=None, error_message=None, error_traceback=None):
         self.definition = definition
-        self.trigger = state
+        self.trigger = trigger
         self.error_message = error_message or ''
         self.error_traceback = error_traceback or ''
 
@@ -129,10 +129,9 @@ class ActionDefinition(JSONSerializable):
         self.trigger = self._get_trigger(trigger)
 
     def _get_action(self, action):
-        if isinstance(action, Action):
-            return action
-        else:
+        if not isinstance(action, Action):
             raise InvalidActionDefinition('Wrong action, actions must subclass Action')
+        return action
 
     def _get_name(self, name):
         return name or self.action.name
@@ -181,8 +180,8 @@ class RulesManager(BaseManager):
     def _check_rule(self, definition, stats):
         result = RuleCheckResult(definition=definition)
         try:
-            check_state = definition.rule.run_check(stats)
-            result.state = settings.CHECK_STATE_PASSED if check_state else settings.CHECK_STATE_FAILED
+            check_result = definition.rule.run_check(stats)
+            result.state = settings.CHECK_STATE_PASSED if check_result else settings.CHECK_STATE_FAILED
         except Exception, e:
             result.state = settings.CHECK_STATE_ERROR
             result.error_message = str(e)
@@ -260,11 +259,6 @@ class ActionsManager(BaseManager):
             actions=self.failed_actions,
             result=result,
             run_condition=result.n_failed_checks,
-        )
-        actions_results += self._process_actions(
-            actions=self.failed_actions,
-            result=result,
-            run_condition=result.n_error_checks,
         )
         actions_results += self._process_actions(
             actions=self.error_actions,
