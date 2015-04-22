@@ -3,40 +3,36 @@ import pytest
 from spidermon.stats import Stats
 from spidermon.exceptions import InvalidStatsOperation
 
+from fixtures.stats import *
 
 @pytest.fixture
 def stats():
-    return Stats({
-        'a': 1,
-        'b': 2,
-    })
+    return Stats(STATS_A)
 
 
 def test_attribute_access(stats):
-    assert(stats['a'] == 1)
-    assert(stats['b'] == 2)
+    assert(stats['item_scraped_count'] == 150)
 
 
 def test_dictionary_access(stats):
-    assert(stats.a == 1)
-    assert(stats.b == 2)
+    assert(stats.item_scraped_count == 150)
 
 
 def test_attribute_set(stats):
     with pytest.raises(InvalidStatsOperation):
-        stats.a = 'some value'
+        stats.item_scraped_count = 'some value'
 
 
 def test_dictionary_set(stats):
     with pytest.raises(InvalidStatsOperation):
-        stats['a'] = 'some value'
+        stats['item_scraped_count'] = 'some value'
 
 
 def test_delete(stats):
     with pytest.raises(InvalidStatsOperation):
-        del stats['a']
+        del stats['item_scraped_count']
 
 
 def test_pop(stats):
     with pytest.raises(InvalidStatsOperation):
-        stats.pop('a', None)
+        stats.pop('item_scraped_count', None)
