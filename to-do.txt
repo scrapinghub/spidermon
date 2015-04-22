@@ -1,9 +1,9 @@
--Add check results (results?)
--Add new tests to managers (errors)
--Handle failures (managers)
--Add Monitors
--Add Actions
--Scrapy integration
--Add docs
--spidermon-actions repo
--spidermon-demo repo
+[ ] Add check results (results?)
+[X] Add new tests to managers (errors)
+[ ] Handle failures (managers)
+[ ] Add Monitors
+[ ] Add Actions
+[ ] Scrapy integration
+[ ] Add docs
+[ ] spidermon-actions repo
+[ ] spidermon-demo repo

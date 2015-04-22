@@ -1,7 +1,27 @@
+import pytest
+
 from spidermon.rules import CallableRule, PythonExpressionRule, TestCaseRule
 from spidermon.managers import RulesManager
+from spidermon.exceptions import InvalidRuleDefinition, InvalidRuleLevel
 
 from fixtures.rules import *
+
+
+def test_errors():
+    with pytest.raises(InvalidRuleDefinition):
+        RulesManager([()])
+
+    with pytest.raises(InvalidRuleDefinition):
+        RulesManager([None])
+
+    with pytest.raises(InvalidRuleDefinition):
+        RulesManager([10])
+
+    with pytest.raises(InvalidRuleLevel):
+        RulesManager([('rule', SimpleRule, 'WRONG LEVEL')])
+
+    with pytest.raises(InvalidRuleDefinition):
+        RulesManager([('rule', SimpleRule, settings.LEVEL_NORMAL, None)])
 
 
 def test_rules():
