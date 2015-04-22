@@ -11,21 +11,6 @@ class MonitorResult(JSONSerializable):
         self.actions = actions or []
         self.stats = stats or {}
 
-    def to_json(self):
-        data = {
-            'monitor': self.monitor.name,
-            'checks': self.checks,
-            'actions': self.actions,
-            'stats': self.stats,
-            'summary': {
-                'rules': {
-                    'total': len(self.monitor.rules_manager.definitions),
-                },
-            }
-        }
-        data['summary']['rules'].update(self._get_check_counts())
-        return data
-
     @property
     def passed_checks(self):
         return self._get_checks(settings.CHECK_STATE_PASSED)
@@ -82,6 +67,25 @@ class MonitorResult(JSONSerializable):
     def n_error_actions(self):
         return len(self.error_actions)
 
+    def as_dict(self):
+        data = {
+            'monitor': self.monitor.name,
+            'checks': self.checks,
+            'actions': self.actions,
+            'stats': self.stats,
+            'summary': {
+                'rules': {
+                    'total': len(self.monitor.rules_manager.definitions),
+                },
+            }
+        }
+        data['summary']['rules'].update(self._get_check_counts())
+        return data
+
+    def debug(self):
+        report = MonitorResultsReport(self)
+        return report.render()
+
     def _get_checks(self, state):
         return [c for c in self.checks if c.state == state]
 
@@ -93,10 +97,6 @@ class MonitorResult(JSONSerializable):
 
     def _get_actions(self, state):
         return [a for a in self.actions if a.state == state]
-
-    def debug(self):
-        report = MonitorResultsReport(self)
-        return report.render()
 
 
 class Monitor(object):

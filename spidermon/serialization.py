@@ -13,7 +13,7 @@ class SpidermonJSONEncoder(json.JSONEncoder):
             MonitorResult,
         )
         if isinstance(obj, serializable_classes):
-            return obj.to_json()
+            return obj.as_dict()
         else:
             return super(SpidermonJSONEncoder, self).default(obj)
 
@@ -22,5 +22,5 @@ class JSONSerializable(object):
     def json(self, indent=4):
         return json.dumps(self, indent=indent, sort_keys=True, cls=SpidermonJSONEncoder)
 
-    def to_json(self):
+    def as_dict(self):
         raise NotImplementedError

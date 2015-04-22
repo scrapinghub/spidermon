@@ -1,3 +1,6 @@
+#---------------------------------------
+# Levels
+#---------------------------------------
 LEVEL_HIGH = 'HIGH'
 LEVEL_NORMAL = 'NORMAL'
 LEVEL_LOW = 'LOW'
@@ -8,6 +11,9 @@ LEVELS = (
 )
 DEFAULT_LEVEL = LEVEL_NORMAL
 
+#---------------------------------------
+# Check states
+#---------------------------------------
 CHECK_STATE_PASSED = 'PASSED'
 CHECK_STATE_FAILED = 'FAILED'
 CHECK_STATE_ERROR = 'ERROR'
@@ -19,6 +25,9 @@ CHECK_STATES = (
 )
 DEFAULT_CHECK_STATE = CHECK_STATE_ALWAYS
 
+#---------------------------------------
+# Action states
+#---------------------------------------
 ACTION_STATE_PROCESSED = 'PROCESSED'
 ACTION_STATE_SKIPPED = 'SKIPPED'
 ACTION_STATE_ERROR = 'ERROR'

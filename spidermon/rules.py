@@ -83,13 +83,13 @@ class TestCaseRule(CallableRule):
         self._assert_test_case(test_case)
         self.test_case = test_case
 
-    def _assert_test_case(self, test_case):
-        if not isinstance(test_case, TestCase):
-            raise InvalidTestCase("Test cases must subclass TestCase")
-
     def check(self, **context_params):
         self.test_case.init_context(**context_params)
         self.test_case.setUp()
         result = self.call(self.test_case)
         self.test_case.tearDown()
         return result
+
+    def _assert_test_case(self, test_case):
+        if not isinstance(test_case, TestCase):
+            raise InvalidTestCase("Test cases must subclass TestCase")

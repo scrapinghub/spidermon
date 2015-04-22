@@ -30,7 +30,7 @@ class RuleCheckResult(JSONSerializable):
     def error(self):
         return self.state == settings.CHECK_STATE_ERROR
 
-    def to_json(self):
+    def as_dict(self):
         data = {
             'rule': self.definition,
             'state': self.state,
@@ -79,7 +79,7 @@ class RuleDefinition(JSONSerializable):
             raise InvalidRuleLevel("Invalid rule severity level '%s'" % level)
         return level or settings.DEFAULT_LEVEL
 
-    def to_json(self):
+    def as_dict(self):
         data = {
             'name': self.name,
             'type': self.rule.type,
@@ -107,7 +107,7 @@ class ActionRunResult(JSONSerializable):
     def error(self):
         return self.state == settings.ACTION_STATE_ERROR
 
-    def to_json(self):
+    def as_dict(self):
         data = {
             'action': self.definition,
             'state': self.state,
@@ -142,7 +142,7 @@ class ActionDefinition(JSONSerializable):
             raise InvalidState("Invalid state '%s'" % state)
         return state or settings.DEFAULT_CHECK_STATE
 
-    def to_json(self):
+    def as_dict(self):
         data = {
             'name': self.name,
             'state': self.state,

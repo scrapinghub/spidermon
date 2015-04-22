@@ -41,7 +41,7 @@ FAILED: {{ result.n_failed_checks }}
 ERRORS: {{ result.n_error_checks }}
     {% if result.n_error_checks %}
 
-_________________ checks errors ____________________
+_________________ check errors _____________________
 
         {% for check in result.error_checks %}
 RULE: {{ check.definition.name }}
@@ -83,8 +83,6 @@ TEMPLATES = {
     'MONITOR_RESULT_REPORT': MONITOR_RESULT_REPORT,
     'MONITOR_REPORT': MONITOR_REPORT,
 }
-
-#____________________ actions _______________________
 
 
 class Table(AsciiTable):
