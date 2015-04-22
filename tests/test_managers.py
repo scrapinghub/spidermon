@@ -1,13 +1,15 @@
 import pytest
 import json
+import jsonschema
 
 from spidermon.rules import CallableRule, PythonExpressionRule, TestCaseRule
 from spidermon.managers import RulesManager
 from spidermon.exceptions import InvalidRuleDefinition, InvalidRuleLevel
+from spidermon.serialization import SpidermonJSONEncoder
 
 from fixtures.rules import *
 from fixtures.stats import *
-from fixtures.json import *
+from fixtures.schemas import *
 
 
 def test_errors():
@@ -88,34 +90,25 @@ def test_json():
     _test_json(
         rules=RULES_AS_TUPLE3,
         stats=STATS_A,
-        expected_json_results=JSON_RESULTS_PASS,
+        schemas=[CHECK_RESULTS_SCHEMA, CHECK_RESULTS_PASS_SCHEMA],
     )
     _test_json(
         rules=RULES_AS_TUPLE3,
         stats=STATS_B,
-        expected_json_results=JSON_RESULTS_FAIL,
+        schemas=[CHECK_RESULTS_SCHEMA, CHECK_RESULTS_FAIL_SCHEMA],
     )
     _test_json(
         rules=RULES_AS_TUPLE3,
         stats=STATS_EMPTY,
-        expected_json_results=JSON_RESULTS_ERROR,
+        schemas=[CHECK_RESULTS_SCHEMA, CHECK_RESULTS_ERROR_SCHEMA],
     )
 
 
-def _clean_json_results(results):
-    cleaned_results = []
-    for r in results:
-        obj = json.loads(r.json())
-        if 'error' in obj and 'traceback' in obj['error']:
-            del obj['error']['traceback']
-        cleaned_results.append(obj)
-    return json.dumps(cleaned_results, sort_keys=True, indent=4)
-
-
-def _test_json(rules, stats, expected_json_results):
+def _test_json(rules, stats, schemas):
     manager = RulesManager(rules)
     results = manager.check_rules(stats)
-    cleaned_results = _clean_json_results(results)
-    cleaned_expected_results = json.dumps(json.loads(expected_json_results), sort_keys=True, indent=4)
-    assert cleaned_results == cleaned_expected_results
+    results_json = json.dumps(results, cls=SpidermonJSONEncoder)
+    results_obj = json.loads(results_json)
+    for schema in schemas:
+        jsonschema.validate(results_obj, schema)
 
