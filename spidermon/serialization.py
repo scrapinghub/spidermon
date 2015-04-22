@@ -3,9 +3,16 @@ import json
 
 class SpidermonJSONEncoder(json.JSONEncoder):
     def default(self, obj):
-        from .managers import RuleCheckResult, RuleDefinition
+        from .managers import (RuleCheckResult, RuleDefinition, ActionRunResult, ActionDefinition)
         from .monitors import MonitorResult
-        if isinstance(obj, (RuleCheckResult, RuleDefinition, MonitorResult)):
+        serializable_classes = (
+            RuleCheckResult,
+            RuleDefinition,
+            ActionRunResult,
+            ActionDefinition,
+            MonitorResult,
+        )
+        if isinstance(obj, serializable_classes):
             return obj.to_json()
         else:
             return super(SpidermonJSONEncoder, self).default(obj)

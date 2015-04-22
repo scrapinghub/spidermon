@@ -4,7 +4,9 @@ import traceback
 
 from .rules import Rule, CallableRule, PythonExpressionRule, TestCaseRule
 from .testing import TestCase
-from .exceptions import InvalidRuleDefinition, InvalidRuleLevel
+from .actions import Action
+from .exceptions import (InvalidRuleDefinition, InvalidRuleLevel,
+                         InvalidState, InvalidActionDefinition)
 from .serialization import JSONSerializable
 from . import settings
 
@@ -86,9 +88,79 @@ class RuleDefinition(JSONSerializable):
         return data
 
 
-class RulesManager(object):
-    def __init__(self, rules=None):
+class ActionRunResult(JSONSerializable):
+    def __init__(self, definition=None, state=None, error_message=None, error_traceback=None):
+        self.definition = definition
+        self.state = state
+        self.error_message = error_message or ''
+        self.error_traceback = error_traceback or ''
+
+    @property
+    def processed(self):
+        return self.state == settings.ACTION_STATE_PROCESSED
+
+    @property
+    def skipped(self):
+        return self.state == settings.ACTION_STATE_SKIPPED
+
+    @property
+    def error(self):
+        return self.state == settings.ACTION_STATE_ERROR
+
+    def to_json(self):
+        data = {
+            'action': self.definition,
+            'state': self.state,
+        }
+        if self.error:
+            data.update({
+                'error': {
+                    'message': self.error_message,
+                    'traceback': self.error_traceback,
+                }
+            })
+        return data
+
+
+class ActionDefinition(JSONSerializable):
+    def __init__(self, action, name=None, state=None):
+        self.action = self._get_action(action)
+        self.name = self._get_name(name)
+        self.state = self._get_state(state)
+
+    def _get_action(self, action):
+        if isinstance(action, Action):
+            return action
+        else:
+            raise InvalidActionDefinition('Wrong action, actions must subclass Action')
+
+    def _get_name(self, name):
+        return name or self.action.name
+
+    def _get_state(self, state):
+        if state and state not in settings.CHECK_STATES:
+            raise InvalidState("Invalid state '%s'" % state)
+        return state or settings.DEFAULT_CHECK_STATE
+
+    def to_json(self):
+        data = {
+            'name': self.name,
+            'state': self.state,
+        }
+        return data
+
+
+class BaseManager(object):
+    def __init__(self):
         self.definitions = []
+
+    def _add_definition(self, definition):
+        self.definitions.append(definition)
+
+
+class RulesManager(BaseManager):
+    def __init__(self, rules=None):
+        super(RulesManager, self).__init__()
         for rule in rules or []:
             self.add_rule(rule)
 
@@ -117,9 +189,6 @@ class RulesManager(object):
             result.error_traceback = traceback.format_exc()
         return result
 
-    def _add_definition(self, definition):
-        self.definitions.append(definition)
-
     def _add_definition_from_test_case(self, test_case, test_case_name=None, level=None):
         for test_name, test in test_case.get_test_methods().items():
             name = '%s.%s' % (test_case_name or test_case.__class__.__name__, test_name)
@@ -136,4 +205,117 @@ class RulesManager(object):
             raise InvalidRuleDefinition('Wrong Rule tuple definition, you should '
                                         'either use (name, rule) or '
                                         '(name, rule, level)')
-        self.add_rule(rule, name, level)
+        self.add_rule(rule=rule, name=name, level=level)
+
+
+class ActionsManager(BaseManager):
+    def __init__(self, actions=None):
+        super(ActionsManager, self).__init__()
+        for action in actions or []:
+            self.add_action(action)
+
+    @property
+    def passed_actions(self):
+        return self._get_actions(settings.CHECK_STATE_PASSED)
+
+    @property
+    def failed_actions(self):
+        return self._get_actions(settings.CHECK_STATE_FAILED)
+
+    @property
+    def error_actions(self):
+        return self._get_actions(settings.CHECK_STATE_ERROR)
+
+    @property
+    def always_actions(self):
+        return self._get_actions(settings.CHECK_STATE_ALWAYS)
+
+    @property
+    def n_passed_actions(self):
+        return len(self.passed_actions)
+
+    @property
+    def n_failed_actions(self):
+        return len(self.failed_actions)
+
+    @property
+    def n_error_actions(self):
+        return len(self.error_actions)
+
+    def add_action(self, action, name=None, state=None):
+        if isinstance(action, tuple):
+            self._add_action_from_tuple(action)
+        else:
+            definition = ActionDefinition(action, name, state)
+            self._add_definition(definition)
+
+    def run_actions(self, result):
+        actions_results = []
+        actions_results += self._process_actions(
+            actions=self.passed_actions,
+            result=result,
+            run_condition=result.n_passed_checks,
+        )
+        actions_results += self._process_actions(
+            actions=self.failed_actions,
+            result=result,
+            run_condition=result.n_failed_checks,
+        )
+        actions_results += self._process_actions(
+            actions=self.failed_actions,
+            result=result,
+            run_condition=result.n_error_checks,
+        )
+        actions_results += self._process_actions(
+            actions=self.error_actions,
+            result=result,
+            run_condition=result.n_error_checks,
+        )
+        actions_results += self._run_actions(
+            actions=self.always_actions,
+            result=result,
+        )
+        return actions_results
+
+    def _process_actions(self, actions, result, run_condition):
+        if run_condition:
+            return self._run_actions(actions, result)
+        else:
+            return self._skip_actions(actions)
+
+    def _run_actions(self, actions, result):
+        return [self._run_action(d, result) for d in actions]
+
+    def _skip_actions(self, actions):
+        return [self._skip_action(d) for d in actions]
+
+    def _run_action(self, definition, result):
+        action_result = ActionRunResult(definition=definition)
+        try:
+            definition.action.run(result)
+            action_result.state = settings.ACTION_STATE_PROCESSED
+        except Exception, e:
+            action_result.state = settings.ACTION_STATE_ERROR
+            action_result.error_message = str(e)
+            action_result.error_traceback = traceback.format_exc()
+        return action_result
+
+    def _skip_action(self, definition):
+        action_result = ActionRunResult(definition=definition)
+        action_result.state = settings.ACTION_STATE_SKIPPED
+        return action_result
+
+    def _add_action_from_tuple(self, tuple_definition):
+        state = None
+        if len(tuple_definition) == 2:
+            name, action = tuple_definition
+        elif len(tuple_definition) == 3:
+            name, action, state = tuple_definition
+        else:
+            raise InvalidActionDefinition('Wrong Action tuple definition, you should '
+                                          'either use (name, action) or '
+                                          '(name, action, state)')
+        self.add_action(action=action, name=name, state=state)
+
+    def _get_actions(self, state):
+        return [d for d in self.definitions if d.state == state]

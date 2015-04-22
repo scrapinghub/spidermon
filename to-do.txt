@@ -1,8 +1,9 @@
 [X] Add check results (results?)
 [X] Add new tests to managers (errors)
-[ ] Handle failures (managers)
-[ ] Add Monitors
-[ ] Add Actions
+[X] Handle failures (managers)
+[X] Add Monitors
+[X] Add Actions
+[ ] Add Action tests
 [ ] Scrapy integration
 [ ] Add docs
 [ ] Improve TestCases

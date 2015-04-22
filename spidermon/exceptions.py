@@ -24,3 +24,11 @@ class InvalidCallable(SpiderMonException):
 
 class InvalidTestCase(SpiderMonException):
     pass
+
+
+class InvalidState(SpiderMonException):
+    pass
+
+
+class InvalidActionDefinition(SpiderMonException):
+    pass

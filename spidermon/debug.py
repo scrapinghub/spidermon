@@ -16,6 +16,15 @@ No rules defined
 
 ====================================================
 
+____________________ actions _______________________
+
+{% if monitor.actions_manager.definitions %}
+{{ actions_table.table }}
+TOTAL: {{ monitor.actions_manager.definitions|length }}
+{% else %}
+No actions defined
+{% endif %}
+
 """
 
 MONITOR_RESULT_REPORT = """
@@ -26,11 +35,11 @@ _____________________ checks _______________________
 
 {% if result.checks %}
 {{ checks_table.table }}
- TOTAL: {{ result.checks|length }}
-PASSED: {{ result.passed_checks|length }}
-FAILED: {{ result.failed_checks|length }}
-ERRORS: {{ result.error_checks|length }}
-    {% if result.error_checks %}
+ TOTAL: {{ result.n_checks }}
+PASSED: {{ result.n_passed_checks }}
+FAILED: {{ result.n_failed_checks }}
+ERRORS: {{ result.n_error_checks }}
+    {% if result.n_error_checks %}
 
 _________________ checks errors ____________________
 
@@ -43,6 +52,28 @@ TRACEBACK: {{ check.error_traceback }}
     {% endif %}
 {% else %}
 No rules defined
+{% endif %}
+
+____________________ actions _______________________
+
+{% if result.actions %}
+{{ actions_table.table }}
+    TOTAL: {{ result.n_actions }}
+PROCESSED: {{ result.n_processed_actions }}
+  SKIPPED: {{ result.n_skipped_actions }}
+   ERRORS: {{ result.n_error_actions }}
+    {% if result.n_error_actions %}
+
+_________________ action errors ____________________
+
+        {% for action in result.error_actions %}
+ACTION: {{ action.definition.name }}
+ERROR: {{ action.error_message }}
+TRACEBACK: {{ action.error_traceback }}
+        {% endfor %}
+    {% endif %}
+{% else %}
+No actions defined
 {% endif %}
 
 ====================================================
@@ -101,6 +132,7 @@ class MonitorReport(Report):
         template = self.get_template(self.template)
         return template.render(
             rules_table=self._get_rules_table(),
+            actions_table=self._get_actions_table(),
             monitor=self.monitor,
         )
 
@@ -116,6 +148,17 @@ class MonitorReport(Report):
         ]
         return Table(data)
 
+    def _get_actions_table(self):
+        data = [['ACTION', 'RUNS']]
+        data += [
+            [
+                d.name,
+                d.state,
+            ]
+            for d in self.monitor.actions_manager.definitions
+        ]
+        return Table(data)
+
 
 class MonitorResultsReport(Report):
     template = MONITOR_RESULT_REPORT
@@ -128,6 +171,7 @@ class MonitorResultsReport(Report):
         template = self.get_template('MONITOR_RESULT_REPORT')
         return template.render(
             checks_table=self._get_checks_table(),
+            actions_table=self._get_actions_table(),
             result=self.result,
         )
 
@@ -141,5 +185,17 @@ class MonitorResultsReport(Report):
                 c.state
             ]
             for c in self.result.checks
+        ]
+        return Table(data)
+
+    def _get_actions_table(self):
+        data = [['ACTION', 'TRIGGER_STATE', 'STATE']]
+        data += [
+            [
+                a.definition.name,
+                a.definition.state,
+                a.state,
+            ]
+            for a in self.result.actions
         ]
         return Table(data)
