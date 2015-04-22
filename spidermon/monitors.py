@@ -1,18 +1,31 @@
 from .managers import RulesManager
 from .serialization import JSONSerializable
+from . import settings
 
 
 class MonitorResult(JSONSerializable):
-    def __init__(self, monitor, rule_checks=None):
+    def __init__(self, monitor, checks=None):
         self.monitor = monitor
-        self.rule_checks = rule_checks or []
+        self.checks = checks or []
 
     def to_json(self):
         data = {
             'monitor': self.monitor.name,
-            'rule_checks': self.rule_checks,
+            'checks': self.checks,
+            'summary': {
+                'rules': {
+                    'total': len(self.monitor.rules_manager.definitions),
+                },
+            }
         }
+        data['summary']['rules'].update(self._get_check_counts())
         return data
+
+    def _get_check_count(self, result):
+        return len([c for c in self.checks if c.result == result])
+
+    def _get_check_counts(self):
+        return dict([(result, self._get_check_count(result)) for result in settings.CHECK_RESULTS])
 
 
 class Monitor(object):
@@ -23,5 +36,5 @@ class Monitor(object):
 
     def run(self, stats):
         result = MonitorResult(self)
-        result.rule_checks = self.rules_manager.check_rules(stats)
+        result.checks = self.rules_manager.check_rules(stats)
         return result
