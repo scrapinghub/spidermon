@@ -1,7 +1,7 @@
-from .context import create_context_dict
-from .exceptions import InvalidCallable, InvalidTestCase
-from .python import Interpreter
-from .testing import TestCase
+from spidermon.context import create_context_dict
+from spidermon.exceptions import InvalidCallable, InvalidTestCase
+from spidermon.python import Interpreter
+from spidermon.testing import TestCase
 
 
 class Rule(object):

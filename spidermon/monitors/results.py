@@ -1,7 +1,6 @@
-from .managers import RulesManager, ActionsManager
-from .serialization import JSONSerializable
-from .debug import MonitorResultsReport, MonitorReport
-from . import settings
+from spidermon.serialization import JSONSerializable
+from spidermon.debug import MonitorResultsReport
+from spidermon import settings
 
 
 class MonitorResult(JSONSerializable):
@@ -97,25 +96,3 @@ class MonitorResult(JSONSerializable):
 
     def _get_actions(self, state):
         return [a for a in self.actions if a.state == state]
-
-
-class Monitor(object):
-    def __init__(self, name=None, rules=None, actions=None):
-        self.name = name or '?'
-
-        self.rules_manager = RulesManager(rules)
-        self.add_rule = self.rules_manager.add_rule
-
-        self.actions_manager = ActionsManager(actions)
-        self.add_action = self.actions_manager.add_action
-
-    def run(self, stats):
-        result = MonitorResult(self)
-        result.checks = self.rules_manager.check_rules(stats)
-        result.actions = self.actions_manager.run_actions(result)
-        result.stats = stats
-        return result
-
-    def debug(self):
-        report = MonitorReport(self)
-        return report.render()

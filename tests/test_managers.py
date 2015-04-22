@@ -3,7 +3,7 @@ import json
 import jsonschema
 
 from spidermon.rules import CallableRule, PythonExpressionRule, TestCaseRule
-from spidermon.managers import RulesManager
+from spidermon.rules.managers import RulesManager
 from spidermon.exceptions import InvalidRuleDefinition, InvalidRuleLevel
 from spidermon.serialization import SpidermonJSONEncoder
 

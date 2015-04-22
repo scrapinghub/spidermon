@@ -1,4 +1,5 @@
-from spidermon.rules import Rule, TestCase
+from spidermon.rules import Rule
+from spidermon.testing import TestCase
 from spidermon import settings
 
 
