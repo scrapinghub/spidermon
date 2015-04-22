@@ -1,13 +1,49 @@
 import six
 import inspect
+import traceback
 
 from .rules import Rule, CallableRule, PythonExpressionRule, TestCaseRule
 from .testing import TestCase
 from .exceptions import InvalidRuleDefinition, InvalidRuleLevel
+from .serialization import JSONSerializable
 from . import settings
 
 
-class RuleDefinition(object):
+class RuleCheckResult(JSONSerializable):
+    def __init__(self, definition=None, result=None, error_message=None, error_traceback=None):
+        self.definition = definition
+        self.result = result
+        self.error_message = error_message or ''
+        self.error_traceback = error_traceback or ''
+
+    @property
+    def passed(self):
+        return self.result == settings.CHECK_RESULT_PASSED
+
+    @property
+    def failed(self):
+        return self.result == settings.CHECK_RESULT_FAILED
+
+    @property
+    def error(self):
+        return self.result == settings.CHECK_RESULT_ERROR
+
+    def to_json(self):
+        data = {
+            'rule': self.definition,
+            'result': self.result,
+        }
+        if self.error:
+            data.update({
+                'error': {
+                    'message': self.error_message,
+                    'traceback': self.error_traceback,
+                }
+            })
+        return data
+
+
+class RuleDefinition(JSONSerializable):
     def __init__(self, rule, name=None, level=None, test_case=None):
         self.rule = self._get_rule(rule, test_case)
         self.name = self._get_name(name)
@@ -44,6 +80,14 @@ class RuleDefinition(object):
             raise InvalidRuleLevel("Invalid rule severity level '%s'" % level)
         return level or settings.DEFAULT_LEVEL
 
+    def to_json(self):
+        data = {
+            'name': self.name,
+            'type': self.rule.type,
+            'level': self.level,
+        }
+        return data
+
 
 class RulesManager(object):
     def __init__(self, rules=None):
@@ -63,9 +107,18 @@ class RulesManager(object):
             self._add_definition(definition)
 
     def check_rules(self, stats):
-        for definition in self.definitions:
-            passed = definition.rule.run_check(stats)
-            print 'checking rule: %-30s %s' % (definition.name, 'PASSED' if passed else 'FAILED')
+        return [self._check_rule(d, stats) for d in self.definitions]
+
+    def _check_rule(self, definition, stats):
+        result = RuleCheckResult(definition=definition)
+        try:
+            check_result = definition.rule.run_check(stats)
+            result.result = settings.CHECK_RESULT_PASSED if check_result else settings.CHECK_RESULT_FAILED
+        except Exception, e:
+            result.result = settings.CHECK_RESULT_ERROR
+            result.error_message = str(e)
+            result.error_traceback = traceback.format_exc()
+        return result
 
     def _add_definition(self, definition):
         self.definitions.append(definition)
