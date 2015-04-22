@@ -1,6 +1,6 @@
 from .managers import RulesManager
 from .serialization import JSONSerializable
-from .debug import MonitorResultsReport
+from .debug import MonitorResultsReport, MonitorReport
 from . import settings
 
 
@@ -73,3 +73,7 @@ class Monitor(object):
         result.checks = self.rules_manager.check_rules(stats)
         result.stats = stats
         return result
+
+    def debug(self):
+        report = MonitorReport(self)
+        return report.render()

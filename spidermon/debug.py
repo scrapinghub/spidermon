@@ -1,6 +1,23 @@
 import jinja2
 from terminaltables import AsciiTable
 
+MONITOR_REPORT = """
+====================================================
+MONITOR: {{ monitor.name }}
+====================================================
+_____________________ rules ________________________
+
+{% if monitor.rules_manager.definitions %}
+{{ rules_table.table }}
+TOTAL: {{ monitor.rules_manager.definitions|length }}
+{% else %}
+No rules defined
+{% endif %}
+
+====================================================
+
+"""
+
 MONITOR_RESULT_REPORT = """
 ====================================================
 MONITOR REPORT: {{result.monitor.name}}
@@ -9,19 +26,19 @@ _____________________ checks _______________________
 
 {% if result.checks %}
 {{ checks_table.table }}
-  TOTAL: {{result.checks|length}}
- PASSED: {{result.passed_checks|length}}
- FAILED: {{result.failed_checks|length}}
- ERRORS: {{result.error_checks|length}}
+ TOTAL: {{ result.checks|length }}
+PASSED: {{ result.passed_checks|length }}
+FAILED: {{ result.failed_checks|length }}
+ERRORS: {{ result.error_checks|length }}
     {% if result.error_checks %}
 
 _________________ checks errors ____________________
 
         {% for check in result.error_checks %}
-RULE: {{check.definition.name}}
-TYPE: {{check.definition.type}}
-ERROR: {{check.error_message}}
-TRACEBACK: {{check.error_traceback}}
+RULE: {{ check.definition.name }}
+TYPE: {{ check.definition.type }}
+ERROR: {{ check.error_message }}
+TRACEBACK: {{ check.error_traceback }}
         {% endfor %}
     {% endif %}
 {% else %}
@@ -33,6 +50,7 @@ No rules defined
 """
 TEMPLATES = {
     'MONITOR_RESULT_REPORT': MONITOR_RESULT_REPORT,
+    'MONITOR_REPORT': MONITOR_REPORT,
 }
 
 #____________________ actions _______________________
@@ -62,11 +80,41 @@ class Report(object):
             trim_blocks=True,
         )
 
+    def render(self):
+        raise NotImplementedError
+
     def get_template(self, template):
         return self.template_env.get_template(template)
 
     def get_cleaned_templates(self):
         return dict([(k, v.strip('\n')) for k, v in TEMPLATES.items()])
+
+
+class MonitorReport(Report):
+    template = 'MONITOR_REPORT'
+
+    def __init__(self, monitor):
+        super(MonitorReport, self).__init__()
+        self.monitor = monitor
+
+    def render(self):
+        template = self.get_template(self.template)
+        return template.render(
+            rules_table=self._get_rules_table(),
+            monitor=self.monitor,
+        )
+
+    def _get_rules_table(self):
+        data = [['RULE', 'TYPE', 'LEVEL']]
+        data += [
+            [
+                d.name,
+                d.type,
+                d.level,
+            ]
+            for d in self.monitor.rules_manager.definitions
+        ]
+        return Table(data)
 
 
 class MonitorResultsReport(Report):
