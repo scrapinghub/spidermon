@@ -1,3 +1,6 @@
+-----------------------------------------
+TO-DO
+-----------------------------------------
 [X] Add check results (results?)
 [X] Add new tests to managers (errors)
 [X] Handle failures (managers)
@@ -11,3 +14,8 @@
 [ ] Improve TestCases
 [ ] spidermon-actions repo
 [ ] spidermon-demo repo
+
+-----------------------------------------
+IDEAS
+-----------------------------------------
+- Improve action triggers (PASSED/ALL_PASSED/ANY_PASSED)
