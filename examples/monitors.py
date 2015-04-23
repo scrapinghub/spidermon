@@ -2,6 +2,8 @@ from spidermon import Monitor, Rule, Action, TestCase
 
 
 STATS = {
+    'downloader/response_count': 63785,
+    'item_scraped_count': 29836,
     'finish_reason': 'finished',
 }
 
@@ -26,6 +28,7 @@ MONITOR_A = Monitor(
     name='A. Monitor from parameters',
     rules=[
         lambda stats: stats.finish_reason == 'finished',
+        lambda stats: stats['downloader/response_count'] > 10000,
     ],
     actions=[
         MessageAction('finish reason is ok!'),
