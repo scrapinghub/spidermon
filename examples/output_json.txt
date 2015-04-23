@@ -1,0 +1,393 @@
+{
+    "actions": [
+        {
+            "action": {
+                "name": "MessageAction",
+                "trigger": "ALWAYS",
+                "type": "MessageAction"
+            },
+            "state": "PROCESSED"
+        }
+    ],
+    "checks": [
+        {
+            "rule": {
+                "level": "NORMAL",
+                "name": "<lambda>",
+                "type": "callable"
+            },
+            "state": "PASSED"
+        },
+        {
+            "rule": {
+                "level": "NORMAL",
+                "name": "<lambda>",
+                "type": "callable"
+            },
+            "state": "PASSED"
+        }
+    ],
+    "monitor": "A. Monitor from parameters",
+    "stats": {
+        "downloader/response_count": 63785,
+        "finish_reason": "finished",
+        "item_scraped_count": 29836
+    },
+    "summary": {
+        "rules": {
+            "ERROR": 0,
+            "FAILED": 0,
+            "PASSED": 2,
+            "total": 2
+        }
+    }
+}
+----------------------------------------
+{
+    "actions": [
+        {
+            "action": {
+                "name": "MessageAction",
+                "trigger": "ALWAYS",
+                "type": "MessageAction"
+            },
+            "state": "PROCESSED"
+        }
+    ],
+    "checks": [
+        {
+            "rule": {
+                "level": "NORMAL",
+                "name": "<lambda>",
+                "type": "callable"
+            },
+            "state": "PASSED"
+        }
+    ],
+    "monitor": "B. Adding rules and actions",
+    "stats": {
+        "downloader/response_count": 63785,
+        "finish_reason": "finished",
+        "item_scraped_count": 29836
+    },
+    "summary": {
+        "rules": {
+            "ERROR": 0,
+            "FAILED": 0,
+            "PASSED": 1,
+            "total": 1
+        }
+    }
+}
+----------------------------------------
+{
+    "actions": [
+        {
+            "action": {
+                "name": "MessageAction",
+                "trigger": "ALWAYS",
+                "type": "MessageAction"
+            },
+            "state": "PROCESSED"
+        }
+    ],
+    "checks": [],
+    "monitor": "C. Monitor without rules",
+    "stats": {
+        "downloader/response_count": 63785,
+        "finish_reason": "finished",
+        "item_scraped_count": 29836
+    },
+    "summary": {
+        "rules": {
+            "ERROR": 0,
+            "FAILED": 0,
+            "PASSED": 0,
+            "total": 0
+        }
+    }
+}
+----------------------------------------
+{
+    "actions": [
+        {
+            "action": {
+                "name": "DummyAction",
+                "trigger": "ALWAYS",
+                "type": "DummyAction"
+            },
+            "state": "PROCESSED"
+        }
+    ],
+    "checks": [
+        {
+            "rule": {
+                "level": "NORMAL",
+                "name": "<lambda>",
+                "type": "callable"
+            },
+            "state": "PASSED"
+        },
+        {
+            "rule": {
+                "level": "NORMAL",
+                "name": "python_expression",
+                "type": "python_expression"
+            },
+            "state": "PASSED"
+        },
+        {
+            "rule": {
+                "level": "NORMAL",
+                "name": "rule_as_function",
+                "type": "callable"
+            },
+            "state": "PASSED"
+        },
+        {
+            "rule": {
+                "level": "NORMAL",
+                "name": "rule",
+                "type": "rule"
+            },
+            "state": "PASSED"
+        },
+        {
+            "rule": {
+                "level": "NORMAL",
+                "name": "ATestCase.test_a",
+                "type": "test_case"
+            },
+            "state": "PASSED"
+        },
+        {
+            "rule": {
+                "level": "NORMAL",
+                "name": "ATestCase.test_b",
+                "type": "test_case"
+            },
+            "state": "PASSED"
+        }
+    ],
+    "monitor": "D. All rule type definitions",
+    "stats": {
+        "downloader/response_count": 63785,
+        "finish_reason": "finished",
+        "item_scraped_count": 29836
+    },
+    "summary": {
+        "rules": {
+            "ERROR": 0,
+            "FAILED": 0,
+            "PASSED": 6,
+            "total": 6
+        }
+    }
+}
+----------------------------------------
+{
+    "actions": [
+        {
+            "action": {
+                "name": "Action 1",
+                "trigger": "ALWAYS",
+                "type": "DummyAction"
+            },
+            "state": "PROCESSED"
+        },
+        {
+            "action": {
+                "name": "Action 2",
+                "trigger": "ALWAYS",
+                "type": "DummyAction"
+            },
+            "state": "PROCESSED"
+        }
+    ],
+    "checks": [
+        {
+            "rule": {
+                "level": "NORMAL",
+                "name": "Rule 1",
+                "type": "callable"
+            },
+            "state": "PASSED"
+        },
+        {
+            "rule": {
+                "level": "NORMAL",
+                "name": "Rule 2",
+                "type": "callable"
+            },
+            "state": "PASSED"
+        },
+        {
+            "rule": {
+                "level": "NORMAL",
+                "name": "Rule 3",
+                "type": "callable"
+            },
+            "state": "PASSED"
+        }
+    ],
+    "monitor": "E. Naming rules and actions",
+    "stats": {
+        "downloader/response_count": 63785,
+        "finish_reason": "finished",
+        "item_scraped_count": 29836
+    },
+    "summary": {
+        "rules": {
+            "ERROR": 0,
+            "FAILED": 0,
+            "PASSED": 3,
+            "total": 3
+        }
+    }
+}
+----------------------------------------
+{
+    "actions": [
+        {
+            "action": {
+                "name": "Action runs on passed",
+                "trigger": "PASSED",
+                "type": "DummyAction"
+            },
+            "state": "PROCESSED"
+        },
+        {
+            "action": {
+                "name": "Action on passed",
+                "trigger": "PASSED",
+                "type": "DummyAction"
+            },
+            "state": "PROCESSED"
+        },
+        {
+            "action": {
+                "name": "Action runs on failed",
+                "trigger": "FAILED",
+                "type": "DummyAction"
+            },
+            "state": "PROCESSED"
+        },
+        {
+            "action": {
+                "name": "Action runs on error",
+                "trigger": "ERROR",
+                "type": "DummyAction"
+            },
+            "state": "SKIPPED"
+        },
+        {
+            "action": {
+                "name": "Action runs always",
+                "trigger": "ALWAYS",
+                "type": "DummyAction"
+            },
+            "state": "PROCESSED"
+        },
+        {
+            "action": {
+                "name": "Action runs always",
+                "trigger": "ALWAYS",
+                "type": "DummyAction"
+            },
+            "state": "PROCESSED"
+        }
+    ],
+    "checks": [
+        {
+            "rule": {
+                "level": "HIGH",
+                "name": "Rule High",
+                "type": "python_expression"
+            },
+            "state": "PASSED"
+        },
+        {
+            "rule": {
+                "level": "NORMAL",
+                "name": "Rule Normal",
+                "type": "python_expression"
+            },
+            "state": "FAILED"
+        },
+        {
+            "rule": {
+                "level": "LOW",
+                "name": "Rule Low",
+                "type": "python_expression"
+            },
+            "state": "FAILED"
+        },
+        {
+            "rule": {
+                "level": "LOW",
+                "name": "Rule Low 2",
+                "type": "callable"
+            },
+            "state": "PASSED"
+        }
+    ],
+    "monitor": "F. Rule levels and action triggers",
+    "stats": {
+        "downloader/response_count": 63785,
+        "finish_reason": "finished",
+        "item_scraped_count": 29836
+    },
+    "summary": {
+        "rules": {
+            "ERROR": 0,
+            "FAILED": 2,
+            "PASSED": 2,
+            "total": 4
+        }
+    }
+}
+----------------------------------------
+{
+    "actions": [
+        {
+            "action": {
+                "name": "Action on error",
+                "trigger": "ERROR",
+                "type": "BombAction"
+            },
+            "error": {
+                "message": "Boom!",
+                "traceback": "Traceback (most recent call last):\n  File \"/Users/javi/scrapinghub/spidermon/spidermon/actions/managers.py\", line 92, in _run_action\n    definition.action.run(result)\n  File \"/Users/javi/scrapinghub/spidermon/examples/monitors.py\", line 144, in run\n    raise Exception('Boom!')\nException: Boom!\n"
+            },
+            "state": "ERROR"
+        }
+    ],
+    "checks": [
+        {
+            "error": {
+                "message": "Stats key 'a_non_existing_key' not found.",
+                "traceback": "Traceback (most recent call last):\n  File \"/Users/javi/scrapinghub/spidermon/spidermon/rules/managers.py\", line 38, in _check_rule\n    check_result = definition.rule.run_check(stats)\n  File \"/Users/javi/scrapinghub/spidermon/spidermon/rules/__init__.py\", line 26, in run_check\n    return bool(self.check(**context_params))\n  File \"/Users/javi/scrapinghub/spidermon/spidermon/rules/__init__.py\", line 69, in check\n    return self.interpreter.eval(self.expression, context_params)\n  File \"/Users/javi/scrapinghub/spidermon/spidermon/python.py\", line 57, in eval\n    return eval(expression, context)\n  File \"<string>\", line 1, in <module>\n  File \"/Users/javi/scrapinghub/spidermon/spidermon/stats.py\", line 43, in __getattr__\n    raise AttributeError(\"Stats key '%s' not found.\" % name)\nAttributeError: Stats key 'a_non_existing_key' not found.\n"
+            },
+            "rule": {
+                "level": "NORMAL",
+                "name": "python_expression",
+                "type": "python_expression"
+            },
+            "state": "ERROR"
+        }
+    ],
+    "monitor": "G. Rule and Action Errors",
+    "stats": {
+        "downloader/response_count": 63785,
+        "finish_reason": "finished",
+        "item_scraped_count": 29836
+    },
+    "summary": {
+        "rules": {
+            "ERROR": 1,
+            "FAILED": 0,
+            "PASSED": 0,
+            "total": 1
+        }
+    }
+}
