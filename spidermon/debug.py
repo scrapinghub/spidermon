@@ -148,11 +148,12 @@ class MonitorReport(Report):
         return Table(data)
 
     def _get_actions_table(self):
-        data = [['ACTION', 'RUNS']]
+        data = [['ACTION', 'TYPE', 'TRIGGER_STATE']]
         data += [
             [
                 d.name,
-                d.state,
+                d.type,
+                d.trigger,
             ]
             for d in self.monitor.actions_manager.definitions
         ]
@@ -188,10 +189,11 @@ class MonitorResultsReport(Report):
         return Table(data)
 
     def _get_actions_table(self):
-        data = [['ACTION', 'TRIGGER_STATE', 'STATE']]
+        data = [['ACTION', 'TYPE', 'TRIGGER_STATE', 'STATE']]
         data += [
             [
                 a.definition.name,
+                a.definition.type,
                 a.definition.trigger,
                 a.state,
             ]

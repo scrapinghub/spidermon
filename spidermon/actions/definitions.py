@@ -11,6 +11,10 @@ class ActionDefinition(JSONSerializable):
         self.name = self._get_name(name)
         self.trigger = self._get_trigger(trigger)
 
+    @property
+    def type(self):
+        return self.action.name
+
     def _get_action(self, action):
         if not isinstance(action, Action):
             raise InvalidActionDefinition('Wrong action, actions must subclass Action')
@@ -27,6 +31,7 @@ class ActionDefinition(JSONSerializable):
     def as_dict(self):
         data = {
             'name': self.name,
+            'type': self.action.name,
             'trigger': self.trigger,
         }
         return data

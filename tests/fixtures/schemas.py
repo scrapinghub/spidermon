@@ -12,11 +12,11 @@ CHECK_RESULTS_SCHEMA = {
             "rule": {
                 "type": "object",
                 "properties": {
-                    "type": {"type": "string"},
                     "name": {"type": "string"},
+                    "type": {"type": "string"},
                     "level": {"enum": list(settings.LEVELS)},
                 },
-                "required": ["type", "name", "level"],
+                "required": ["name", "type", "level"],
             },
             "error": {
                 "type": "object",
@@ -52,9 +52,10 @@ ACTION_RESULTS_SCHEMA = {
                 "type": "object",
                 "properties": {
                     "name": {"type": "string"},
+                    "type": {"type": "string"},
                     "trigger": {"enum": list(settings.ACTION_TRIGGERS)},
                 },
-                "required": ["name", "trigger"],
+                "required": ["name", "type", "trigger"],
             },
             "error": {
                 "type": "object",
