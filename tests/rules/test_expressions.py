@@ -4,8 +4,8 @@ import unittest
 from spidermon.python import Interpreter, InvalidExpression
 from spidermon.context import create_context_dict
 
-from fixtures.expressions import *
-from fixtures.stats import *
+from tests.fixtures.expressions import *
+from tests.fixtures.stats import *
 
 
 class ExpressionBase(unittest.TestCase):

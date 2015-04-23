@@ -20,7 +20,7 @@ class ActionDefinition(JSONSerializable):
         return name or self.action.name
 
     def _get_trigger(self, trigger):
-        if trigger and trigger not in settings.CHECK_STATES:
+        if trigger and trigger not in settings.ACTION_TRIGGERS:
             raise InvalidState("Invalid state '%s'" % trigger)
         return trigger or settings.DEFAULT_CHECK_STATE
 

@@ -44,11 +44,11 @@ class ActionsManager(object):
     def n_error_actions(self):
         return len(self.error_actions)
 
-    def add_action(self, action, name=None, state=None):
+    def add_action(self, action, name=None, trigger=None):
         if isinstance(action, tuple):
             self._add_action_from_tuple(action)
         else:
-            definition = ActionDefinition(action, name, state)
+            definition = ActionDefinition(action, name, trigger)
             self._add_definition(definition)
 
     def run_actions(self, result):
@@ -103,16 +103,16 @@ class ActionsManager(object):
         return action_result
 
     def _add_action_from_tuple(self, tuple_definition):
-        state = None
+        trigger = None
         if len(tuple_definition) == 2:
             name, action = tuple_definition
         elif len(tuple_definition) == 3:
-            name, action, state = tuple_definition
+            name, action, trigger = tuple_definition
         else:
             raise InvalidActionDefinition('Wrong Action tuple definition, you should '
                                           'either use (name, action) or '
                                           '(name, action, state)')
-        self.add_action(action=action, name=name, state=state)
+        self.add_action(action=action, name=name, trigger=trigger)
 
     def _get_actions_for_trigger(self, state):
         return [d for d in self.definitions if d.trigger == state]

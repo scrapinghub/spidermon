@@ -3,7 +3,8 @@
 [X] Handle failures (managers)
 [X] Add Monitors
 [X] Add Actions
-[ ] Add Action tests
+[X] Add Action tests
+[ ] Add Monitor tests
 [ ] Scrapy integration
 [ ] Add docs
 [ ] Improve TestCases

@@ -3,9 +3,9 @@ import pytest
 from spidermon import CallableRule, PythonExpressionRule
 from spidermon.exceptions import InvalidExpression, InvalidCallable
 
-from fixtures.rules import *
-from fixtures.stats import *
-from fixtures.expressions import *
+from tests.fixtures.rules import *
+from tests.fixtures.stats import *
+from tests.fixtures.expressions import *
 
 
 def test_base_rule():

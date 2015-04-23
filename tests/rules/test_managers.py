@@ -6,10 +6,11 @@ from spidermon.rules import CallableRule, PythonExpressionRule, TestCaseRule
 from spidermon.rules.managers import RulesManager
 from spidermon.exceptions import InvalidRuleDefinition, InvalidRuleLevel
 from spidermon.serialization import SpidermonJSONEncoder
+from spidermon import settings
 
-from fixtures.rules import *
-from fixtures.stats import *
-from fixtures.schemas import *
+from tests.fixtures.rules import *
+from tests.fixtures.stats import *
+from tests.fixtures.schemas import *
 
 
 def test_errors():
