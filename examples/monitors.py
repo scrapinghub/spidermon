@@ -6,6 +6,11 @@ STATS = {
 }
 
 
+class DummyAction(Action):
+    def run(self, result):
+        pass
+
+
 class MessageAction(Action):
     def __init__(self, msg):
         self.msg = msg
@@ -83,7 +88,7 @@ MONITOR_D = Monitor(
         ATestCase(),  # TestCase
     ],
     actions=[
-        MessageAction('hi there!'),
+        DummyAction(),
     ]
 )
 
@@ -98,11 +103,11 @@ MONITOR_E = Monitor(
         ('Rule 2', rule_as_function),
     ],
     actions=[
-        ('Action 1', MessageAction('hi there!')),
+        ('Action 1', DummyAction()),
     ]
 )
 MONITOR_E.add_rule(rule=rule_as_function, name='Rule 3')
-MONITOR_E.add_action(action=MessageAction('hi there again!'), name='Action 2')
+MONITOR_E.add_action(action=DummyAction(), name='Action 2')
 
 
 #---------------------------------------------------------------
@@ -116,13 +121,15 @@ MONITOR_F = Monitor(
         ('Rule Low',    'stats.finish_reason != "finished"', 'LOW'),
     ],
     actions=[
-        ('Action on passed', MessageAction('nice!'),    'PASSED'),
-        ('Action on failed', MessageAction('almost!'),  'FAILED'),
-        ('Action on error',  MessageAction('f**k!'),    'ERROR'),
+        ('Action runs always',    DummyAction()),  #  trigger defaults to ALWAYS
+        ('Action runs always',    DummyAction(), 'ALWAYS'),
+        ('Action runs on passed', DummyAction(), 'PASSED'),
+        ('Action runs on failed', DummyAction(), 'FAILED'),
+        ('Action runs on error',  DummyAction(), 'ERROR'),
     ]
 )
 MONITOR_F.add_rule(rule=rule_as_function, name='Rule Low 2', level='LOW')
-MONITOR_F.add_action(action=MessageAction('cool!'), name='Action on passed', trigger='PASSED')
+MONITOR_F.add_action(action=DummyAction(), name='Action on passed', trigger='PASSED')
 
 
 #---------------------------------------------------------------
