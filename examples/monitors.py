@@ -32,8 +32,8 @@ MONITOR_A = Monitor(
 # B. Adding rules and actions
 #---------------------------------------------------------------
 MONITOR_B = Monitor(name='B. Adding rules and actions')
-MONITOR_B.add_rule(lambda stats: stats.finish_reason == 'finished')
-MONITOR_B.add_action(MessageAction('finish reason is ok!'))
+MONITOR_B.add_rule(rule=lambda stats: stats.finish_reason == 'finished')
+MONITOR_B.add_action(action=MessageAction('finish reason is ok!'))
 
 
 #---------------------------------------------------------------
@@ -101,8 +101,8 @@ MONITOR_E = Monitor(
         ('Action 1', MessageAction('hi there!')),
     ]
 )
-MONITOR_E.add_rule(rule_as_function, 'Rule 3')
-MONITOR_E.add_action(MessageAction('hi there again!'), 'Action 2')
+MONITOR_E.add_rule(rule=rule_as_function, name='Rule 3')
+MONITOR_E.add_action(action=MessageAction('hi there again!'), name='Action 2')
 
 
 #---------------------------------------------------------------
@@ -121,8 +121,8 @@ MONITOR_F = Monitor(
         ('Action on error',  MessageAction('f**k!'),    'ERROR'),
     ]
 )
-MONITOR_F.add_rule(rule_as_function, 'Rule Low 2', 'LOW')
-MONITOR_F.add_action(MessageAction('cool!'), 'Action on passed', 'PASSED')
+MONITOR_F.add_rule(rule=rule_as_function, name='Rule Low 2', level='LOW')
+MONITOR_F.add_action(action=MessageAction('cool!'), name='Action on passed', trigger='PASSED')
 
 
 #---------------------------------------------------------------
