@@ -2,10 +2,10 @@ import jinja2
 from terminaltables import AsciiTable
 
 MONITOR_REPORT = """
-====================================================
+==============================================================================
 MONITOR: {{ monitor.name }}
-====================================================
-_____________________ rules ________________________
+==============================================================================
+__________________________________ rules _____________________________________
 
 {% if monitor.rules_manager.definitions %}
 {{ rules_table.table }}
@@ -14,9 +14,9 @@ TOTAL: {{ monitor.rules_manager.definitions|length }}
 No rules defined
 {% endif %}
 
-====================================================
+==============================================================================
 
-____________________ actions _______________________
+_________________________________ actions ____________________________________
 
 {% if monitor.actions_manager.definitions %}
 {{ actions_table.table }}
@@ -28,10 +28,10 @@ No actions defined
 """
 
 MONITOR_RESULT_REPORT = """
-====================================================
+==============================================================================
 MONITOR REPORT: {{result.monitor.name}}
-====================================================
-_____________________ checks _______________________
+==============================================================================
+__________________________________ rules _____________________________________
 
 {% if result.checks %}
 {{ checks_table.table }}
@@ -41,7 +41,7 @@ FAILED: {{ result.n_failed_checks }}
 ERRORS: {{ result.n_error_checks }}
     {% if result.n_error_checks %}
 
-_________________ check errors _____________________
+______________________________ check errors __________________________________
 
         {% for check in result.error_checks %}
 RULE: {{ check.definition.name }}
@@ -54,7 +54,7 @@ TRACEBACK: {{ check.error_traceback }}
 No rules defined
 {% endif %}
 
-____________________ actions _______________________
+_________________________________ actions ____________________________________
 
 {% if result.actions %}
 {{ actions_table.table }}
@@ -64,7 +64,7 @@ PROCESSED: {{ result.n_processed_actions }}
    ERRORS: {{ result.n_error_actions }}
     {% if result.n_error_actions %}
 
-_________________ action errors ____________________
+______________________________ action errors _________________________________
 
         {% for action in result.error_actions %}
 ACTION: {{ action.definition.name }}
@@ -77,7 +77,7 @@ TRACEBACK: {{ action.error_traceback }}
 No actions defined
 {% endif %}
 
-====================================================
+==============================================================================
 
 """
 TEMPLATES = {
