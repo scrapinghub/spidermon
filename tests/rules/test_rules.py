@@ -1,6 +1,6 @@
 import pytest
 
-from spidermon import CallableRule, PythonExpressionRule
+from spidermon.rules import CallableRule, PythonExpressionRule
 from spidermon.exceptions import InvalidExpression, InvalidCallable
 
 from tests.fixtures.rules import *
