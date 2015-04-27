@@ -9,6 +9,7 @@ BUILDDIR          = build
 S3CMD             = s3cmd
 S3BUCKET          = s3://spidermon.scrapinghub.com/docs/
 S3BUCKETURL       = http://spidermon.scrapinghub.com.s3.amazonaws.com/docs/
+S3BUCKETNOTESURL  = http://spidermon.scrapinghub.com.s3.amazonaws.com/notes/
 
 # User-friendly check for sphinx-build
 ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
@@ -28,6 +29,7 @@ help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@echo "  html       to make standalone HTML files"
 	@echo "  s3html     to make standalone HTML files and publish them to s3 bucket"
+	@echo "  s3notes    to publish notes to s3 bucket"
 	@echo "  dirhtml    to make HTML files named index.html in directories"
 	@echo "  singlehtml to make a single large HTML file"
 	@echo "  pickle     to make pickle files"
@@ -69,6 +71,12 @@ s3html:
 	$(S3CMD) sync setacl --acl-public --recursive $(BUILDDIR)/s3html/ $(S3BUCKET)
 	@echo
 	@echo "Publish finished. The docs are available in $(S3BUCKETURL)index.html"
+
+s3notes:
+	@echo "Publishing notes to s3 bucket..."
+	$(S3CMD) sync setacl --acl-public --recursive $(BUILDDIR)/notes/ $(S3BUCKET)
+	@echo
+	@echo "Publish finished. The docs are available in $(S3BUCKETURL)notes"
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
