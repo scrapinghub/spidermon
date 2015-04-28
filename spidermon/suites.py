@@ -2,7 +2,7 @@ from unittest import TestSuite
 import inspect
 import collections
 
-from monitors import MonitorBase
+from monitors import Monitor
 
 
 class MonitorSuite(TestSuite):
@@ -40,12 +40,12 @@ class MonitorSuite(TestSuite):
             return self._add_monitor_from_class(monitor_class=monitor, name=name)
         elif isinstance(monitor, tuple):
             return self._add_monitor_from_tuple(monitor_tuple=monitor)
-        elif isinstance(monitor, (MonitorBase, MonitorSuite)):
+        elif isinstance(monitor, (Monitor, MonitorSuite)):
             return super(MonitorSuite, self).addTest(monitor)
         raise Exception('Not valid monitor')  # TODO: Custom exception
 
     def _add_monitor_from_class(self, monitor_class, name=None):
-        if issubclass(monitor_class, MonitorBase):
+        if issubclass(monitor_class, Monitor):
             from loaders import MonitorLoader
             loader = MonitorLoader()
             monitor = loader.load_suite_from_monitor(monitor_class)
@@ -76,7 +76,7 @@ class MonitorSuite(TestSuite):
     def number_of_tests(self):
         n = 0
         for test in self:
-            if isinstance(test, MonitorBase):
+            if isinstance(test, Monitor):
                 n += 1
             else:
                 n += test.number_of_tests
@@ -86,7 +86,7 @@ class MonitorSuite(TestSuite):
     def all_tests(self):
         tests = []
         for test in self:
-            if isinstance(test, MonitorBase):
+            if isinstance(test, Monitor):
                 tests += [test]
             else:
                 test += test.all_tests

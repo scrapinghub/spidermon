@@ -1,15 +1,17 @@
+import inspect
 from unittest import TestLoader
 from functools import cmp_to_key as _cmp_to_key
 
 
-from monitors import MonitorBase
-from suites import MonitorSuite
+from .monitors import Monitor
+from .suites import MonitorSuite
+from .exceptions import InvalidMonitor
 
 
 class MonitorLoader(TestLoader):
     def load_suite_from_monitor(self, monitor):
-        if not issubclass(monitor, MonitorBase):
-            raise Exception  # TODO: Add custom exception
+        if not (inspect.isclass(monitor) and issubclass(monitor, Monitor)):
+            raise InvalidMonitor('monitor must be a class subclassing Monitor')
         test_function_names = self.get_testcase_names(monitor)
         if not test_function_names and hasattr(monitor, 'runTest'):
             test_function_names = ['runTest']

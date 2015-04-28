@@ -3,9 +3,9 @@ from unittest import TestCase
 from .stats import Stats
 
 
-class MonitorBase(TestCase):
+class Monitor(TestCase):
     def __init__(self, methodName='runTest', name=None):
-        super(MonitorBase, self).__init__(methodName)
+        super(Monitor, self).__init__(methodName)
         self._name = name
         self._data = None
 
@@ -26,7 +26,7 @@ class MonitorBase(TestCase):
         print level*'\t' + repr(self)
 
 
-class StatsMonitor(MonitorBase):
+class StatsMonitor(Monitor):
     def __init__(self, methodName='runTest', name=None):
         super(StatsMonitor, self).__init__(methodName, name)
         self.stats = Stats()

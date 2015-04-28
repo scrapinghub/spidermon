@@ -1,4 +1,4 @@
-from monitors import StatsMonitor, JobMonitor
+from monitors import Monitor, StatsMonitor, JobMonitor
 from suites import MonitorSuite
 from loaders import MonitorLoader
 from runners import MonitorRunner, TextMonitorRunner
