@@ -158,3 +158,7 @@ def check_suite(suite, expected_number_of_tests):
     assert suite.number_of_tests == expected_number_of_tests
     for test in suite:
         assert isinstance(test, (Monitor, MonitorSuite))
+    all_tests = suite.all_tests
+    assert len(all_tests) == expected_number_of_tests
+    for test in all_tests:
+        assert isinstance(test, (Monitor, Monitor))

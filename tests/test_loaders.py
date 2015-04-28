@@ -3,7 +3,8 @@ import pytest
 from spidermon import MonitorLoader, MonitorSuite
 from spidermon.exceptions import InvalidMonitor
 
-from fixtures.cases import *
+from .fixtures.cases import *
+from .test_suites import check_suite
 
 
 @pytest.fixture
@@ -12,15 +13,15 @@ def loader():
 
 
 def test_loading(loader):
-    _check_suite(
+    check_suite(
         suite=loader.load_suite_from_monitor(EmptyMonitor),
         expected_number_of_tests=0
     )
-    _check_suite(
+    check_suite(
         suite=loader.load_suite_from_monitor(Monitor01),
         expected_number_of_tests=3
     )
-    _check_suite(
+    check_suite(
         suite=loader.load_suite_from_monitor(Monitor02),
         expected_number_of_tests=2
     )
@@ -63,13 +64,4 @@ def test_testcase_names(loader):
 def _check_testcase_names(loader, monitor_class, expected_names):
     names = loader.get_testcase_names(monitor_class)
     assert names == expected_names
-
-
-def _check_suite(suite, expected_number_of_tests):
-    assert isinstance(suite, MonitorSuite)
-    assert suite.number_of_tests == expected_number_of_tests
-    for test in suite:
-        assert isinstance(test, Monitor)
-
-
 
