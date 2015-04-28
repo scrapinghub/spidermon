@@ -1,8 +1,13 @@
+import six
+
 from unittest import TestSuite
 import inspect
 import collections
 
-from monitors import Monitor
+from .monitors import Monitor
+from .exceptions import (InvalidMonitor,
+                         InvalidMonitorIterable, InvalidMonitorClass, InvalidMonitorTuple,
+                         NotAllowedMethod)
 
 
 class MonitorSuite(TestSuite):
@@ -31,7 +36,7 @@ class MonitorSuite(TestSuite):
 
     def add_monitors(self, monitors):
         if not isinstance(monitors, collections.Iterable):
-            raise Exception('Not iterable')  # TODO: Custom exception
+            raise InvalidMonitorIterable('Monitors definition is not iterable')
         for m in monitors:
             self.add_monitor(m)
 
@@ -42,7 +47,7 @@ class MonitorSuite(TestSuite):
             return self._add_monitor_from_tuple(monitor_tuple=monitor)
         elif isinstance(monitor, (Monitor, MonitorSuite)):
             return super(MonitorSuite, self).addTest(monitor)
-        raise Exception('Not valid monitor')  # TODO: Custom exception
+        self._raise_invalid()
 
     def _add_monitor_from_class(self, monitor_class, name=None):
         if issubclass(monitor_class, Monitor):
@@ -52,17 +57,34 @@ class MonitorSuite(TestSuite):
         elif issubclass(monitor_class, MonitorSuite):
             monitor = monitor_class(name=name)
         else:
-            raise Exception('Not valid monitor')  # TODO: Custom exception
+            self._raise_invalid_class()
         return self.add_monitor(monitor=monitor, name=name)
 
     def _add_monitor_from_tuple(self, monitor_tuple):
         if len(monitor_tuple) != 2:
-            raise Exception('Not valid monitor')  # TODO: Custom exception
-        monitor, name = monitor_tuple
+            self._raise_invalid_tuple()
+        name, monitor = monitor_tuple
+        if not isinstance(name, six.string_types):
+            self._raise_invalid_tuple()
         return self.add_monitor(monitor=monitor, name=name)
 
+    def _raise_invalid(self):
+        raise InvalidMonitor('Wrong Monitor definition, it should be:\n'
+                             '- an instance of a Monitor/MonitorSuite object.\n'
+                             '- a subclass of Monitor/MonitorSuite.\n'
+                             '- a tuple with the format (name, monitor).\n'
+                             '- a string containing an evaluable python expression.')
+
+    def _raise_invalid_class(self):
+        raise InvalidMonitorClass('Wrong Monitor class definition, it should be '
+                                  'an instance of a Monitor/MonitorSuite object.')
+
+    def _raise_invalid_tuple(self):
+        raise InvalidMonitorTuple('Wrong Monitor tuple definition, it should be '
+                                  'a tuple with the format (name, monitor)')
+
     def __not_allowed_method(self, *args, **kwargs):
-        raise Exception  # TODO: Custom exception
+        raise NotAllowedMethod
 
     addTest = __not_allowed_method
     addTests = __not_allowed_method
@@ -74,13 +96,8 @@ class MonitorSuite(TestSuite):
 
     @property
     def number_of_tests(self):
-        n = 0
-        for test in self:
-            if isinstance(test, Monitor):
-                n += 1
-            else:
-                n += test.number_of_tests
-        return n
+        return sum([1 if isinstance(test, Monitor) else test.number_of_tests
+                    for test in self])
 
     @property
     def all_tests(self):
