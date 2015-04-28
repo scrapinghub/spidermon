@@ -1,4 +1,4 @@
-import unittest
+from unittest import TestLoader
 from functools import cmp_to_key as _cmp_to_key
 
 
@@ -6,7 +6,7 @@ from monitors import MonitorBase
 from suites import MonitorSuite
 
 
-class MonitorLoader(unittest.TestLoader):
+class MonitorLoader(TestLoader):
     def load_suite_from_monitor(self, monitor):
         if not issubclass(monitor, MonitorBase):
             raise Exception  # TODO: Add custom exception

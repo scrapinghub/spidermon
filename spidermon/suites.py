@@ -1,12 +1,11 @@
-import unittest
+from unittest import TestSuite
 import inspect
 import collections
 
-from objects import StatsMonitorObject, JobMonitorObject
 from monitors import MonitorBase
 
 
-class MonitorSuite(unittest.TestSuite):
+class MonitorSuite(TestSuite):
 
     monitors = []
 
@@ -20,9 +19,9 @@ class MonitorSuite(unittest.TestSuite):
     def name(self):
         return self._name or self.__doc__ or self.__class__.__name__
 
-    def init_child_data(self, **data):
+    def init_data(self, **data):
         for test in self:
-            test.set_data(**data)
+            test.init_data(**data)
 
     def __repr__(self):
         return '<SUITE:%s[%d,%s] at %s>' % (self.name, len(self._tests), self.number_of_tests, hex(id(self)))
@@ -75,19 +74,20 @@ class MonitorSuite(unittest.TestSuite):
 
     @property
     def number_of_tests(self):
-        return sum([t.number_of_tests for t in self])
+        n = 0
+        for test in self:
+            if isinstance(test, MonitorBase):
+                n += 1
+            else:
+                n += test.number_of_tests
+        return n
 
     @property
     def all_tests(self):
         tests = []
         for test in self:
-            tests += test.all_tests
+            if isinstance(test, MonitorBase):
+                tests += [test]
+            else:
+                test += test.all_tests
         return tests
-
-
-class StatsMonitorSuite(MonitorSuite, StatsMonitorObject):
-    pass
-
-
-class JobMonitorSuite(MonitorSuite, JobMonitorObject):
-    pass
