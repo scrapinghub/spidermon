@@ -1,14 +1,11 @@
-import pytest
-
-from spidermon.monitors import Monitor
+from spidermon import Monitor
 
 
-class MonitorWithoutTests(Monitor):
+class EmptyMonitor(Monitor):
     pass
 
 
 class Monitor01(Monitor):
-    @pytest.mark.skip
     def test_a(self):
         pass
 
@@ -16,5 +13,13 @@ class Monitor01(Monitor):
         pass
 
     def test_c(self):
+        pass
+
+
+class Monitor02(Monitor):
+    def test_d(self):
+        pass
+
+    def test_e(self):
         pass
 
