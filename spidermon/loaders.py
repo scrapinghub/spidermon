@@ -2,7 +2,6 @@ import inspect
 from unittest import TestLoader
 from functools import cmp_to_key as _cmp_to_key
 
-
 from .monitors import Monitor
 from .suites import MonitorSuite
 from .exceptions import InvalidMonitor
