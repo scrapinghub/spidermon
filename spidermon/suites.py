@@ -19,10 +19,33 @@ class MonitorSuite(TestSuite):
         self.add_monitors(self.monitors)
         self.add_monitors(monitors)
         self._name = name
+        self._parent = None
 
     @property
     def name(self):
-        return self._name or self.__doc__ or self.__class__.__name__
+        return self.suite_name or self.__class__.__name__
+
+    @property
+    def suite_name(self):
+        return self._name or self.__doc__
+
+    @property
+    def full_name(self):
+        parts = []
+        if self.parent and self.parent.full_name:
+            parts.append(self.parent.full_name)
+        if self.suite_name:
+            parts.append(self.suite_name)
+        return '/'.join(parts)
+
+
+
+    @property
+    def parent(self):
+        return self._parent
+
+    def set_parent(self, parent):
+        self._parent = parent
 
     def init_data(self, **data):
         for test in self:
@@ -46,6 +69,7 @@ class MonitorSuite(TestSuite):
         elif isinstance(monitor, tuple):
             return self._add_monitor_from_tuple(monitor_tuple=monitor)
         elif isinstance(monitor, (Monitor, MonitorSuite)):
+            monitor.set_parent(self)
             return super(MonitorSuite, self).addTest(monitor)
         self._raise_invalid()
 
@@ -53,7 +77,7 @@ class MonitorSuite(TestSuite):
         if issubclass(monitor_class, Monitor):
             from loaders import MonitorLoader
             loader = MonitorLoader()
-            monitor = loader.load_suite_from_monitor(monitor_class)
+            monitor = loader.load_suite_from_monitor(monitor_class=monitor_class, name=name)
         elif issubclass(monitor_class, MonitorSuite):
             monitor = monitor_class(name=name)
         else:
@@ -106,5 +130,5 @@ class MonitorSuite(TestSuite):
             if isinstance(test, Monitor):
                 tests += [test]
             else:
-                test += test.all_tests
+                tests += test.all_tests
         return tests

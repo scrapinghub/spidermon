@@ -8,13 +8,17 @@ from .exceptions import InvalidMonitor
 
 
 class MonitorLoader(TestLoader):
-    def load_suite_from_monitor(self, monitor):
-        if not (inspect.isclass(monitor) and issubclass(monitor, Monitor)):
+    def load_suite_from_monitor(self, monitor_class, name=None):
+        if not (inspect.isclass(monitor_class) and issubclass(monitor_class, Monitor)):
             raise InvalidMonitor('monitor must be a class subclassing Monitor')
-        test_function_names = self.get_testcase_names(monitor)
-        if not test_function_names and hasattr(monitor, 'runTest'):
+        test_function_names = self.get_testcase_names(monitor_class)
+        if not test_function_names and hasattr(monitor_class, 'runTest'):
             test_function_names = ['runTest']
-        loaded_suite = MonitorSuite(map(monitor, test_function_names))
+        #monitors = [monitor_class(function_name, name=name) for function_name in test_function_names]
+        loaded_suite = MonitorSuite(
+            monitors=map(monitor_class, test_function_names),
+            name=name
+        )
         return loaded_suite
 
     def get_testcase_names(self, monitor_class):
