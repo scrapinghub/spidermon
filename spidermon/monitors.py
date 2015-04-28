@@ -10,12 +10,6 @@ class Monitor(TestCase):
         self._data = None
         self._parent = None
 
-    def set_parent(self, parent):
-        self._parent = parent
-
-    def init_data(self, **data):
-        self._data = data
-
     @property
     def name(self):
         return self._name or str(self)
@@ -45,14 +39,20 @@ class Monitor(TestCase):
     def parent(self):
         return self._parent
 
+    def set_parent(self, parent):
+        self._parent = parent
+
+    def init_data(self, **data):
+        self._data = data
+
+    def debug(self, level=0):
+        print level*'\t' + repr(self)
+
     def __repr__(self):
         return '<MONITOR:%s at %s>' % (str(self), hex(id(self)))
 
     def __str__(self):
         return '%s.%s' % (self.__class__.__name__, self._testMethodName)
-
-    def debug(self, level=0):
-        print level*'\t' + repr(self)
 
 
 class StatsMonitor(Monitor):

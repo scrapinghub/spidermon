@@ -38,11 +38,24 @@ class MonitorSuite(TestSuite):
             parts.append(self.suite_name)
         return '/'.join(parts)
 
-
-
     @property
     def parent(self):
         return self._parent
+
+    @property
+    def number_of_tests(self):
+        return sum([1 if isinstance(test, Monitor) else test.number_of_tests
+                    for test in self])
+
+    @property
+    def all_tests(self):
+        tests = []
+        for test in self:
+            if isinstance(test, Monitor):
+                tests += [test]
+            else:
+                tests += test.all_tests
+        return tests
 
     def set_parent(self, parent):
         self._parent = parent
@@ -50,12 +63,6 @@ class MonitorSuite(TestSuite):
     def init_data(self, **data):
         for test in self:
             test.init_data(**data)
-
-    def __repr__(self):
-        return '<SUITE:%s[%d,%s] at %s>' % (self.name, len(self._tests), self.number_of_tests, hex(id(self)))
-
-    def __str__(self):
-        return self.__repr__()
 
     def add_monitors(self, monitors):
         if not isinstance(monitors, collections.Iterable):
@@ -72,6 +79,11 @@ class MonitorSuite(TestSuite):
             monitor.set_parent(self)
             return super(MonitorSuite, self).addTest(monitor)
         self._raise_invalid()
+
+    def debug(self, level=0):
+        print level*'\t' + repr(self)
+        for test in self:
+            test.debug(level=level+1)
 
     def _add_monitor_from_class(self, monitor_class, name=None):
         if issubclass(monitor_class, Monitor):
@@ -110,25 +122,11 @@ class MonitorSuite(TestSuite):
     def __not_allowed_method(self, *args, **kwargs):
         raise NotAllowedMethod
 
+    def __repr__(self):
+        return '<SUITE:%s[%d,%s] at %s>' % (self.name, len(self._tests), self.number_of_tests, hex(id(self)))
+
+    def __str__(self):
+        return self.__repr__()
+
     addTest = __not_allowed_method
     addTests = __not_allowed_method
-
-    def debug(self, level=0):
-        print level*'\t' + repr(self)
-        for test in self:
-            test.debug(level=level+1)
-
-    @property
-    def number_of_tests(self):
-        return sum([1 if isinstance(test, Monitor) else test.number_of_tests
-                    for test in self])
-
-    @property
-    def all_tests(self):
-        tests = []
-        for test in self:
-            if isinstance(test, Monitor):
-                tests += [test]
-            else:
-                tests += test.all_tests
-        return tests
