@@ -14,10 +14,9 @@ class MonitorLoader(TestLoader):
         test_function_names = self.get_testcase_names(monitor_class)
         if not test_function_names and hasattr(monitor_class, 'runTest'):
             test_function_names = ['runTest']
-        #monitors = [monitor_class(function_name, name=name) for function_name in test_function_names]
         loaded_suite = MonitorSuite(
             monitors=map(monitor_class, test_function_names),
-            name=name
+            name=name,
         )
         return loaded_suite
 
