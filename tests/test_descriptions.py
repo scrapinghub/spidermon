@@ -21,9 +21,9 @@ SUITE_DESCRIPTIONS = [
 ]
 
 METHOD_DESCRIPTIONS = [
-    # --------------------------------------------------------------
-    # monitor class                   description
-    # --------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------
+    # monitor class                 method name                     description
+    # ---------------------------------------------------------------------------------------------
     (DescriptedMethodsMonitor,      'test_not_descripted',          ''),
     (DescriptedMethodsMonitor,      'test_docstring_descripted',    'docstring method description'),
     (DescriptedMethodsMonitor,      'test_decorator_descripted',    'decorator method description'),
