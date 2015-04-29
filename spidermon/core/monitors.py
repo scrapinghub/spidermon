@@ -56,7 +56,7 @@ class Monitor(TestCase):
     def monitor_description(self):
         return self.options.description or \
                self.__class__.__doc__ or \
-               ''
+               settings.DEFAULT_DESCRIPTION
 
     @property
     def monitor_level(self):
@@ -75,7 +75,7 @@ class Monitor(TestCase):
     def method_description(self):
         return self.method.options.description or \
                self.method.__func__.__doc__ or \
-               ''
+               settings.DEFAULT_DESCRIPTION
 
     @property
     def method_level(self):

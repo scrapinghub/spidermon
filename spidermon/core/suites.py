@@ -60,7 +60,7 @@ class MonitorSuite(TestSuite):
     def description(self):
         return self.options.description or \
                self.__class__.__doc__ or \
-               ''
+               settings.DEFAULT_DESCRIPTION
 
     @property
     def parent(self):

@@ -34,14 +34,3 @@ class TextMonitorRunner(MonitorRunner):
 
     def create_result(self):
         return TextMonitorResult(stream=self.stream, verbosity=self.verbosity)
-
-
-from unittest import TextTestRunner
-
-
-class OldTextRunner(TextTestRunner):
-    def run(self, suite, data):
-        if not isinstance(suite, MonitorSuite):
-            raise Exception('Not valid')  # TODO: Add custom exception
-        suite.init_data(**data)
-        return super(OldTextRunner, self).run(suite)
