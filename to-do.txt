@@ -1,21 +1,50 @@
 -----------------------------------------
-TO-DO
+FEATURES
 -----------------------------------------
-[X] Add check results (results?)
-[X] Add new tests to managers (errors)
-[X] Handle failures (managers)
-[X] Add Monitors
-[X] Add Actions
-[X] Add Action tests
-[ ] Add Monitor tests
-[X] Add Examples
-[ ] Scrapy integration
-[ ] Add docs
-[ ] Improve TestCases
-[ ] spidermon-actions repo
-[ ] spidermon-demo repo
+[X] Decorators
+[X] Naming
+[X] Descriptions
+[X] Levels
+[X] Ordering
+[ ] Monitor runner exceptions
+[ ] Actions
+[ ] Suite actions hooks
+[ ] Results
+[ ] Improve Stats (regex?)
+[ ] Monitor Marks
+[ ] Monitor Meta
+[ ] Python expressions
+
+
+-----------------------------------------
+TESTS
+-----------------------------------------
+[X] loaders
+[X] stats
+[ ] monitors
+[X] suites
+[X] naming.names
+[ ] naming.description
+[ ] ordering
+[ ] levels
+[ ] options
+[ ] decorators
+[ ] runners
+[ ] results
+
+-----------------------------------------
+OTHER STUFF
+-----------------------------------------
+[X] pytest compatibility
+[ ] scrapy integration
+[ ] SpiderMonitor (builtin methods+functions)
+[ ] Add examples
+[ ] Docs
+[ ] Monitor scrapy decorators
 
 -----------------------------------------
 IDEAS
 -----------------------------------------
-- Improve action triggers (PASSED/ALL_PASSED/ANY_PASSED)
+- 'with' in monitors
+- spidermon-actions
+- spidermon-demo

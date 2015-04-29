@@ -1,8 +1,8 @@
 import pytest
 
 from spidermon import MonitorSuite
-from spidermon.exceptions import (InvalidMonitor,
-                                  InvalidMonitorIterable, InvalidMonitorClass, InvalidMonitorTuple,
+from spidermon.exceptions import (InvalidMonitor, InvalidMonitorIterable,
+                                  InvalidMonitorClass, InvalidMonitorTuple,
                                   NotAllowedMethod)
 
 from fixtures.suites import *

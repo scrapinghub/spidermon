@@ -1,4 +1,4 @@
-from .options import Options
+from core.options import Options
 from . import settings
 
 

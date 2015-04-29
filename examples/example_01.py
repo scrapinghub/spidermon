@@ -134,14 +134,16 @@ class ExampleSuite(MonitorSuite):
 
 suite = ExampleSuite()
 runner = TextMonitorRunner(verbosity=2)
-#runner.run(suite, data={'stats': STATS})
+runner.run(suite, data={'stats': STATS})
+exit()
 
 print '-'*80
 for t in suite.all_tests:
     print '    MONITOR:', t.monitor_full_name
     print '       TEST:', t.method_name
-    print '      LEVEL:', t.level or '*'*40
-    print '      ORDER:', t.order
+    print '      LEVEL:', t.level
+    #print '      ORDER:', t.order
+    print 'DESCRIPTION:', t.method_description
     print '-'*80
 
 #suite.debug()

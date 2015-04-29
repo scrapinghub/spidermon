@@ -4,12 +4,12 @@ from unittest import TestSuite
 import inspect
 import collections
 
+from spidermon.exceptions import (InvalidMonitor, InvalidMonitorIterable,
+                                  InvalidMonitorClass, InvalidMonitorTuple,
+                                  NotAllowedMethod)
+from spidermon import settings
 from .monitors import Monitor
 from .options import OptionsMetaclass
-from .exceptions import (InvalidMonitor,
-                         InvalidMonitorIterable, InvalidMonitorClass, InvalidMonitorTuple,
-                         NotAllowedMethod)
-from . import settings
 
 
 class MonitorSuite(TestSuite):
@@ -118,7 +118,7 @@ class MonitorSuite(TestSuite):
 
     def _add_monitor_from_class(self, monitor_class, name=None):
         if issubclass(monitor_class, Monitor):
-            from loaders import MonitorLoader
+            from spidermon.loaders import MonitorLoader
             loader = MonitorLoader()
             monitor = loader.load_suite_from_monitor(monitor_class=monitor_class, name=name)
         elif issubclass(monitor_class, MonitorSuite):

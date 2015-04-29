@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from .stats import Stats
+from spidermon.stats import Stats
+from spidermon import settings
 from .options import OptionsMetaclass, Options
-from . import settings
 
 
 class Monitor(TestCase):

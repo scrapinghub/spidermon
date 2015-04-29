@@ -1,1 +1,1 @@
-pytest_plugins = "spidermon.pytest.plugins.filter_monitors"
+pytest_plugins = "spidermon.contrib.pytest.plugins.filter_monitors"

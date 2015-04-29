@@ -1,4 +1,4 @@
-from . import settings
+from spidermon import settings
 
 
 class OptionsMetaclass(type):

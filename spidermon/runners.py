@@ -1,7 +1,7 @@
 import sys
 import time
 
-from .suites import MonitorSuite
+from core.suites import MonitorSuite
 from .results import MonitorResult, TextMonitorResult
 
 
