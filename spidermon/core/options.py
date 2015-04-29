@@ -17,7 +17,7 @@ class Options(object):
         self.description = settings.DEFAULT_DESCRIPTION
         self.level = None
         self.meta = {}
-        self.order = 1
+        self.order = settings.DEFAULT_ORDER
 
     @classmethod
     def add_or_create(cls, target):
