@@ -34,12 +34,12 @@ class MonitorSuite(TestSuite):
         parts = []
         if self.parent and self.parent.full_name:
             parts.append(self.parent.full_name)
-        if self.custom_name:
+        if self.have_custom_name:
             parts.append(self.name)
         return '/'.join(parts)
 
     @property
-    def custom_name(self):
+    def have_custom_name(self):
         return self._name or \
                self.options.name
 

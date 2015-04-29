@@ -15,6 +15,10 @@ class Monitor(TestCase):
         self._init_test_method()
 
     @property
+    def name(self):
+        return ':'.join([self.monitor_name, self.test_method_name])
+
+    @property
     def monitor_name(self):
         return self._name or \
                self.options.name or \
@@ -24,10 +28,6 @@ class Monitor(TestCase):
     def test_method_name(self):
         return self.test_method.options.name or \
                self._testMethodName
-
-    @property
-    def name(self):
-        return ':'.join([self.monitor_name, self.test_method_name])
 
     @property
     def test_method(self):
