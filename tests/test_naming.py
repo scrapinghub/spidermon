@@ -3,7 +3,7 @@ import pytest
 from fixtures.naming import *
 
 
-TEST_NAMES = [
+NAMES = [
     'UnnamedMonitor:A Test',
     'UnnamedMonitor:test_without_name',
     'Class Monitor:A Test',
@@ -38,7 +38,7 @@ TEST_NAMES = [
     'Instance Monitor:test_without_name',
 ]
 
-TEST_MONITOR_NAMES = [
+MONITOR_NAMES = [
     'UnnamedMonitor',
     'UnnamedMonitor',
     'Class Monitor',
@@ -73,7 +73,7 @@ TEST_MONITOR_NAMES = [
     'Instance Monitor',
 ]
 
-TEST_TEST_METHOD_NAMES = [
+METHOD_NAMES = [
     'A Test',
     'test_without_name',
     'A Test',
@@ -108,7 +108,7 @@ TEST_TEST_METHOD_NAMES = [
     'test_without_name',
 ]
 
-TEST_FULLNAME_NAMES_UNNNAMED_SUITE = [
+FULL_NAMES_UNNNAMED_SUITE = [
     'UnnamedMonitor:A Test',
     'UnnamedMonitor:test_without_name',
     'Class Monitor:A Test',
@@ -143,7 +143,7 @@ TEST_FULLNAME_NAMES_UNNNAMED_SUITE = [
     'Instance Suite Name/Instance Monitor:test_without_name',
 ]
 
-TEST_FULLNAME_NAMES_NAMED_SUITE = [
+FULL_NAMES_NAMED_SUITE = [
     'The Top Suite/UnnamedMonitor:A Test',
     'The Top Suite/UnnamedMonitor:test_without_name',
     'The Top Suite/Class Monitor:A Test',
@@ -188,63 +188,63 @@ def unnamed_top_suite():
     return UnnamedTopSuite()
 
 
-def test_naming_test_names(named_top_suite, unnamed_top_suite):
+def test_naming_names(named_top_suite, unnamed_top_suite):
     _check_names(
-        generated_names=_generate_test_names(named_top_suite),
-        expected_names=TEST_NAMES,
+        generated_names=_generate_names(named_top_suite),
+        expected_names=NAMES,
     )
     _check_names(
-        generated_names=_generate_test_names(unnamed_top_suite),
-        expected_names=TEST_NAMES,
-    )
-
-
-def test_naming_test_monitor_names(named_top_suite, unnamed_top_suite):
-    _check_names(
-        generated_names=_generate_test_monitor_names(named_top_suite),
-        expected_names=TEST_MONITOR_NAMES,
-    )
-    _check_names(
-        generated_names=_generate_test_monitor_names(unnamed_top_suite),
-        expected_names=TEST_MONITOR_NAMES,
+        generated_names=_generate_names(unnamed_top_suite),
+        expected_names=NAMES,
     )
 
 
-def test_naming_test_test_method_names(named_top_suite, unnamed_top_suite):
+def test_naming_monitor_names(named_top_suite, unnamed_top_suite):
     _check_names(
-        generated_names=_generate_test_test_method_names(named_top_suite),
-        expected_names=TEST_TEST_METHOD_NAMES,
+        generated_names=_generate_monitor_names(named_top_suite),
+        expected_names=MONITOR_NAMES,
     )
     _check_names(
-        generated_names=_generate_test_test_method_names(unnamed_top_suite),
-        expected_names=TEST_TEST_METHOD_NAMES,
-    )
-
-
-def test_naming_test_full_names(named_top_suite, unnamed_top_suite):
-    _check_names(
-        generated_names=_generate_test_full_names(named_top_suite),
-        expected_names=TEST_FULLNAME_NAMES_NAMED_SUITE,
-    )
-    _check_names(
-        generated_names=_generate_test_full_names(unnamed_top_suite),
-        expected_names=TEST_FULLNAME_NAMES_UNNNAMED_SUITE,
+        generated_names=_generate_monitor_names(unnamed_top_suite),
+        expected_names=MONITOR_NAMES,
     )
 
 
-def _generate_test_names(suite):
+def test_naming_method_names(named_top_suite, unnamed_top_suite):
+    _check_names(
+        generated_names=_generate_method_names(named_top_suite),
+        expected_names=METHOD_NAMES,
+    )
+    _check_names(
+        generated_names=_generate_method_names(unnamed_top_suite),
+        expected_names=METHOD_NAMES,
+    )
+
+
+def test_naming_full_names(named_top_suite, unnamed_top_suite):
+    _check_names(
+        generated_names=_generate_full_names(named_top_suite),
+        expected_names=FULL_NAMES_NAMED_SUITE,
+    )
+    _check_names(
+        generated_names=_generate_full_names(unnamed_top_suite),
+        expected_names=FULL_NAMES_UNNNAMED_SUITE,
+    )
+
+
+def _generate_names(suite):
     return [test.name for test in suite.all_tests]
 
 
-def _generate_test_monitor_names(suite):
+def _generate_monitor_names(suite):
     return [test.monitor_name for test in suite.all_tests]
 
 
-def _generate_test_test_method_names(suite):
-    return [test.test_method_name for test in suite.all_tests]
+def _generate_method_names(suite):
+    return [test.method_name for test in suite.all_tests]
 
 
-def _generate_test_full_names(suite):
+def _generate_full_names(suite):
     return [test.full_name for test in suite.all_tests]
 
 
