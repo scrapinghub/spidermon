@@ -1,6 +1,6 @@
 import pytest
 
-from fixtures.naming import *
+from fixtures.names import *
 
 
 NAMES = [
