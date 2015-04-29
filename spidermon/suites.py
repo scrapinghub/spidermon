@@ -5,12 +5,14 @@ import inspect
 import collections
 
 from .monitors import Monitor
+from .options import OptionsMetaclass
 from .exceptions import (InvalidMonitor,
                          InvalidMonitorIterable, InvalidMonitorClass, InvalidMonitorTuple,
                          NotAllowedMethod)
 
 
 class MonitorSuite(TestSuite):
+    __metaclass__ = OptionsMetaclass
 
     monitors = []
 
@@ -23,20 +25,23 @@ class MonitorSuite(TestSuite):
 
     @property
     def name(self):
-        return self.suite_name or self.__class__.__name__
-
-    @property
-    def suite_name(self):
-        return self._name or self.__doc__
+        return self._name or \
+               self.options.name or \
+               self.__class__.__name__
 
     @property
     def full_name(self):
         parts = []
         if self.parent and self.parent.full_name:
             parts.append(self.parent.full_name)
-        if self.suite_name:
-            parts.append(self.suite_name)
+        if self.custom_name:
+            parts.append(self.name)
         return '/'.join(parts)
+
+    @property
+    def custom_name(self):
+        return self._name or \
+               self.options.name
 
     @property
     def parent(self):
@@ -126,7 +131,7 @@ class MonitorSuite(TestSuite):
         return '<SUITE:%s[%d,%s] at %s>' % (self.name, len(self._tests), self.number_of_tests, hex(id(self)))
 
     def __str__(self):
-        return self.__repr__()
+        return self.name
 
     addTest = __not_allowed_method
     addTests = __not_allowed_method

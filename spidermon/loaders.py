@@ -14,10 +14,9 @@ class MonitorLoader(TestLoader):
         test_function_names = self.get_testcase_names(monitor_class)
         if not test_function_names and hasattr(monitor_class, 'runTest'):
             test_function_names = ['runTest']
-        loaded_suite = MonitorSuite(
-            monitors=map(monitor_class, test_function_names),
-            name=name,
-        )
+        monitors = [monitor_class(fn_name, name=name)
+                    for fn_name in test_function_names]
+        loaded_suite = MonitorSuite(monitors=monitors)
         return loaded_suite
 
     def get_testcase_names(self, monitor_class):
@@ -29,3 +28,4 @@ class MonitorLoader(TestLoader):
             test_function_names.sort(key=_cmp_to_key(self.sortTestMethodsUsing))
         return test_function_names
 
+    # TODO: hide methods?

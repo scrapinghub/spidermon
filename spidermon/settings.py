@@ -1,3 +1,6 @@
+# ----------------------------------
+# Test status
+# ----------------------------------
 TEST_STATUS_SUCCESS = 'OK'
 TEST_STATUS_ERROR = 'ERROR'
 TEST_STATUS_FAILURE = 'FAIL'
@@ -13,3 +16,18 @@ TEST_STATUSES = (
     TEST_STATUS_EXPECTED_FAILURE,
     TEST_STATUS_UNEXPECTED_SUCCESS,
 )
+
+# ----------------------------------
+# Monitor Levels
+# ----------------------------------
+MONITOR_LEVEL_HIGH = 'HIGH'
+MONITOR_LEVEL_NORMAL = 'NORMAL'
+MONITOR_LEVEL_LOW = 'LOW'
+
+MONITOR_LEVELS = (
+    MONITOR_LEVEL_HIGH,
+    MONITOR_LEVEL_NORMAL,
+    MONITOR_LEVEL_LOW,
+)
+
+DEFAULT_MONITOR_LEVEL = MONITOR_LEVEL_NORMAL
