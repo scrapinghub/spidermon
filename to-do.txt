@@ -26,7 +26,7 @@ TESTS
 [X] naming.names
 [X] naming.description
 [X] ordering
-[ ] levels
+[X] levels
 [ ] options
 [ ] decorators
 [ ] runners
