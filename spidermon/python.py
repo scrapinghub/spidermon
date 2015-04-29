@@ -47,7 +47,8 @@ class Interpreter(object):
 
         start_node = tree.body[0]
         if not isinstance(start_node, ast.Expr):
-            raise InvalidExpression("Python string must be an expression: '%s' found" % start_node.__class__.__name__)
+            raise InvalidExpression("Python string must be an expression: '%s' found" %
+                                    start_node.__class__.__name__)
 
         self._check_node(start_node)
 
@@ -78,4 +79,5 @@ class Interpreter(object):
         return node.__class__.__name__.lower() in self.ast_allowed_nodes
 
     def _raise_not_allowed_node(self, node):
-        raise InvalidExpression("'%s' definition not allowed in python expressions" % node.__class__.__name__)
+        raise InvalidExpression("'%s' definition not allowed in python expressions" %
+                                node.__class__.__name__)
