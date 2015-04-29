@@ -24,8 +24,8 @@ TESTS
 [ ] monitors
 [X] suites
 [X] naming.names
-[ ] naming.description
-[ ] ordering
+[X] naming.description
+[X] ordering
 [ ] levels
 [ ] options
 [ ] decorators
