@@ -4,7 +4,7 @@ MONITOR_DESCRIPTIONS = [
     # --------------------------------------------------------------
     # monitor class                 description
     # --------------------------------------------------------------
-    (NoDescriptedMonitor,           ''),
+    (NotDescriptedMonitor,          ''),
     (DocstringDescriptedMonitor,    'docstring monitor description'),
     (DescoratedDescriptedMonitor,   'decorator monitor description'),
     (DescoratedDescriptedMonitor2,  'decorator monitor description'),
@@ -14,7 +14,7 @@ SUITE_DESCRIPTIONS = [
     # --------------------------------------------------------------
     # suite class                   description
     # --------------------------------------------------------------
-    (NoDescriptedSuite,             ''),
+    (NotDescriptedSuite,            ''),
     (DocstringDescriptedSuite,      'docstring suite description'),
     (DescoratedDescriptedSuite,     'decorator suite description'),
     (DescoratedDescriptedSuite2,    'decorator suite description'),
