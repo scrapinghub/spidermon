@@ -44,3 +44,6 @@ class Stats(collections.MutableMapping):
 
     def __setattr__(self, name, value):
         raise InvalidStatsOperation("Immutable Stats! You cannot add or modify read-only stats.")
+
+    def __repr__(self):
+        return str(dict(self))

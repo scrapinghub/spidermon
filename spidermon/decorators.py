@@ -10,10 +10,26 @@ def _set_name_decorator(name):
     return decorator
 
 
+def _set_description_decorator(description):
+    def decorator(fn):
+        Options.add_or_create(fn)
+        fn.options.description = description
+        return fn
+    return decorator
+
+
 def _set_level_decorator(level):
     def decorator(fn):
         Options.add_or_create(fn)
         fn.options.level = level
+        return fn
+    return decorator
+
+
+def _set_order_decorator(order):
+    def decorator(fn):
+        Options.add_or_create(fn)
+        fn.options.order = order
         return fn
     return decorator
 
@@ -29,3 +45,5 @@ class LevelDecoratorGenerator:
 
 level = LevelDecoratorGenerator()
 name = _set_name_decorator
+description = _set_description_decorator
+order = _set_order_decorator

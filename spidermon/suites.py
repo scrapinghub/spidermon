@@ -9,6 +9,7 @@ from .options import OptionsMetaclass
 from .exceptions import (InvalidMonitor,
                          InvalidMonitorIterable, InvalidMonitorClass, InvalidMonitorTuple,
                          NotAllowedMethod)
+from . import settings
 
 
 class MonitorSuite(TestSuite):
@@ -16,18 +17,30 @@ class MonitorSuite(TestSuite):
 
     monitors = []
 
-    def __init__(self, monitors=(), name=None):
+    def __init__(self, monitors=(), name=None, order=None):
         self._tests = []
-        self.add_monitors(self.monitors)
-        self.add_monitors(monitors)
         self._name = name
         self._parent = None
+        self._order = order
+        self.add_monitors(self.monitors)
+        self.add_monitors(monitors)
 
     @property
     def name(self):
         return self._name or \
                self.options.name or \
                self.__class__.__name__
+
+    @property
+    def level(self):
+        return self.options.level or \
+               self.parent_level
+
+    @property
+    def parent_level(self):
+        if self.parent:
+            return self.parent.level
+        return settings.DEFAULT_MONITOR_LEVEL
 
     @property
     def full_name(self):
@@ -44,8 +57,19 @@ class MonitorSuite(TestSuite):
                self.options.name
 
     @property
+    def description(self):
+        return self.options.description or \
+               self.__class__.__doc__ or \
+               ''
+
+    @property
     def parent(self):
         return self._parent
+
+    @property
+    def order(self):
+        return self._order if self._order is not None else None or \
+               self.options.order
 
     @property
     def number_of_tests(self):
@@ -82,7 +106,9 @@ class MonitorSuite(TestSuite):
             return self._add_monitor_from_tuple(monitor_tuple=monitor)
         elif isinstance(monitor, (Monitor, MonitorSuite)):
             monitor.set_parent(self)
-            return super(MonitorSuite, self).addTest(monitor)
+            super(MonitorSuite, self).addTest(monitor)
+            self._reorder_tests()
+            return
         self._raise_invalid()
 
     def debug(self, level=0):
@@ -123,6 +149,9 @@ class MonitorSuite(TestSuite):
     def _raise_invalid_tuple(self):
         raise InvalidMonitorTuple('Wrong Monitor tuple definition, it should be '
                                   'a tuple with the format (name, monitor)')
+
+    def _reorder_tests(self):
+        self._tests = sorted(self._tests, key=lambda x: x.order, reverse=False)
 
     def __not_allowed_method(self, *args, **kwargs):
         raise NotAllowedMethod

@@ -10,12 +10,14 @@ class OptionsMetaclass(type):
 
 class Options(object):
     options_name = 'options'
-    options_attributes = ['name', 'level', 'meta']
+    options_attributes = ['name', 'level', 'meta', 'description', 'order']
 
     def __init__(self):
         self.name = None
-        self.level = settings.DEFAULT_MONITOR_LEVEL
+        self.description = settings.DEFAULT_DESCRIPTION
+        self.level = None
         self.meta = {}
+        self.order = 1
 
     @classmethod
     def add_or_create(cls, target):

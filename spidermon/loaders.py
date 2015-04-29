@@ -16,7 +16,10 @@ class MonitorLoader(TestLoader):
             test_function_names = ['runTest']
         monitors = [monitor_class(fn_name, name=name)
                     for fn_name in test_function_names]
-        loaded_suite = MonitorSuite(monitors=monitors)
+        loaded_suite = MonitorSuite(
+            monitors=monitors,
+            order=monitor_class.options.order
+        )
         return loaded_suite
 
     def get_testcase_names(self, monitor_class):

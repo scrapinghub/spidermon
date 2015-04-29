@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from .stats import Stats
 from .options import OptionsMetaclass, Options
+from . import settings
 
 
 class Monitor(TestCase):
@@ -12,26 +13,11 @@ class Monitor(TestCase):
         self._name = name
         self._data = None
         self._parent = None
-        self._init_test_method()
+        self._init_method()
 
     @property
     def name(self):
-        return ':'.join([self.monitor_name, self.test_method_name])
-
-    @property
-    def monitor_name(self):
-        return self._name or \
-               self.options.name or \
-               self.__class__.__name__
-
-    @property
-    def test_method_name(self):
-        return self.test_method.options.name or \
-               self._testMethodName
-
-    @property
-    def test_method(self):
-        return getattr(self, self._testMethodName)
+        return ':'.join([self.monitor_name, self.method_name])
 
     @property
     def full_name(self):
@@ -42,8 +28,66 @@ class Monitor(TestCase):
         return '/'.join(parts)
 
     @property
+    def level(self):
+        return self.method_level or \
+               self.monitor_level or \
+               self.parent_level or \
+               settings.DEFAULT_MONITOR_LEVEL
+
+    @property
+    def order(self):
+        return self.method.options.order
+
+    @property
+    def monitor_name(self):
+        return self._name or \
+               self.options.name or \
+               self.__class__.__name__
+
+    @property
+    def monitor_full_name(self):
+        parts = []
+        if self.parent and self.parent.full_name:
+            parts.append(self.parent.full_name)
+        parts.append(self.monitor_name)
+        return '/'.join(parts)
+
+    @property
+    def monitor_description(self):
+        return self.options.description or \
+               self.__class__.__doc__ or \
+               ''
+
+    @property
+    def monitor_level(self):
+        return self.options.level
+
+    @property
+    def method(self):
+        return getattr(self, self._testMethodName)
+
+    @property
+    def method_name(self):
+        return self.method.options.name or \
+               self._testMethodName
+
+    @property
+    def method_description(self):
+        return self.method.options.description or \
+               self.method.__func__.__doc__ or \
+               ''
+
+    @property
+    def method_level(self):
+        return self.method.options.level
+
+    @property
     def parent(self):
         return self._parent
+
+    @property
+    def parent_level(self):
+        return self.parent.level
 
     def set_parent(self, parent):
         self._parent = parent
@@ -54,8 +98,8 @@ class Monitor(TestCase):
     def debug(self, level=0):
         print level*'\t' + repr(self)
 
-    def _init_test_method(self):
-        Options.add_or_create(self.test_method.__func__)
+    def _init_method(self):
+        Options.add_or_create(self.method.__func__)
 
     def __repr__(self):
         return '<MONITOR:(%s) at %s>' % (self.name, hex(id(self)))
