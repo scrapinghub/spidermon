@@ -2,7 +2,7 @@ from .options import Options
 from . import settings
 
 
-def _name_decorator(name):
+def _set_name_decorator(name):
     def decorator(fn):
         Options.add_or_create(fn)
         fn.options.name = name
@@ -10,7 +10,7 @@ def _name_decorator(name):
     return decorator
 
 
-def _level_decorator(level):
+def _set_level_decorator(level):
     def decorator(fn):
         Options.add_or_create(fn)
         fn.options.level = level
@@ -25,7 +25,7 @@ class LevelDecoratorGenerator:
         if name not in self.allowed_levels:
             raise AttributeError('Invalid level')
         else:
-            return _level_decorator(name.upper())
+            return _set_level_decorator(name.upper())
 
 level = LevelDecoratorGenerator()
-name = _name_decorator
+name = _set_name_decorator
