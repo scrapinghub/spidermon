@@ -1,6 +1,6 @@
 from fixtures.ordering import *
 
-SUITES_SEQUENCES = [
+SUITE_SEQUENCES = [
     # ------------------------------------------------------------------------------------------------------------
     # monitor sequence                                      expected sequence
     # ------------------------------------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ METHOD_SEQUENCES = [
 
 
 def test_suite_ordering():
-    for monitors_sequence, expected_sequence in SUITES_SEQUENCES:
+    for monitors_sequence, expected_sequence in SUITE_SEQUENCES:
         suite = MonitorSuite()
         suite.add_monitors(monitors_sequence)
         sequence = [_extract_test_class(t) for t in suite]

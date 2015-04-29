@@ -13,7 +13,8 @@ FEATURES
 [ ] Improve Stats (regex?)
 [ ] Monitor Marks
 [ ] Monitor Meta
-[ ] Python expressions
+[X] Python expressions
+[ ] Python expressions as monitor
 
 
 -----------------------------------------
@@ -31,6 +32,8 @@ TESTS
 [ ] decorators
 [ ] runners
 [ ] results
+[X] Python expressions
+[ ] Python expressions as
 
 -----------------------------------------
 OTHER STUFF
