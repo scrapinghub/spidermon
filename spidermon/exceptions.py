@@ -24,3 +24,7 @@ class InvalidMonitorClass(InvalidMonitor):
 
 class InvalidMonitorTuple(InvalidMonitor):
     pass
+
+
+class InvalidExpression(SpiderMonException):
+    pass
