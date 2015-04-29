@@ -11,7 +11,6 @@ LEVEL_TESTS = [
     # ---------------------------------------------------------------------------------------
     # suite                     monitor/methods                                expected level
     # ---------------------------------------------------------------------------------------
-
     # Suite No Level
     (Suites.NoLevelSuite,       Monitors.NoLevelMonitor.NoLevelMethod,         NORMAL),
     (Suites.NoLevelSuite,       Monitors.NoLevelMonitor.HighLevelMethod,       HIGH),
@@ -99,9 +98,9 @@ LEVEL_TESTS = [
 
 
 def test_levels():
-    for suite, monitor, level in LEVEL_TESTS:
+    for suite, monitor, expected_level in LEVEL_TESTS:
         suite = suite()
         suite.add_monitor(monitor)
-        assert suite.all_tests[0].level == level
+        assert suite.all_tests[0].level == expected_level
 
 
