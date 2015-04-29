@@ -1,6 +1,6 @@
 import pytest
 
-from spidermon import MonitorLoader, MonitorSuite
+from spidermon import MonitorLoader
 from spidermon.exceptions import InvalidMonitor
 
 from .fixtures.cases import *

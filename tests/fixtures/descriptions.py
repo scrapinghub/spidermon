@@ -9,7 +9,7 @@ class BaseMonitor(Monitor):
         pass
 
 
-class NoDescriptedMonitor(BaseMonitor):
+class NotDescriptedMonitor(BaseMonitor):
     pass
 
 
@@ -31,7 +31,7 @@ class DescoratedDescriptedMonitor2(BaseMonitor):
 # ----------------------------------
 # Suites
 # ----------------------------------
-class NoDescriptedSuite(MonitorSuite):
+class NotDescriptedSuite(MonitorSuite):
     pass
 
 
