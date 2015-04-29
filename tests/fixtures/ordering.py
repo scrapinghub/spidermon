@@ -10,6 +10,9 @@ class DummyMonitorSuite(MonitorSuite):
     monitors = [DummyMonitor]
 
 
+# ----------------------------------
+# Monitors ordering
+# ----------------------------------
 class Unordered:
     class A(DummyMonitor):
         pass
@@ -42,6 +45,9 @@ class Ordered:
         pass
 
 
+# ----------------------------------
+# Methods ordering
+# ----------------------------------
 class UnorderedMethodsMonitor(Monitor):
 
     def test_a(self):

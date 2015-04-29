@@ -1,6 +1,9 @@
 from spidermon import Monitor, MonitorSuite, monitors
 
 
+# ----------------------------------
+# Base Monitors
+# ----------------------------------
 class NoLevelMethodMonitor(Monitor):
     def test(self):
         pass
@@ -24,6 +27,9 @@ class LowLevelMethodMonitor(Monitor):
         pass
 
 
+# ----------------------------------
+# Monitors
+# ----------------------------------
 class Monitors:
     class NoLevelMonitor:
         class NoLevelMethod(NoLevelMethodMonitor): pass
@@ -62,6 +68,9 @@ class Monitors:
         class LowLevelMethod(LowLevelMethodMonitor): pass
 
 
+# ----------------------------------
+# Suites
+# ----------------------------------
 class Suites:
     class NoLevelSuite(MonitorSuite): pass
     @monitors.level.high

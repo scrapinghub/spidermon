@@ -188,7 +188,7 @@ def unnamed_top_suite():
     return UnnamedTopSuite()
 
 
-def test_naming_names(named_top_suite, unnamed_top_suite):
+def test_names(named_top_suite, unnamed_top_suite):
     _check_names(
         generated_names=_generate_names(named_top_suite),
         expected_names=NAMES,
@@ -199,7 +199,7 @@ def test_naming_names(named_top_suite, unnamed_top_suite):
     )
 
 
-def test_naming_monitor_names(named_top_suite, unnamed_top_suite):
+def test_monitor_names(named_top_suite, unnamed_top_suite):
     _check_names(
         generated_names=_generate_monitor_names(named_top_suite),
         expected_names=MONITOR_NAMES,
@@ -210,7 +210,7 @@ def test_naming_monitor_names(named_top_suite, unnamed_top_suite):
     )
 
 
-def test_naming_method_names(named_top_suite, unnamed_top_suite):
+def test_method_names(named_top_suite, unnamed_top_suite):
     _check_names(
         generated_names=_generate_method_names(named_top_suite),
         expected_names=METHOD_NAMES,
@@ -221,7 +221,7 @@ def test_naming_method_names(named_top_suite, unnamed_top_suite):
     )
 
 
-def test_naming_full_names(named_top_suite, unnamed_top_suite):
+def test_full_names(named_top_suite, unnamed_top_suite):
     _check_names(
         generated_names=_generate_full_names(named_top_suite),
         expected_names=FULL_NAMES_NAMED_SUITE,
