@@ -32,7 +32,7 @@ TESTS
 [ ] runners
 [ ] results
 [X] Python expressions
-[ ] Python expressions as
+[ ] Python expressions as monitor
 
 -----------------------------------------
 OTHER STUFF
