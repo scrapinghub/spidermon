@@ -4,26 +4,37 @@ from unittest import TestSuite
 import inspect
 import collections
 
-from spidermon.exceptions import (InvalidMonitor, InvalidMonitorIterable,
-                                  InvalidMonitorClass, InvalidMonitorTuple,
-                                  NotAllowedMethod)
+from spidermon.exceptions import (InvalidMonitorIterable, NotAllowedMethod)
 from spidermon import settings
+
 from .monitors import Monitor
+from .actions import Action
 from .options import MonitorOptionsMetaclass
+from .factories import MonitorFactory, ActionFactory
 
 
 class MonitorSuite(TestSuite):
     __metaclass__ = MonitorOptionsMetaclass
 
     monitors = []
+    test_finish_actions = []
 
-    def __init__(self, monitors=(), name=None, order=None):
+    def __init__(self, name=None, monitors=None,
+                 test_finish_actions=None, order=None):
         self._tests = []
         self._name = name
         self._parent = None
         self._order = order
+
         self.add_monitors(self.monitors)
-        self.add_monitors(monitors)
+        self.add_monitors(monitors or [])
+
+        class_test_finish_actions = self.test_finish_actions
+        setattr(self, 'test_finish_actions', [])
+        self.test_finish_actions = []
+        self.add_test_finish_actions(class_test_finish_actions)
+        self.add_test_finish_actions(test_finish_actions or [])
+
 
     @property
     def name(self):
@@ -100,16 +111,18 @@ class MonitorSuite(TestSuite):
             self.add_monitor(m)
 
     def add_monitor(self, monitor, name=None):
-        if inspect.isclass(monitor):
-            return self._add_monitor_from_class(monitor_class=monitor, name=name)
-        elif isinstance(monitor, tuple):
-            return self._add_monitor_from_tuple(monitor_tuple=monitor)
-        elif isinstance(monitor, (Monitor, MonitorSuite)):
-            monitor.set_parent(self)
-            super(MonitorSuite, self).addTest(monitor)
-            self._reorder_tests()
-            return
-        self._raise_invalid()
+        monitor = MonitorFactory.load_monitor(monitor, name)
+        monitor.set_parent(self)
+        super(MonitorSuite, self).addTest(monitor)
+        self._reorder_tests()
+
+    def add_test_finish_actions(self, actions):
+        for action in actions:
+            self.add_test_finish_action(action)
+
+    def add_test_finish_action(self, action):
+        action = ActionFactory.load_action(action)
+        self.test_finish_actions.append(action)
 
     def debug_tree(self, level=0):
         s = level*'\t' + repr(self) + '\n'
@@ -131,51 +144,17 @@ class MonitorSuite(TestSuite):
             s += '-'*80 + '\n'
         return s
 
-    def _add_monitor_from_class(self, monitor_class, name=None):
-        if issubclass(monitor_class, Monitor):
-            from spidermon.loaders import MonitorLoader
-            loader = MonitorLoader()
-            monitor = loader.load_suite_from_monitor(monitor_class=monitor_class, name=name)
-        elif issubclass(monitor_class, MonitorSuite):
-            monitor = monitor_class(name=name)
-        else:
-            self._raise_invalid_class()
-        return self.add_monitor(monitor=monitor, name=name)
-
-    def _add_monitor_from_tuple(self, monitor_tuple):
-        if len(monitor_tuple) != 2:
-            self._raise_invalid_tuple()
-        name, monitor = monitor_tuple
-        if not isinstance(name, six.string_types):
-            self._raise_invalid_tuple()
-        return self.add_monitor(monitor=monitor, name=name)
-
-    def _raise_invalid(self):
-        raise InvalidMonitor('Wrong Monitor definition, it should be:\n'
-                             '- an instance of a Monitor/MonitorSuite object.\n'
-                             '- a subclass of Monitor/MonitorSuite.\n'
-                             '- a tuple with the format (name, monitor).\n'
-                             '- a string containing an evaluable python expression.')
-
-    def _raise_invalid_class(self):
-        raise InvalidMonitorClass('Wrong Monitor class definition, it should be '
-                                  'an instance of a Monitor/MonitorSuite object.')
-
-    def _raise_invalid_tuple(self):
-        raise InvalidMonitorTuple('Wrong Monitor tuple definition, it should be '
-                                  'a tuple with the format (name, monitor)')
-
     def _reorder_tests(self):
         self._tests = sorted(self._tests, key=lambda x: x.order, reverse=False)
-
-    def __not_allowed_method(self, *args, **kwargs):
-        raise NotAllowedMethod
 
     def __repr__(self):
         return '<SUITE:%s[%d,%s] at %s>' % (self.name, len(self._tests), self.number_of_tests, hex(id(self)))
 
     def __str__(self):
         return self.name
+
+    def __not_allowed_method(self, *args, **kwargs):
+        raise NotAllowedMethod
 
     addTest = __not_allowed_method
     addTests = __not_allowed_method

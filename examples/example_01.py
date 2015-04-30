@@ -134,7 +134,11 @@ class ExampleSuite(MonitorSuite):
 
 suite = ExampleSuite()
 runner = TextMonitorRunner(verbosity=2)
-runner.run(suite, data={'stats': STATS})
+#runner.run(suite, data={'stats': STATS})
+
+#help(ExampleSuite)
+#help(ItemsMonitor)
 
 #print suite.debug_tree()
 #print suite.debug_tests()
+print suite.options

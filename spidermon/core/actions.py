@@ -1,4 +1,8 @@
-from .options import ActionOptions, ActionOptionsMetaclass
+import sys
+
+from spidermon.exceptions import SkipAction
+
+from .options import ActionOptionsMetaclass
 
 
 class Action(object):
@@ -13,4 +17,22 @@ class Action(object):
                self.__class__.__name__
 
     def run(self, result):
+        result.start_action(self)
+        try:
+            self.run_action(result)
+        except SkipAction, e:
+            result.add_action_skip(self, e.message)
+        except Exception, e:
+            result.add_action_error(self, sys.exc_info())
+        else:
+            result.add_action_success(self)
+
+    def run_action(self, result):
         raise NotImplementedError
+
+    def __repr__(self):
+        return '<ACTION:(%s) at %s>' % (self.name, hex(id(self)))
+
+    def __str__(self):
+        return repr(self)
+
