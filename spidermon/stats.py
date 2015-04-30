@@ -21,12 +21,6 @@ class Stats(collections.MutableMapping):
     def __getitem__(self, key):
         return self._store[self.__keytransform__(key)]
 
-    def __setitem__(self, key, value):
-        raise InvalidStatsOperation("Immutable Stats! You cannot add or modify read-only stats.")
-
-    def __delitem__(self, key):
-        raise InvalidStatsOperation("Immutable Stats! You cannot delete read-only stats.")
-
     def __iter__(self):
         return iter(self._store)
 
@@ -42,8 +36,12 @@ class Stats(collections.MutableMapping):
         else:
             raise AttributeError("Stats key '%s' not found." % name)
 
-    def __setattr__(self, name, value):
-        raise InvalidStatsOperation("Immutable Stats! You cannot add or modify read-only stats.")
-
     def __repr__(self):
         return str(dict(self))
+
+    def _immutable(self, *args, **kws):
+        raise InvalidStatsOperation('Immutable Stats! You cannot add or modify read-only stats.')
+
+    __setitem__ = _immutable
+    __delitem__ = _immutable
+    __setattr__ = _immutable
