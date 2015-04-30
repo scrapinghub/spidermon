@@ -16,7 +16,6 @@ FEATURES
 [X] Python expressions
 [ ] Python expressions as monitor
 
-
 -----------------------------------------
 TESTS
 -----------------------------------------
@@ -40,10 +39,12 @@ OTHER STUFF
 -----------------------------------------
 [X] pytest compatibility
 [ ] scrapy integration
+[ ] StatsMonitor
+[ ] JobMonitor
 [ ] SpiderMonitor (builtin methods+functions)
 [ ] Add examples
 [ ] Docs
-[ ] Monitor scrapy decorators
+[ ] Scrapy Monitor decorators
 
 -----------------------------------------
 IDEAS
