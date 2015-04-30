@@ -1,10 +1,10 @@
-from core.options import Options
+from core.options import MonitorOptions
 from . import settings
 
 
 def _set_name_decorator(name):
     def decorator(fn):
-        Options.add_or_create(fn)
+        MonitorOptions.add_or_create(fn)
         fn.options.name = name
         return fn
     return decorator
@@ -12,7 +12,7 @@ def _set_name_decorator(name):
 
 def _set_description_decorator(description):
     def decorator(fn):
-        Options.add_or_create(fn)
+        MonitorOptions.add_or_create(fn)
         fn.options.description = description
         return fn
     return decorator
@@ -20,7 +20,7 @@ def _set_description_decorator(description):
 
 def _set_level_decorator(level):
     def decorator(fn):
-        Options.add_or_create(fn)
+        MonitorOptions.add_or_create(fn)
         fn.options.level = level
         return fn
     return decorator
@@ -28,7 +28,7 @@ def _set_level_decorator(level):
 
 def _set_order_decorator(order):
     def decorator(fn):
-        Options.add_or_create(fn)
+        MonitorOptions.add_or_create(fn)
         fn.options.order = order
         return fn
     return decorator

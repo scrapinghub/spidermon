@@ -9,11 +9,11 @@ from spidermon.exceptions import (InvalidMonitor, InvalidMonitorIterable,
                                   NotAllowedMethod)
 from spidermon import settings
 from .monitors import Monitor
-from .options import OptionsMetaclass
+from .options import MonitorOptionsMetaclass
 
 
 class MonitorSuite(TestSuite):
-    __metaclass__ = OptionsMetaclass
+    __metaclass__ = MonitorOptionsMetaclass
 
     monitors = []
 

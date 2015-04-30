@@ -1,31 +1,49 @@
 from spidermon import settings
 
 
-class OptionsMetaclass(type):
+class OptionsMetaclassBase(type):
+    __options_class__ = None
+
     def __new__(mcs, name, bases, attrs):
-        cls = super(OptionsMetaclass, mcs).__new__(mcs, name, bases, attrs)
-        cls.options = Options()
+        cls = super(OptionsMetaclassBase, mcs).__new__(mcs, name, bases, attrs)
+        if not cls.__options_class__:
+            raise TypeError('Options class not defined! '
+                            'are you trying to use OptionsMetaclassBase?')
+        cls.options = cls.__options_class__()
         return cls
 
 
-class Options(object):
-    options_name = 'options'
-    options_attributes = ['name', 'level', 'meta', 'description', 'order']
+class OptionsBase(object):
+    __options_name__ = 'options'
 
+    @classmethod
+    def add_or_create(cls, target):
+        if not hasattr(target, cls.__options_name__):
+            setattr(target, cls.__options_name__, cls())
+            return True
+        return False
+
+    def _get_attributes(self):
+        return dict([(k, v) for k, v in self.__dict__.items()
+                     if not k.startswith('_')])
+
+    def __str__(self):
+        return '<{name}:({attributes})>'.format(
+            name=self.__class__.__name__,
+            attributes=', '.join('%s=%s' % (attr, getattr(self, attr))
+                                 for attr in self._get_attributes())
+        )
+
+
+class MonitorOptions(OptionsBase):
     def __init__(self):
         self.name = None
         self.description = settings.DEFAULT_DESCRIPTION
         self.level = None
         self.meta = {}
         self.order = settings.DEFAULT_ORDER
+        self.amparo = 3
 
-    @classmethod
-    def add_or_create(cls, target):
-        if not hasattr(target, cls.options_name):
-            setattr(target, cls.options_name, Options())
-            return True
-        return False
 
-    def __str__(self):
-        return '<Options:(%s)>' % ', '.join('%s=%s' % (attr, getattr(self, attr))
-                                            for attr in self.options_attributes)
+class MonitorOptionsMetaclass(OptionsMetaclassBase):
+    __options_class__ = MonitorOptions

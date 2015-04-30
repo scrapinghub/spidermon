@@ -2,11 +2,11 @@ from unittest import TestCase
 
 from spidermon.stats import Stats
 from spidermon import settings
-from .options import OptionsMetaclass, Options
+from .options import MonitorOptions, MonitorOptionsMetaclass
 
 
 class Monitor(TestCase):
-    __metaclass__ = OptionsMetaclass
+    __metaclass__ = MonitorOptionsMetaclass
 
     def __init__(self, methodName='runTest', name=None):
         super(Monitor, self).__init__(methodName)
@@ -99,7 +99,7 @@ class Monitor(TestCase):
         return level*'\t' + repr(self) + '\n'
 
     def _init_method(self):
-        Options.add_or_create(self.method.__func__)
+        MonitorOptions.add_or_create(self.method.__func__)
 
     def __repr__(self):
         return '<MONITOR:(%s) at %s>' % (self.name, hex(id(self)))
