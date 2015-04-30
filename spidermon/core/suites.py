@@ -111,10 +111,28 @@ class MonitorSuite(TestSuite):
             return
         self._raise_invalid()
 
-    def debug(self, level=0):
-        print level*'\t' + repr(self)
+    def debug_tree(self, level=0):
+        s = level*'\t' + repr(self) + '\n'
         for test in self:
-            test.debug(level=level+1)
+            s += test.debug_tree(level=level+1)
+        return s
+
+    def debug_tests(self, show_monitor=True, show_method=True, show_level=True,
+                    show_order=False, show_description=True):
+        s = '-'*80 + '\n'
+        for t in self.all_tests:
+            if show_monitor:
+                s += '    MONITOR: ' + t.monitor_full_name + '\n'
+            if show_method:
+                s += '     METHOD: ' + t.method_name + '\n'
+            if show_level:
+                s += '      LEVEL: ' + t.level + '\n'
+            if show_order:
+                s += '      ORDER: ' + str(t.order) + '\n'
+            if show_description:
+                s += 'DESCRIPTION: ' + (t.method_description or '...') + '\n'
+            s += '-'*80 + '\n'
+        return s
 
     def _add_monitor_from_class(self, monitor_class, name=None):
         if issubclass(monitor_class, Monitor):

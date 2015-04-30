@@ -152,7 +152,7 @@ def _test_creation_from_add_monitor(definition):
 
 def check_suite(suite, expected_number_of_tests):
     #print
-    #suite.debug()
+    #print suite.debug_tree()
     #print
     assert isinstance(suite, MonitorSuite)
     assert suite.number_of_tests == expected_number_of_tests

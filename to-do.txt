@@ -33,6 +33,7 @@ TESTS
 [ ] results
 [X] Python expressions
 [ ] Python expressions as monitor
+[ ] setUp/tearDown
 
 -----------------------------------------
 OTHER STUFF

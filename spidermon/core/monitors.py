@@ -95,8 +95,8 @@ class Monitor(TestCase):
     def init_data(self, **data):
         self._data = data
 
-    def debug(self, level=0):
-        print level*'\t' + repr(self)
+    def debug_tree(self, level=0):
+        return level*'\t' + repr(self) + '\n'
 
     def _init_method(self):
         Options.add_or_create(self.method.__func__)
