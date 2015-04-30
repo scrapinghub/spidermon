@@ -47,3 +47,13 @@ class MonitorOptions(OptionsBase):
 
 class MonitorOptionsMetaclass(OptionsMetaclassBase):
     __options_class__ = MonitorOptions
+
+
+class ActionOptions(OptionsBase):
+    def __init__(self):
+        self.name = None
+        self.description = settings.DEFAULT_DESCRIPTION
+
+
+class ActionOptionsMetaclass(OptionsMetaclassBase):
+    __options_class__ = ActionOptions
