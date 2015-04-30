@@ -119,18 +119,15 @@ class MonitorSuite(TestSuite):
 
     def debug_tests(self, show_monitor=True, show_method=True, show_level=True,
                     show_order=False, show_description=True):
+        def debug_attribute(condition, name, value):
+            return '%12s: %s\n' % (name, str(value)) if condition else ''
         s = '-'*80 + '\n'
         for t in self.all_tests:
-            if show_monitor:
-                s += '    MONITOR: ' + t.monitor_full_name + '\n'
-            if show_method:
-                s += '     METHOD: ' + t.method_name + '\n'
-            if show_level:
-                s += '      LEVEL: ' + t.level + '\n'
-            if show_order:
-                s += '      ORDER: ' + str(t.order) + '\n'
-            if show_description:
-                s += 'DESCRIPTION: ' + (t.method_description or '...') + '\n'
+            s += debug_attribute(show_monitor,      'MONITOR',      t.monitor_full_name)
+            s += debug_attribute(show_method,       'METHOD',       t.method_name)
+            s += debug_attribute(show_level,        'LEVEL',        t.level)
+            s += debug_attribute(show_order,        'ORDER',        t.order)
+            s += debug_attribute(show_description,  'DESCRIPTION',  t.method_description or '...')
             s += '-'*80 + '\n'
         return s
 
