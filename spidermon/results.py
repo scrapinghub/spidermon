@@ -271,8 +271,8 @@ class TextMonitorResult(MonitorResult):
         self.write_run_result(test, reason)
 
     @tests_step_required
-    def addExpectedFailure(self, test, err):
-        super(TextMonitorResult, self).addExpectedFailure(test, err)
+    def addExpectedFailure(self, test, error):
+        super(TextMonitorResult, self).addExpectedFailure(test, error)
         self.write_run_result(test)
 
     @tests_step_required
@@ -296,8 +296,8 @@ class TextMonitorResult(MonitorResult):
         self.write_run_result(action, reason)
 
     @actions_step_required
-    def add_action_error(self, action, err):
-        super(TextMonitorResult, self).add_action_error(action, err)
+    def add_action_error(self, action, error):
+        super(TextMonitorResult, self).add_action_error(action, error)
         self.write_run_result(action)
 
     def write(self, text):
