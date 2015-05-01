@@ -126,14 +126,14 @@ def step_required_decorator(allowed_steps):
     def _step_required_decorator(fn):
         def decorator(self, *args, **kwargs):
             if self.step.name not in allowed_steps:
-                raise ValueError
+                raise ValueError # TO-DO
             else:
                 return fn(self, *args, **kwargs)
         return decorator
     return _step_required_decorator
 
-tests_steps_required = step_required_decorator(TESTS_STEPS)
-actions_steps_required = step_required_decorator(ACTIONS_STEPS)
+tests_step_required = step_required_decorator(TESTS_STEPS)
+actions_step_required = step_required_decorator(ACTIONS_STEPS)
 
 
 class MonitorResult(unittest.TestResult):
@@ -162,59 +162,59 @@ class MonitorResult(unittest.TestResult):
     def finish_step(self):
         self.step.finish()
 
-    @tests_steps_required
+    @tests_step_required
     def startTest(self, test):
         super(MonitorResult, self).startTest(test)
         self.step.add_item(test)
 
-    @tests_steps_required
+    @tests_step_required
     def addSuccess(self, test):
         super(MonitorResult, self).addSuccess(test)
         self.step[test].status = settings.TEST_STATUS_SUCCESS
 
-    @tests_steps_required
+    @tests_step_required
     def addError(self, test, error):
         super(MonitorResult, self).addError(test, error)
         self.step[test].status = settings.TEST_STATUS_ERROR
         self.step[test].error = self._exc_info_to_string(error, test)
 
-    @tests_steps_required
+    @tests_step_required
     def addFailure(self, test, error):
         super(MonitorResult, self).addFailure(test, error)
         self.step[test].status = settings.TEST_STATUS_FAILURE
         self.step[test].error = self._exc_info_to_string(error, test)
 
-    @tests_steps_required
+    @tests_step_required
     def addSkip(self, test, reason):
         super(MonitorResult, self).addSkip(test, reason)
         self.step[test].status = settings.TEST_STATUS_FAILURE
         self.step[test].reason = reason
 
-    @tests_steps_required
+    @tests_step_required
     def addExpectedFailure(self, test, error):
         super(MonitorResult, self).addExpectedFailure(test, error)
         self.step[test].status = settings.TEST_STATUS_EXPECTED_FAILURE
         self.step[test].error = self._exc_info_to_string(error, test)
 
-    @tests_steps_required
+    @tests_step_required
     def addUnexpectedSuccess(self, test):
         super(MonitorResult, self).addUnexpectedSuccess(test)
         self.step[test].status = settings.TEST_STATUS_UNEXPECTED_SUCCESS
 
-    @actions_steps_required
+    @actions_step_required
     def start_action(self, action):
         self.step.add_item(action)
 
-    @actions_steps_required
+    @actions_step_required
     def add_action_success(self, action):
         self.step[action].status = settings.ACTION_STATUS_SUCCESS
 
-    @actions_steps_required
+    @actions_step_required
     def add_action_skip(self, action, reason):
         self.step[action].status = settings.ACTION_STATUS_SKIPPED
         self.step[action].reason = reason
 
-    @actions_steps_required
+    @actions_step_required
     def add_action_error(self, action, error):
         self.step[action].status = settings.ACTION_STATUS_ERROR
         self.step[action].error = error
@@ -245,57 +245,57 @@ class TextMonitorResult(MonitorResult):
         self.write_run_footer()
         self.write_step_summary()
 
-    @tests_steps_required
+    @tests_step_required
     def startTest(self, test):
         super(TextMonitorResult, self).startTest(test)
         self.write_run_start(test)
 
-    @tests_steps_required
+    @tests_step_required
     def addSuccess(self, test):
         super(TextMonitorResult, self).addSuccess(test)
         self.write_run_result(test)
 
-    @tests_steps_required
+    @tests_step_required
     def addError(self, test, error):
         super(TextMonitorResult, self).addError(test, error)
         self.write_run_result(test)
 
-    @tests_steps_required
+    @tests_step_required
     def addFailure(self, test, error):
         super(TextMonitorResult, self).addFailure(test, error)
         self.write_run_result(test)
 
-    @tests_steps_required
+    @tests_step_required
     def addSkip(self, test, reason):
         super(TextMonitorResult, self).addSkip(test, reason)
         self.write_run_result(test, reason)
 
-    @tests_steps_required
+    @tests_step_required
     def addExpectedFailure(self, test, err):
         super(TextMonitorResult, self).addExpectedFailure(test, err)
         self.write_run_result(test)
 
-    @tests_steps_required
+    @tests_step_required
     def addUnexpectedSuccess(self, test):
         super(TextMonitorResult, self).addUnexpectedSuccess(test)
         self.write_run_result(test)
 
-    @actions_steps_required
+    @actions_step_required
     def start_action(self, action):
         super(TextMonitorResult, self).start_action(action)
         self.write_run_start(action)
 
-    @actions_steps_required
+    @actions_step_required
     def add_action_success(self, action):
         super(TextMonitorResult, self).add_action_success(action)
         self.write_run_result(action)
 
-    @actions_steps_required
+    @actions_step_required
     def add_action_skip(self, action, reason):
         super(TextMonitorResult, self).add_action_skip(action, reason)
         self.write_run_result(action, reason)
 
-    @actions_steps_required
+    @actions_step_required
     def add_action_error(self, action, err):
         super(TextMonitorResult, self).add_action_error(action, err)
         self.write_run_result(action)
