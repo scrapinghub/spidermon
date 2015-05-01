@@ -1,7 +1,8 @@
+import abc
 from spidermon import settings
 
 
-class OptionsMetaclassBase(type):
+class OptionsMetaclassBase(abc.ABCMeta):
     __options_class__ = None
 
     def __new__(mcs, name, bases, attrs):

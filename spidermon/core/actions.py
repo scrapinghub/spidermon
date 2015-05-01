@@ -1,4 +1,4 @@
-import sys
+import abc
 import traceback
 
 from spidermon.exceptions import SkipAction
@@ -28,6 +28,7 @@ class Action(object):
         else:
             result.add_action_success(self)
 
+    @abc.abstractmethod
     def run_action(self, result):
         raise NotImplementedError
 
