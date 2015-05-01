@@ -1,12 +1,14 @@
 import sys
-import time
 
 from core.suites import MonitorSuite
 from .results import MonitorResult, TextMonitorResult
-from .exceptions import SkipAction
 
 
 class MonitorRunner(object):
+    def __init__(self):
+        self.suite = None
+        self.result = None
+
     def run(self, suite, data=None):
         if not isinstance(suite, MonitorSuite):
             raise Exception('Not valid')  # TODO: Add custom exception
@@ -18,24 +20,27 @@ class MonitorRunner(object):
         return self.run_suite()
 
     def run_suite(self):
-        start_time = time.time()
-        self.result.start_run()
+        self.result.start()
         self.run_tests()
         self.run_actions()
-        self.result.finish_run(time_taken=time.time() - start_time)
+        self.result.finish()
         return self.result
 
     def run_tests(self):
-        start_time = time.time()
-        self.result.start_tests()
+        self.result.next_step()
         self.suite(self.result)
-        self.result.finish_tests(time_taken=time.time() - start_time)
+        self.result.finish_step()
 
     def run_actions(self):
-        start_time = time.time()
-        self.result.start_actions()
+        self.result.next_step()
         self.run_test_finish_actions()
-        self.result.finish_actions(time_taken=time.time() - start_time)
+        self.result.finish_step()
+
+        self.result.next_step()
+        self.result.finish_step()
+
+        self.result.next_step()
+        self.result.finish_step()
 
     def run_test_finish_actions(self):
         for action in self.suite.test_finish_actions:
@@ -47,6 +52,7 @@ class MonitorRunner(object):
 
 class TextMonitorRunner(MonitorRunner):
     def __init__(self, stream=sys.stderr, verbosity=1):
+        super(TextMonitorRunner, self).__init__()
         self.stream = stream
         self.verbosity = verbosity
 

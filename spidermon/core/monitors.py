@@ -107,6 +107,9 @@ class Monitor(TestCase):
     def __str__(self):
         return self.name
 
+    def __hash__(self):
+        return hash(id(self))
+
 
 class StatsMonitor(Monitor):
     def __init__(self, methodName='runTest', name=None):

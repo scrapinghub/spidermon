@@ -1,4 +1,5 @@
 import sys
+import traceback
 
 from spidermon.exceptions import SkipAction
 
@@ -22,8 +23,8 @@ class Action(object):
             self.run_action(result)
         except SkipAction, e:
             result.add_action_skip(self, e.message)
-        except Exception, e:
-            result.add_action_error(self, sys.exc_info())
+        except:
+            result.add_action_error(self, traceback.format_exc())
         else:
             result.add_action_success(self)
 
