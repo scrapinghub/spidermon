@@ -22,47 +22,47 @@ class MonitorRunner(object):
 
     def run_suite(self):
         self.result.start()
-        self.run_tests()
+        self.run_monitors()
         self.run_actions()
         self.result.finish()
         return self.result
 
-    def run_tests(self):
+    def run_monitors(self):
         self.result.next_step()
         self.suite(self.result)
         self.result.finish_step()
 
     def run_actions(self):
-        # Run test finished actions
+        # Run monitors finished actions
         self.result.next_step()
-        self.run_test_finished()
+        self.run_monitors_finished()
         self.result.finish_step()
 
-        # Run test passed actions
+        # Run monitors passed actions
         self.result.next_step()
-        if self.result.test_results and self.result.all_tests_passed:
-            self.run_test_passsed()
+        if self.result.monitor_results and self.result.all_monitors_passed:
+            self.run_monitors_passsed()
         self.result.finish_step()
 
-        # Run test failed actions
+        # Run monitors failed actions
         self.result.next_step()
-        if self.result.test_results and not self.result.all_tests_passed:
-            self.run_test_fail_actions()
+        if self.result.monitor_results and not self.result.all_monitors_passed:
+            self.run_monitors_failed()
         self.result.finish_step()
 
-    def run_test_finished(self):
-        self.suite.on_tests_finished(self.result)
-        for action in self.suite.test_finish_actions:
+    def run_monitors_finished(self):
+        self.suite.on_monitors_finished(self.result)
+        for action in self.suite.monitors_finished_actions:
             action.run(self.result)
 
-    def run_test_passsed(self):
-        self.suite.on_tests_passed(self.result)
-        for action in self.suite.test_pass_actions:
+    def run_monitors_passsed(self):
+        self.suite.on_monitors_passed(self.result)
+        for action in self.suite.monitors_passed_actions:
             action.run(self.result)
 
-    def run_test_fail_actions(self):
-        self.suite.on_tests_failed(self.result)
-        for action in self.suite.test_fail_actions:
+    def run_monitors_failed(self):
+        self.suite.on_monitors_failed(self.result)
+        for action in self.suite.monitors_failed_actions:
             action.run(self.result)
 
     def create_result(self):

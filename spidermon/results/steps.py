@@ -3,7 +3,7 @@ import time
 
 from spidermon import settings
 
-from .items import ItemResult, TestResult, ActionResult
+from .items import ItemResult, MonitorResult, ActionResult
 
 
 class Step(object):
@@ -72,18 +72,18 @@ class Step(object):
         return len(self.error_results) > 0
 
 
-class TestsStep(Step):
-    item_result_class = TestResult
-    successful_statuses = settings.TESTS_SUCCESSFUL_STATUSES
-    error_statuses = settings.TESTS_ERROR_STATUSES
+class MonitorStep(Step):
+    item_result_class = MonitorResult
+    successful_statuses = settings.MONITOR_SUCCESSFUL_STATUSES
+    error_statuses = settings.MONITOR_ERROR_STATUSES
 
     def get_infos(self):
         return {
-            'failures': len(self.items_for_status(settings.TEST_STATUS_FAILURE)),
-            'errors': len(self.items_for_status(settings.TEST_STATUS_ERROR)),
-            'skipped': len(self.items_for_status(settings.TEST_STATUS_SKIPPED)),
-            'expected failures': len(self.items_for_status(settings.TEST_STATUS_EXPECTED_FAILURE)),
-            'unexpected successes': len(self.items_for_status(settings.TEST_STATUS_UNEXPECTED_SUCCESS)),
+            'failures': len(self.items_for_status(settings.MONITOR_STATUS_FAILURE)),
+            'errors': len(self.items_for_status(settings.MONITOR_STATUS_ERROR)),
+            'skipped': len(self.items_for_status(settings.MONITOR_STATUS_SKIPPED)),
+            'expected failures': len(self.items_for_status(settings.MONITOR_STATUS_EXPECTED_FAILURE)),
+            'unexpected successes': len(self.items_for_status(settings.MONITOR_STATUS_UNEXPECTED_SUCCESS)),
         }
 
 

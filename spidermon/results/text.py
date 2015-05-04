@@ -2,17 +2,17 @@ import sys
 
 from spidermon import settings
 
-from .monitor import MonitorResult, tests_step_required, actions_step_required
+from .monitor import MonitorResult, monitors_step_required, actions_step_required
 
 
 DOTS = {
     # Tests
-    settings.TEST_STATUS_SUCCESS: '.',
-    settings.TEST_STATUS_ERROR: 'E',
-    settings.TEST_STATUS_FAILURE: 'F',
-    settings.TEST_STATUS_SKIPPED: 's',
-    settings.TEST_STATUS_EXPECTED_FAILURE: 'x',
-    settings.TEST_STATUS_UNEXPECTED_SUCCESS: 'u',
+    settings.MONITOR_STATUS_SUCCESS: '.',
+    settings.MONITOR_STATUS_ERROR: 'E',
+    settings.MONITOR_STATUS_FAILURE: 'F',
+    settings.MONITOR_STATUS_SKIPPED: 's',
+    settings.MONITOR_STATUS_EXPECTED_FAILURE: 'x',
+    settings.MONITOR_STATUS_UNEXPECTED_SUCCESS: 'u',
 
     # Actions
     settings.ACTION_STATUS_SUCCESS: '.',
@@ -46,37 +46,37 @@ class TextMonitorResult(MonitorResult):
         self.write_run_footer()
         self.write_step_summary()
 
-    @tests_step_required
+    @monitors_step_required
     def startTest(self, test):
         super(TextMonitorResult, self).startTest(test)
         self.write_run_start(test)
 
-    @tests_step_required
+    @monitors_step_required
     def addSuccess(self, test):
         super(TextMonitorResult, self).addSuccess(test)
         self.write_run_result(test)
 
-    @tests_step_required
+    @monitors_step_required
     def addError(self, test, error):
         super(TextMonitorResult, self).addError(test, error)
         self.write_run_result(test)
 
-    @tests_step_required
+    @monitors_step_required
     def addFailure(self, test, error):
         super(TextMonitorResult, self).addFailure(test, error)
         self.write_run_result(test)
 
-    @tests_step_required
+    @monitors_step_required
     def addSkip(self, test, reason):
         super(TextMonitorResult, self).addSkip(test, reason)
         self.write_run_result(test, reason)
 
-    @tests_step_required
+    @monitors_step_required
     def addExpectedFailure(self, test, error):
         super(TextMonitorResult, self).addExpectedFailure(test, error)
         self.write_run_result(test)
 
-    @tests_step_required
+    @monitors_step_required
     def addUnexpectedSuccess(self, test):
         super(TextMonitorResult, self).addUnexpectedSuccess(test)
         self.write_run_result(test)

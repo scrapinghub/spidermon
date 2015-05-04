@@ -15,15 +15,15 @@ def loader():
 def test_loading(loader):
     check_suite(
         suite=loader.load_suite_from_monitor(EmptyMonitor),
-        expected_number_of_tests=0
+        expected_number_of_monitors=0
     )
     check_suite(
         suite=loader.load_suite_from_monitor(Monitor01),
-        expected_number_of_tests=3
+        expected_number_of_monitors=3
     )
     check_suite(
         suite=loader.load_suite_from_monitor(Monitor02),
-        expected_number_of_tests=2
+        expected_number_of_monitors=2
     )
 
 

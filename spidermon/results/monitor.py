@@ -3,7 +3,7 @@ import unittest
 
 from spidermon import settings
 
-from .steps import TestsStep, ActionsStep
+from .steps import MonitorStep, ActionsStep
 
 
 def step_required_decorator(allowed_steps):
@@ -16,7 +16,7 @@ def step_required_decorator(allowed_steps):
         return decorator
     return _step_required_decorator
 
-tests_step_required = step_required_decorator(settings.TESTS_STEPS)
+monitors_step_required = step_required_decorator(settings.MONITORS_STEPS)
 actions_step_required = step_required_decorator(settings.ACTIONS_STEPS)
 
 
@@ -29,32 +29,32 @@ class MonitorResult(unittest.TestResult):
         self._current_step = None
 
     @property
-    def all_tests_passed(self):
-        return self._tests_step.successful
+    def all_monitors_passed(self):
+        return self._step_monitors.successful
 
     @property
-    def test_results(self):
-        return self._tests_step.all_items
+    def monitor_results(self):
+        return self._step_monitors.all_items
 
     @property
-    def passed_test_results(self):
-        return self._tests_step.items_for_status(settings.TEST_STATUS_SUCCESS)
+    def monitors_passed_results(self):
+        return self._step_monitors.items_for_status(settings.MONITOR_STATUS_SUCCESS)
 
     @property
-    def failed_test_results(self):
-        return self._tests_step.items_for_status(settings.TEST_STATUS_FAILURE)
+    def failed_monitors_results(self):
+        return self._step_monitors.items_for_status(settings.MONITOR_STATUS_FAILURE)
 
     @property
     def finished_action_results(self):
-        return self._finish_actions_step.all_items
+        return self._step_monitors_finished.all_items
 
     @property
     def passed_action_results(self):
-        return self._pass_actions_step.all_items
+        return self._step_monitors_passed.all_items
 
     @property
     def failed_action_results(self):
-        return self._fail_actions_step.all_items
+        return self._step_monitors_failed.all_items
 
     @property
     def step(self):
@@ -74,44 +74,44 @@ class MonitorResult(unittest.TestResult):
     def finish_step(self):
         self.step.finish()
 
-    @tests_step_required
+    @monitors_step_required
     def startTest(self, test):
         super(MonitorResult, self).startTest(test)
         self.step.add_item(test)
 
-    @tests_step_required
+    @monitors_step_required
     def addSuccess(self, test):
         super(MonitorResult, self).addSuccess(test)
-        self.step[test].status = settings.TEST_STATUS_SUCCESS
+        self.step[test].status = settings.MONITOR_STATUS_SUCCESS
 
-    @tests_step_required
+    @monitors_step_required
     def addError(self, test, error):
         super(MonitorResult, self).addError(test, error)
-        self.step[test].status = settings.TEST_STATUS_ERROR
+        self.step[test].status = settings.MONITOR_STATUS_ERROR
         self.step[test].error = self._exc_info_to_string(error, test)
 
-    @tests_step_required
+    @monitors_step_required
     def addFailure(self, test, error):
         super(MonitorResult, self).addFailure(test, error)
-        self.step[test].status = settings.TEST_STATUS_FAILURE
+        self.step[test].status = settings.MONITOR_STATUS_FAILURE
         self.step[test].error = self._exc_info_to_string(error, test)
 
-    @tests_step_required
+    @monitors_step_required
     def addSkip(self, test, reason):
         super(MonitorResult, self).addSkip(test, reason)
-        self.step[test].status = settings.TEST_STATUS_FAILURE
+        self.step[test].status = settings.MONITOR_STATUS_FAILURE
         self.step[test].reason = reason
 
-    @tests_step_required
+    @monitors_step_required
     def addExpectedFailure(self, test, error):
         super(MonitorResult, self).addExpectedFailure(test, error)
-        self.step[test].status = settings.TEST_STATUS_EXPECTED_FAILURE
+        self.step[test].status = settings.MONITOR_STATUS_EXPECTED_FAILURE
         self.step[test].error = self._exc_info_to_string(error, test)
 
-    @tests_step_required
+    @monitors_step_required
     def addUnexpectedSuccess(self, test):
         super(MonitorResult, self).addUnexpectedSuccess(test)
-        self.step[test].status = settings.TEST_STATUS_UNEXPECTED_SUCCESS
+        self.step[test].status = settings.MONITOR_STATUS_UNEXPECTED_SUCCESS
 
     @actions_step_required
     def start_action(self, action):
@@ -132,23 +132,23 @@ class MonitorResult(unittest.TestResult):
         self.step[action].error = error
 
     @property
-    def _tests_step(self):
-        return self._steps[settings.STEP_TESTS]
+    def _step_monitors(self):
+        return self._steps[settings.STEP_MONITORS]
 
     @property
-    def _finish_actions_step(self):
-        return self._steps[settings.STEP_FINISH_ACTIONS]
+    def _step_monitors_finished(self):
+        return self._steps[settings.STEP_MONITORS_FINISHED]
 
     @property
-    def _pass_actions_step(self):
-        return self._steps[settings.STEP_PASS_ACTIONS]
+    def _step_monitors_passed(self):
+        return self._steps[settings.STEP_MONITORS_PASSED]
 
     @property
-    def _fail_actions_step(self):
-        return self._steps[settings.STEP_FAIL_ACTIONS]
+    def _step_monitors_failed(self):
+        return self._steps[settings.STEP_MONITORS_FAILED]
 
     def _get_step_class(self, step):
-        return TestsStep if step in settings.TESTS_STEPS else ActionsStep
+        return MonitorStep if step in settings.MONITORS_STEPS else ActionsStep
 
 
 

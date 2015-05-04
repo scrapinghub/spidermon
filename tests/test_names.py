@@ -233,19 +233,19 @@ def test_full_names(named_top_suite, unnamed_top_suite):
 
 
 def _generate_names(suite):
-    return [test.name for test in suite.all_tests]
+    return [test.name for test in suite.all_monitors]
 
 
 def _generate_monitor_names(suite):
-    return [test.monitor_name for test in suite.all_tests]
+    return [test.monitor_name for test in suite.all_monitors]
 
 
 def _generate_method_names(suite):
-    return [test.method_name for test in suite.all_tests]
+    return [test.method_name for test in suite.all_monitors]
 
 
 def _generate_full_names(suite):
-    return [test.full_name for test in suite.all_tests]
+    return [test.full_name for test in suite.all_monitors]
 
 
 def _check_names(generated_names, expected_names):

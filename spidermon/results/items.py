@@ -9,11 +9,11 @@ class ItemResult(object):
         self.reason = None
 
 
-class TestResult(ItemResult):
-    name = 'test'
+class MonitorResult(ItemResult):
+    name = 'monitor'
 
     @property
-    def test(self):
+    def monitor(self):
         return self.item
 
 

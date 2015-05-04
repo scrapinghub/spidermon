@@ -16,14 +16,14 @@ class MonitorSuite(TestSuite):
     __metaclass__ = MonitorOptionsMetaclass
 
     monitors = []
-    test_finish_actions = []
-    test_pass_actions = []
-    test_fail_actions = []
+    monitors_finished_actions = []
+    monitors_passed_actions = []
+    monitors_failed_actions = []
 
     def __init__(self, name=None, monitors=None,
-                 test_finish_actions=None,
-                 test_pass_actions=None,
-                 test_fail_actions=None,
+                 monitors_finished_actions=None,
+                 monitors_passed_actions=None,
+                 monitors_failed_actions=None,
                  order=None):
         self._tests = []
         self._name = name
@@ -33,20 +33,20 @@ class MonitorSuite(TestSuite):
         self.add_monitors(self.monitors)
         self.add_monitors(monitors or [])
 
-        declarative_test_finish_actions = self.test_finish_actions
-        self.test_finish_actions = []
-        self.add_test_finish_actions(declarative_test_finish_actions)
-        self.add_test_finish_actions(test_finish_actions or [])
+        declarative_monitors_finished_actions = self.monitors_finished_actions
+        self.monitors_finished_actions = []
+        self.add_monitors_finished_actions(declarative_monitors_finished_actions)
+        self.add_monitors_finished_actions(monitors_finished_actions or [])
 
-        declarative_test_pass_actions = self.test_pass_actions
-        self.test_pass_actions = []
-        self.add_test_pass_actions(declarative_test_pass_actions)
-        self.add_test_pass_actions(test_pass_actions or [])
+        declarative_monitors_passed_actions = self.monitors_passed_actions
+        self.monitors_passed_actions = []
+        self.add_monitors_failed_actions(declarative_monitors_passed_actions)
+        self.add_monitors_failed_actions(monitors_passed_actions or [])
 
-        declarative_test_fail_actions = self.test_fail_actions
-        self.test_fail_actions = []
-        self.add_test_fail_actions(declarative_test_fail_actions)
-        self.add_test_fail_actions(test_fail_actions or [])
+        declarative_monitors_failed_actions = self.monitors_failed_actions
+        self.monitors_failed_actions = []
+        self.add_monitors_failed_actions(declarative_monitors_failed_actions)
+        self.add_monitors_failed_actions(monitors_failed_actions or [])
 
 
     @property
@@ -96,19 +96,19 @@ class MonitorSuite(TestSuite):
                self.options.order
 
     @property
-    def number_of_tests(self):
-        return sum([1 if isinstance(test, Monitor) else test.number_of_tests
-                    for test in self])
+    def number_of_monitors(self):
+        return sum([1 if isinstance(monitor, Monitor) else monitor.number_of_monitors
+                    for monitor in self])
 
     @property
-    def all_tests(self):
-        tests = []
-        for test in self:
-            if isinstance(test, Monitor):
-                tests += [test]
+    def all_monitors(self):
+        monitors = []
+        for monitor in self:
+            if isinstance(monitor, Monitor):
+                monitors += [monitor]
             else:
-                tests += test.all_tests
-        return tests
+                monitors += monitor.all_monitors
+        return monitors
 
     def set_parent(self, parent):
         self._parent = parent
@@ -129,26 +129,26 @@ class MonitorSuite(TestSuite):
         super(MonitorSuite, self).addTest(monitor)
         self._reorder_tests()
 
-    def add_test_finish_actions(self, actions):
+    def add_monitors_finished_actions(self, actions):
         for action in actions:
-            self.add_test_finish_action(action)
+            self.add_monitors_finished_action(action)
 
-    def add_test_finish_action(self, action):
-        self._add_action(action, self.test_finish_actions)
+    def add_monitors_finished_action(self, action):
+        self._add_action(action, self.monitors_finished_actions)
 
-    def add_test_pass_actions(self, actions):
+    def add_monitors_passed_actions(self, actions):
         for action in actions:
-            self.add_test_pass_action(action)
+            self.add_monitors_passed_action(action)
 
-    def add_test_pass_action(self, action):
-        self._add_action(action, self.test_pass_actions)
+    def add_monitors_passed_action(self, action):
+        self._add_action(action, self.monitors_passed_actions)
 
-    def add_test_fail_actions(self, actions):
+    def add_monitors_failed_actions(self, actions):
         for action in actions:
-            self.add_test_fail_action(action)
+            self.add_monitors_failed_action(action)
 
-    def add_test_fail_action(self, action):
-        self._add_action(action, self.test_fail_actions)
+    def add_monitors_failed_action(self, action):
+        self._add_action(action, self.monitors_failed_actions)
 
     def _add_action(self, action, target_actions_list):
         action = ActionFactory.load_action(action)
@@ -165,7 +165,7 @@ class MonitorSuite(TestSuite):
         def debug_attribute(condition, name, value):
             return '%12s: %s\n' % (name, str(value)) if condition else ''
         s = '-'*80 + '\n'
-        for t in self.all_tests:
+        for t in self.all_monitors:
             s += debug_attribute(show_monitor,      'MONITOR',      t.monitor_full_name)
             s += debug_attribute(show_method,       'METHOD',       t.method_name)
             s += debug_attribute(show_level,        'LEVEL',        t.level)
@@ -178,7 +178,7 @@ class MonitorSuite(TestSuite):
         self._tests = sorted(self._tests, key=lambda x: x.order, reverse=False)
 
     def __repr__(self):
-        return '<SUITE:%s[%d,%s] at %s>' % (self.name, len(self._tests), self.number_of_tests, hex(id(self)))
+        return '<SUITE:%s[%d,%s] at %s>' % (self.name, len(self._tests), self.number_of_monitors, hex(id(self)))
 
     def __str__(self):
         return self.name
@@ -189,11 +189,11 @@ class MonitorSuite(TestSuite):
     addTest = __not_allowed_method
     addTests = __not_allowed_method
 
-    def on_tests_finished(self, result):
+    def on_monitors_finished(self, result):
         pass
 
-    def on_tests_passed(self, result):
+    def on_monitors_passed(self, result):
         pass
 
-    def on_tests_failed(self, result):
+    def on_monitors_failed(self, result):
         pass

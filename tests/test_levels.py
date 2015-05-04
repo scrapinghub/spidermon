@@ -101,6 +101,6 @@ def test_levels():
     for suite, monitor, expected_level in LEVEL_TESTS:
         suite = suite()
         suite.add_monitor(monitor)
-        assert suite.all_tests[0].level == expected_level
+        assert suite.all_monitors[0].level == expected_level
 
 

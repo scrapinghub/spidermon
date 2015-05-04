@@ -9,15 +9,15 @@ from fixtures.suites import *
 
 
 class SuiteDefinition(object):
-    def __init__(self, suite_class, monitors=None, expected_number_of_tests=0):
+    def __init__(self, suite_class, monitors=None, expected_number_of_monitors=0):
         self.suite_class = suite_class
         self.monitors = monitors or []
-        self.expected_number_of_tests = expected_number_of_tests
+        self.expected_number_of_monitors = expected_number_of_monitors
 
 
 CLASS_SUITE_DEFINITIONS = [
     # ---------------------------------------------------------------------------------
-    #               suite_class    monitors                  expected_number_of_tests
+    #               suite_class    monitors               expected_number_of_monitors
     # ---------------------------------------------------------------------------------
 
     # no monitors
@@ -119,7 +119,7 @@ def _test_creation_from_init(definition):
     suite = definition.suite_class(monitors=definition.monitors)
     check_suite(
         suite=suite,
-        expected_number_of_tests=definition.expected_number_of_tests,
+        expected_number_of_monitors=definition.expected_number_of_monitors,
     )
 
 
@@ -136,7 +136,7 @@ def _test_creation_from_add_monitors(definition):
     suite.add_monitors(definition.monitors)
     check_suite(
         suite=suite,
-        expected_number_of_tests=definition.expected_number_of_tests,
+        expected_number_of_monitors=definition.expected_number_of_monitors,
     )
 
 
@@ -146,19 +146,19 @@ def _test_creation_from_add_monitor(definition):
         suite.add_monitor(monitor)
     check_suite(
         suite=suite,
-        expected_number_of_tests=definition.expected_number_of_tests,
+        expected_number_of_monitors=definition.expected_number_of_monitors,
     )
 
 
-def check_suite(suite, expected_number_of_tests):
+def check_suite(suite, expected_number_of_monitors):
     #print
     #print suite.debug_tree()
     #print
     assert isinstance(suite, MonitorSuite)
-    assert suite.number_of_tests == expected_number_of_tests
-    for test in suite:
-        assert isinstance(test, (Monitor, MonitorSuite))
-    all_tests = suite.all_tests
-    assert len(all_tests) == expected_number_of_tests
-    for test in all_tests:
+    assert suite.number_of_monitors == expected_number_of_monitors
+    for monitor in suite:
+        assert isinstance(monitor, (Monitor, MonitorSuite))
+    all_monitors = suite.all_monitors
+    assert len(all_monitors) == expected_number_of_monitors
+    for test in all_monitors:
         assert isinstance(test, (Monitor, Monitor))
