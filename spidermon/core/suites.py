@@ -40,8 +40,8 @@ class MonitorSuite(TestSuite):
 
         declarative_monitors_passed_actions = self.monitors_passed_actions
         self.monitors_passed_actions = []
-        self.add_monitors_failed_actions(declarative_monitors_passed_actions)
-        self.add_monitors_failed_actions(monitors_passed_actions or [])
+        self.add_monitors_passed_actions(declarative_monitors_passed_actions)
+        self.add_monitors_passed_actions(monitors_passed_actions or [])
 
         declarative_monitors_failed_actions = self.monitors_failed_actions
         self.monitors_failed_actions = []
@@ -160,8 +160,8 @@ class MonitorSuite(TestSuite):
             s += test.debug_tree(level=level+1)
         return s
 
-    def debug_tests(self, show_monitor=True, show_method=True, show_level=True,
-                    show_order=False, show_description=True):
+    def debug_monitors(self, show_monitor=True, show_method=True, show_level=True,
+                       show_order=False, show_description=True):
         def debug_attribute(condition, name, value):
             return '%12s: %s\n' % (name, str(value)) if condition else ''
         s = '-'*80 + '\n'
