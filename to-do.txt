@@ -39,7 +39,7 @@ TESTS
 OTHER STUFF
 -----------------------------------------
 [X] pytest compatibility
-[ ] scrapy integration
+[X] scrapy integration
 [ ] StatsMonitor
 [ ] JobMonitor
 [ ] SpiderMonitor (builtin methods+functions)
