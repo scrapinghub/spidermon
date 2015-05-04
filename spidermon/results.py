@@ -219,6 +219,9 @@ class MonitorResult(unittest.TestResult):
         self.step[action].status = settings.ACTION_STATUS_ERROR
         self.step[action].error = error
 
+    def _get_step_class(self, step):
+        return TestsStep if step in TESTS_STEPS else ActionsStep
+
 
 class TextMonitorResult(MonitorResult):
 
@@ -369,6 +372,3 @@ class TextMonitorResult(MonitorResult):
         right_length = left_length + length - title_length - left_length * 2
         char = char or self.SEPARATOR_LIGHT
         return '%s %s %s' % (char*left_length, title, char*right_length)
-
-    def _get_step_class(self, step):
-        return TestsStep if step in TESTS_STEPS else ActionsStep
