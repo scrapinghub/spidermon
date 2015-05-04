@@ -38,3 +38,7 @@ class Action(object):
     def __str__(self):
         return repr(self)
 
+
+class DummyAction(Action):
+    def run_action(self, result):
+        pass
