@@ -22,13 +22,6 @@ class Step(object):
         return self.finish_time - self.start_time
 
     @property
-    def successful(self):
-        for result in self._results.values():
-            if result.status not in self.successful_statuses:
-                return False
-        return True
-
-    @property
     def number_of_items(self):
         return len(self._results)
 
@@ -55,6 +48,28 @@ class Step(object):
 
     def __getitem__(self, key):
         return self._results[key]
+
+    @property
+    def successful_results(self):
+        results = []
+        for successful_status in self.successful_statuses:
+            results += self.items_for_status(successful_status)
+        return results
+
+    @property
+    def error_results(self):
+        results = []
+        for error_status in self.error_statuses:
+            results += self.items_for_status(error_status)
+        return results
+
+    @property
+    def successful(self):
+        return not self.has_errors
+
+    @property
+    def has_errors(self):
+        return len(self.error_results) > 0
 
 
 class TestsStep(Step):

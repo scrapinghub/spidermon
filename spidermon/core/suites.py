@@ -189,11 +189,11 @@ class MonitorSuite(TestSuite):
     addTest = __not_allowed_method
     addTests = __not_allowed_method
 
-    def on_tests_finish(self, result, tests):
+    def on_tests_finished(self, result):
         pass
 
-    def on_tests_passed(self, result, passed_tests):
+    def on_tests_passed(self, result):
         pass
 
-    def on_tests_failed(self, result, failed_tests):
+    def on_tests_failed(self, result):
         pass

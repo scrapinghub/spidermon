@@ -29,6 +29,34 @@ class MonitorResult(unittest.TestResult):
         self._current_step = None
 
     @property
+    def all_tests_passed(self):
+        return self._tests_step.successful
+
+    @property
+    def test_results(self):
+        return self._tests_step.all_items
+
+    @property
+    def passed_test_results(self):
+        return self._tests_step.items_for_status(settings.TEST_STATUS_SUCCESS)
+
+    @property
+    def failed_test_results(self):
+        return self._tests_step.items_for_status(settings.TEST_STATUS_FAILURE)
+
+    @property
+    def finished_action_results(self):
+        return self._finish_actions_step.all_items
+
+    @property
+    def passed_action_results(self):
+        return self._pass_actions_step.all_items
+
+    @property
+    def failed_action_results(self):
+        return self._fail_actions_step.all_items
+
+    @property
     def step(self):
         return self._current_step
 
@@ -104,16 +132,20 @@ class MonitorResult(unittest.TestResult):
         self.step[action].error = error
 
     @property
-    def all_tests(self):
-        return self._steps[settings.STEP_TESTS].all_items
+    def _tests_step(self):
+        return self._steps[settings.STEP_TESTS]
 
     @property
-    def passed_tests(self):
-        return self._steps[settings.STEP_TESTS].items_for_status(settings.TEST_STATUS_SUCCESS)
+    def _finish_actions_step(self):
+        return self._steps[settings.STEP_FINISH_ACTIONS]
 
     @property
-    def failed_tests(self):
-        return self._steps[settings.STEP_TESTS].items_for_status(settings.TEST_STATUS_FAILURE)
+    def _pass_actions_step(self):
+        return self._steps[settings.STEP_PASS_ACTIONS]
+
+    @property
+    def _fail_actions_step(self):
+        return self._steps[settings.STEP_FAIL_ACTIONS]
 
     def _get_step_class(self, step):
         return TestsStep if step in settings.TESTS_STEPS else ActionsStep
