@@ -1,6 +1,6 @@
 from core.monitors import Monitor, StatsMonitor, JobMonitor
 from core.suites import MonitorSuite
-from core.actions import Action
+from core.actions import Action, DummyAction
 from .loaders import MonitorLoader
 from .runners import MonitorRunner, TextMonitorRunner
 from .results.monitor import MonitorResult

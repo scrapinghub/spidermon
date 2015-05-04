@@ -1,6 +1,7 @@
 import sys
 
 from spidermon import settings
+from spidermon.utils import line_title
 
 from .monitor import MonitorResult, monitors_step_required, actions_step_required
 
@@ -114,7 +115,7 @@ class TextMonitorResult(MonitorResult):
         self.write_line(self.SEPARATOR_BOLD*self.LINE_LENGTH)
 
     def write_title(self, title):
-        self.write_line(self._line_title(title))
+        self.write_line(line_title(title))
 
     def write_line(self, text=None):
         self.write('%s\n' % (text or ''))
@@ -132,7 +133,7 @@ class TextMonitorResult(MonitorResult):
         if self.show_all:
             self.write_run_status(self.step[item].status, extra)
         elif self.use_dots:
-            self.write(DOTS[self.step.results[item]])
+            self.write(DOTS[self.step[item].status])
             self.write_flush()
 
     def write_run_footer(self):
@@ -163,10 +164,3 @@ class TextMonitorResult(MonitorResult):
         else:
             self.write_line()
         self.write_line()
-
-    def _line_title(self, title, length=70, char=None):
-        title_length = len(title)+2
-        left_length = (length-title_length)/2
-        right_length = left_length + length - title_length - left_length * 2
-        char = char or self.SEPARATOR_LIGHT
-        return '%s %s %s' % (char*left_length, title, char*right_length)

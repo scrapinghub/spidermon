@@ -139,7 +139,6 @@ class MonitorResult(unittest.TestResult):
             result.status = settings.ACTION.STATUS.SKIPPED
             result.reason = reason
 
-
     @property
     def _step_monitors(self):
         return self._steps[settings.STEPS.MONITORS]
@@ -158,6 +157,3 @@ class MonitorResult(unittest.TestResult):
 
     def _get_step_class(self, step):
         return MonitorStep if step in settings.STEPS.MONITOR_RELATED else ActionsStep
-
-
-
