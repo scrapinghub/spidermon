@@ -7,9 +7,9 @@ FEATURES
 [X] Levels
 [X] Ordering
 [ ] Monitor runner exceptions
-[ ] Actions
-[ ] Suite actions hooks
-[ ] Results
+[X] Actions
+[X] Suite actions hooks
+[X] Results
 [ ] Improve Stats (regex?)
 [ ] Monitor Marks
 [ ] Monitor Meta
