@@ -46,6 +46,7 @@ class MONITOR:
             _MONITOR_STATUS_FAILURE,
             _MONITOR_STATUS_ERROR,
         )
+        DEFAULT = UNDEFINED_STATUS
 
     class LEVEL:
         HIGH = _MONITOR_LEVEL_HIGH
@@ -90,6 +91,7 @@ class ACTION:
         ERROR = (
             _ACTION_STATUS_ERROR,
         )
+        DEFAULT = UNDEFINED_STATUS
 
     DEFAULT_DESCRIPTION = ''
 

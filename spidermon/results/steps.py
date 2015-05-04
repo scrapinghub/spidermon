@@ -26,7 +26,9 @@ class Step(object):
         return len(self._results)
 
     def add_item(self, item):
-        self._results[item] = self.item_result_class(item)
+        result = self.item_result_class(item)
+        self._results[item] = result
+        return result
 
     def start(self):
         self.start_time = time.time()

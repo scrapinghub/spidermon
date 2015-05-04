@@ -41,19 +41,19 @@ class MonitorResult(unittest.TestResult):
         return self._step_monitors.items_for_status(settings.MONITOR.STATUS.SUCCESS)
 
     @property
-    def failed_monitors_results(self):
+    def monitors_failed_results(self):
         return self._step_monitors.items_for_status(settings.MONITOR.STATUS.FAILURE)
 
     @property
-    def finished_action_results(self):
+    def monitors_finished_action_results(self):
         return self._step_monitors_finished.all_items
 
     @property
-    def passed_action_results(self):
+    def monitors_passed_action_results(self):
         return self._step_monitors_passed.all_items
 
     @property
-    def failed_action_results(self):
+    def monitors_failed_action_results(self):
         return self._step_monitors_failed.all_items
 
     @property
@@ -131,6 +131,14 @@ class MonitorResult(unittest.TestResult):
     def add_action_error(self, action, error):
         self.step[action].status = settings.ACTION.STATUS.ERROR
         self.step[action].error = error
+
+    @actions_step_required
+    def skip_all_step_actions(self, actions, reason):
+        for action in actions:
+            result = self.step.add_item(action)
+            result.status = settings.ACTION.STATUS.SKIPPED
+            result.reason = reason
+
 
     @property
     def _step_monitors(self):

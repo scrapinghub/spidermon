@@ -42,12 +42,20 @@ class MonitorRunner(object):
         self.result.next_step()
         if self.result.monitor_results and self.result.all_monitors_passed:
             self.run_monitors_passsed()
+        else:
+            self.result.skip_all_step_actions(
+                actions=self.suite.monitors_passed_actions,
+                reason='A Monitor failed')
         self.result.finish_step()
 
         # Run monitors failed actions
         self.result.next_step()
         if self.result.monitor_results and not self.result.all_monitors_passed:
             self.run_monitors_failed()
+        else:
+            self.result.skip_all_step_actions(
+                actions=self.suite.monitors_failed_actions,
+                reason='No Monitors failed')
         self.result.finish_step()
 
     def run_monitors_finished(self):

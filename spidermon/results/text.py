@@ -6,7 +6,7 @@ from .monitor import MonitorResult, monitors_step_required, actions_step_require
 
 
 DOTS = {
-    # Tests
+    # Monitors
     settings.MONITOR.STATUS.SUCCESS: '.',
     settings.MONITOR.STATUS.ERROR: 'E',
     settings.MONITOR.STATUS.FAILURE: 'F',
