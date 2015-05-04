@@ -39,10 +39,10 @@ class OptionsBase(object):
 class MonitorOptions(OptionsBase):
     def __init__(self):
         self.name = None
-        self.description = settings.DEFAULT_DESCRIPTION
+        self.description = settings.MONITOR.DEFAULT_DESCRIPTION
         self.level = None
         self.meta = {}
-        self.order = settings.DEFAULT_ORDER
+        self.order = settings.MONITOR.DEFAULT_ORDER
         self.amparo = 3
 
 
@@ -53,7 +53,7 @@ class MonitorOptionsMetaclass(OptionsMetaclassBase):
 class ActionOptions(OptionsBase):
     def __init__(self):
         self.name = None
-        self.description = settings.DEFAULT_DESCRIPTION
+        self.description = settings.ACTION.DEFAULT_DESCRIPTION
 
 
 class ActionOptionsMetaclass(OptionsMetaclassBase):

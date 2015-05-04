@@ -29,7 +29,6 @@ class Step(object):
         self._results[item] = self.item_result_class(item)
 
     def start(self):
-        #print 'starting step', self.name
         self.start_time = time.time()
 
     def finish(self):
@@ -74,26 +73,26 @@ class Step(object):
 
 class MonitorStep(Step):
     item_result_class = MonitorResult
-    successful_statuses = settings.MONITOR_SUCCESSFUL_STATUSES
-    error_statuses = settings.MONITOR_ERROR_STATUSES
+    successful_statuses = settings.MONITOR.STATUSES.SUCCESSFUL
+    error_statuses = settings.MONITOR.STATUSES.ERROR
 
     def get_infos(self):
         return {
-            'failures': len(self.items_for_status(settings.MONITOR_STATUS_FAILURE)),
-            'errors': len(self.items_for_status(settings.MONITOR_STATUS_ERROR)),
-            'skipped': len(self.items_for_status(settings.MONITOR_STATUS_SKIPPED)),
-            'expected failures': len(self.items_for_status(settings.MONITOR_STATUS_EXPECTED_FAILURE)),
-            'unexpected successes': len(self.items_for_status(settings.MONITOR_STATUS_UNEXPECTED_SUCCESS)),
+            'failures': len(self.items_for_status(settings.MONITOR.STATUS.FAILURE)),
+            'errors': len(self.items_for_status(settings.MONITOR.STATUS.ERROR)),
+            'skipped': len(self.items_for_status(settings.MONITOR.STATUS.SKIPPED)),
+            'expected failures': len(self.items_for_status(settings.MONITOR.STATUS.EXPECTED_FAILURE)),
+            'unexpected successes': len(self.items_for_status(settings.MONITOR.STATUS.UNEXPECTED_SUCCESS)),
         }
 
 
 class ActionsStep(Step):
     item_result_class = ActionResult
-    successful_statuses = settings.ACTIONS_SUCCESSFUL_STATUSES
-    error_statuses = settings.ACTIONS_ERROR_STATUSES
+    successful_statuses = settings.ACTION.STATUSES.SUCCESSFUL
+    error_statuses = settings.ACTION.STATUSES.ERROR
 
     def get_infos(self):
         return {
-            'errors': len(self.items_for_status(settings.ACTION_STATUS_ERROR)),
-            'skipped': len(self.items_for_status(settings.ACTION_STATUS_SKIPPED)),
+            'errors': len(self.items_for_status(settings.ACTION.STATUS.ERROR)),
+            'skipped': len(self.items_for_status(settings.ACTION.STATUS.SKIPPED)),
         }

@@ -53,3 +53,4 @@ IDEAS
 - 'with' in monitors
 - spidermon-actions
 - spidermon-demo
+- Action logging?

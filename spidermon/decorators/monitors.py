@@ -6,9 +6,9 @@ from spidermon.decorators import OptionsDecorator, DecoratorWithAttributes
 class LevelDecorator(DecoratorWithAttributes):
     name = 'level'
     attributes = {
-        'high': OptionsDecorator.set_fixed_value(MonitorOptions, name, settings.MONITOR_LEVEL_HIGH),
-        'normal': OptionsDecorator.set_fixed_value(MonitorOptions, name, settings.MONITOR_LEVEL_NORMAL),
-        'low': OptionsDecorator.set_fixed_value(MonitorOptions, name, settings.MONITOR_LEVEL_LOW),
+        'high': OptionsDecorator.set_fixed_value(MonitorOptions, name, settings.MONITOR.LEVEL.HIGH),
+        'normal': OptionsDecorator.set_fixed_value(MonitorOptions, name, settings.MONITOR.LEVEL.NORMAL),
+        'low': OptionsDecorator.set_fixed_value(MonitorOptions, name, settings.MONITOR.LEVEL.LOW),
     }
 
 name = OptionsDecorator.set_value(MonitorOptions, 'name')

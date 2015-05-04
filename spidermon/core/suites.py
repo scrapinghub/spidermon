@@ -64,7 +64,7 @@ class MonitorSuite(TestSuite):
     def parent_level(self):
         if self.parent:
             return self.parent.level
-        return settings.DEFAULT_MONITOR_LEVEL
+        return settings.MONITOR.LEVELS.DEFAULT
 
     @property
     def full_name(self):
@@ -84,7 +84,7 @@ class MonitorSuite(TestSuite):
     def description(self):
         return self.options.description or \
                self.__class__.__doc__ or \
-               settings.DEFAULT_DESCRIPTION
+               settings.MONITOR.DEFAULT_DESCRIPTION
 
     @property
     def parent(self):

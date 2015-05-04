@@ -2,9 +2,9 @@ from spidermon import settings
 
 from fixtures.levels import *
 
-HIGH = settings.MONITOR_LEVEL_HIGH
-NORMAL = settings.MONITOR_LEVEL_NORMAL
-LOW = settings.MONITOR_LEVEL_LOW
+HIGH = settings.MONITOR.LEVEL.HIGH
+NORMAL = settings.MONITOR.LEVEL.NORMAL
+LOW = settings.MONITOR.LEVEL.LOW
 
 
 LEVEL_TESTS = [

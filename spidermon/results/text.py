@@ -7,17 +7,17 @@ from .monitor import MonitorResult, monitors_step_required, actions_step_require
 
 DOTS = {
     # Tests
-    settings.MONITOR_STATUS_SUCCESS: '.',
-    settings.MONITOR_STATUS_ERROR: 'E',
-    settings.MONITOR_STATUS_FAILURE: 'F',
-    settings.MONITOR_STATUS_SKIPPED: 's',
-    settings.MONITOR_STATUS_EXPECTED_FAILURE: 'x',
-    settings.MONITOR_STATUS_UNEXPECTED_SUCCESS: 'u',
+    settings.MONITOR.STATUS.SUCCESS: '.',
+    settings.MONITOR.STATUS.ERROR: 'E',
+    settings.MONITOR.STATUS.FAILURE: 'F',
+    settings.MONITOR.STATUS.SKIPPED: 's',
+    settings.MONITOR.STATUS.EXPECTED_FAILURE: 'x',
+    settings.MONITOR.STATUS.UNEXPECTED_SUCCESS: 'u',
 
     # Actions
-    settings.ACTION_STATUS_SUCCESS: '.',
-    settings.ACTION_STATUS_ERROR: 'E',
-    settings.ACTION_STATUS_SKIPPED: 's',
+    settings.ACTION.STATUS.SUCCESS: '.',
+    settings.ACTION.STATUS.ERROR: 'E',
+    settings.ACTION.STATUS.SKIPPED: 's',
 }
 
 
