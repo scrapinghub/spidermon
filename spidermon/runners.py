@@ -1,7 +1,8 @@
 import sys
 
 from core.suites import MonitorSuite
-from .results import MonitorResult, TextMonitorResult
+from spidermon.results.monitor import MonitorResult
+from spidermon.results.text import TextMonitorResult
 
 
 class MonitorRunner(object):
@@ -33,17 +34,30 @@ class MonitorRunner(object):
 
     def run_actions(self):
         self.result.next_step()
-        self.run_test_finish_actions()
+        self.run_test_finish()
         self.result.finish_step()
 
         self.result.next_step()
+        self.run_test_passsed()
         self.result.finish_step()
 
         self.result.next_step()
+        self.run_test_fail_actions()
         self.result.finish_step()
 
-    def run_test_finish_actions(self):
+    def run_test_finish(self):
+        self.suite.on_tests_finished(self.result, self.result.all_tests)
         for action in self.suite.test_finish_actions:
+            action.run(self.result)
+
+    def run_test_passsed(self):
+        self.suite.on_tests_passed(self.result, self.result.passed_tests)
+        for action in self.suite.test_pass_actions:
+            action.run(self.result)
+
+    def run_test_fail_actions(self):
+        self.suite.on_tests_failed(self.result, self.result.failed_tests)
+        for action in self.suite.test_fail_actions:
             action.run(self.result)
 
     def create_result(self):

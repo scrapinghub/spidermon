@@ -1,4 +1,9 @@
 # ----------------------------------
+# Status
+# ----------------------------------
+UNDEFINED_STATUS = '?'
+
+# ----------------------------------
 # Test status
 # ----------------------------------
 TEST_STATUS_SUCCESS = 'OK'
@@ -65,6 +70,13 @@ ACTIONS_ERROR_STATUSES = (
 )
 
 # ----------------------------------
-# Others
+# Result steps
 # ----------------------------------
-UNDEFINED_STATUS = '?'
+STEP_TESTS = 'TESTS'
+STEP_FINISH_ACTIONS = 'FINISH ACTIONS'
+STEP_PASS_ACTIONS = 'PASS ACTIONS'
+STEP_FAIL_ACTIONS = 'FAIL ACTIONS'
+
+STEPS = [STEP_TESTS, STEP_FINISH_ACTIONS, STEP_PASS_ACTIONS, STEP_FAIL_ACTIONS]
+TESTS_STEPS = [STEP_TESTS]
+ACTIONS_STEPS = [STEP_FINISH_ACTIONS, STEP_PASS_ACTIONS, STEP_FAIL_ACTIONS]

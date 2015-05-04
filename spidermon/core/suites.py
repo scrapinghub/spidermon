@@ -8,7 +8,6 @@ from spidermon.exceptions import (InvalidMonitorIterable, NotAllowedMethod)
 from spidermon import settings
 
 from .monitors import Monitor
-from .actions import Action
 from .options import MonitorOptionsMetaclass
 from .factories import MonitorFactory, ActionFactory
 
@@ -18,9 +17,14 @@ class MonitorSuite(TestSuite):
 
     monitors = []
     test_finish_actions = []
+    test_pass_actions = []
+    test_fail_actions = []
 
     def __init__(self, name=None, monitors=None,
-                 test_finish_actions=None, order=None):
+                 test_finish_actions=None,
+                 test_pass_actions=None,
+                 test_fail_actions=None,
+                 order=None):
         self._tests = []
         self._name = name
         self._parent = None
@@ -29,11 +33,20 @@ class MonitorSuite(TestSuite):
         self.add_monitors(self.monitors)
         self.add_monitors(monitors or [])
 
-        class_test_finish_actions = self.test_finish_actions
-        setattr(self, 'test_finish_actions', [])
+        declarative_test_finish_actions = self.test_finish_actions
         self.test_finish_actions = []
-        self.add_test_finish_actions(class_test_finish_actions)
+        self.add_test_finish_actions(declarative_test_finish_actions)
         self.add_test_finish_actions(test_finish_actions or [])
+
+        declarative_test_pass_actions = self.test_pass_actions
+        self.test_pass_actions = []
+        self.add_test_pass_actions(declarative_test_pass_actions)
+        self.add_test_pass_actions(test_pass_actions or [])
+
+        declarative_test_fail_actions = self.test_fail_actions
+        self.test_fail_actions = []
+        self.add_test_fail_actions(declarative_test_fail_actions)
+        self.add_test_fail_actions(test_fail_actions or [])
 
 
     @property
@@ -121,8 +134,25 @@ class MonitorSuite(TestSuite):
             self.add_test_finish_action(action)
 
     def add_test_finish_action(self, action):
+        self._add_action(action, self.test_finish_actions)
+
+    def add_test_pass_actions(self, actions):
+        for action in actions:
+            self.add_test_pass_action(action)
+
+    def add_test_pass_action(self, action):
+        self._add_action(action, self.test_pass_actions)
+
+    def add_test_fail_actions(self, actions):
+        for action in actions:
+            self.add_test_fail_action(action)
+
+    def add_test_fail_action(self, action):
+        self._add_action(action, self.test_fail_actions)
+
+    def _add_action(self, action, target_actions_list):
         action = ActionFactory.load_action(action)
-        self.test_finish_actions.append(action)
+        target_actions_list.append(action)
 
     def debug_tree(self, level=0):
         s = level*'\t' + repr(self) + '\n'
@@ -158,3 +188,12 @@ class MonitorSuite(TestSuite):
 
     addTest = __not_allowed_method
     addTests = __not_allowed_method
+
+    def on_tests_finish(self, result, tests):
+        pass
+
+    def on_tests_passed(self, result, passed_tests):
+        pass
+
+    def on_tests_failed(self, result, failed_tests):
+        pass

@@ -3,6 +3,7 @@ from core.suites import MonitorSuite
 from core.actions import Action
 from .loaders import MonitorLoader
 from .runners import MonitorRunner, TextMonitorRunner
-from .results import MonitorResult, TextMonitorResult
+from .results.monitor import MonitorResult
+from .results.text import TextMonitorResult
 from .decorators import monitors, actions
 from .exceptions import SkipAction
