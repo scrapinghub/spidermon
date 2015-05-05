@@ -24,11 +24,13 @@ class MonitorSuite(TestSuite):
                  monitors_finished_actions=None,
                  monitors_passed_actions=None,
                  monitors_failed_actions=None,
-                 order=None):
+                 order=None,
+                 crawler=None):
         self._tests = []
         self._name = name
         self._parent = None
         self._order = order
+        self._crawler = crawler
 
         self.add_monitors(self.monitors)
         self.add_monitors(monitors or [])
@@ -151,7 +153,7 @@ class MonitorSuite(TestSuite):
         self._add_action(action, self.monitors_failed_actions)
 
     def _add_action(self, action, target_actions_list):
-        action = ActionFactory.load_action(action)
+        action = ActionFactory.load_action(action, crawler=self._crawler)
         target_actions_list.append(action)
 
     def debug_tree(self, level=0):

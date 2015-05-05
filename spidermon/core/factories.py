@@ -62,18 +62,21 @@ class MonitorFactory(object):
 
 class ActionFactory(object):
     @classmethod
-    def load_action(cls, action):
+    def load_action(cls, action, crawler=None):
         if inspect.isclass(action):
-            return cls.load_action_from_class(action_class=action)
+            return cls.load_action_from_class(action_class=action, crawler=crawler)
         elif isinstance(action, Action):
             return action
         cls.raise_invalid_action()
 
     @classmethod
-    def load_action_from_class(cls, action_class):
+    def load_action_from_class(cls, action_class, crawler=None):
         if not issubclass(action_class, Action):
             cls.raise_invalid_class()
-        return action_class()
+        if crawler and hasattr(action_class, 'from_crawler'):
+            return action_class.from_crawler(crawler)
+        else:
+            return action_class()
 
 
     @classmethod
