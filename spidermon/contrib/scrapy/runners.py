@@ -2,7 +2,7 @@ from scrapy import log
 
 from spidermon.results.monitor import MonitorResult, monitors_step_required, actions_step_required
 from spidermon.runners import MonitorRunner
-from spidermon.utils import line_title, line
+from spidermon.utils import line_title, line, Message
 
 LOG_MESSAGE_HEADER = 'Spidermon'
 
@@ -20,8 +20,8 @@ class SpiderMonitorResult(MonitorResult):
     def finish_step(self):
         super(SpiderMonitorResult, self).finish_step()
         self.log_info(line())
-        #if not self.step.successful:
-        #    self.write_errors()
+        if not self.step.successful:
+            self.write_errors()
         self.write_run_footer()
         self.write_step_summary()
 
@@ -91,11 +91,25 @@ class SpiderMonitorResult(MonitorResult):
             summary += ' (%s)' % ', '.join(['%s=%s' % (k, v) for k, v in infos.items() if v])
         self.log_info(summary)
 
+    def write_errors(self):
+        for status in self.step.error_statuses:
+            for item in self.step.items_for_status(status):
+                msg = Message()
+                msg.write_line()
+                msg.write_bold_separator()
+                msg.write_line('%s: %s' % (item.status, item.item.name))
+                msg.write_light_separator()
+                msg.write(item.error)
+                self.log_error(msg)
+
+    def log_error(self, msg):
+        self.log(msg, level=log.ERROR)
+
     def log_info(self, msg):
         self.log(msg, level=log.INFO)
 
     def log(self, msg, level=log.DEBUG):
-        self.spider.log('(%s) %s' % (LOG_MESSAGE_HEADER, msg), level=level)
+        self.spider.log('[%s] %s' % (LOG_MESSAGE_HEADER, msg), level=level)
 
 
 class SpiderMonitorRunner(MonitorRunner):
