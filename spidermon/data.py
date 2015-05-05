@@ -2,6 +2,16 @@ from .exceptions import InvalidDataOperation
 
 
 class Data(dict):
+    """
+    Immutable dict class with attribute access.
+
+    example:
+    >> s = Stats({'scraped_items': 100})
+    >> s['scraped_items']
+    100
+    >> s.scraped_items
+    100
+    """
     def __getattr__(self, name):
         if name in self:
             return self[name]
