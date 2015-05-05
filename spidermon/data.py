@@ -6,7 +6,7 @@ class Data(dict):
     Immutable dict class with attribute access.
 
     example:
-    >> s = Stats({'scraped_items': 100})
+    >> s = Data({'scraped_items': 100})
     >> s['scraped_items']
     100
     >> s.scraped_items
