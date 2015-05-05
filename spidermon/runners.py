@@ -1,8 +1,9 @@
 import sys
 
-from core.suites import MonitorSuite
+from spidermon.core.suites import MonitorSuite
 from spidermon.results.monitor import MonitorResult
 from spidermon.results.text import TextMonitorResult
+from spidermon.exceptions import InvalidMonitor, InvalidResult
 
 
 class MonitorRunner(object):
@@ -12,12 +13,12 @@ class MonitorRunner(object):
 
     def run(self, suite, data=None):
         if not isinstance(suite, MonitorSuite):
-            raise Exception('Not valid')  # TODO: Add custom exception
+            raise InvalidMonitor('Runners must receive a MonitorSuite instance')
         self.suite = suite
         self.suite.init_data(**(data or {}))
         self.result = self.create_result()
         if not isinstance(self.result, MonitorResult):
-            raise Exception('Not valid')  # TODO: Add custom exception
+            raise InvalidResult('Runners must use a MonitorResult instance')
         return self.run_suite()
 
     def run_suite(self):

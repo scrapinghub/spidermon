@@ -1,16 +1,16 @@
-class SpiderMonException(Exception):
+class SpidermonException(Exception):
     pass
 
 
-class InvalidStatsOperation(SpiderMonException):
+class InvalidStatsOperation(SpidermonException):
     pass
 
 
-class NotAllowedMethod(SpiderMonException):
+class NotAllowedMethod(SpidermonException):
     pass
 
 
-class InvalidMonitor(SpiderMonException):
+class InvalidMonitor(SpidermonException):
     pass
 
 
@@ -26,9 +26,13 @@ class InvalidMonitorTuple(InvalidMonitor):
     pass
 
 
-class InvalidExpression(SpiderMonException):
+class InvalidExpression(SpidermonException):
     pass
 
 
-class SkipAction(SpiderMonException):
+class InvalidResult(SpidermonException):
+    pass
+
+
+class SkipAction(SpidermonException):
     pass

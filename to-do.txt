@@ -6,7 +6,7 @@ FEATURES
 [X] Descriptions
 [X] Levels
 [X] Ordering
-[ ] Monitor runner exceptions
+[X] Monitor runner exceptions
 [X] Actions
 [X] Suite actions hooks
 [X] Results
