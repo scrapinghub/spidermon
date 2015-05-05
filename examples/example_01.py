@@ -1,6 +1,8 @@
 import datetime
 
-from spidermon import StatsMonitor, MonitorSuite, TextMonitorRunner, monitors
+from spidermon import StatsMonitor, MonitorSuite, monitors
+from spidermon import TextMonitorRunner, MonitorRunner
+from spidermon import Action, SkipAction
 
 
 STATS = {
@@ -124,6 +126,19 @@ class ItemsMonitor(StatsMonitor):
         pass
 
 
+class AnAction(Action):
+    def run_action(self, result):
+        #print 'ein....'
+        #raise SkipAction, 'jarl...'
+        pass
+
+
+class BombAction(Action):
+    def run_action(self, result):
+        pass
+        #raise Exception('Boom!')
+
+
 #@monitors.level.normal
 class ExampleSuite(MonitorSuite):
     monitors = [
@@ -131,14 +146,42 @@ class ExampleSuite(MonitorSuite):
         ('Hola', HolaMonitor),
         ('Items', ItemsMonitor),
     ]
+    monitors_finished_actions = [
+        #AnAction,
+    ]
+    monitors_passed_actions = [
+        BombAction,
+        #AnAction,
+    ]
+    monitors_failed_actions = [
+        AnAction,
+        #AnAction,
+        #AnAction,
+    ]
+
+    """
+    def on_monitors_finished(self, result):
+        for monitor_result in result.monitor_results:
+            if monitor_result.monitor.level == 'HIGH':
+                AnAction().run(result)
+                break
+
+    def on_monitors_passed(self, result):
+        AnAction().run(result)
+
+    def on_monitors_failed(self, result):
+        AnAction().run(result)
+    """
+
 
 suite = ExampleSuite()
-runner = TextMonitorRunner(verbosity=2)
-#runner.run(suite, data={'stats': STATS})
 
-#help(ExampleSuite)
-#help(ItemsMonitor)
+
+runner = MonitorRunner()
+runner = TextMonitorRunner(verbosity=2)
+result = runner.run(suite, data={'stats': STATS})
 
 #print suite.debug_tree()
-#print suite.debug_tests()
-print suite.options
+#print suite.debug_monitors()
+#print suite.options
+
