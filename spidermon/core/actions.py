@@ -17,10 +17,10 @@ class Action(object):
         return self.options.name or \
                self.__class__.__name__
 
-    def run(self, result):
+    def run(self, result, data):
         result.start_action(self)
         try:
-            self.run_action(result)
+            self.run_action(result, data)
         except SkipAction, e:
             result.add_action_skip(self, e.message)
         except:
@@ -29,7 +29,7 @@ class Action(object):
             result.add_action_success(self)
 
     @abc.abstractmethod
-    def run_action(self, result):
+    def run_action(self, result, data):
         raise NotImplementedError
 
     def __repr__(self):
@@ -40,5 +40,5 @@ class Action(object):
 
 
 class DummyAction(Action):
-    def run_action(self, result):
+    def run_action(self, result, data):
         pass

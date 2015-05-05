@@ -115,9 +115,9 @@ class MonitorSuite(TestSuite):
     def set_parent(self, parent):
         self._parent = parent
 
-    def init_data(self, **data):
+    def init_data(self, data):
         for test in self:
-            test.init_data(**data)
+            test.init_data(data)
 
     def add_monitors(self, monitors):
         if not isinstance(monitors, collections.Iterable):

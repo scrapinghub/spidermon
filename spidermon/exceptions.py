@@ -2,7 +2,7 @@ class SpidermonException(Exception):
     pass
 
 
-class InvalidStatsOperation(SpidermonException):
+class InvalidDataOperation(SpidermonException):
     pass
 
 

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from spidermon.stats import Stats
+from spidermon.data import Data
 from spidermon import settings
 from .options import MonitorOptions, MonitorOptionsMetaclass
 
@@ -92,8 +92,8 @@ class Monitor(TestCase):
     def set_parent(self, parent):
         self._parent = parent
 
-    def init_data(self, **data):
-        self._data = data
+    def init_data(self, data):
+        self.data = data
 
     def debug_tree(self, level=0):
         return level*'\t' + repr(self) + '\n'
@@ -114,13 +114,12 @@ class Monitor(TestCase):
 class StatsMonitor(Monitor):
     def __init__(self, methodName='runTest', name=None):
         super(StatsMonitor, self).__init__(methodName, name)
-        self.stats = Stats()
+        self.stats = Data()
 
-    def init_data(self, **data):
-        super(StatsMonitor, self).init_data(**data)
-        stats = data.get('stats')
-        if stats:
-            self.stats = Stats(stats)
+    def init_data(self, data):
+        super(StatsMonitor, self).init_data(data)
+        if 'stats' in data:
+            self.stats = data.stats
 
 
 class JobMonitor(StatsMonitor):
@@ -129,5 +128,5 @@ class JobMonitor(StatsMonitor):
         self.job = {}
 
     def init_data(self, **data):
-        super(StatsMonitor, self).init_data(**data)
-        self.job = data.get('job')
+        super(StatsMonitor, self).init_data(data)
+        #self.job = data.get('job')

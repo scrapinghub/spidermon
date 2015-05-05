@@ -151,7 +151,7 @@ class TextMonitorResult(MonitorResult):
         for status in self.step.error_statuses:
             for item in self.step.items_for_status(status):
                 self.write_line_bold()
-                self.write_line('%s: %s' % (item.status, item.name))
+                self.write_line('%s: %s' % (item.status, item.item.name))
                 self.write_line_light()
                 self.write_line(item.error)
                 self.write_line()

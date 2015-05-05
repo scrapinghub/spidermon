@@ -2,7 +2,7 @@ import pytest
 
 from spidermon.python import Interpreter
 from spidermon.exceptions import InvalidExpression
-from spidermon.stats import Stats
+from spidermon.data import Data
 
 from fixtures.expressions import *
 from fixtures.stats import STATS_TO_EVALUATE
@@ -31,7 +31,7 @@ def test_valid_expressions(interpreter):
 
 
 def test_evaluated_expressions(interpreter):
-    context = {'stats': Stats(STATS_TO_EVALUATE)}
+    data = Data({'stats': Data(STATS_TO_EVALUATE)})
     for expression, result in EXPRESSIONS_TO_EVALUATE:
-        assert result == interpreter.eval(expression, context), \
+        assert result == interpreter.eval(expression, data), \
             'Expression fails: "%s" != %s' % (expression, result)
