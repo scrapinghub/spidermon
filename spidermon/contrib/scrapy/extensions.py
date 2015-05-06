@@ -7,9 +7,10 @@ from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 
 class Spidermon(object):
 
-    def __init__(self, crawler, spider_close_monitors):
+    def __init__(self, crawler, spider_opened_suites, spider_closed_suites):
         self.crawler = crawler
-        self.spider_close_suites = [self.load_suite(s) for s in spider_close_monitors]
+        self.spider_opened_suites = [self.load_suite(s) for s in spider_opened_suites]
+        self.spider_closed_suites = [self.load_suite(s) for s in spider_closed_suites]
 
     def load_suite(self, suite_to_load):
         try:
@@ -25,18 +26,26 @@ class Spidermon(object):
     def from_crawler(cls, crawler):
         ext = cls(
             crawler=crawler,
-            spider_close_monitors=crawler.settings.getlist('SPIDERMON_SPIDER_CLOSE_MONITORS'),
+            spider_opened_suites=crawler.settings.getlist('SPIDERMON_SPIDER_OPEN_MONITORS'),
+            spider_closed_suites=crawler.settings.getlist('SPIDERMON_SPIDER_CLOSE_MONITORS'),
         )
+        crawler.signals.connect(ext.spider_opened, signal=signals.spider_opened)
         crawler.signals.connect(ext.spider_closed, signal=signals.spider_closed)
         return ext
 
+    def spider_opened(self, spider):
+        self._run_suites(spider, self.spider_opened_suites)
+
     def spider_closed(self, spider):
-        data = self.generate_data_for_spider(spider)
-        for suite in self.spider_close_suites:
+        self._run_suites(spider, self.spider_closed_suites)
+
+    def _run_suites(self, spider, suites):
+        data = self._generate_data_for_spider(spider)
+        for suite in suites:
             runner = SpiderMonitorRunner(spider=spider)
             runner.run(suite, data=data)
 
-    def generate_data_for_spider(self, spider):
+    def _generate_data_for_spider(self, spider):
         return {
             'stats': self.crawler.stats.get_stats(spider),
             'crawler': self.crawler,
