@@ -3,11 +3,11 @@
 {%- endmacro %}
 
 {% macro render_results(color, results) %}
-        {
-            "text": "{% for result in results %}{{ render_result(result) }}{% endfor %}",
-            "color": "{{ color }}",
-            "mrkdwn_in": ["text", "pretext"]
-        }
+    {
+        "text": "{% for result in results %}{{ render_result(result) }}{% endfor %}",
+        "color": "{{ color }}",
+        "mrkdwn_in": ["text", "pretext"]
+    }
 {% endmacro %}
 
 {% macro render_passed() %}
