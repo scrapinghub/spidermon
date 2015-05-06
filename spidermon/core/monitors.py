@@ -17,7 +17,7 @@ class Monitor(TestCase):
 
     @property
     def name(self):
-        return ':'.join([self.monitor_name, self.method_name])
+        return '/'.join([self.monitor_name, self.method_name])
 
     @property
     def full_name(self):
