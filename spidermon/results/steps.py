@@ -40,6 +40,12 @@ class Step(object):
         return [result for item, result in self._results.items()
                 if result.status == status]
 
+    def items_for_statuses(self, statuses):
+        items = []
+        for status in statuses:
+            items += self.items_for_status(status)
+        return items
+
     @property
     def all_items(self):
         return self._results.values()

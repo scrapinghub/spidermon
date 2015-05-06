@@ -38,11 +38,11 @@ class MonitorResult(unittest.TestResult):
 
     @property
     def monitors_passed_results(self):
-        return self._step_monitors.items_for_status(settings.MONITOR.STATUS.SUCCESS)
+        return self._step_monitors.items_for_statuses(settings.MONITOR.STATUSES.SUCCESSFUL)
 
     @property
     def monitors_failed_results(self):
-        return self._step_monitors.items_for_status(settings.MONITOR.STATUS.FAILURE)
+        return self._step_monitors.items_for_statuses(settings.MONITOR.STATUSES.ERROR)
 
     @property
     def monitors_finished_action_results(self):
