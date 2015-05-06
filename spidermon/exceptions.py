@@ -34,5 +34,9 @@ class InvalidResult(SpidermonException):
     pass
 
 
+class NotConfigured(SpidermonException):
+    pass
+
+
 class SkipAction(SpidermonException):
     pass

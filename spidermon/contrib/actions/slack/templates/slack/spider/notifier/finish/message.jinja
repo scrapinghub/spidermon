@@ -1,0 +1,5 @@
+{% if monitors_failed %}
+    :skull: `{{ data.spider.name }}` *spider finished with errors!* _(errors={{ result.monitors_failed_results|length }})_
+{% else %}
+    :thumbsup: `{{ data.spider.name }}` *spider finished!*
+{% endif %}

@@ -12,15 +12,21 @@ class Action(object):
     """
     __metaclass__ = ActionOptionsMetaclass
 
+    def __init__(self):
+        self.result = None
+        self.data = None
+
     @property
     def name(self):
         return self.options.name or \
                self.__class__.__name__
 
     def run(self, result, data):
+        self.result = result
+        self.data = data
         result.start_action(self)
         try:
-            self.run_action(result, data)
+            self.run_action()
         except SkipAction, e:
             result.add_action_skip(self, e.message)
         except:
@@ -29,8 +35,16 @@ class Action(object):
             result.add_action_success(self)
 
     @abc.abstractmethod
-    def run_action(self, result, data):
+    def run_action(self):
         raise NotImplementedError
+
+    @property
+    def monitors_passed(self):
+        return len(self.result.monitors_passed_results) > 0
+
+    @property
+    def monitors_failed(self):
+        return len(self.result.monitors_failed_results) > 0
 
     def __repr__(self):
         return '<ACTION:(%s) at %s>' % (self.name, hex(id(self)))
@@ -40,5 +54,5 @@ class Action(object):
 
 
 class DummyAction(Action):
-    def run_action(self, result, data):
+    def run_action(self):
         pass
