@@ -4,6 +4,7 @@ setup(
     name         = 'spidermon',
     version      = '0.1',
     packages     = find_packages(),
+    zip_safe     = False,
     install_requires=[
         'six==1.9.0',
     ],
@@ -11,5 +12,4 @@ setup(
         'six==1.9.0',
         "pytest>=2.7.0",
     ]
-
 )
