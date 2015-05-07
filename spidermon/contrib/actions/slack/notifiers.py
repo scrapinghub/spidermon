@@ -13,19 +13,10 @@ class SlackSpiderNotifierFinish(SlackMessageAction):
     include_error_attachments = True
 
     def __init__(self,
-                 sender_token=None, sender_name=None,
-                 message_template=None, attachments_template=None,
-                 recipients=None,
-                 fake_messages=None,
-                 include_ok_attachments=None, include_error_attachments=None):
-        super(SlackSpiderNotifierFinish, self).__init__(
-            sender_token=sender_token,
-            sender_name=sender_name,
-            message_template=message_template,
-            attachments_template=attachments_template,
-            recipients=recipients,
-            fake_messages=fake_messages,
-        )
+                 include_ok_attachments=None,
+                 include_error_attachments=None,
+                 **kwargs):
+        super(SlackSpiderNotifierFinish, self).__init__(**kwargs)
         self.include_ok_attachments = include_ok_attachments or self.include_ok_attachments
         self.include_error_attachments = include_error_attachments or self.include_error_attachments
 
