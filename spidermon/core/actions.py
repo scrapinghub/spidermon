@@ -16,6 +16,14 @@ class Action(object):
         self.result = None
         self.data = None
 
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(**cls.from_crawler_kwargs(crawler))
+
+    @classmethod
+    def from_crawler_kwargs(cls, crawler):
+        return {}
+
     @property
     def name(self):
         return self.options.name or \
