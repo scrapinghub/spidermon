@@ -127,14 +127,16 @@ class ItemsMonitor(StatsMonitor):
 
 
 class AnAction(Action):
-    def run_action(self, result):
+    def run_action(self, result, data):
         #print 'ein....'
         #raise SkipAction, 'jarl...'
+        #print data.stats.finish_reason
+        #print data.stats['finish_reason']
         pass
 
 
 class BombAction(Action):
-    def run_action(self, result):
+    def run_action(self, result, data):
         pass
         #raise Exception('Boom!')
 
@@ -147,14 +149,14 @@ class ExampleSuite(MonitorSuite):
         ('Items', ItemsMonitor),
     ]
     monitors_finished_actions = [
-        #AnAction,
+        AnAction,
     ]
     monitors_passed_actions = [
-        BombAction,
+        #BombAction,
         #AnAction,
     ]
     monitors_failed_actions = [
-        AnAction,
+        #AnAction,
         #AnAction,
         #AnAction,
     ]
