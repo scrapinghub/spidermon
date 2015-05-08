@@ -15,6 +15,7 @@ class ActionWithTemplatesMetaclass(ActionOptionsMetaclass):
     def add_class_templates(mcs, cls):
         class_file = inspect.getfile(cls)
         class_path = os.path.dirname(class_file)
+        template_loader.discover_folder(class_path)
         for path in cls.template_paths:
             template_path = os.path.join(class_path, path)
             template_loader.add_path(template_path)

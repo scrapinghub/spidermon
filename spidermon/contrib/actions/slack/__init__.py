@@ -109,7 +109,6 @@ class SlackMessageManager():
 
 
 class SendSlackMessage(ActionWithTemplates):
-    template_paths = ['templates']
     message = None
     attachements = None
     message_template = 'slack/default/message.jinja'
