@@ -26,3 +26,15 @@ class ActionWithTemplates(Action):
 
     def get_template(self, name):
         return template_loader.get_template(name)
+
+    def render_template(self, template):
+        template = self.get_template(template)
+        return template.render(self.get_template_context())
+
+    def get_template_context(self):
+        return {
+            'result': self.result,
+            'data': self.data,
+            'monitors_passed': self.monitors_passed,
+            'monitors_failed': self.monitors_failed,
+        }

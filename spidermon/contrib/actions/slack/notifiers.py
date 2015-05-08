@@ -36,8 +36,8 @@ class SlackSpiderNotifierFinish(SlackMessageAction):
         else:
             return None
 
-    def _get_template_context(self):
-        context = super(SlackSpiderNotifierFinish, self)._get_template_context()
+    def get_template_context(self):
+        context = super(SlackSpiderNotifierFinish, self).get_template_context()
         context.update({
             'include_ok_attachments': self.include_ok_attachments,
             'include_error_attachments': self.include_error_attachments,

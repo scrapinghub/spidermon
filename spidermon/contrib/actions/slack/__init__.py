@@ -144,10 +144,6 @@ class SlackMessageAction(ActionWithTemplates):
             raise NotConfigured("You must provide at least one recipient for the message.")
 
     @classmethod
-    def from_crawler(cls, crawler):
-        return cls(**cls.from_crawler_kwargs(crawler))
-
-    @classmethod
     def from_crawler_kwargs(cls, crawler):
         return {
             'sender_token': crawler.settings.get('SPIDERMON_SLACK_SENDER_TOKEN'),
@@ -163,33 +159,26 @@ class SlackMessageAction(ActionWithTemplates):
         }
 
     def run_action(self):
+        message = self.get_message()
+        attachments = self.get_attachments()
         if not self.fake:
             self.manager.send_message(
                 to=self.recipients,
-                text=self.get_message(),
-                attachments=self.get_attachments(),
+                text=message,
+                attachments=attachments,
             )
+        else:
+            print 'message:', message
+            print 'attachments:', attachments
 
     def get_message(self):
         if self.include_message:
-            return self.message or self._render_template(self.message_template)
+            return self.message or self.render_template(self.message_template)
         else:
             return None
 
     def get_attachments(self):
         if self.include_attachments:
-            return self.attachements or self._render_template(self.attachments_template)
+            return self.attachements or self.render_template(self.attachments_template)
         else:
             return None
-
-    def _render_template(self, template):
-        template = self.get_template(template)
-        return template.render(self._get_template_context())
-
-    def _get_template_context(self):
-        return {
-            'result': self.result,
-            'data': self.data,
-            'monitors_passed': self.monitors_passed,
-            'monitors_failed': self.monitors_failed,
-        }
