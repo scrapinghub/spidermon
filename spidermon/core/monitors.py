@@ -118,15 +118,16 @@ class StatsMonitor(Monitor):
 
     def init_data(self, data):
         super(StatsMonitor, self).init_data(data)
-        if 'stats' in data:
-            self.stats = data.stats
+        self.stats = data.stats
 
 
-class JobMonitor(StatsMonitor):
+class SpiderMonitor(StatsMonitor):
     def __init__(self, methodName='runTest', name=None):
-        super(JobMonitor, self).__init__(methodName, name)
+        super(SpiderMonitor, self).__init__(methodName, name)
         self.job = {}
 
-    def init_data(self, **data):
-        super(StatsMonitor, self).init_data(data)
-        #self.job = data.get('job')
+    def init_data(self, data):
+        super(SpiderMonitor, self).init_data(data)
+        self.crawler = data.crawler
+        self.spider = data.spider
+        self.hubstorage = data.hubstorage
