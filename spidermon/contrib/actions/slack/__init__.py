@@ -108,7 +108,7 @@ class SlackMessageManager():
             return json.dumps(python_attachments)
 
 
-class SlackMessageAction(ActionWithTemplates):
+class SendSlackMessage(ActionWithTemplates):
     template_paths = ['templates']
     message = None
     attachements = None
@@ -127,7 +127,7 @@ class SlackMessageAction(ActionWithTemplates):
                  message=None, message_template=None, include_message=None,
                  attachments=None, attachments_template=None, include_attachments=None,
                  fake=None):
-        super(SlackMessageAction, self).__init__()
+        super(SendSlackMessage, self).__init__()
         self.manager = SlackMessageManager(
             sender_token=sender_token or self.sender_token,
             sender_name=sender_name or self.sender_name,
