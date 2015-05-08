@@ -11,7 +11,7 @@ except:
 class _Hubstorage(object):
 
     def __init__(self):
-        self.available = 'SHUB_JOBKEY' in os.environ and HubstorageClient
+        self.available = 'SHUB_JOBKEY' in os.environ and HubstorageClient is not None
         self._client = None
         self._project = None
         self._job = None
