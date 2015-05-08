@@ -3,6 +3,7 @@ from scrapy.utils.misc import load_object
 
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
+from spidermon.hubstorage import hs
 
 
 class Spidermon(object):
@@ -43,11 +44,12 @@ class Spidermon(object):
         data = self._generate_data_for_spider(spider)
         for suite in suites:
             runner = SpiderMonitorRunner(spider=spider)
-            runner.run(suite, data=data)
+            runner.run(suite, **data)
 
     def _generate_data_for_spider(self, spider):
         return {
             'stats': self.crawler.stats.get_stats(spider),
             'crawler': self.crawler,
             'spider': spider,
+            'hubstorage': hs,
         }

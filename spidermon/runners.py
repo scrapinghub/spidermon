@@ -15,18 +15,18 @@ class MonitorRunner(object):
         self.result = None
         self.data = None
 
-    def run(self, suite, data=None):
+    def run(self, suite, **data):
         if not isinstance(suite, MonitorSuite):
             raise InvalidMonitor('Runners must receive a MonitorSuite instance')
         self.suite = suite
-        self.data = self.transform_data(data)
+        self.data = self.transform_data(**data)
         self.suite.init_data(self.data)
         self.result = self.create_result()
         if not isinstance(self.result, MonitorResult):
             raise InvalidResult('Runners must use a MonitorResult instance')
         return self.run_suite()
 
-    def transform_data(self, data):
+    def transform_data(self, **data):
         data = data or {}
         new_data_dict = {}
         for attr_name, attr in data.items():
