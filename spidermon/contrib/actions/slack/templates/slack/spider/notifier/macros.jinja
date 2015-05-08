@@ -20,6 +20,6 @@
 
 {% macro render_job_url() %}
 {% if data.hubstorage.available %}
- https://dash.scrapinghub.com/p/{{ data.hubstorage.project_id }}/{{ job/data.hubstorage.spider_id }}/{{ job/data.hubstorage.job_id }}
+ https://dash.scrapinghub.com/p/{{ data.hubstorage.project_id }}/job/{{ data.hubstorage.spider_id }}/{{ data.hubstorage.job_id }}
 {% endif %}
 {% endmacro %}
