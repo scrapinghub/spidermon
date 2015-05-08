@@ -1,10 +1,10 @@
-from jinja2 import Environment, FileSystemLoader, BaseLoader
+from jinja2 import Environment, FileSystemLoader
 
 
 class TemplateLoader(object):
     def __init__(self):
-        self.env = BaseLoader()
         self.paths = []
+        self.reload_env()
 
     def add_path(self, path):
         if path not in self.paths:
