@@ -12,7 +12,7 @@ class JobTagsAction(Action):
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
-        kwargs = super(JobTagsAction, cls).from_crawler_kwargs()
+        kwargs = super(JobTagsAction, cls).from_crawler_kwargs(crawler)
         if cls.tag_settings:
             kwargs.update({
                 'tags': crawler.settings.get(cls.tag_settings),
