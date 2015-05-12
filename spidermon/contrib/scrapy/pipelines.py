@@ -18,7 +18,9 @@ DEFAULT_ADD_ERRORS_TO_ITEM = False
 
 class ItemValidationPipeline(object):
 
-    def __init__(self, validators, stats, add_errors_to_items=False, errors_field=None):
+    def __init__(self, validators, stats, drop_items_with_errors=False,
+                 add_errors_to_items=False, errors_field=None):
+        self.drop_items_with_errors = drop_items_with_errors
         self.add_errors_to_items = add_errors_to_items
         self.errors_field = errors_field or DEFAULT_ERRORS_FIELD
         self.validators = []
@@ -36,6 +38,7 @@ class ItemValidationPipeline(object):
         return cls(
             validators=validators,
             stats=crawler.stats,
+            drop_items_with_errors=crawler.settings.getbool('SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS'),
             add_errors_to_items=crawler.settings.get('SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS'),
             errors_field=crawler.settings.get('SPIDERMON_VALIDATION_ERRORS_FIELD'),
         )
@@ -76,7 +79,11 @@ class ItemValidationPipeline(object):
                         self.stats.add_field_error(field_name, message)
                 if self.add_errors_to_items:
                     self._add_errors_to_item(item, errors)
-        return item
+        if self.drop_items_with_errors:
+            self.stats.add_dropped_item()
+            raise DropItem('Validation failed!')
+        else:
+            return item
 
     def _add_validator(self, validator):
         self.validators.append(validator)

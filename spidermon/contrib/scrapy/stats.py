@@ -6,6 +6,7 @@ DEFAULT_PREFIX = 'spidermon/validation'
 
 class NAMES:
     ITEMS = 'items'
+    DROPPED = 'dropped'
     FIELDS = 'fields'
     ERRORS = 'errors'
     VALIDATORS = 'validators'
@@ -33,6 +34,9 @@ class ValidationStatsManager(object):
 
     def add_item(self):
         self.stats.inc_value(self._get_stats_name(NAMES.ITEMS))
+
+    def add_dropped_item(self):
+        self.stats.inc_value(self._get_stats_name(NAMES.ITEMS, NAMES.DROPPED))
 
     def add_item_with_errors(self):
         self.stats.inc_value(self._get_stats_name(NAMES.ITEMS, NAMES.ERRORS))
