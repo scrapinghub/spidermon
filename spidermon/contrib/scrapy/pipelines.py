@@ -55,6 +55,7 @@ class ItemValidationPipeline(object):
                     schema = json.loads(schema)
         if not isinstance(schema, dict):
             raise NotConfigured('Invalid schema, jsonschemas must be defined as:\n'
+                                '- a python dict.\n'
                                 '- an object path to a python dict.\n'
                                 '- an object path to a JSON string.\n'
                                 '- a path to a JSON file.')
