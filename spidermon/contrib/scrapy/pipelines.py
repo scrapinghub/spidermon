@@ -14,14 +14,17 @@ from .stats import ValidationStatsManager
 
 DEFAULT_ERRORS_FIELD = '_validation'
 DEFAULT_ADD_ERRORS_TO_ITEM = False
+DEFAULT_DROP_ITEMS_WITH_ERRORS = False
 
 
 class ItemValidationPipeline(object):
 
-    def __init__(self, validators, stats, drop_items_with_errors=False,
-                 add_errors_to_items=False, errors_field=None):
+    def __init__(self, validators, stats,
+                 drop_items_with_errors=DEFAULT_DROP_ITEMS_WITH_ERRORS,
+                 add_errors_to_items=DEFAULT_ADD_ERRORS_TO_ITEM,
+                 errors_field=None):
         self.drop_items_with_errors = drop_items_with_errors
-        self.add_errors_to_items = add_errors_to_items
+        self.add_errors_to_items = add_errors_to_items or DEFAULT_ADD_ERRORS_TO_ITEM
         self.errors_field = errors_field or DEFAULT_ERRORS_FIELD
         self.validators = []
         self.stats = ValidationStatsManager(stats)
