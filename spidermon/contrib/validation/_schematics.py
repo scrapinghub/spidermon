@@ -30,7 +30,7 @@ class SchematicsValidator(Validator):
         )
         self._model = model
         self._fields_required = {}
-        self._save_required()
+        self._save_required_fields()
         self._data = {}
 
     def _validate(self, data, strict=False):
@@ -40,7 +40,7 @@ class SchematicsValidator(Validator):
             model.validate()
         except ModelValidationError, e:
             self._add_errors(e.messages)
-        self._restore_required()
+        self._restore_required_fields()
 
     def _reset(self):
         super(SchematicsValidator, self)._reset()
@@ -59,11 +59,11 @@ class SchematicsValidator(Validator):
                 self._data.pop(field_name)
             return self._model(raw_data=self._data, strict=strict)
 
-    def _save_required(self):
+    def _save_required_fields(self):
         for field_name, field in self._model._fields.items():
             self._fields_required[field_name] = field.required
 
-    def _restore_required(self):
+    def _restore_required_fields(self):
         for field_name, required in self._fields_required.items():
             self._model._fields[field_name].required = required
 

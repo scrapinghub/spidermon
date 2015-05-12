@@ -54,7 +54,7 @@ class MessageTranslator(object):
     def translate_message(cls, message):
         for target_message in cls.messages:
             if isinstance(target_message, RE_PATTERN_INSTANCE) and target_message.search(message):
-                return cls.messages[target_message]
+                return cls.messages[target_message]  # TO-DO: Add substitution?
             elif message == target_message:
                 return cls.messages[target_message]
         return message

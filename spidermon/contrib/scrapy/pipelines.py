@@ -43,7 +43,7 @@ class ItemValidationPipeline(object):
     @classmethod
     def _load_jsonschema_validator(cls, schema):
         if isinstance(schema, six.string_types):
-            if '.json' in schema:
+            if schema.endswith('.json'):
                 with open(schema, 'r') as f:
                     schema = json.load(f)
             else:
@@ -51,7 +51,7 @@ class ItemValidationPipeline(object):
                 if isinstance(schema, six.string_types):
                     schema = json.loads(schema)
         if not isinstance(schema, dict):
-            raise NotConfigured('Invalid schema, jsonschemas must either be defined as:\n'
+            raise NotConfigured('Invalid schema, jsonschemas must be defined as:\n'
                                 '- an object path to a python dict.\n'
                                 '- an object path to a JSON string.\n'
                                 '- a path to a JSON file.')

@@ -11,8 +11,8 @@ REQUIRED_RE = re.compile("'(.+)' is a required property")
 
 class JSONSchemaMessageTranslator(MessageTranslator):
     messages = {
-        re.compile("'(.+)' is a required property"):    messages.MISSING_REQUIRED_FIELD,
-        re.compile("'(.+)' is too short"):              messages.FIELD_TOO_SHORT,
+        re.compile("'.+' is a required property"):    messages.MISSING_REQUIRED_FIELD,
+        re.compile("'.+' is too short"):              messages.FIELD_TOO_SHORT,
     }
 
 
@@ -29,7 +29,7 @@ class JSONSchemaValidator(Validator):
 
     def _validate(self, data, strict=False):
         validator = Draft4Validator(self._schema)
-        errors = sorted(validator.iter_errors(data), key=lambda e: e.path)
+        errors = validator.iter_errors(data)
         for e in errors:
             absolute_path = list(e.absolute_path)
             required_match = REQUIRED_RE.search(e.message)
