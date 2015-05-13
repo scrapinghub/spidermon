@@ -11,13 +11,13 @@ REQUIRED_RE = re.compile("'(.+)' is a required property")
 
 class JSONSchemaMessageTranslator(MessageTranslator):
     messages = {
-        re.compile("'.+' is a required property"):    messages.MISSING_REQUIRED_FIELD,
-        re.compile("'.+' is too short"):              messages.FIELD_TOO_SHORT,
+        r"'.+' is a required property":    messages.MISSING_REQUIRED_FIELD,
+        r"'.+' is too short":              messages.FIELD_TOO_SHORT,
     }
 
 
 class JSONSchemaValidator(Validator):
-    default_translator = JSONSchemaMessageTranslator
+    default_translator = JSONSchemaMessageTranslator()
     name = 'JSONSchema'
 
     def __init__(self, schema, translator=None, use_default_translator=True):
