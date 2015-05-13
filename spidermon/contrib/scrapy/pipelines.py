@@ -100,5 +100,3 @@ class ItemValidationPipeline(object):
             item[self.errors_field] = defaultdict(list)
         for field_name, messages in errors.items():
             item[self.errors_field][field_name] += messages
-
-
