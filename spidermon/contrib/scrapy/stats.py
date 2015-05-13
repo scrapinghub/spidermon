@@ -1,4 +1,4 @@
-from slugify import Slugify
+from slugify import slugify
 
 
 DEFAULT_PREFIX = 'spidermon/validation'
@@ -13,8 +13,6 @@ class NAMES:
 
 
 class ValidationStatsManager(object):
-    slugifier = Slugify(to_lower=True, separator='_')
-
     def __init__(self, stats, prefix=None, slugify=True):
         self.stats = stats
         self.prefix = prefix or DEFAULT_PREFIX
@@ -45,4 +43,4 @@ class ValidationStatsManager(object):
         return '/'.join([self.prefix] + list([self._get_name(n) for n in names]))
 
     def _get_name(self, name):
-        return self.slugifier(name) if self.slugify else name
+        return slugify(text=name, separator='_').lower() if self.slugify else name
