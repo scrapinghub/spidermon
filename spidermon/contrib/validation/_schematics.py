@@ -12,7 +12,7 @@ class SchematicsMessageTranslator(MessageTranslator):
         'Rogue field':                          messages.UNEXPECTED_FIELD,
         'This field is required.':              messages.MISSING_REQUIRED_FIELD,
         'String value is too long.':            messages.FIELD_TOO_LONG,
-        'String value is too short.':            messages.FIELD_TOO_SHORT,
+        'String value is too short.':           messages.FIELD_TOO_SHORT,
         'Not a well formed email address.':     'Invalid email',
         'Not a well formed URL.':               'Invalid URL',
     }
