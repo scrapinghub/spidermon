@@ -81,13 +81,13 @@ class ItemValidationPipeline(object):
                 for field_name, messages in errors.items():
                     for message in messages:
                         self.stats.add_field_error(field_name, message)
+                self.stats.add_item_with_errors()
                 if self.add_errors_to_items:
                     self._add_errors_to_item(item, errors)
-        if self.drop_items_with_errors:
-            self.stats.add_dropped_item()
-            raise DropItem('Validation failed!')
-        else:
-            return item
+                if self.drop_items_with_errors:
+                    self.stats.add_dropped_item()
+                    raise DropItem('Validation failed!')
+        return item
 
     def _add_validator(self, validator):
         self.validators.append(validator)
@@ -100,3 +100,5 @@ class ItemValidationPipeline(object):
             item[self.errors_field] = defaultdict(list)
         for field_name, messages in errors.items():
             item[self.errors_field][field_name] += messages
+
+
