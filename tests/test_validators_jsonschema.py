@@ -646,3 +646,98 @@ class Dependencies(object):
         ),
 
     ]
+
+
+class Enum(object):
+#class Enum(SchemaTest):
+    schema_simple = {
+        "enum": [1, 2, 3],
+    }
+    schema_heterogeneous = {
+        "enum": [6, "foo", [], True, {"foo": 12}],
+    }
+    schema_properties = {
+        "type": "object",
+        "properties": {
+            "foo": {"enum": ["foo"]},
+            "bar": {"enum": ["bar"]}
+        },
+        "required": ["bar"]
+    }
+    data_tests = [
+        DataTest(
+            name="simple, valid",
+            schema=schema_simple,
+            data=1,
+            valid=True,
+        ),
+        DataTest(
+            name="simple, invalid",
+            schema=schema_simple,
+            data=4,
+            valid=False,
+            expected_errors={
+                '': [messages.VALUE_NOT_IN_CHOICES],
+            }
+        ),
+        DataTest(
+            name="heterogeneous, valid",
+            schema=schema_heterogeneous,
+            data=[],
+            valid=True,
+        ),
+        DataTest(
+            name="heterogeneous, invalid",
+            schema=schema_heterogeneous,
+            data=None,
+            valid=False,
+            expected_errors={
+                '': [messages.VALUE_NOT_IN_CHOICES],
+            }
+        ),
+        DataTest(
+            name="heterogeneous, deep valid",
+            schema=schema_heterogeneous,
+            data={"foo": False},
+            valid=False,
+            expected_errors={
+                '': [messages.VALUE_NOT_IN_CHOICES],
+            }
+        ),
+        DataTest(
+            name="properties, both valid",
+            schema=schema_properties,
+            data={"foo": "foo", "bar": "bar"},
+            valid=True,
+        ),
+        DataTest(
+            name="properties, missing optional valid",
+            schema=schema_properties,
+            data={"bar": "bar"},
+            valid=True,
+        ),
+        DataTest(
+            name="properties, missing required",
+            schema=schema_properties,
+            data={"foo": "foo"},
+            valid=False,
+            expected_errors={
+                'bar': [messages.MISSING_REQUIRED_FIELD],
+            }
+        ),
+        DataTest(
+            name="properties, missing all",
+            schema=schema_properties,
+            data={},
+            valid=False,
+            expected_errors={
+                'bar': [messages.MISSING_REQUIRED_FIELD],
+            }
+        ),
+
+
+
+
+
+
+    ]

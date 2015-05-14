@@ -20,7 +20,8 @@ class JSONSchemaMessageTranslator(MessageTranslator):
         r"^Additional items are not allowed .*$":               messages.TOO_MANY_ITEMS,
         r"^Additional properties are not allowed .*$":          messages.UNEXPECTED_FIELD,
 
-        r"^'.+ is a dependency of .+$":                         messages.MISSING_DEPENDENT_FIELD,
+        r"^.+ is a dependency of .+$":                          messages.MISSING_DEPENDENT_FIELD,
+        r"^.* is not one of .+$":                               messages.VALUE_NOT_IN_CHOICES,
 
         #r".+ is not of type u?'number'":   messages.INVALID_NUMBER,
         #r".+ is not of type 'string'":   messages.INVALID_STRING,
