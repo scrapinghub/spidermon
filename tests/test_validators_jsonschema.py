@@ -36,92 +36,6 @@ class DataTest(object):
         self.schema = schema
 
 
-#class Type(object):
-class Type(SchemaTest):
-    type_tests = [
-        # -------------------------------------------------------
-        # type          data        expected error
-        # -------------------------------------------------------
-        # array
-        ('array',       [],         None),
-        ('array',       [1, 2],     None),
-        ('array',       None,       messages.INVALID_ARRAY),
-        ('array',       {},         messages.INVALID_ARRAY),
-        ('array',       "[]",       messages.INVALID_ARRAY),
-        ('array',       "abc",      messages.INVALID_ARRAY),
-        ('array',       1,          messages.INVALID_ARRAY),
-
-        # boolean
-        ('boolean',     True,       None),
-        ('boolean',     False,      None),
-        ('boolean',     None,       messages.INVALID_BOOLEAN),
-        ('boolean',     "True",     messages.INVALID_BOOLEAN),
-        ('boolean',     "False",    messages.INVALID_BOOLEAN),
-        ('boolean',     0,          messages.INVALID_BOOLEAN),
-        ('boolean',     1,          messages.INVALID_BOOLEAN),
-
-        # integer
-        ('integer',     0,          None),
-        ('integer',     1,          None),
-        ('integer',     -500,       None),
-        ('integer',     1000000,    None),
-        ('integer',     None,       messages.INVALID_INT),
-        ('integer',     1.2,        messages.INVALID_INT),
-        ('integer',     "1",        messages.INVALID_INT),
-
-        # number
-        ('number',      0,          None),
-        ('number',      1,          None),
-        ('number',      -500,       None),
-        ('number',      1000000,    None),
-        ('number',      1.2,        None),
-        ('number',      -34.7,      None),
-        ('number',      None,       messages.INVALID_NUMBER),
-        ('number',      "1",        messages.INVALID_NUMBER),
-        ('number',      True,       messages.INVALID_NUMBER),
-
-        # null
-        ('null',        None,       None),
-        ('null',        [],         messages.NOT_NULL),
-        ('null',        {},         messages.NOT_NULL),
-        ('null',        0,          messages.NOT_NULL),
-        ('null',        "",         messages.NOT_NULL),
-
-        # object
-        ('object',      {},         None),
-        ('object',      {'a': 1},   None),
-        ('object',      None,       messages.INVALID_OBJECT),
-        ('object',      [],         messages.INVALID_OBJECT),
-        ('object',      0,          messages.INVALID_OBJECT),
-        ('object',      "",         messages.INVALID_OBJECT),
-        ('object',      "abc",      messages.INVALID_OBJECT),
-
-        # string
-        ('string',      "",         None),
-        ('string',      "abc",      None),
-        ('string',      "-",        None),
-        ('string',      "...",      None),
-        ('string',      u"",        None),
-        ('string',      u"abc",     None),
-        ('string',      u"España",  None),
-        ('string',      "1",        None),
-        ('string',      None,       messages.INVALID_STRING),
-        ('string',      1,          messages.INVALID_STRING),
-        ('string',      [],         messages.INVALID_STRING),
-        ('string',      {},         messages.INVALID_STRING),
-    ]
-    data_tests = [
-        DataTest(
-            name='%02d_%s' % (i+1, data_type),
-            data=data,
-            valid=expected_error is None,
-            expected_errors={'': [expected_error]} if expected_error else None,
-            schema={"type": data_type},
-        )
-        for i, (data_type, data, expected_error) in enumerate(type_tests)
-    ]
-
-
 #class AdditionalItems(object):
 class AdditionalItems(SchemaTest):
     data_tests = [
@@ -734,12 +648,6 @@ class Enum(SchemaTest):
                 'bar': [messages.MISSING_REQUIRED_FIELD],
             }
         ),
-
-
-
-
-
-
     ]
 
 
@@ -1015,3 +923,90 @@ class Format(SchemaTest):
             }
         ),
     ]
+
+
+#class Type(object):
+class Type(SchemaTest):
+    type_tests = [
+        # -------------------------------------------------------
+        # type          data        expected error
+        # -------------------------------------------------------
+        # array
+        ('array',       [],         None),
+        ('array',       [1, 2],     None),
+        ('array',       None,       messages.INVALID_ARRAY),
+        ('array',       {},         messages.INVALID_ARRAY),
+        ('array',       "[]",       messages.INVALID_ARRAY),
+        ('array',       "abc",      messages.INVALID_ARRAY),
+        ('array',       1,          messages.INVALID_ARRAY),
+
+        # boolean
+        ('boolean',     True,       None),
+        ('boolean',     False,      None),
+        ('boolean',     None,       messages.INVALID_BOOLEAN),
+        ('boolean',     "True",     messages.INVALID_BOOLEAN),
+        ('boolean',     "False",    messages.INVALID_BOOLEAN),
+        ('boolean',     0,          messages.INVALID_BOOLEAN),
+        ('boolean',     1,          messages.INVALID_BOOLEAN),
+
+        # integer
+        ('integer',     0,          None),
+        ('integer',     1,          None),
+        ('integer',     -500,       None),
+        ('integer',     1000000,    None),
+        ('integer',     None,       messages.INVALID_INT),
+        ('integer',     1.2,        messages.INVALID_INT),
+        ('integer',     "1",        messages.INVALID_INT),
+
+        # number
+        ('number',      0,          None),
+        ('number',      1,          None),
+        ('number',      -500,       None),
+        ('number',      1000000,    None),
+        ('number',      1.2,        None),
+        ('number',      -34.7,      None),
+        ('number',      None,       messages.INVALID_NUMBER),
+        ('number',      "1",        messages.INVALID_NUMBER),
+        ('number',      True,       messages.INVALID_NUMBER),
+
+        # null
+        ('null',        None,       None),
+        ('null',        [],         messages.NOT_NULL),
+        ('null',        {},         messages.NOT_NULL),
+        ('null',        0,          messages.NOT_NULL),
+        ('null',        "",         messages.NOT_NULL),
+
+        # object
+        ('object',      {},         None),
+        ('object',      {'a': 1},   None),
+        ('object',      None,       messages.INVALID_OBJECT),
+        ('object',      [],         messages.INVALID_OBJECT),
+        ('object',      0,          messages.INVALID_OBJECT),
+        ('object',      "",         messages.INVALID_OBJECT),
+        ('object',      "abc",      messages.INVALID_OBJECT),
+
+        # string
+        ('string',      "",         None),
+        ('string',      "abc",      None),
+        ('string',      "-",        None),
+        ('string',      "...",      None),
+        ('string',      u"",        None),
+        ('string',      u"abc",     None),
+        ('string',      u"España",  None),
+        ('string',      "1",        None),
+        ('string',      None,       messages.INVALID_STRING),
+        ('string',      1,          messages.INVALID_STRING),
+        ('string',      [],         messages.INVALID_STRING),
+        ('string',      {},         messages.INVALID_STRING),
+    ]
+    data_tests = [
+        DataTest(
+            name='%02d_%s' % (i+1, data_type),
+            data=data,
+            valid=expected_error is None,
+            expected_errors={'': [expected_error]} if expected_error else None,
+            schema={"type": data_type},
+        )
+        for i, (data_type, data, expected_error) in enumerate(type_tests)
+    ]
+
