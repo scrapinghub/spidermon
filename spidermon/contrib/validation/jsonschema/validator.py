@@ -1,19 +1,14 @@
+from __future__ import absolute_import
 import re
 
 from jsonschema.validators import Draft4Validator
 
-from .base import Validator, MessageTranslator
-from . import messages
+from spidermon.contrib.validation.validator import Validator
+
+from .translator import JSONSchemaMessageTranslator
 
 
 REQUIRED_RE = re.compile("'(.+)' is a required property")
-
-
-class JSONSchemaMessageTranslator(MessageTranslator):
-    messages = {
-        r"'.+' is a required property":    messages.MISSING_REQUIRED_FIELD,
-        r"'.+' is too short":              messages.FIELD_TOO_SHORT,
-    }
 
 
 class JSONSchemaValidator(Validator):
@@ -28,9 +23,13 @@ class JSONSchemaValidator(Validator):
         self._schema = schema
 
     def _validate(self, data, strict=False):
-        validator = Draft4Validator(self._schema)
+        validator = Draft4Validator(
+            schema=self._schema,
+            #format_checker=format_checker,
+        )
         errors = validator.iter_errors(data)
         for e in errors:
+            #print e
             absolute_path = list(e.absolute_path)
             required_match = REQUIRED_RE.search(e.message)
             if required_match:

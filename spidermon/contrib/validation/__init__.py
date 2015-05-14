@@ -1,2 +1,2 @@
-from ._schematics import SchematicsValidator, SchematicsMessageTranslator
-from ._jsonschema import JSONSchemaValidator, JSONSchemaMessageTranslator
+from .schematics.validator import SchematicsValidator
+from .jsonschema.validator import JSONSchemaValidator
