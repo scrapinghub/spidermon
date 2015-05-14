@@ -36,8 +36,8 @@ class DataTest(object):
         self.schema = schema
 
 
-class Type(object):
-#class Type(SchemaTest):
+#class Type(object):
+class Type(SchemaTest):
     type_tests = [
         # -------------------------------------------------------
         # type          data        expected error
@@ -122,8 +122,8 @@ class Type(object):
     ]
 
 
-class AdditionalItems(object):
-#class AdditionalItems(SchemaTest):
+#class AdditionalItems(object):
+class AdditionalItems(SchemaTest):
     data_tests = [
         DataTest(
             name="additionalItems as schema, additional items match schema",
@@ -230,8 +230,8 @@ class AdditionalItems(object):
     ]
 
 
-class AdditionalProperties(object):
-#class AdditionalProperties(SchemaTest):
+#class AdditionalProperties(object):
+class AdditionalProperties(SchemaTest):
     schema_false = {
         "properties": {"foo": {}, "bar": {}},
         "patternProperties": {"^v": {}},
@@ -320,8 +320,8 @@ class AdditionalProperties(object):
     ]
 
 
-class AllOf(object):
-#class AllOf(SchemaTest):
+#class AllOf(object):
+class AllOf(SchemaTest):
     schema = {
         "type": "object",
         "properties": {
@@ -384,8 +384,8 @@ class AllOf(object):
     ]
 
 
-class AnyOf(object):
-#class AnyOf(SchemaTest):
+#class AnyOf(object):
+class AnyOf(SchemaTest):
     schema = {
         "type": "object",
         "properties": {
@@ -441,8 +441,8 @@ class AnyOf(object):
     ]
 
 
-class OneOf(object):
-#class OneOf(SchemaTest):
+#class OneOf(object):
+class OneOf(SchemaTest):
     schema = {
         "type": "object",
         "properties": {
@@ -503,8 +503,8 @@ class OneOf(object):
     ]
 
 
-class Dependencies(object):
-#class Dependencies(SchemaTest):
+#class Dependencies(object):
+class Dependencies(SchemaTest):
     schema_single = {
         "dependencies": {
             "bar": ["foo"],
@@ -648,8 +648,8 @@ class Dependencies(object):
     ]
 
 
-class Enum(object):
-#class Enum(SchemaTest):
+#class Enum(object):
+class Enum(SchemaTest):
     schema_simple = {
         "enum": [1, 2, 3],
     }
@@ -770,6 +770,10 @@ class Format(SchemaTest):
             "urls": {
                 "type": "array",
                 "items": {"type": "string", "format": "url"}
+            },
+            "regexes": {
+                "type": "array",
+                "items": {"type": "string", "format": "regex"}
             },
         },
     }
@@ -991,6 +995,23 @@ class Format(SchemaTest):
                 'urls.14': [messages.INVALID_URL],
                 'urls.15': [messages.INVALID_URL],
                 'urls.16': [messages.INVALID_URL],
+            }
+        ),
+        DataTest(
+            name='regexes. valid',
+            data={'regexes': [
+                '[0-9]+',
+            ]},
+            valid=True,
+        ),
+        DataTest(
+            name='regexes. invalid',
+            data={'regexes': [
+                '[0-9]++',
+            ]},
+            valid=False,
+            expected_errors={
+                'regexes.0': [messages.INVALID_REGEX],
             }
         ),
     ]
