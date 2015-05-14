@@ -23,6 +23,16 @@ class JSONSchemaMessageTranslator(MessageTranslator):
         r"^.+ is a dependency of .+$":                          messages.MISSING_DEPENDENT_FIELD,
         r"^.* is not one of .+$":                               messages.VALUE_NOT_IN_CHOICES,
 
+        r"^.* is not a 'date-time'$":                           messages.INVALID_DATETIME,
+        r"^.* is not a 'email'$":                               messages.INVALID_EMAIL,
+        r"^.* is not a 'ipv4'$":                                messages.INVALID_IPV4,
+        r"^.* is not a 'ipv6'$":                                messages.INVALID_IPV6,
+        r"^.* is not a 'hostname'$":                            messages.INVALID_HOSTNAME,
+        r"^.* is not a 'url'$":                                 messages.INVALID_URL,
+        r"^.* is not a 'uri'$":                                 messages.INVALID_URI,
+        r"^.* is not a 'regex'$":                               messages.INVALID_REGEX,
+        r"^.* is not a 'color'$":                               messages.INVALID_COLOR,
+
         #r".+ is not of type u?'number'":   messages.INVALID_NUMBER,
         #r".+ is not of type 'string'":   messages.INVALID_STRING,
         #r".+ is not of type u?'object'":   messages.INVALID_OBJECT,

@@ -741,3 +741,256 @@ class Enum(object):
 
 
     ]
+
+
+class Format(SchemaTest):
+    schema = {
+        "type": "object",
+        "properties": {
+            "datetimes": {
+                "type": "array",
+                "items": {"type": "string", "format": "date-time"}
+            },
+            "emails": {
+                "type": "array",
+                "items": {"type": "string", "format": "email"}
+            },
+            "ipv4s": {
+                "type": "array",
+                "items": {"type": "string", "format": "ipv4"}
+            },
+            "ipv6s": {
+                "type": "array",
+                "items": {"type": "string", "format": "ipv6"}
+            },
+            "hostnames": {
+                "type": "array",
+                "items": {"type": "string", "format": "hostname"}
+            },
+            "urls": {
+                "type": "array",
+                "items": {"type": "string", "format": "url"}
+            },
+        },
+    }
+    data_tests = [
+        DataTest(
+            name='datetime. valid',
+            data={'datetimes': [
+                "2013-03-25T12:42:31+00:32",
+                "2013-03-25T22:04:10.04399Z",
+            ]},
+            valid=True
+        ),
+        DataTest(
+            name='datetime. invalid',
+            data={'datetimes': [
+                "2015-05-13 13:35:15.718978",
+                "2015-05-13 13:35:15",
+                "13-05-2013",
+            ]},
+            valid=False,
+            expected_errors={
+                'datetimes.0': [messages.INVALID_DATETIME],
+                'datetimes.1': [messages.INVALID_DATETIME],
+                'datetimes.2': [messages.INVALID_DATETIME],
+            }
+        ),
+        DataTest(
+            name='email. valid',
+            data={'emails': [
+                'johndoe@domain.com',
+                'john.doe@domain.com',
+                'john.doe@sub.domain.com',
+                'j@sub.domain.com',
+                'j@d.com',
+                'j@domain.co.uk',
+            ]},
+            valid=True
+        ),
+        DataTest(
+            name='email. invalid',
+            data={'emails': [
+                '',
+                'johndoe',
+                'johndoe@domain',
+                'johndoe@domain.',
+                '@domain',
+                '@domain.com',
+                'domain.com',
+            ]},
+            valid=False,
+            expected_errors={
+                'emails.0': [messages.INVALID_EMAIL],
+                'emails.1': [messages.INVALID_EMAIL],
+                'emails.2': [messages.INVALID_EMAIL],
+                'emails.3': [messages.INVALID_EMAIL],
+                'emails.4': [messages.INVALID_EMAIL],
+                'emails.5': [messages.INVALID_EMAIL],
+                'emails.6': [messages.INVALID_EMAIL],
+            }
+        ),
+        DataTest(
+            name='ipv4. valid',
+            data={'ipv4s': [
+                '98.139.180.149',
+                '69.89.31.226',
+                '192.168.1.1',
+                '127.0.0.0',
+                '0.0.0.0',
+                '255.255.255.255',
+            ]},
+            valid=True
+        ),
+        DataTest(
+            name='ipv4. invalid',
+            data={'ipv4s': [
+                '',
+                '0',
+                '0.',
+                '0.0',
+                '0.0.',
+                '0.0.0',
+                '0.0.0.0.',
+                '0.0.0.0.0',
+                '256.256.256.256',
+                '2002:4559:1FE2::4559:1FE2',
+                '2002:4559:1FE2:0:0:0:4559:1FE2',
+                '2002:4559:1FE2:0000:0000:0000:4559:1FE2',
+            ]},
+            valid=False,
+            expected_errors={
+                'ipv4s.0': [messages.INVALID_IPV4],
+                'ipv4s.1': [messages.INVALID_IPV4],
+                'ipv4s.2': [messages.INVALID_IPV4],
+                'ipv4s.3': [messages.INVALID_IPV4],
+                'ipv4s.4': [messages.INVALID_IPV4],
+                'ipv4s.5': [messages.INVALID_IPV4],
+                'ipv4s.6': [messages.INVALID_IPV4],
+                'ipv4s.7': [messages.INVALID_IPV4],
+                'ipv4s.8': [messages.INVALID_IPV4],
+                'ipv4s.9': [messages.INVALID_IPV4],
+                'ipv4s.10': [messages.INVALID_IPV4],
+                'ipv4s.11': [messages.INVALID_IPV4],
+            }
+        ),
+        DataTest(
+            name='ipv6. valid',
+            data={'ipv6s': [
+                '2002:4559:1FE2::4559:1FE2',
+                '2002:4559:1FE2:0:0:0:4559:1FE2',
+                '2002:4559:1FE2:0000:0000:0000:4559:1FE2',
+            ]},
+            valid=True
+        ),
+        DataTest(
+            name='ipv6. invalid',
+            data={'ipv6s': [
+                '',
+                '98.139.180.149',
+                '69.89.31.226',
+                '192.168.1.1',
+                '127.0.0.0',
+                '0.0.0.0',
+                '255.255.255.255',
+            ]},
+            valid=False,
+            expected_errors={
+                'ipv6s.0': [messages.INVALID_IPV6],
+                'ipv6s.1': [messages.INVALID_IPV6],
+                'ipv6s.2': [messages.INVALID_IPV6],
+                'ipv6s.3': [messages.INVALID_IPV6],
+                'ipv6s.4': [messages.INVALID_IPV6],
+                'ipv6s.5': [messages.INVALID_IPV6],
+                'ipv6s.6': [messages.INVALID_IPV6],
+            }
+        ),
+        DataTest(
+            name='hostname. valid',
+            data={'hostnames': [
+                'localhost',
+                'google',
+                'google.com',
+                'xn--hxajbheg2az3al.xn--jxalpdlp',
+                'a'*63,
+            ]},
+            valid=True,
+        ),
+        DataTest(
+            name='hostname. invalid',
+            data={'hostnames': [
+                '...',
+                'a'*64,
+                '-hi-',
+                '_hi_',
+                '*hi*',
+            ]},
+            valid=False,
+            expected_errors={
+                'hostnames.0': [messages.INVALID_HOSTNAME],
+                'hostnames.1': [messages.INVALID_HOSTNAME],
+                'hostnames.2': [messages.INVALID_HOSTNAME],
+                'hostnames.3': [messages.INVALID_HOSTNAME],
+                'hostnames.4': [messages.INVALID_HOSTNAME],
+            }
+        ),
+        DataTest(
+            name='urls. valid',
+            data={'urls': [
+                'http://www.domain',
+                'http://www.com',
+                'http://www.domain.com.',
+                'http://www.domain.com/.',
+                'http://www.domain.com/..',
+                'http://www.domain.com//cataglog//index.html',
+                'http://www.domain.net/',
+                'http://www.domain.com/level2/leafnode-L2.xhtml/',
+                'http://www.domain.com/level2/level3/leafnode-L3.xhtml/',
+                'http://www.domain.com?pageid=123&testid=1524',
+                'http://www.domain.com/do.html#A',
+            ]},
+            valid=True,
+        ),
+        DataTest(
+            name='urls. invalid',
+            data={'urls': [
+                '',
+                'http://',
+                'http://www.',
+                'www.',
+                'http://www. .com',
+                'domain.com',
+                'www.domain.com',
+                'http:/www.domain.com',
+                'http//www.domain.com',
+                'http:www.domain.com',
+                'htp://domain.com/',
+                'http://sub.domain.com\en-us\default.aspx\\',
+                'http:\\\\msdn.domain.com\en-us\library\default.aspx\\',
+                'http:\\\\www.domain.com\leafnode-L1.html',
+                './',
+                '../',
+                'http:\\\\www.domain.com\\leafnode-L1.xhtml\\',
+            ]},
+            valid=False,
+            expected_errors={
+                'urls.0': [messages.INVALID_URL],
+                'urls.1': [messages.INVALID_URL],
+                'urls.2': [messages.INVALID_URL],
+                'urls.3': [messages.INVALID_URL],
+                'urls.4': [messages.INVALID_URL],
+                'urls.5': [messages.INVALID_URL],
+                'urls.6': [messages.INVALID_URL],
+                'urls.7': [messages.INVALID_URL],
+                'urls.8': [messages.INVALID_URL],
+                'urls.9': [messages.INVALID_URL],
+                'urls.10': [messages.INVALID_URL],
+                'urls.11': [messages.INVALID_URL],
+                'urls.12': [messages.INVALID_URL],
+                'urls.13': [messages.INVALID_URL],
+                'urls.14': [messages.INVALID_URL],
+                'urls.15': [messages.INVALID_URL],
+                'urls.16': [messages.INVALID_URL],
+            }
+        ),
+    ]
