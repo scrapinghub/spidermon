@@ -124,7 +124,9 @@ class StatsMonitor(Monitor):
 class SpiderMonitor(StatsMonitor):
     def __init__(self, methodName='runTest', name=None):
         super(SpiderMonitor, self).__init__(methodName, name)
-        self.job = {}
+        self.crawler = None
+        self.spider = None
+        self.hubstorage = None
 
     def init_data(self, data):
         super(SpiderMonitor, self).init_data(data)
