@@ -20,7 +20,7 @@ def monkeypatch_urltype():
     URLType.URL_REGEX = URL_REGEX
 
 
-def monkeypatch_urltype():
+def monkeypatch_listtype():
     """
     Replace ListType list conversion method to avoid errors
     """
@@ -36,4 +36,4 @@ def monkeypatch_urltype():
 
 # Apply monkeypatches
 monkeypatch_urltype()
-monkeypatch_urltype()
+monkeypatch_listtype()
