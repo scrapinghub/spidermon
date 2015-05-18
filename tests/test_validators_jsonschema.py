@@ -1787,3 +1787,162 @@ class Properties(object):
             }
         ),
     ]
+
+
+#class Ref(object):
+class Ref(SchemaTest):
+    schema_root = {
+        "properties": {
+            "foo": {"$ref": "#"},
+        },
+        "additionalProperties": False,
+    }
+    schema_relative = {
+        "properties": {
+            "foo": {"type": "integer"},
+            "bar": {"$ref": "#/properties/foo"},
+        },
+    }
+    schema_relative_array = {
+        "items": [
+            {"type": "integer"},
+            {"$ref": "#/items/0"},
+        ],
+    }
+    schema_escaped = {
+        "tilda~field": {"type": "integer"},
+        "slash/field": {"type": "integer"},
+        "percent%field": {"type": "integer"},
+        "properties": {
+            "tilda": {"$ref": "#/tilda~0field"},
+            "slash": {"$ref": "#/slash~1field"},
+            "percent": {"$ref": "#/percent%25field"}
+        }
+    }
+    schema_nested = {
+        "definitions": {
+            "a": {"type": "integer"},
+            "b": {"$ref": "#/definitions/a"},
+            "c": {"$ref": "#/definitions/b"},
+        },
+        "$ref": "#/definitions/c",
+    }
+    data_tests = [
+        DataTest(
+            name="root. match",
+            schema=schema_root,
+            data={"foo": False},
+            valid=True,
+        ),
+        DataTest(
+            name="root. recursive match",
+            schema=schema_root,
+            data={"foo": {"foo": False}},
+            valid=True,
+        ),
+        DataTest(
+            name="root. mismatch",
+            schema=schema_root,
+            data={"bar": False},
+            valid=False,
+            expected_errors={
+                '': [messages.UNEXPECTED_FIELD],
+            }
+        ),
+        DataTest(
+            name="root. recursive mismatch",
+            schema=schema_root,
+            data={"foo": {"bar": False}},
+            valid=False,
+            expected_errors={
+                'foo': [messages.UNEXPECTED_FIELD],
+            }
+        ),
+        DataTest(
+            name="relative. match",
+            schema=schema_relative,
+            data={"bar": 3},
+            valid=True,
+        ),
+        DataTest(
+            name="relative. mismatch",
+            schema=schema_relative,
+            data={"bar": True},
+            valid=False,
+            expected_errors={
+                'bar': [messages.INVALID_INT],
+            }
+        ),
+        DataTest(
+            name="relative array. match",
+            schema=schema_relative_array,
+            data=[1, 2],
+            valid=True,
+        ),
+        DataTest(
+            name="relative array. mismatch",
+            schema=schema_relative_array,
+            data=[1, "foo"],
+            valid=False,
+            expected_errors={
+                '1': [messages.INVALID_INT],
+            }
+        ),
+        DataTest(
+            name="escaped. slash",
+            schema=schema_escaped,
+            data={"slash": "aoeu"},
+            valid=False,
+            expected_errors={
+                'slash': [messages.INVALID_INT],
+            }
+        ),
+        DataTest(
+            name="escaped. tilda",
+            schema=schema_escaped,
+            data={"tilda": "aoeu"},
+            valid=False,
+            expected_errors={
+                'tilda': [messages.INVALID_INT],
+            }
+        ),
+        DataTest(
+            name="escaped. percent",
+            schema=schema_escaped,
+            data={"percent": "aoeu"},
+            valid=False,
+            expected_errors={
+                'percent': [messages.INVALID_INT],
+            }
+        ),
+        DataTest(
+            name="escaped. all",
+            schema=schema_escaped,
+            data={
+                "slash": "aoeu",
+                "tilda": "aoeu",
+                "percent": "aoeu"
+            },
+            valid=False,
+            expected_errors={
+                'slash': [messages.INVALID_INT],
+                'tilda': [messages.INVALID_INT],
+                'percent': [messages.INVALID_INT],
+            }
+        ),
+        DataTest(
+            name="nested. valid",
+            schema=schema_nested,
+            data=5,
+            valid=True,
+        ),
+        DataTest(
+            name="nested. invalid",
+            schema=schema_nested,
+            data='a',
+            valid=False,
+            expected_errors={
+                '': [messages.INVALID_INT],
+            }
+        ),
+    ]
