@@ -355,68 +355,6 @@ class AnyOf(object):
     ]
 
 
-class OneOf(object):
-#class OneOf(SchemaTest):
-    schema = {
-        "type": "object",
-        "properties": {
-            "A": {"type": "boolean"},
-            "B": {"type": "boolean"}
-        },
-        "oneOf": [
-            {"required": ["A"]},
-            {"required": ["B"]}
-        ]
-    }
-    data_tests = [
-        DataTest(
-            name="Empty object",
-            data={},
-            valid=False,
-            expected_errors={
-                '': [messages.NOT_VALID_UNDER_ANY_SCHEMA],
-            }
-        ),
-        DataTest(
-            name="Mismatch B",
-            data={"A": True},
-            valid=True,
-        ),
-        DataTest(
-            name="Mismatch A",
-            data={"B": True},
-            valid=True,
-        ),
-        DataTest(
-            name="Both values",
-            data={"A": False, "B": False},
-            valid=False,
-            expected_errors={
-                '': [messages.VALID_FOR_SEVERAL_EXCLUSIVE_SCHEMAS],
-            }
-        ),
-        DataTest(
-            name="Wrong type for A",
-            data={"A": 1, "B": False},
-            valid=False,
-            expected_errors={
-                '': [messages.VALID_FOR_SEVERAL_EXCLUSIVE_SCHEMAS],
-                'A': [messages.INVALID_BOOLEAN],
-            }
-        ),
-        DataTest(
-            name="Wrong type for both",
-            data={"A": 1, "B": 1},
-            valid=False,
-            expected_errors={
-                '': [messages.VALID_FOR_SEVERAL_EXCLUSIVE_SCHEMAS],
-                'A': [messages.INVALID_BOOLEAN],
-                'B': [messages.INVALID_BOOLEAN],
-            }
-        ),
-    ]
-
-
 class Dependencies(object):
 #class Dependencies(SchemaTest):
     schema_single = {
@@ -1510,5 +1448,230 @@ class Not(object):
             schema=schema_forbidden,
             data={"bar": 1, "baz": 2},
             valid=True,
+        ),
+    ]
+
+
+class OneOf(object):
+#class OneOf(SchemaTest):
+    schema = {
+        "type": "object",
+        "properties": {
+            "A": {"type": "boolean"},
+            "B": {"type": "boolean"}
+        },
+        "oneOf": [
+            {"required": ["A"]},
+            {"required": ["B"]}
+        ]
+    }
+    data_tests = [
+        DataTest(
+            name="Empty object",
+            data={},
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_VALID_UNDER_ANY_SCHEMA],
+            }
+        ),
+        DataTest(
+            name="Mismatch B",
+            data={"A": True},
+            valid=True,
+        ),
+        DataTest(
+            name="Mismatch A",
+            data={"B": True},
+            valid=True,
+        ),
+        DataTest(
+            name="Both values",
+            data={"A": False, "B": False},
+            valid=False,
+            expected_errors={
+                '': [messages.VALID_FOR_SEVERAL_EXCLUSIVE_SCHEMAS],
+            }
+        ),
+        DataTest(
+            name="Wrong type for A",
+            data={"A": 1, "B": False},
+            valid=False,
+            expected_errors={
+                '': [messages.VALID_FOR_SEVERAL_EXCLUSIVE_SCHEMAS],
+                'A': [messages.INVALID_BOOLEAN],
+            }
+        ),
+        DataTest(
+            name="Wrong type for both",
+            data={"A": 1, "B": 1},
+            valid=False,
+            expected_errors={
+                '': [messages.VALID_FOR_SEVERAL_EXCLUSIVE_SCHEMAS],
+                'A': [messages.INVALID_BOOLEAN],
+                'B': [messages.INVALID_BOOLEAN],
+            }
+        ),
+    ]
+
+
+class Pattern(object):
+#class Pattern(SchemaTest):
+    schema = {
+        "pattern": "^a*$",
+    }
+    data_tests = [
+        DataTest(
+            name="valid",
+            data='aaa',
+            valid=True,
+        ),
+        DataTest(
+            name="invalid",
+            data='abc',
+            valid=False,
+            expected_errors={
+                '': [messages.REGEX_NOT_MATCHED],
+            }
+        ),
+        DataTest(
+            name="ignores non-strings",
+            data=True,
+            valid=True,
+        ),
+    ]
+
+
+class PatternProperties(object):
+#class PatternProperties(SchemaTest):
+    schema_single = {
+        "patternProperties": {
+            "f.*o": {"type": "integer"},
+        },
+    }
+    schema_multiple = {
+        "patternProperties": {
+            "a*": {"type": "integer"},
+            "aaa*": {"maximum": 20},
+        },
+    }
+    schema_complex = {
+        "patternProperties": {
+            "[0-9]{2,}": {"type": "boolean"},
+            "X_": {"type": "string"},
+        },
+    }
+    data_tests = [
+        DataTest(
+            name="single. valid",
+            schema=schema_single,
+            data={"foo": 1},
+            valid=True,
+        ),
+        DataTest(
+            name="single. multiple valid",
+            schema=schema_single,
+            data={"foo": 1, "foooooo": 2},
+            valid=True,
+        ),
+        DataTest(
+            name="single. invalid",
+            schema=schema_single,
+            data={"foo": "bar", "fooooo": 2},
+            valid=False,
+            expected_errors={
+                'foo': [messages.INVALID_INT],
+            }
+        ),
+        DataTest(
+            name="single. multiple invalid",
+            schema=schema_single,
+            data={"foo": "bar", "foooooo": "baz"},
+            valid=False,
+            expected_errors={
+                'foo': [messages.INVALID_INT],
+                'foooooo': [messages.INVALID_INT],
+            }
+        ),
+        DataTest(
+            name="single. ignores non-objects",
+            schema=schema_single,
+            data=12,
+            valid=True,
+        ),
+        DataTest(
+            name="multiple. valid",
+            schema=schema_multiple,
+            data={"a": 21},
+            valid=True,
+        ),
+        DataTest(
+            name="multiple. simultaneous valid",
+            schema=schema_multiple,
+            data={"aaaa": 18},
+            valid=True,
+        ),
+        DataTest(
+            name="multiple. multiple valid",
+            schema=schema_multiple,
+            data={"a": 21, "aaaa": 18},
+            valid=True,
+        ),
+        DataTest(
+            name="multiple. invalid one",
+            schema=schema_multiple,
+            data={"a": "bar"},
+            valid=False,
+            expected_errors={
+                'a': [messages.INVALID_INT],
+            }
+        ),
+        DataTest(
+            name="multiple. invalid other",
+            schema=schema_multiple,
+            data={"aaaa": 31},
+            valid=False,
+            expected_errors={
+                'aaaa': [messages.NUMBER_TOO_HIGH],
+            }
+        ),
+        DataTest(
+            name="multiple. invalid both",
+            schema=schema_multiple,
+            data={"aaa": "foo", "aaaa": 31},
+            valid=False,
+            expected_errors={
+                'aaa': [messages.INVALID_INT],
+                'aaaa': [messages.NUMBER_TOO_HIGH],
+            }
+        ),
+        DataTest(
+            name="complex. non recognized members are ignored",
+            schema=schema_complex,
+            data={"answer 1": "42"},
+            valid=True,
+        ),
+        DataTest(
+            name="complex. recognized members are accounted for",
+            schema=schema_complex,
+            data={"a31b": None},
+            valid=False,
+            expected_errors={
+                'a31b': [messages.INVALID_BOOLEAN],
+            }
+        ),
+        DataTest(
+            name="complex. regexes are case sensitive",
+            schema=schema_complex,
+            data={"a_x_3": 3 },
+            valid=True,
+        ),
+        DataTest(
+            name="complex. regexes are case sensitive 2",
+            schema=schema_complex,
+            data={"a_X_3": 3},
+            valid=False,
+            expected_errors={
+                'a_X_3': [messages.INVALID_STRING],
+            }
         ),
     ]

@@ -49,5 +49,7 @@ class JSONSchemaMessageTranslator(MessageTranslator):
 
         r"^.+ is too short$":                                   messages.FIELD_TOO_SHORT,
         r"^.+ is too long$":                                    messages.FIELD_TOO_LONG,
+
+        r"^.+ does not match .*$":                              messages.REGEX_NOT_MATCHED,
     }
 
