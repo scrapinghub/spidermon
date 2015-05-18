@@ -36,8 +36,7 @@ class DataTest(object):
         self.schema = schema
 
 
-class AdditionalItems(object):
-#class AdditionalItems(SchemaTest):
+class AdditionalItems(SchemaTest):
     data_tests = [
         DataTest(
             name="additionalItems as schema, additional items match schema",
@@ -144,8 +143,7 @@ class AdditionalItems(object):
     ]
 
 
-class AdditionalProperties(object):
-#class AdditionalProperties(SchemaTest):
+class AdditionalProperties(SchemaTest):
     schema_false = {
         "properties": {"foo": {}, "bar": {}},
         "patternProperties": {"^v": {}},
@@ -234,8 +232,7 @@ class AdditionalProperties(object):
     ]
 
 
-class AllOf(object):
-#class AllOf(SchemaTest):
+class AllOf(SchemaTest):
     schema = {
         "type": "object",
         "properties": {
@@ -298,8 +295,7 @@ class AllOf(object):
     ]
 
 
-class AnyOf(object):
-#class AnyOf(SchemaTest):
+class AnyOf(SchemaTest):
     schema = {
         "type": "object",
         "properties": {
@@ -355,8 +351,7 @@ class AnyOf(object):
     ]
 
 
-class Dependencies(object):
-#class Dependencies(SchemaTest):
+class Dependencies(SchemaTest):
     schema_single = {
         "dependencies": {
             "bar": ["foo"],
@@ -500,8 +495,7 @@ class Dependencies(object):
     ]
 
 
-class Enum(object):
-#class Enum(SchemaTest):
+class Enum(SchemaTest):
     schema_simple = {
         "enum": [1, 2, 3],
     }
@@ -589,8 +583,7 @@ class Enum(object):
     ]
 
 
-class Format(object):
-#class Format(SchemaTest):
+class Format(SchemaTest):
     schema = {
         "type": "object",
         "properties": {
@@ -864,8 +857,7 @@ class Format(object):
     ]
 
 
-class Items(object):
-#class Items(SchemaTest):
+class Items(SchemaTest):
     schema_items = {
         "items": {"type": "integer"},
     }
@@ -916,8 +908,7 @@ class Items(object):
     ]
 
 
-class MaxItems(object):
-#class MaxItems(SchemaTest):
+class MaxItems(SchemaTest):
     schema = {
         "maxItems": 2
     }
@@ -948,8 +939,7 @@ class MaxItems(object):
     ]
 
 
-class MaxLength(object):
-#class MaxLength(SchemaTest):
+class MaxLength(SchemaTest):
     schema = {
         "maxLength": 2
     }
@@ -980,8 +970,7 @@ class MaxLength(object):
     ]
 
 
-class MaxProperties(object):
-#class MaxProperties(SchemaTest):
+class MaxProperties(SchemaTest):
     schema = {
         "maxProperties": 2
     }
@@ -1012,8 +1001,7 @@ class MaxProperties(object):
     ]
 
 
-class Maximum(object):
-#class Maximum(SchemaTest):
+class Maximum(SchemaTest):
     schema = {
         "maximum": 3.0,
     }
@@ -1067,8 +1055,7 @@ class Maximum(object):
     ]
 
 
-class MinItems(object):
-#class MinItems(SchemaTest):
+class MinItems(SchemaTest):
     schema = {
         "minItems": 1,
     }
@@ -1099,8 +1086,7 @@ class MinItems(object):
     ]
 
 
-class MinProperties(object):
-#class MinProperties(SchemaTest):
+class MinProperties(SchemaTest):
     schema = {
         "minProperties": 1,
     }
@@ -1131,8 +1117,7 @@ class MinProperties(object):
     ]
 
 
-class Minimum(object):
-#class Minimum(SchemaTest):
+class Minimum(SchemaTest):
     schema = {
         "minimum": 1.1,
     }
@@ -1186,8 +1171,7 @@ class Minimum(object):
     ]
 
 
-class MultipleOf(object):
-#class MultipleOf(SchemaTest):
+class MultipleOf(SchemaTest):
     schema_int = {
         "multipleOf": 2,
     }
@@ -1264,8 +1248,7 @@ class MultipleOf(object):
     ]
 
 
-class Not(object):
-#class Not(SchemaTest):
+class Not(SchemaTest):
     schema_not = {
         "not": {"type": "integer"},
     }
@@ -1366,8 +1349,7 @@ class Not(object):
     ]
 
 
-class OneOf(object):
-#class OneOf(SchemaTest):
+class OneOf(SchemaTest):
     schema = {
         "type": "object",
         "properties": {
@@ -1428,8 +1410,7 @@ class OneOf(object):
     ]
 
 
-class Pattern(object):
-#class Pattern(SchemaTest):
+class Pattern(SchemaTest):
     schema = {
         "pattern": "^a*$",
     }
@@ -1455,8 +1436,7 @@ class Pattern(object):
     ]
 
 
-class PatternProperties(object):
-#class PatternProperties(SchemaTest):
+class PatternProperties(SchemaTest):
     schema_single = {
         "patternProperties": {
             "f.*o": {"type": "integer"},
@@ -1591,8 +1571,7 @@ class PatternProperties(object):
     ]
 
 
-class Properties(object):
-#class Properties(SchemaTest):
+class Properties(SchemaTest):
     schema = {
         "properties": {
             "foo": {"type": "integer"},
@@ -1703,8 +1682,7 @@ class Properties(object):
     ]
 
 
-class Ref(object):
-#class Ref(SchemaTest):
+class Ref(SchemaTest):
     schema_root = {
         "properties": {
             "foo": {"$ref": "#"},
@@ -1862,8 +1840,7 @@ class Ref(object):
     ]
 
 
-class Required(object):
-#class Required(SchemaTest):
+class Required(SchemaTest):
     schema = {
         "properties": {
             "foo": {},
@@ -1899,8 +1876,7 @@ class Required(object):
     ]
 
 
-class Type(object):
-#class Type(SchemaTest):
+class Type(SchemaTest):
     type_tests = [
         # -------------------------------------------------------
         # type          data        expected error
@@ -1982,4 +1958,101 @@ class Type(object):
             schema={"type": data_type},
         )
         for i, (data_type, data, expected_error) in enumerate(type_tests)
+    ]
+
+
+class Unique(SchemaTest):
+    schema = {
+        "uniqueItems": True,
+    }
+    data_tests = [
+        DataTest(
+            name="unique array",
+            data=[1, 2],
+            valid=True,
+        ),
+        DataTest(
+            name="non-unique array",
+            data=[1, 1],
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_UNIQUE],
+            }
+        ),
+        DataTest(
+            name="non-unique numbers",
+            data=[1.0, 1.00, 1],
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_UNIQUE],
+            }
+        ),
+        DataTest(
+            name="unique objects array",
+            data=[{"foo": "bar"}, {"foo": "baz"}],
+            valid=True,
+        ),
+        DataTest(
+            name="non-unique objects array",
+            data=[{"foo": "bar"}, {"foo": "bar"}],
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_UNIQUE],
+            }
+        ),
+        DataTest(
+            name="unique nested objects array",
+            data=[
+                {"foo": {"bar": {"baz": True}}},
+                {"foo": {"bar": {"baz": False}}}
+            ],
+            valid=True,
+        ),
+        DataTest(
+            name="non-unique nested objects array",
+            data=[
+                {"foo": {"bar": {"baz": True}}},
+                {"foo": {"bar": {"baz": True}}}
+            ],
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_UNIQUE],
+            }
+        ),
+        DataTest(
+            name="unique array of arrays",
+            data=[["foo"], ["bar"]],
+            valid=True,
+        ),
+        DataTest(
+            name="non-unique array of arrays",
+            data=[["foo"], ["foo"]],
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_UNIQUE],
+            }
+        ),
+        DataTest(
+            name="1 and True",
+            data=[1, True],
+            valid=True,
+        ),
+        DataTest(
+            name="0 and False",
+            data=[0, False],
+            valid=True,
+        ),
+        DataTest(
+            name="unique heterogeneous types",
+            data=[{}, [1], True, None, 1],
+            valid=True,
+        ),
+        DataTest(
+            name="non-unique heterogeneous types",
+            data=[{}, [1], True, None, {}, 1],
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_UNIQUE],
+            }
+        ),
     ]
