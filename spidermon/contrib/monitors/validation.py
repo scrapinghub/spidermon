@@ -35,13 +35,11 @@ class FieldErrorsInfo(MetaDictPercentCounter):
         return self._fields_count
 
 
-
-
 class ItemsInfo(object):
-    def __init__(self, count, with_errors, dropped):
-        self.count = count
-        self.errors = PercentCounter(with_errors, count)
-        self.dropped = PercentCounter(dropped, count)
+    def __init__(self, items_count, items_with_errors, items_dropped):
+        self.count = items_count
+        self.errors = PercentCounter(count=items_with_errors, total=items_count)
+        self.dropped = PercentCounter(count=items_dropped, total=items_count)
 
 
 class ValidationInfo(object):
@@ -52,7 +50,10 @@ class ValidationInfo(object):
         items_count = sum(self.analyzer.search('items$').values())
         items_with_errors_count = sum(self.analyzer.search('items/errors$').values())
         items_dropped_count = sum(self.analyzer.search('items/dropped$').values())
-        self.items = ItemsInfo(items_count, items_with_errors_count, items_dropped_count)
+        self.items = ItemsInfo(
+            items_count=items_count,
+            items_with_errors=items_with_errors_count,
+            items_dropped=items_dropped_count)
 
         # errors & fields
         fields_count = sum(self.analyzer.search('fields$').values())
