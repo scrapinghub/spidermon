@@ -36,8 +36,8 @@ class DataTest(object):
         self.schema = schema
 
 
-#class AdditionalItems(object):
-class AdditionalItems(SchemaTest):
+class AdditionalItems(object):
+#class AdditionalItems(SchemaTest):
     data_tests = [
         DataTest(
             name="additionalItems as schema, additional items match schema",
@@ -144,8 +144,8 @@ class AdditionalItems(SchemaTest):
     ]
 
 
-#class AdditionalProperties(object):
-class AdditionalProperties(SchemaTest):
+class AdditionalProperties(object):
+#class AdditionalProperties(SchemaTest):
     schema_false = {
         "properties": {"foo": {}, "bar": {}},
         "patternProperties": {"^v": {}},
@@ -234,8 +234,8 @@ class AdditionalProperties(SchemaTest):
     ]
 
 
-#class AllOf(object):
-class AllOf(SchemaTest):
+class AllOf(object):
+#class AllOf(SchemaTest):
     schema = {
         "type": "object",
         "properties": {
@@ -298,8 +298,8 @@ class AllOf(SchemaTest):
     ]
 
 
-#class AnyOf(object):
-class AnyOf(SchemaTest):
+class AnyOf(object):
+#class AnyOf(SchemaTest):
     schema = {
         "type": "object",
         "properties": {
@@ -355,8 +355,8 @@ class AnyOf(SchemaTest):
     ]
 
 
-#class OneOf(object):
-class OneOf(SchemaTest):
+class OneOf(object):
+#class OneOf(SchemaTest):
     schema = {
         "type": "object",
         "properties": {
@@ -417,8 +417,8 @@ class OneOf(SchemaTest):
     ]
 
 
-#class Dependencies(object):
-class Dependencies(SchemaTest):
+class Dependencies(object):
+#class Dependencies(SchemaTest):
     schema_single = {
         "dependencies": {
             "bar": ["foo"],
@@ -562,8 +562,8 @@ class Dependencies(SchemaTest):
     ]
 
 
-#class Enum(object):
-class Enum(SchemaTest):
+class Enum(object):
+#class Enum(SchemaTest):
     schema_simple = {
         "enum": [1, 2, 3],
     }
@@ -651,7 +651,8 @@ class Enum(SchemaTest):
     ]
 
 
-class Format(SchemaTest):
+class Format(object):
+#class Format(SchemaTest):
     schema = {
         "type": "object",
         "properties": {
@@ -925,8 +926,8 @@ class Format(SchemaTest):
     ]
 
 
-#class Type(object):
-class Type(SchemaTest):
+class Type(object):
+#class Type(SchemaTest):
     type_tests = [
         # -------------------------------------------------------
         # type          data        expected error
@@ -1010,3 +1011,504 @@ class Type(SchemaTest):
         for i, (data_type, data, expected_error) in enumerate(type_tests)
     ]
 
+
+class Items(object):
+#class Items(SchemaTest):
+    schema_items = {
+        "items": {"type": "integer"},
+    }
+    schema_array = {
+        "items": [
+            {"type": "integer"},
+            {"type": "string"}
+        ]
+    }
+    data_tests = [
+        DataTest(
+            name='schema_items. valid items',
+            schema=schema_items,
+            data=[1, 2, 3],
+            valid=True,
+        ),
+        DataTest(
+            name='schema_items. wrong type of items',
+            schema=schema_items,
+            data=[1, 'x'],
+            valid=False,
+            expected_errors={
+                '1': [messages.INVALID_INT],
+            }
+        ),
+        DataTest(
+            name='schema_items. ignores non-arrays',
+            schema=schema_items,
+            data={"foo": "bar"},
+            valid=True,
+        ),
+        DataTest(
+            name='schema_array. correct types',
+            schema=schema_array,
+            data=[1, "foo"],
+            valid=True,
+        ),
+        DataTest(
+            name='schema_array. wrong types',
+            schema=schema_array,
+            data=["foo", 1],
+            valid=False,
+            expected_errors={
+                '0': [messages.INVALID_INT],
+                '1': [messages.INVALID_STRING],
+            }
+        ),
+    ]
+
+
+class MaxItems(object):
+#class MaxItems(SchemaTest):
+    schema = {
+        "maxItems": 2
+    }
+    data_tests = [
+        DataTest(
+            name='shorter is valid',
+            data=[1],
+            valid=True,
+        ),
+        DataTest(
+            name='exact length is valid',
+            data=[1, 2],
+            valid=True,
+        ),
+        DataTest(
+            name='too long is invalid',
+            data=[1, 2, 3],
+            valid=False,
+            expected_errors={
+                '': [messages.FIELD_TOO_LONG],
+            }
+        ),
+        DataTest(
+            name='ignores non-arrays',
+            data="foobar",
+            valid=True,
+        ),
+    ]
+
+
+class MaxLength(object):
+#class MaxLength(SchemaTest):
+    schema = {
+        "maxLength": 2
+    }
+    data_tests = [
+        DataTest(
+            name='shorter is valid',
+            data='f',
+            valid=True,
+        ),
+        DataTest(
+            name='exact length is valid',
+            data='fo',
+            valid=True,
+        ),
+        DataTest(
+            name='too long is invalid',
+            data='foo',
+            valid=False,
+            expected_errors={
+                '': [messages.FIELD_TOO_LONG],
+            }
+        ),
+        DataTest(
+            name='ignores non-strings',
+            data=100,
+            valid=True,
+        ),
+    ]
+
+
+class MaxProperties(object):
+#class MaxProperties(SchemaTest):
+    schema = {
+        "maxProperties": 2
+    }
+    data_tests = [
+        DataTest(
+            name='shorter is valid',
+            data={"foo": 1},
+            valid=True,
+        ),
+        DataTest(
+            name='exact length is valid',
+            data={"foo": 1, "bar": 2},
+            valid=True,
+        ),
+        DataTest(
+            name='too long is invalid',
+            data={"foo": 1, "bar": 2, "baz": 3},
+            valid=False,
+            expected_errors={
+                '': [messages.TOO_MANY_PROPERTIES],
+            }
+        ),
+        DataTest(
+            name='ignores non-objects',
+            data='foobar',
+            valid=True,
+        ),
+    ]
+
+
+class Maximum(object):
+#class Maximum(SchemaTest):
+    schema = {
+        "maximum": 3.0,
+    }
+    schema_exclusive = {
+        "maximum": 3.0,
+        "exclusiveMaximum": True,
+    }
+    data_tests = [
+        DataTest(
+            name='below',
+            data=2.6,
+            valid=True,
+        ),
+        DataTest(
+            name='above',
+            data=3.5,
+            valid=False,
+            expected_errors={
+                '': [messages.NUMBER_TOO_HIGH],
+            }
+        ),
+        DataTest(
+            name='ignores non-numbers',
+            data={"foo": 1, "bar": 2, "baz": 3},
+            valid=True,
+        ),
+        DataTest(
+            name='exclusive. below',
+            schema=schema_exclusive,
+            data=2.2,
+            valid=True,
+        ),
+        DataTest(
+            name='exclusive. boundary point',
+            schema=schema_exclusive,
+            data=3.0,
+            valid=False,
+            expected_errors={
+                '': [messages.NUMBER_TOO_HIGH],
+            }
+        ),
+        DataTest(
+            name='exclusive. above',
+            schema=schema_exclusive,
+            data=3.5,
+            valid=False,
+            expected_errors={
+                '': [messages.NUMBER_TOO_HIGH],
+            }
+        ),
+    ]
+
+
+class MinItems(object):
+#class MinItems(SchemaTest):
+    schema = {
+        "minItems": 1,
+    }
+    data_tests = [
+        DataTest(
+            name='longer is valid',
+            data=[1, 2],
+            valid=True,
+        ),
+        DataTest(
+            name='exact length is valid',
+            data=[1],
+            valid=True,
+        ),
+        DataTest(
+            name='too short is invalid',
+            data=[],
+            valid=False,
+            expected_errors={
+                '': [messages.FIELD_TOO_SHORT],
+            }
+        ),
+        DataTest(
+            name='ignores non-arrays',
+            data="",
+            valid=True,
+        ),
+    ]
+
+
+class MinProperties(object):
+#class MinProperties(SchemaTest):
+    schema = {
+        "minProperties": 1,
+    }
+    data_tests = [
+        DataTest(
+            name='longer is valid',
+            data={"foo": 1, "bar": 2},
+            valid=True,
+        ),
+        DataTest(
+            name='exact length is valid',
+            data={"foo": 1},
+            valid=True,
+        ),
+        DataTest(
+            name='too short is invalid',
+            data={},
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_ENOUGH_PROPERTIES],
+            }
+        ),
+        DataTest(
+            name='ignores non-objects',
+            data='',
+            valid=True,
+        ),
+    ]
+
+
+class Minimum(object):
+#class Minimum(SchemaTest):
+    schema = {
+        "minimum": 1.1,
+    }
+    schema_exclusive = {
+        "minimum": 1.1,
+        "exclusiveMinimum": True,
+    }
+    data_tests = [
+        DataTest(
+            name='above',
+            data=2.6,
+            valid=True,
+        ),
+        DataTest(
+            name='below',
+            data=0.6,
+            valid=False,
+            expected_errors={
+                '': [messages.NUMBER_TOO_LOW],
+            }
+        ),
+        DataTest(
+            name='ignores non-numbers',
+            data='x',
+            valid=True,
+        ),
+        DataTest(
+            name='exclusive. above',
+            schema=schema_exclusive,
+            data=1.2,
+            valid=True,
+        ),
+        DataTest(
+            name='exclusive. boundary point',
+            schema=schema_exclusive,
+            data=1.1,
+            valid=False,
+            expected_errors={
+                '': [messages.NUMBER_TOO_LOW],
+            }
+        ),
+        DataTest(
+            name='exclusive. below',
+            schema=schema_exclusive,
+            data=0.6,
+            valid=False,
+            expected_errors={
+                '': [messages.NUMBER_TOO_LOW],
+            }
+        ),
+    ]
+
+
+class MultipleOf(object):
+#class MultipleOf(SchemaTest):
+    schema_int = {
+        "multipleOf": 2,
+    }
+    schema_number = {
+        "multipleOf": 1.5,
+    }
+    schema_small_number = {
+        "multipleOf": 0.0001,
+    }
+    data_tests = [
+        DataTest(
+            name='int. valid',
+            schema=schema_int,
+            data=10,
+            valid=True,
+        ),
+        DataTest(
+            name='int. valid float',
+            schema=schema_int,
+            data=10.0,
+            valid=True,
+        ),
+        DataTest(
+            name='int. invalid',
+            schema=schema_int,
+            data=7,
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_MULTIPLE_OF],
+            }
+        ),
+        DataTest(
+            name='int. ignores non-numbers',
+            data='x',
+            valid=True,
+        ),
+        DataTest(
+            name='number. zero is multiple of anything',
+            schema=schema_number,
+            data=0,
+            valid=True,
+        ),
+        DataTest(
+            name='number. valid',
+            schema=schema_number,
+            data=4.5,
+            valid=True,
+        ),
+        DataTest(
+            name='number. invalid',
+            schema=schema_number,
+            data=35,
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_MULTIPLE_OF],
+            }
+        ),
+        DataTest(
+            name='small number. valid',
+            schema=schema_small_number,
+            data=0.0075,
+            valid=True,
+        ),
+        DataTest(
+            name='small number. invalid',
+            schema=schema_small_number,
+            data=0.00751,
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_MULTIPLE_OF],
+            }
+        ),
+
+    ]
+
+
+class Not(object):
+#class Not(SchemaTest):
+    schema_not = {
+        "not": {"type": "integer"},
+    }
+    schema_multiple = {
+        "not": {"type": ["integer", "boolean"]},
+    }
+    schema_complex = {
+        "not": {
+            "type": "object",
+            "properties": {
+                "foo": {"type": "string"},
+            },
+        },
+    }
+    schema_forbidden = {
+        "properties": {
+            "foo": {
+                "not": {},
+            },
+        },
+    }
+    data_tests = [
+        DataTest(
+            name='not. allowed',
+            schema=schema_not,
+            data='foo',
+            valid=True,
+        ),
+        DataTest(
+            name='not. disallowed',
+            schema=schema_not,
+            data=1,
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_ALLOWED_VALUE],
+            }
+        ),
+        DataTest(
+            name='multiple. allowed',
+            schema=schema_multiple,
+            data='foo',
+            valid=True,
+        ),
+        DataTest(
+            name='multiple. mismatch',
+            schema=schema_multiple,
+            data=1,
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_ALLOWED_VALUE],
+            }
+        ),
+        DataTest(
+            name='multiple. other mismatch',
+            schema=schema_multiple,
+            data=True,
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_ALLOWED_VALUE],
+            }
+        ),
+        DataTest(
+            name='complex. match',
+            schema=schema_complex,
+            data=1,
+            valid=True,
+        ),
+        DataTest(
+            name='complex. other match',
+            schema=schema_complex,
+            data={"foo": 1},
+            valid=True,
+        ),
+        DataTest(
+            name='complex. mismatch',
+            schema=schema_complex,
+            data={"foo": "bar"},
+            valid=False,
+            expected_errors={
+                '': [messages.NOT_ALLOWED_VALUE],
+            }
+        ),
+        DataTest(
+            name='forbidden. present',
+            schema=schema_forbidden,
+            data={"foo": 1, "bar": 2},
+            valid=False,
+            expected_errors={
+                'foo': [messages.NOT_ALLOWED_VALUE],
+            }
+        ),
+        DataTest(
+            name='forbidden. absent',
+            schema=schema_forbidden,
+            data={"bar": 1, "baz": 2},
+            valid=True,
+        ),
+    ]

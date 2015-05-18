@@ -33,13 +33,21 @@ class JSONSchemaMessageTranslator(MessageTranslator):
         r"^.* is not a 'regex'$":                               messages.INVALID_REGEX,
         r"^.* is not a 'color'$":                               messages.INVALID_COLOR,
 
-        #r".+ is not of type u?'number'":   messages.INVALID_NUMBER,
-        #r".+ is not of type 'string'":   messages.INVALID_STRING,
-        #r".+ is not of type u?'object'":   messages.INVALID_OBJECT,
-        r"^.+ is too short$":              messages.FIELD_TOO_SHORT,
-        r"^.+ is too long$":              messages.FIELD_TOO_LONG,
+        r"^.* has too many properties$":                        messages.TOO_MANY_PROPERTIES,
+        r"^.* does not have enough properties":                 messages.NOT_ENOUGH_PROPERTIES,
+
+        r"^.* is greater than the maximum of .*$":              messages.NUMBER_TOO_HIGH,
+        r"^.* is greater than or equal to the maximum of .*$":  messages.NUMBER_TOO_HIGH,
+
+        r"^.* is less than the minimum of .*$":                 messages.NUMBER_TOO_LOW,
+        r"^.* is less than or equal to the minimum of .*$":     messages.NUMBER_TOO_LOW,
+
+        r"^.* is not a multiple of .*$":                        messages.NOT_MULTIPLE_OF,
+
+        r"^.* is not allowed for .*$":                          messages.NOT_ALLOWED_VALUE,
 
 
-        #r".+ is not a 'url'":              messages.INVALID_URL,
+        r"^.+ is too short$":                                   messages.FIELD_TOO_SHORT,
+        r"^.+ is too long$":                                    messages.FIELD_TOO_LONG,
     }
 
