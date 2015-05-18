@@ -1675,3 +1675,115 @@ class PatternProperties(object):
             }
         ),
     ]
+
+
+class Properties(object):
+#class Properties(SchemaTest):
+    schema = {
+        "properties": {
+            "foo": {"type": "integer"},
+            "bar": {"type": "string"}
+        }
+    }
+    schema_mixed = {
+        "properties": {
+            "foo": {"type": "array", "maxItems": 3},
+            "bar": {"type": "array"}
+        },
+        "patternProperties": {"f.o": {"minItems": 2}},
+        "additionalProperties": {"type": "integer"}
+    }
+    data_tests = [
+        DataTest(
+            name="both present",
+            data={"foo": 1, "bar": "baz"},
+            valid=True,
+        ),
+        DataTest(
+            name="one invalid",
+            data={"foo": 1, "bar": {}},
+            valid=False,
+            expected_errors={
+                'bar': [messages.INVALID_STRING],
+            }
+        ),
+        DataTest(
+            name="both invalid",
+            data={"foo": [], "bar": {}},
+            valid=False,
+            expected_errors={
+                'foo': [messages.INVALID_INT],
+                'bar': [messages.INVALID_STRING],
+            }
+        ),
+        DataTest(
+            name="other properties",
+            data={"quux": []},
+            valid=True,
+        ),
+        DataTest(
+            name="ignores non-objects",
+            data=[],
+            valid=True,
+        ),
+        DataTest(
+            name="mixed. property validates property",
+            schema=schema_mixed,
+            data={"foo": [1, 2]},
+            valid=True,
+        ),
+        DataTest(
+            name="mixed. property invalidates property",
+            schema=schema_mixed,
+            data={"foo": [1, 2, 3, 4]},
+            valid=False,
+            expected_errors={
+                'foo': [messages.FIELD_TOO_LONG],
+            }
+        ),
+        DataTest(
+            name="mixed. patternProperty invalidates property",
+            schema=schema_mixed,
+            data={"foo": []},
+            valid=False,
+            expected_errors={
+                'foo': [messages.FIELD_TOO_SHORT],
+            }
+        ),
+        DataTest(
+            name="mixed. patternProperty validates nonproperty",
+            schema=schema_mixed,
+            data={"fxo": [1, 2]},
+            valid=True,
+        ),
+        DataTest(
+            name="mixed. patternProperty invalidates nonproperty",
+            schema=schema_mixed,
+            data={"fxo": []},
+            valid=False,
+            expected_errors={
+                'fxo': [messages.FIELD_TOO_SHORT],
+            }
+        ),
+        DataTest(
+            name="mixed. additionalProperty ignores property",
+            schema=schema_mixed,
+            data={"bar": []},
+            valid=True,
+        ),
+        DataTest(
+            name="mixed. additionalProperty validates others",
+            schema=schema_mixed,
+            data={"quux": 3},
+            valid=True,
+        ),
+        DataTest(
+            name="mixed. additionalProperty invalidates others",
+            schema=schema_mixed,
+            data={"quux": "foo"},
+            valid=False,
+            expected_errors={
+                'quux': [messages.INVALID_INT],
+            }
+        ),
+    ]
