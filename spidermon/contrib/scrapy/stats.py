@@ -1,7 +1,7 @@
 from slugify import slugify
 
 
-DEFAULT_PREFIX = 'spidermon/validation'
+STATS_DEFAULT_VALIDATION_PREFIX = 'spidermon/validation'
 
 
 class NAMES:
@@ -15,7 +15,7 @@ class NAMES:
 class ValidationStatsManager(object):
     def __init__(self, stats, prefix=None, slugify=True):
         self.stats = stats
-        self.prefix = prefix or DEFAULT_PREFIX
+        self.prefix = prefix or STATS_DEFAULT_VALIDATION_PREFIX
         self.slugify = slugify
 
     def add_validator(self, class_name):
