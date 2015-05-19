@@ -19,3 +19,4 @@
 {% endmacro %}
 
 {% macro render_job_url() %}{% if data.job %} https://dash.scrapinghub.com/p/{{ data.job.key.split('/')[0] }}/job/{{ data.job.key.split('/')[1] }}/{{ data.job.key.split('/')[2] }}{% endif %}{% endmacro %}
+{% macro render_spider_name() %}{% if data.spider %}{{ data.spider.name }}{% elif data.job %}{{ data.job.metadata['spider'] }}{% else %}??{% endif %}{% endmacro %}
