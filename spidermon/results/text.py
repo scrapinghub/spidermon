@@ -1,7 +1,7 @@
 import sys
 
 from spidermon import settings
-from spidermon.utils import line_title
+from spidermon.utils.text import line_title
 
 from .monitor import MonitorResult, monitors_step_required, actions_step_required
 

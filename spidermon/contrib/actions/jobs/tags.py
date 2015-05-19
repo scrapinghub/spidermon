@@ -1,4 +1,5 @@
 from spidermon.core.actions import Action
+from spidermon.exceptions import NotConfigured
 
 
 class JobTagsAction(Action):
@@ -20,8 +21,10 @@ class JobTagsAction(Action):
         return kwargs
 
     def run_action(self):
-        if self.data.hubstorage.available and self.tags:
-            job_metadata = self.data.hubstorage.job.metadata
+        if self.tags:
+            if not self.data.job:
+                raise NotConfigured('Job not available!')
+            job_metadata = self.data.job.metadata
             self.process_tags(job_metadata)
             job_metadata.save()
 

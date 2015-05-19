@@ -1,4 +1,4 @@
-from core.monitors import Monitor, StatsMonitor, SpiderMonitor
+from core.monitors import Monitor
 from core.suites import MonitorSuite
 from core.actions import Action, DummyAction
 from .loaders import MonitorLoader

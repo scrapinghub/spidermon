@@ -2,7 +2,7 @@ from scrapy import log
 
 from spidermon.results.monitor import MonitorResult, monitors_step_required, actions_step_required
 from spidermon.runners import MonitorRunner
-from spidermon.utils import line_title, line, Message
+from spidermon.utils.text import line_title, line, Message
 
 LOG_MESSAGE_HEADER = 'Spidermon'
 

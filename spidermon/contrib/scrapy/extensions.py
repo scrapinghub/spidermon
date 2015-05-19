@@ -3,7 +3,7 @@ from scrapy.utils.misc import load_object
 
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
-from spidermon.hubstorage import hs
+from spidermon.utils.hubstorage import hs
 
 
 class Spidermon(object):
@@ -51,5 +51,5 @@ class Spidermon(object):
             'stats': self.crawler.stats.get_stats(spider),
             'crawler': self.crawler,
             'spider': spider,
-            'hubstorage': hs,
+            'job': hs.job if hs.available else None,
         }

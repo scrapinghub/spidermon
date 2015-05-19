@@ -41,7 +41,7 @@ class ItemValidationPipeline(object):
         return cls(
             validators=validators,
             stats=crawler.stats,
-            drop_items_with_errors=crawler.settings.getbool('SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS'),
+            drop_items_with_errors=crawler.settings.get('SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS'),
             add_errors_to_items=crawler.settings.get('SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS'),
             errors_field=crawler.settings.get('SPIDERMON_VALIDATION_ERRORS_FIELD'),
         )

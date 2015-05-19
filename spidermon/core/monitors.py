@@ -109,27 +109,3 @@ class Monitor(TestCase):
 
     def __hash__(self):
         return hash(id(self))
-
-
-class StatsMonitor(Monitor):
-    def __init__(self, methodName='runTest', name=None):
-        super(StatsMonitor, self).__init__(methodName, name)
-        self.stats = Data()
-
-    def init_data(self, data):
-        super(StatsMonitor, self).init_data(data)
-        self.stats = data.stats
-
-
-class SpiderMonitor(StatsMonitor):
-    def __init__(self, methodName='runTest', name=None):
-        super(SpiderMonitor, self).__init__(methodName, name)
-        self.crawler = None
-        self.spider = None
-        self.hubstorage = None
-
-    def init_data(self, data):
-        super(SpiderMonitor, self).init_data(data)
-        self.crawler = data.crawler
-        self.spider = data.spider
-        self.hubstorage = data.hubstorage

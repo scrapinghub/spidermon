@@ -31,18 +31,18 @@ class GenerateJobReport(GenerateReport):
         return kwargs
 
     def after_render_report(self):
-        if self.data.hubstorage.available:
-            report_file = StringIO.StringIO(self.report)
-            self.add_job_report(
-                auth=self.data.hubstorage.auth,
-                job_key=self.data.hubstorage.job_key,
-                key=self.report_key,
-                content_type=self.content_type,
-                report_file=report_file,
-            )
-            report_file.close()
+        if not self.data.job:
+            raise NotConfigured('Job not available!')
+        report_file = StringIO.StringIO(self.report)
+        self.add_job_report(
+            job_key=self.data.job.key,
+            key=self.report_key,
+            content_type=self.content_type,
+            report_file=report_file,
+        )
+        report_file.close()
 
-    def add_job_report(self, auth, job_key, key, content_type, report_file):
+    def add_job_report(self, job_key, key, content_type, report_file):
         r = requests.post(
             url='https://dash.scrapinghub.com/api/reports/add.json',
             auth=(self.api_key, None),

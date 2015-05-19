@@ -18,4 +18,4 @@
     {{ render_results('danger', result.monitors_failed_results) }}
 {% endmacro %}
 
-{% macro render_job_url() %}{% if data.hubstorage.available %} https://dash.scrapinghub.com/p/{{ data.hubstorage.project_id }}/job/{{ data.hubstorage.spider_id }}/{{ data.hubstorage.job_id }}{% endif %}{% endmacro %}
+{% macro render_job_url() %}{% if data.job %} https://dash.scrapinghub.com/p/{{ data.job.key.split('/')[0] }}/job/{{ data.job.key.split('/')[1] }}/{{ data.job.key.split('/')[2] }}{% endif %}{% endmacro %}

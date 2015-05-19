@@ -1,7 +1,8 @@
 from spidermon.contrib.stats.counters import PercentCounter, DictPercentCounter, AttributeDictPercentCounter
 from spidermon.contrib.stats.analyzer import StatsAnalyzer
 from spidermon.contrib.scrapy.stats import STATS_DEFAULT_VALIDATION_PREFIX
-from spidermon.core.monitors import StatsMonitor
+
+from .stats import StatsMonitorMixin
 
 
 class MetaDictPercentCounter(DictPercentCounter):
@@ -68,11 +69,9 @@ class ValidationInfo(object):
                 self.fields.add_values(key=field, subkey=error, value=count)
 
 
-class ValidationMonitor(StatsMonitor):
-    def __init__(self, methodName='runTest', name=None):
-        super(ValidationMonitor, self).__init__(methodName, name)
-        self.validation = None
-
-    def init_data(self, data):
-        super(ValidationMonitor, self).init_data(data)
-        self.validation = ValidationInfo(self.stats)
+class ValidationMonitorMixin(StatsMonitorMixin):
+    @property
+    def validation(self):
+        if not hasattr(self, '_validation'):
+            self._validation = ValidationInfo(self.stats)
+        return self._validation
