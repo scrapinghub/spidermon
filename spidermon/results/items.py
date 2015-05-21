@@ -7,6 +7,7 @@ class ItemResult(object):
         self.status = settings.UNDEFINED_STATUS
         self.error = None
         self.reason = None
+        self.id = id(self)
 
 
 class MonitorResult(ItemResult):

@@ -95,6 +95,7 @@ class MonitorResult(unittest.TestResult):
         super(MonitorResult, self).addFailure(test, error)
         self.step[test].status = settings.MONITOR.STATUS.FAILURE
         self.step[test].error = self._exc_info_to_string(error, test)
+        self.step[test].reason = error[1].message
 
     @monitors_step_required
     def addSkip(self, test, reason):
