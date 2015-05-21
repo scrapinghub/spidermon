@@ -48,8 +48,10 @@ class TemplateLoader(object):
             self.paths.append(path)
             self.reload_env()
 
-    def auto_discover(self, folder=None):
+    def auto_discover(self, path=None, folder=None):
         caller_folder = os.path.dirname(inspect.stack()[1][1])
+        if path:
+            caller_folder = os.path.join(caller_folder, path)
         if folder:
             self.add_path(os.path.join(caller_folder, folder))
         else:
