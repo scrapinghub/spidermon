@@ -1,5 +1,4 @@
 {% extends 'reports/email/pages/medium.jinja' %}
-{% import 'reports/email/ui.jinja' as ui%}
 
 {% macro render_dash_link() %}
     {% if data.job %}
@@ -176,14 +175,14 @@
     {#-----------------------------------------------
       TITLE
     ------------------------------------------------#}
-    {% call ui.render_title_section() %}
+    <div class="report-title">
         {{ render_dash_link() }}
         <h1>{{ report_title or 'Report Title' }}</h1>
-    {% endcall %}
+    </div>
     {#-----------------------------------------------
       SUMMARY
     ------------------------------------------------#}
-    {% call ui.render_section() %}
+    <div class="report-section">
         <table class="table-summary" cellspacing="0" cellpadding="0" border="0" width="100%">
             <tr>
                 {#------------------------
@@ -299,11 +298,12 @@
                 {% endif %}
             </tr>
         </table>
-    {% endcall %}
+    </div>
     {#-----------------------------------------------
       MONITORS
     ------------------------------------------------#}
-    {% call ui.render_section(top_separator=True) %}
+    <hr>
+    <div class="report-section">
         <h2>Monitors</h2>
         {% if result.monitor_results %}
             {% for group in result.monitor_results|groupby('monitor.monitor_name') %}
@@ -337,12 +337,13 @@
                 No monitors defined...
             </div>
         {% endif %}
-    {% endcall %}
+    </div>
     {#-----------------------------------------------
       MONITOR FAILURES
     ------------------------------------------------#}
     {% if result.monitors_failed_results %}
-        {% call ui.render_section(top_separator=True) %}
+        <hr>
+        <div class="report-section">
             <h1>Monitor Failures</h1>
             {% for group in result.monitors_failed_results|groupby('monitor.monitor_name') %}
                 {% for result in group.list %}
@@ -363,14 +364,14 @@
                     </div>
                 {% endfor %}
             {% endfor %}
-        {% endcall %}
+        </div>
     {% endif %}
     {#-----------------------------------------------
       STATS
     ------------------------------------------------#}
-    {% call ui.render_section(top_separator=True) %}
+    <div class="report-section">
         <h2>Stats</h2>
         <pre>{{ data.stats|pprint }}</pre>
-    {% endcall %}
+    </div>
 
 {% endblock %}
