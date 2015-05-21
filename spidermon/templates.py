@@ -1,9 +1,41 @@
 import inspect
 import os
+import datetime
+import pprint as pretty_print
 
 from jinja2 import Environment, FileSystemLoader
 
 DEFAULT_TEMPLATE_FOLDERS = ['templates']
+
+
+def get_log_errors(logs):
+    return [e for e in logs.list() if e['level'] >= 40]
+
+
+def make_list(obj):
+    return list(obj)
+
+
+def pprint(obj):
+    return pretty_print.pformat(obj)
+
+
+def format_time(time):
+    if not isinstance(time, datetime.timedelta):
+        time = datetime.timedelta(seconds=int(time / 1000.))
+    return ':'.join(str(time).split(':')[:2])+'h'
+
+
+FILTERS = {
+    'pprint': pprint,
+    'list': make_list,
+    'get_log_errors': get_log_errors,
+    'format_time': format_time,
+}
+GLOBALS = {
+    'datetime': datetime,
+    'str': str,
+}
 
 
 class TemplateLoader(object):
@@ -35,6 +67,11 @@ class TemplateLoader(object):
             lstrip_blocks=True,
             trim_blocks=True,
             )
+        for filter_name, filter in FILTERS.items():
+            self.env.filters[filter_name] = filter
+
+        for global_name, global_value in GLOBALS.items():
+            self.env.globals[global_name] = global_value
 
     def get_template(self, name):
         return self.env.get_template(name)
