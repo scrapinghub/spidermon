@@ -1,4 +1,5 @@
 {% extends 'reports/email/pages/medium.jinja' %}
+{% import 'reports/email/ui.jinja' as ui%}
 
 {% macro render_dash_link() %}
     {% if data.job %}
@@ -172,20 +173,35 @@
 {% endblock %}
 
 {% block page_content %}
-    <div class="report-title">
+    {#-----------------------------------------------
+      TITLE
+    ------------------------------------------------#}
+    {% call ui.render_title_section() %}
         {{ render_dash_link() }}
         <h1>{{ report_title or 'Report Title' }}</h1>
-    </div>
-    <div class="report-section report-section-gray2">
+    {% endcall %}
+    {#-----------------------------------------------
+      SUMMARY
+    ------------------------------------------------#}
+    {% call ui.render_section() %}
         <table class="table-summary" cellspacing="0" cellpadding="0" border="0" width="100%">
             <tr>
+                {#------------------------
+                  VALUES
+                ------------------------#}
                 <td>
+                    {#------------------------
+                      JOB OR SPIDER
+                    ------------------------#}
                     <dl class="dl-horizontal">
                         {% set items_count = data.stats.get('item_scraped_count', 0) %}
                         {% set requests_count = data.stats.get('downloader/request_count', 0) %}
                         {% set stats_count = data.stats|length %}
                         {% set passed_monitors_count = result.monitors_passed_results|length %}
                         {% set failed_monitors_count = result.monitors_failed_results|length %}
+                        {#------------------------
+                          JOB
+                        ------------------------#}
                         {% if data.job %}
                             {% set is_script = data.job.metadata['spider'].startswith('py:') %}
                             {% set logs_count = data.job.logs.list()|list|length %}
@@ -193,11 +209,7 @@
                             {% set log_errors_count = log_errors|length %}
                             {% set running_time = data.job.metadata.get('finished_time', 0) - data.job.metadata.get('running_time', 0) %}
                             <dt>
-                                {% if is_script %}
-                                    Script:
-                                {% else %}
-                                    Spider:
-                                {% endif %}
+                                {% if is_script %}Script{% else %}Spider{% endif %}:
                             </dt>
                             <dd>
                                 <span class="label label-info">
@@ -219,6 +231,9 @@
                             {{ render_header_data('Logs', logs_count, "badge") }}
                             {{ render_header_data('Stats', stats_count, "badge") }}
                             {{ render_header_data('Running Time', running_time|format_time) }}
+                        {#------------------------
+                          SPIDER
+                        ------------------------#}
                         {% elif data.spider %}
                             {% set log_errors_count = data.stats.get('log_count/ERROR', 0) %}
                             {% set running_time = data.stats.get('finish_time') - data.stats.get('start_time') %}
@@ -230,6 +245,9 @@
                             {{ render_header_data('Stats', stats_count, "badge") }}
                             {{ render_header_data('Running Time', running_time|format_time) }}
                         {% endif %}
+                        {#------------------------
+                          BOTH
+                        ------------------------#}
                         <dt>Monitors:</dt>
                         <dd>
                             {% if passed_monitors_count or failed_monitors_count %}
@@ -239,8 +257,10 @@
                                 -
                             {% endif %}
                         </dd>
-
                     </dl>
+                    {#------------------------
+                      JOB ONLY
+                    ------------------------#}
                     {% if data.job %}
                         <hr>
                         <dl class="dl-horizontal">
@@ -261,12 +281,11 @@
                                 {% endif %}
                             </dd>
                         </dl>
-                        <!--
-                        <pre>{{ data.job.metadata.items()|pprint }}</pre>
-                        -->
                     {% endif %}
-
                 </td>
+                {#------------------------
+                  ICON
+                ------------------------#}
                 {% if result.all_monitors_passed %}
                     <td class="summary-result status_OK">
                         <i class="fa fa-check-circle fa-3x"></i>
@@ -280,9 +299,11 @@
                 {% endif %}
             </tr>
         </table>
-    </div>
-    <hr>
-    <div class="report-section">
+    {% endcall %}
+    {#-----------------------------------------------
+      MONITORS
+    ------------------------------------------------#}
+    {% call ui.render_section(top_separator=True) %}
         <h2>Monitors</h2>
         {% if result.monitor_results %}
             {% for group in result.monitor_results|groupby('monitor.monitor_name') %}
@@ -316,10 +337,12 @@
                 No monitors defined...
             </div>
         {% endif %}
-    </div>
+    {% endcall %}
+    {#-----------------------------------------------
+      MONITOR FAILURES
+    ------------------------------------------------#}
     {% if result.monitors_failed_results %}
-        <hr>
-        <div class="report-section">
+        {% call ui.render_section(top_separator=True) %}
             <h1>Monitor Failures</h1>
             {% for group in result.monitors_failed_results|groupby('monitor.monitor_name') %}
                 {% for result in group.list %}
@@ -340,38 +363,14 @@
                     </div>
                 {% endfor %}
             {% endfor %}
-        </div>
+        {% endcall %}
     {% endif %}
-    <!--
-    <hr>
-    <div class="report-section">
-        <h2>Actions</h2>
-            <h3>Monitors Finished</h3>
-            <table class="table table-striped table-monitor">
-                {% for result in result.monitors_finished_action_results %}
-                    <tr class="row_{{ result.status }}">
-                        <td class="name">
-                            <h4 title="{{ result.action.description }}">
-                                {{ result.action.name }}
-                            </h4>
-                        </td>
-                        <td class="status">
-                            {% if result.status != 'OK'  %}
-                                {{ render_status_label(result.status) }}
-                            {% endif %}
-                        </td>
-                        <td class="icon">
-                            {{ render_status_icon(result.status) }}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-    </div>
-    -->
-    <hr>
-    <div class="report-section">
+    {#-----------------------------------------------
+      STATS
+    ------------------------------------------------#}
+    {% call ui.render_section(top_separator=True) %}
         <h2>Stats</h2>
         <pre>{{ data.stats|pprint }}</pre>
-    </div>
+    {% endcall %}
 
 {% endblock %}
