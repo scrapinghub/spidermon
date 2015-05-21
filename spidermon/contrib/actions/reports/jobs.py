@@ -12,8 +12,8 @@ class GenerateJobReport(GenerateReport):
     report_key = 'report'
     content_type = 'text/plain'
 
-    def __init__(self, template, api_key=None, report_key=None, content_type=None):
-        super(GenerateJobReport, self).__init__(template=template)
+    def __init__(self, template, api_key=None, report_key=None, content_type=None, context=None):
+        super(GenerateJobReport, self).__init__(template=template, context=context)
         self.api_key = api_key or self.api_key
         self.report_key = report_key or self.report_key
         self.content_type = content_type or self.content_type

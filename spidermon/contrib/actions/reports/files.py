@@ -7,8 +7,8 @@ class GenerateFileReport(GenerateReport):
     template = None
     filename = None
 
-    def __init__(self, template, filename):
-        super(GenerateFileReport, self).__init__(template=template)
+    def __init__(self, template, filename, context=None):
+        super(GenerateFileReport, self).__init__(template=template, context=context)
         self.filename = filename or self.filename
         if not self.filename:
             raise NotConfigured("You must define a template output file.")
