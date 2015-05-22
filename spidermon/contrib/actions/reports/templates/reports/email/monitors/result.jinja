@@ -116,7 +116,12 @@
                             {% set logs_count = data.job.logs.list()|list|length %}
                             {% set log_errors = data.job.logs|get_log_errors %}
                             {% set log_errors_count = log_errors|length %}
-                            {% set running_time = data.job.metadata.get('finished_time', 0) - data.job.metadata.get('running_time', 0) %}
+                            {% set job_finished_time = data.job.metadata.get('finished_time', 0) %}
+                            {% if not job_finished_time %}
+                                {% set job_finished_time = datetime.datetime.utcnow().strftime('%s')|int*1000 %}
+                            {% endif %}
+                            {% set job_running_time = data.job.metadata.get('running_time', 0) %}
+                            {% set running_time = job_finished_time - job_running_time %}
 
                             {% if is_script %}
                                 {{ render_header_data('Script', data.job.metadata['spider'][3:], 'label label-blue') }}
