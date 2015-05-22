@@ -110,6 +110,6 @@ class CreateS3Report(CreateReport):
             filename=self.get_s3_filename(),
         )
         return {
-            'reports': self.data.meta.get('reports', []) + [report_url]
+            'reports_links': self.data.meta.get('reports', []) + [report_url]
         }
 

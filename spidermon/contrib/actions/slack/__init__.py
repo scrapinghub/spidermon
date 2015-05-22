@@ -28,7 +28,7 @@ class SlackMessageManager():
             self._users = self._get_users_info()
         return self._users
 
-    def send_message(self, to, text, parse='full', link_names=1, attachments=None, use_mention=False):
+    def send_message(self, to, text, parse=None, link_names=1, attachments=None, use_mention=False):
         if isinstance(to, list):
             return [self.send_message(
                 to=recipient,
