@@ -3,17 +3,17 @@ import StringIO
 
 from spidermon.exceptions import NotConfigured
 
-from . import GenerateReport
+from . import CreateReport
 
 
-class GenerateJobReport(GenerateReport):
+class CreateJobReport(CreateReport):
     template = None
     api_key = None
     report_key = 'report'
     content_type = 'text/plain'
 
     def __init__(self, template, api_key=None, report_key=None, content_type=None, context=None):
-        super(GenerateJobReport, self).__init__(template=template, context=context)
+        super(CreateJobReport, self).__init__(template=template, context=context)
         self.api_key = api_key or self.api_key
         self.report_key = report_key or self.report_key
         self.content_type = content_type or self.content_type
@@ -22,7 +22,7 @@ class GenerateJobReport(GenerateReport):
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
-        kwargs = super(GenerateJobReport, cls).from_crawler_kwargs(crawler)
+        kwargs = super(CreateJobReport, cls).from_crawler_kwargs(crawler)
         kwargs.update({
             'api_key': crawler.settings.get('SPIDERMON_JOBREPORT_APIKEY'),
             'report_key': crawler.settings.get('SPIDERMON_JOBREPORT_KEY'),

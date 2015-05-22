@@ -2,11 +2,11 @@ from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
 
 
-class GenerateReport(ActionWithTemplates):
+class CreateReport(ActionWithTemplates):
     template = None
 
     def __init__(self, template, context=None):
-        super(GenerateReport, self).__init__()
+        super(CreateReport, self).__init__()
         self.template = template or self.template
         self.context = context or {}
         self.report = ''
@@ -15,7 +15,7 @@ class GenerateReport(ActionWithTemplates):
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
-        kwargs = super(GenerateReport, cls).from_crawler_kwargs(crawler)
+        kwargs = super(CreateReport, cls).from_crawler_kwargs(crawler)
         kwargs.update({
             'template': crawler.settings.get('SPIDERMON_REPORT_TEMPLATE'),
         })
@@ -36,6 +36,6 @@ class GenerateReport(ActionWithTemplates):
         pass
 
     def get_template_context(self):
-        context = super(GenerateReport, self).get_template_context()
+        context = super(CreateReport, self).get_template_context()
         context.update(self.context)
         return context
