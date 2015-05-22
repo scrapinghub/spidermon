@@ -1,0 +1,32 @@
+import boto
+
+from spidermon.exceptions import NotConfigured
+
+from . import SendEmail
+
+
+class SendS3Email(SendEmail):
+    aws_access_key = None
+    aws_secret_key = None
+
+    def __init__(self, aws_access_key, aws_secret_key, *args, **kwargs):
+        super(SendS3Email, self).__init__(*args, **kwargs)
+        self.aws_access_key = aws_access_key or self.aws_access_key
+        self.aws_secret_key = aws_secret_key or self.aws_secret_key
+        if not self.aws_access_key:
+            raise NotConfigured("You must provide the AWS Access Key.")
+        if not self.aws_secret_key:
+            raise NotConfigured("You must provide the AWS Secret Key.")
+
+    @classmethod
+    def from_crawler_kwargs(cls, crawler):
+        kwargs = super(SendS3Email, cls).from_crawler_kwargs(crawler)
+        kwargs.update({
+            'aws_access_key': crawler.settings.get('SPIDERMON_AWS_ACCESS_KEY'),
+            'aws_secret_key': crawler.settings.get('SPIDERMON_AWS_SECRET_KEY'),
+        })
+        return kwargs
+
+    def send_message(self, message):
+        session = boto.connect_ses(self.aws_access_key, self.aws_secret_key)
+        session.send_raw_email(raw_message=message.as_string())
