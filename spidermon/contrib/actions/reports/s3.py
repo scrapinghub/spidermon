@@ -6,6 +6,10 @@ from spidermon.exceptions import NotConfigured
 from . import CreateReport
 
 
+DEFAULT_S3_REGION_ENDPOINT = 's3.amazonaws.com'
+DEFAULT_S3_CONTENT_TYPE = 'text/html'
+
+
 class S3Uploader(object):
     def __init__(self, aws_key, aws_secret):
         self.connection = S3Connection(
@@ -47,17 +51,19 @@ class CreateS3Report(CreateReport):
     aws_secret_key = None
     s3_bucket = None
     s3_filename = None
+    s3_region_endpoint = DEFAULT_S3_REGION_ENDPOINT
     make_public = True
-    content_type = 'text/html'
+    content_type = DEFAULT_S3_CONTENT_TYPE
 
     def __init__(self, aws_access_key, aws_secret_key,
-                 s3_bucket, s3_filename,
+                 s3_bucket, s3_filename, s3_region_endpoint=None,
                  make_public=False, content_type=None,
                  *args, **kwargs):
         super(CreateS3Report, self).__init__(*args, **kwargs)
         self.aws_access_key = aws_access_key or self.aws_access_key
         self.aws_secret_key = aws_secret_key or self.aws_secret_key
         self.s3_bucket = s3_bucket or self.s3_bucket
+        self.s3_region_endpoint = s3_region_endpoint or self.s3_region_endpoint
         self.s3_filename = s3_filename or self.s3_filename
         self.make_public = make_public or self.make_public
         self.content_type = content_type or self.content_type
@@ -78,6 +84,7 @@ class CreateS3Report(CreateReport):
             'aws_secret_key': crawler.settings.get('SPIDERMON_AWS_SECRET_KEY'),
             's3_bucket': crawler.settings.get('SPIDERMON_REPORT_S3_BUCKET'),
             's3_filename': crawler.settings.get('SPIDERMON_REPORT_S3_FILENAME'),
+            's3_region_endpoint': crawler.settings.get('SPIDERMON_REPORT_S3_REGION_ENDPOINT'),
             'make_public': crawler.settings.get('SPIDERMON_REPORT_S3_MAKE_PUBLIC'),
             'content_type': crawler.settings.get('SPIDERMON_REPORT_S3_CONTENT_TYPE'),
         })
@@ -95,4 +102,14 @@ class CreateS3Report(CreateReport):
 
     def get_s3_filename(self):
         return self.render_text_template(self.s3_filename)
+
+    def get_meta(self):
+        report_url = 'http://{bucket}.{region}/{filename}'.format(
+            bucket=self.s3_bucket,
+            region=self.s3_region_endpoint,
+            filename=self.get_s3_filename(),
+        )
+        return {
+            'reports': self.data.meta.get('reports', []) + [report_url]
+        }
 
