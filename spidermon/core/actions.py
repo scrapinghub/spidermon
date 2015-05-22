@@ -41,6 +41,7 @@ class Action(object):
             result.add_action_error(self, traceback.format_exc())
         else:
             result.add_action_success(self)
+        data.meta.update(self.get_meta())
 
     @abc.abstractmethod
     def run_action(self):
@@ -53,6 +54,9 @@ class Action(object):
     @property
     def monitors_failed(self):
         return len(self.result.monitors_failed_results) > 0
+
+    def get_meta(self):
+        return {}
 
     def __repr__(self):
         return '<ACTION:(%s) at %s>' % (self.name, hex(id(self)))

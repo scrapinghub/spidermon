@@ -9,6 +9,9 @@ from spidermon.data import Data
 
 class MonitorRunner(object):
     data_immutable_dicts = ['stats']
+    data_default_data = {
+        'meta': {},
+    }
 
     def __init__(self):
         self.suite = None
@@ -19,6 +22,7 @@ class MonitorRunner(object):
         if not isinstance(suite, MonitorSuite):
             raise InvalidMonitor('Runners must receive a MonitorSuite instance')
         self.suite = suite
+        data = dict(self.data_default_data, **data)
         self.data = self.transform_data(**data)
         self.suite.init_data(self.data)
         self.result = self.create_result()
