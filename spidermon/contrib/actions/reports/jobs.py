@@ -7,13 +7,12 @@ from . import CreateReport
 
 
 class CreateJobReport(CreateReport):
-    template = None
     api_key = None
     report_key = 'report'
     content_type = 'text/plain'
 
-    def __init__(self, template, api_key=None, report_key=None, content_type=None, context=None):
-        super(CreateJobReport, self).__init__(template=template, context=context)
+    def __init__(self, api_key=None, report_key=None, content_type=None, *args, **kwargs):
+        super(CreateJobReport, self).__init__(*args, **kwargs)
         self.api_key = api_key or self.api_key
         self.report_key = report_key or self.report_key
         self.content_type = content_type or self.content_type

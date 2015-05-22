@@ -15,8 +15,8 @@ class SendSlackMessageSpiderFinished(SendSlackMessage):
     def __init__(self,
                  include_ok_attachments=None,
                  include_error_attachments=None,
-                 **kwargs):
-        super(SendSlackMessageSpiderFinished, self).__init__(**kwargs)
+                 *args, **kwargs):
+        super(SendSlackMessageSpiderFinished, self).__init__(*args, **kwargs)
         self.include_ok_attachments = include_ok_attachments or self.include_ok_attachments
         self.include_error_attachments = include_error_attachments or self.include_error_attachments
 

@@ -4,11 +4,10 @@ from . import CreateReport
 
 
 class CreateFileReport(CreateReport):
-    template = None
     filename = None
 
-    def __init__(self, template, filename, context=None):
-        super(CreateFileReport, self).__init__(template=template, context=context)
+    def __init__(self, filename, *args, **kwargs):
+        super(CreateFileReport, self).__init__(*args, **kwargs)
         self.filename = filename or self.filename
         if not self.filename:
             raise NotConfigured("You must define a template output file.")

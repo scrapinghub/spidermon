@@ -10,7 +10,7 @@ class SlackMessageManager():
     sender_token = None
     sender_name = None
 
-    def __init__(self, sender_token=None, sender_name=None, to=None):
+    def __init__(self, sender_token=None, sender_name=None):
         sender_token = sender_token or self.sender_token
         if not sender_token:
             raise NotConfigured('You must provide a slack token.')
