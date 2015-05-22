@@ -172,12 +172,18 @@ class SendSlackMessage(ActionWithTemplates):
 
     def get_message(self):
         if self.include_message:
-            return self.message or self.render_template(self.message_template)
+            if self.message:
+                return self.render_text_template(self.message)
+            else:
+                return self.render_template(self.message_template)
         else:
             return None
 
     def get_attachments(self):
         if self.include_attachments:
-            return self.attachements or self.render_template(self.attachments_template)
+            if self.attachements:
+                return self.render_text_template(self.attachements)
+            else:
+                return self.render_template(self.attachments_template)
         else:
             return None

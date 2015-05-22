@@ -2,7 +2,7 @@ import os
 import inspect
 
 from spidermon.core.actions import ActionOptionsMetaclass, Action
-from spidermon.templates import template_loader
+from spidermon.templates import template_loader, Template
 
 
 class ActionWithTemplatesMetaclass(ActionOptionsMetaclass):
@@ -27,6 +27,10 @@ class ActionWithTemplates(Action):
 
     def get_template(self, name):
         return template_loader.get_template(name)
+
+    def render_text_template(self, template):
+        template = Template(template)
+        return template.render(self.get_template_context())
 
     def render_template(self, template):
         template = self.get_template(template)
