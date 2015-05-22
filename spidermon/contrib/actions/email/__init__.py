@@ -77,8 +77,10 @@ class SendEmail(ActionWithTemplates):
     def get_subject(self):
         if self.subject:
             return self.render_text_template(self.subject)
-        else:
+        elif self.subject_template:
             return self.render_template(self.subject_template)
+        else:
+            return ''
 
     def get_body_text(self):
         if self.body_text:
