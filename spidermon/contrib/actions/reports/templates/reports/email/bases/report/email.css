@@ -30,9 +30,9 @@ ul ul,ul ol,ol ol,ol ul{margin-bottom:0}
 li{line-height:20px}
 hr{margin:20px 0;border:0;border-top:1px solid #eee;border-bottom:1px solid #fff}
 td{margin:0;padding:0;}
-code,pre{padding:0 3px 2px;font-family:Monaco,Menlo,Consolas,"Courier New",monospace;font-size:11px;color:#333;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px}
+code,pre{padding:0 3px 2px;font-family:Monaco,Menlo,Consolas,"Courier New",monospace;font-size:11px;color:#333;border-radius:3px}
 code{padding:2px 4px;color:#d14;background-color:#f7f7f9;border:1px solid #e1e1e8}
-pre{display:block;padding:9.5px;margin:0 0 10px;font-size:12px;line-height:20px;word-break:break-all;word-wrap:break-word;white-space:pre;white-space:pre-wrap;background-color:#f5f5f5;border:1px solid #ccc;border:1px solid rgba(0,0,0,0.15);-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+pre{display:block;padding:9.5px;margin:0 0 10px;font-size:12px;line-height:20px;white-space:pre;white-space:pre-wrap;background-color:#f5f5f5;border:1px solid #ccc;border:1px solid rgba(0,0,0,0.15);border-radius:4px}
 pre code{padding:0;color:inherit;background-color:transparent;border:0}
 table{max-width:100%;background-color:transparent;border-collapse:collapse;border-spacing:0}
 
@@ -74,7 +74,7 @@ table{max-width:100%;background-color:transparent;border-collapse:collapse;borde
 /*--------------------------
  Badge
 --------------------------*/
-.badge {padding: 2px 9px 2px 9px;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;font-size: 12px;font-weight: 700;line-height: 14px;color: #fff;vertical-align: baseline;white-space: nowrap;background-color: #999;text-align: center;}
+.badge {padding: 2px 9px 2px 9px;border-radius: 9px;font-size: 12px;font-weight: 700;line-height: 14px;color: #fff;vertical-align: baseline;white-space: nowrap;background-color: #999;text-align: center;}
 .badge-green {background-color: #468847}
 .badge-red {background-color: #b94a48}
 /*--------------------------
