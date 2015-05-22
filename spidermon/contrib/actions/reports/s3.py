@@ -88,7 +88,11 @@ class CreateS3Report(CreateReport):
         s3.upload_from_content(
             content=self.report,
             s3_bucket=self.s3_bucket,
-            s3_filename=self.s3_filename,
+            s3_filename=self.get_s3_filename(),
             headers={'Content-Type': self.content_type},
             make_public=self.make_public,
         )
+
+    def get_s3_filename(self):
+        return self.render_text_template(self.s3_filename)
+
