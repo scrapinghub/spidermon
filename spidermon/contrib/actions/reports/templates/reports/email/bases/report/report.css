@@ -1,0 +1,27 @@
+/*--------------------------
+ Page
+--------------------------*/
+body {background-color: #eee;font-size: 14px;}
+hr {margin: 0;padding: 0;}
+tr.odd td {background-color: #f9f9f9;}
+
+/*--------------------------
+ Report
+--------------------------*/
+table.report-container {width: 100%;}
+table.report-container td {padding: 40px 20px;}
+.report {background-color: #ffffff;margin: 0 auto;-webkit-border-radius: 6px;-moz-border-radius: 6px;border-radius: 6px;-webkit-box-shadow: 0 2px 10px 0 rgba(0,0,0,0.3);-moz-box-shadow: 0 2px 10px 0 rgba(0,0,0,0.3);box-shadow: 0 2px 10px 0 rgba(0,0,0,0.3);text-align: left;}
+.report-big {width:1000px;}
+.report-medium {width:730px;}
+.report-small {width:500px;}
+.report-title {background-color: #444;color: #fff;-webkit-border-top-left-radius: 6px;-webkit-border-top-right-radius: 6px;-moz-border-radius-topleft: 6px;-moz-border-radius-topright: 6px;border-top-left-radius: 6px;border-top-right-radius: 6px;}
+.report-title td {margin: 0;vertical-align: top;}
+.report-title td.title {padding: 16px 30px;}
+.report-title td.title h1 {margin: 0;padding: 0;}
+.report-title td.button {padding: 18px 16px 0 0;}
+.report-title td.button {text-align: right;width: 130px;}
+.report-section {margin: 0;padding: 25px 30px;}
+.report-section h2 {margin: 0 0 20px 0;padding: 0 0 12px 0;line-height: 20px;border-bottom: 1px solid #f4f4f4;}
+.report-section h3 {margin: 25px 0 5px 0;line-height: 24px;}
+.report-section h4 {margin: 0 0 2px 0;}
+.report-footer {text-align: center;padding: 20px 10px 5px 10px;color: #cdcdcd;font-size: 14px;}

@@ -1,0 +1,271 @@
+{% extends 'reports/email/bases/report/medium.jinja' %}
+
+{#===============================================
+  render_dash_link
+===============================================#}
+{% macro render_dash_link() %}
+    <a class="btn btn-blue btn-sm" href="https://dash.scrapinghub.com/p/{{ data.job.key.split('/')[0] }}/job/{{ data.job.key.split('/')[1] }}/{{ data.job.key.split('/')[2] }}" target="_blank">
+        See job in dash
+    </a>
+{% endmacro %}
+
+{#===============================================
+  render_header_data_value
+===============================================#}
+{% macro render_header_data_value(value, classes=None) %}
+    {% if value %}
+        {% if classes %}
+            <span class="{{ classes }}">{{ value }}</span>
+        {% else %}
+            {{ value }}
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{#===============================================
+  render_header_data
+===============================================#}
+{% macro render_header_data(name, value, classes=None) %}
+    <tr>
+        <td class="name">{{ name }}:</td>
+        <td class="value">
+            {% if value %}
+                {{ render_header_data_value(value, classes) }}
+            {% else %}
+                -
+            {% endif %}
+        </td>
+    </tr>
+{% endmacro %}
+
+{#===============================================
+  render_header_data_list
+===============================================#}
+{% macro render_header_data_list(name, values, classes=None) %}
+    <tr>
+        <td class="name">{{ name }}:</td>
+        <td class="value">
+            {% if values %}
+                {% for value in values %}{{ render_header_data_value(value, classes) }}{% endfor %}
+            {% else %}
+                -
+            {% endif %}
+        </td>
+    </tr>
+{% endmacro %}
+
+{#===============================================
+  render_header_data_separator
+===============================================#}
+{% macro render_header_data_separator() %}
+    <tr>
+        <td class="separator" colspan="2"><hr></td>
+    </tr>
+{% endmacro %}
+
+{#===============================================
+  page_styles
+===============================================#}
+{% block page_styles %}
+    {% include 'reports/email/monitors/result.css' %}
+{% endblock %}
+
+{#===============================================
+  page_content
+===============================================#}
+{% block page_content %}
+    {#-----------------------------------------------
+      TITLE
+    ------------------------------------------------#}
+    <table class="report-title" width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td class="title">
+                <h1>{{ report_title or 'Report Title' }}</h1>
+            </td>
+            {% if data.job %}
+                <td class="button">
+                    {{ render_dash_link() }}
+                </td>
+            {% endif %}
+        </tr>
+    </table>
+    {#-----------------------------------------------
+      SUMMARY
+    ------------------------------------------------#}
+    <div class="report-section">
+        <table class="table-summary" width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                {#------------------------
+                  VALUES
+                ------------------------#}
+                <td class="values">
+                    <table class="table-summary-values" width="100%" border="0" cellspacing="0" cellpadding="0">
+                        {#------------------------
+                          JOB OR SPIDER
+                        ------------------------#}
+                        {% set items_count = data.stats.get('item_scraped_count', 0) %}
+                        {% set requests_count = data.stats.get('downloader/request_count', 0) %}
+                        {% set stats_count = data.stats|length %}
+                        {% set passed_monitors_count = result.monitors_passed_results|length %}
+                        {% set failed_monitors_count = result.monitors_failed_results|length %}
+                        {#------------------------
+                          JOB
+                        ------------------------#}
+                        {% if data.job %}
+                            {% set is_script = data.job.metadata['spider'].startswith('py:') %}
+                            {% set logs_count = data.job.logs.list()|list|length %}
+                            {% set log_errors = data.job.logs|get_log_errors %}
+                            {% set log_errors_count = log_errors|length %}
+                            {% set running_time = data.job.metadata.get('finished_time', 0) - data.job.metadata.get('running_time', 0) %}
+
+                            {% if is_script %}
+                                {{ render_header_data('Script', data.job.metadata['spider'][3:], 'label label-blue') }}
+                            {% else %}
+                                {{ render_header_data('spider', data.job.metadata['spider'], 'label label-blue') }}
+                                {{ render_header_data('Version', data.job.metadata['version']) }}
+                                {{ render_header_data('Items', items_count, "badge badge-green") }}
+                            {% endif %}
+                            {{ render_header_data('Errors', log_errors_count, "badge badge-red") }}
+                            {% if not is_script %}
+                                {{ render_header_data('Requests', requests_count, "badge") }}
+                            {% endif %}
+                            {{ render_header_data('Logs', logs_count, "badge") }}
+                            {{ render_header_data('Stats', stats_count, "badge") }}
+                            {{ render_header_data('Running Time', running_time|format_time) }}
+                        {#------------------------
+                          SPIDER
+                        ------------------------#}
+                        {% elif data.spider %}
+                            {% set log_errors_count = data.stats.get('log_count/ERROR', 0) %}
+                            {% set running_time = data.stats.get('finish_time') - data.stats.get('start_time') %}
+
+                            {{ render_header_data('Spider', data.spider.name, 'label label-blue') }}
+                            {{ render_header_data('Items', items_count, "badge badge-green") }}
+                            {{ render_header_data('Errors', log_errors_count, "badge badge-red") }}
+                            {{ render_header_data('Requests', requests_count, "badge") }}
+                            {{ render_header_data('Stats', stats_count, "badge") }}
+                            {{ render_header_data('Running Time', running_time|format_time) }}
+                        {% endif %}
+                        {#------------------------
+                          BOTH
+                        ------------------------#}
+                        {% if passed_monitors_count or failed_monitors_count %}
+                            {% set monitors = [render_header_data_value(passed_monitors_count, "badge"), render_header_data_value(failed_monitors_count, "badge badge-red")] %}
+                            {{ render_header_data_list('Monitors', monitors) }}
+                        {% else %}
+                            {{ render_header_data('Monitors', None) }}
+                        {% endif %}
+                        {#------------------------
+                          JOB ONLY
+                        ------------------------#}
+                        {% if data.job %}
+                            {{ render_header_data_separator() }}
+                            {{ render_header_data('Job', data.job.key, classes='label label-blue') }}
+                            {{ render_header_data('State', data.job.metadata['state']) }}
+                            {{ render_header_data('Outcome', data.job.metadata['close_reason']) }}
+                            {{ render_header_data('Priority', data.job.metadata['priority']) }}
+                            {{ render_header_data('Bot Group', data.job.metadata['botgroup']) }}
+                            {{ render_header_data_list('Tags', data.job.metadata['tags'], 'label label-gray') }}
+                        {% endif %}
+                    </table>
+                </td>
+                <td class="banner">
+                    {% if result.all_monitors_passed %}
+                        <i class="icon-big icon-big-OK"></i>
+                        <div class="text-OK">All passed!</div>
+                    {% else %}
+                        <i class="icon-big icon-big-FAIL"></i>
+                        <div class="text-FAIL">{{ result.monitors_failed_results|length }} failed!</div>
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    </div>
+    {#-----------------------------------------------
+      MONITORS
+    ------------------------------------------------#}
+    <hr>
+    <div class="report-section">
+        <h2>Monitors</h2>
+        {% if result.monitor_results %}
+            {% for group in result.monitor_results|groupby('monitor.monitor_name') %}
+                <h3>{{ group.grouper }}</h3>
+                <table class="table-monitor" width="100%" border="0" cellspacing="0" cellpadding="0">
+                    {% for result in group.list %}
+                        <tr class="row_{{ result.status }} name {{ loop.cycle('odd', 'even') }}">
+                            <td class="name" title="{{ result.monitor.method_description }}">
+                                {% if result.status != 'OK'  %}
+                                    <a class="link-{{ result.status }}" href="#failure_{{ result.id }}">{{ result.monitor.method_name }}</a>
+                                {% else %}
+                                    {{ result.monitor.method_name }}
+                                {% endif %}
+                            </td>
+                            <td class="status">
+                                {% if result.status != 'OK'  %}
+                                    <span class="label label-{{ result.status }}">{{ result.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="icon">
+                                <i class="icon icon-{{ result.status }}"></i>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-warning">
+                No monitors defined...
+            </div>
+        {% endif %}
+    </div>
+    {#-----------------------------------------------
+      MONITOR FAILURES
+    ------------------------------------------------#}
+    {% if result.monitors_failed_results %}
+        <hr>
+        <div class="report-section">
+            <h2>Monitor Failures</h2>
+            {% for group in result.monitors_failed_results|groupby('monitor.monitor_name') %}
+                {% for result in group.list %}
+                    <a id="failure_{{ result.id }}"></a>
+                    <table class="report-failure" width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td>
+                                <h4 class="text-{{ result.status }}">{{ result.monitor.name }}</h4>
+                            </td>
+                            <td class="label">
+                                <span class="label label-{{ result.status }}">{{ result.status }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                {% if result.monitor.method_description %}
+                                    <div class="description">{{ result.monitor.method_description }}</div>
+                                {% endif %}
+                                {% if result.reason %}
+                                    <div class="highlighted">{{ result.reason }}</div>
+                                {% endif %}
+                                <pre>{{ result.error|indent }}</pre>
+                            </td>
+                        </tr>
+                    </table>
+
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
+    {#-----------------------------------------------
+      STATS
+    ------------------------------------------------#}
+    <hr>
+    <div class="report-section">
+        <h2>Stats</h2>
+        {% if data.stats %}
+            <pre>{{ data.stats|pprint }}</pre>
+        {% else %}
+            <div class="alert alert-warning">
+                No stats available...
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

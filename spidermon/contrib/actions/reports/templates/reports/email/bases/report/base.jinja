@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            {% include 'reports/email/bases/report/email.css' %}
+            {% include 'reports/email/bases/report/report.css' %}
+            {% block page_styles %}
+            {% endblock %}
+        </style>
+    </head>
+    <body>
+        <table class="report-container" width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td align="center">
+                    <div class="report {% block page_class %}{% endblock %}">
+                        {% block page_content %}{% endblock %}
+                    </div>
+                    <div class="report-footer">
+                        Report timestamp: {{ datetime.datetime.utcnow().strftime('%x %X UTC') }}
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
+
+

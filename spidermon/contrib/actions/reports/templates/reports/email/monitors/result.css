@@ -1,0 +1,154 @@
+/*--------------------------
+ Summary
+--------------------------*/
+table.table-summary td {
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+}
+table.table-summary td.values {
+    width: 470px;
+    /*background-color: #0ff;/**/
+    padding: 18px 0;
+}
+table.table-summary td.banner {
+    width: 200px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    /*background-color: #ff0;/**/
+    padding-bottom: 20px;
+}
+table.table-summary-values td.name {
+    padding: 2px 0;
+    vertical-align: middle;
+    text-align: right;
+    width: 160px;
+    font-weight: bold;
+}
+table.table-summary-values td.value {
+    padding: 1px 0 0 17px;
+    width: 310px;
+    vertical-align: middle;
+}
+table.table-summary-values td.value .label {
+    font-size: 14px;
+}
+table.table-summary-values td.separator {
+    padding: 10px 0;
+}
+
+/*--------------------------
+ Monitors
+--------------------------*/
+table.table-monitor {
+    margin: 10px 0 30px 0;
+    border-bottom: 1px solid #ddd;
+}
+table.table-monitor tr {
+    height: 42px;
+}
+table.table-monitor td {
+    padding: 10px 0px;
+    margin: 0;
+    border-top: 1px solid #ddd;
+}
+table.table-monitor td.name {
+    font-size: 18px;
+    line-height: 20px;
+    font-weight: 700;
+    color: #666;
+    width: 544px;
+    padding-left:15px
+}
+table.table-monitor td.name a {
+    text-decoration: underline;
+}
+table.table-monitor td.status {
+    text-align: center;
+    width: 80px;
+}
+table.table-monitor td.icon {
+    padding: 4px 5px 4px 5px;
+    text-align: center;
+    width: 46px;
+}
+
+/*--------------------------
+ Labels
+--------------------------*/
+.label-FAIL {
+    background-color: #b94a48;
+}
+.label-ERROR {
+    background-color: #ff0000;
+}
+
+/*--------------------------
+ Icons
+--------------------------*/
+.icon-OK {
+    background-image:url(http://email-templates.scrapinghub.com.s3.amazonaws.com/spidermon/icon_ok_34.png);
+}
+.icon-FAIL {
+    background-image:url(http://email-templates.scrapinghub.com.s3.amazonaws.com/spidermon/icon_fail_34.png);
+}
+.icon-ERROR {
+    background-image:url(http://email-templates.scrapinghub.com.s3.amazonaws.com/spidermon/icon_error_34.png);
+}
+.icon-big-OK {
+    background-image:url(http://email-templates.scrapinghub.com.s3.amazonaws.com/spidermon/icon_ok_140.png);
+}
+.icon-big-FAIL {
+    background-image:url(http://email-templates.scrapinghub.com.s3.amazonaws.com/spidermon/icon_fail_140.png);
+}
+
+/*--------------------------
+ OK / FAIL / ERROR
+--------------------------*/
+.text-OK {
+    color: #5cb85c;
+}
+a.link-FAIL:hover,
+a.link-FAIL:visited,
+a.link-FAIL:active,
+a.link-FAIL,
+.text-FAIL {
+    color: #b94a48;
+}
+a.link-ERROR:hover,
+a.link-ERROR:visited,
+a.link-ERROR:active,
+a.link-ERROR,
+.text-ERROR {
+    color: #ff0000;
+}
+
+/*--------------------------
+ Monitor Failures
+--------------------------*/
+table.report-failure {
+    margin: 30px 0 30px 0;
+}
+table.report-failure td {
+    margin: 0;
+    padding: 0;
+}
+table.report-failure td.label {
+    text-align: right;
+}
+.description {
+    color: #888;
+    font-size: 13px;
+    margin: 0 0 2px 0;
+}
+table.report-failure pre {
+    margin-top: 8px;
+}
+.highlighted {
+    display: inline-block;
+    background-color: #fff5b9;
+    padding: 1px 6px;
+    font-style: italic;
+    margin: 5px 0 2px 0;
+}
