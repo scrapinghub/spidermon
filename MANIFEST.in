@@ -1,1 +1,1 @@
-recursive-include spidermon *.jinja
+recursive-include spidermon *.jinja *.css
