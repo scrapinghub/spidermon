@@ -5,12 +5,12 @@ from spidermon.exceptions import NotConfigured
 from . import SendEmail
 
 
-class SendS3Email(SendEmail):
+class SendSESEmail(SendEmail):
     aws_access_key = None
     aws_secret_key = None
 
     def __init__(self, aws_access_key, aws_secret_key, *args, **kwargs):
-        super(SendS3Email, self).__init__(*args, **kwargs)
+        super(SendSESEmail, self).__init__(*args, **kwargs)
         self.aws_access_key = aws_access_key or self.aws_access_key
         self.aws_secret_key = aws_secret_key or self.aws_secret_key
         if not self.aws_access_key:
@@ -20,7 +20,7 @@ class SendS3Email(SendEmail):
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
-        kwargs = super(SendS3Email, cls).from_crawler_kwargs(crawler)
+        kwargs = super(SendSESEmail, cls).from_crawler_kwargs(crawler)
         kwargs.update({
             'aws_access_key': crawler.settings.get('SPIDERMON_AWS_ACCESS_KEY'),
             'aws_secret_key': crawler.settings.get('SPIDERMON_AWS_SECRET_KEY'),
