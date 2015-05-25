@@ -103,12 +103,15 @@ class CreateS3Report(CreateReport):
     def get_s3_filename(self):
         return self.render_text_template(self.s3_filename)
 
-    def get_meta(self):
-        report_url = 'http://{bucket}.{region}/{filename}'.format(
+    def get_s3_report_url(self):
+        return 'http://{bucket}.{region}/{filename}'.format(
             bucket=self.s3_bucket,
             region=self.s3_region_endpoint,
             filename=self.get_s3_filename(),
         )
+
+    def get_meta(self):
+        report_url = self.get_s3_report_url()
         return {
             'reports_links': self.data.meta.get('reports', []) + [report_url]
         }
