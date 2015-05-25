@@ -21,10 +21,10 @@ from spidermon.contrib.stats.counters import DictPercentCounter
 
 
 class StatusCodesInfo(object):
-    def __init__(self, status_codes_count, analyzer):
+    def __init__(self, status_codes_count, stats_analyzer):
 
         self._count = status_codes_count
-        self.analyzer = analyzer
+        self._stats_analyzer = stats_analyzer
 
         # all status codes
         self.all = DictPercentCounter(total=status_codes_count)
@@ -72,7 +72,7 @@ class StatusCodesInfo(object):
     def _get_response_code(self, code):
         return dict([(code, PercentCounter(count, self._count))
                      for count, code in
-                     self.analyzer.search(
+                     self._stats_analyzer.search(
                          pattern=DOWNLOADER_RESPONSE_STATUS + ('(%s)$' % code),
                          include_matches=True,
                          ).values()
@@ -81,11 +81,11 @@ class StatusCodesInfo(object):
 
 class ResponsesInfo(object):
     def __init__(self, stats):
-        self.analyzer = StatsAnalyzer(stats=stats)
-        self.count = self.analyzer.search(DOWNLOADER_RESPONSE_COUNT + '$').get(DOWNLOADER_RESPONSE_COUNT, 0)
+        stats_analyzer = StatsAnalyzer(stats=stats)
+        self.count = stats_analyzer.search(DOWNLOADER_RESPONSE_COUNT + '$').get(DOWNLOADER_RESPONSE_COUNT, 0)
         self.codes = StatusCodesInfo(
             status_codes_count=self.count,
-            analyzer=self.analyzer,
+            stats_analyzer=stats_analyzer,
         )
 
 
