@@ -82,9 +82,9 @@ class StatusCodesInfo(object):
 class ResponsesInfo(object):
     def __init__(self, stats):
         stats_analyzer = StatsAnalyzer(stats=stats)
-        self.count = stats_analyzer.search(DOWNLOADER_RESPONSE_COUNT + '$').get(DOWNLOADER_RESPONSE_COUNT, 0)
+        self.responses_count = stats_analyzer.search(DOWNLOADER_RESPONSE_COUNT + '$').get(DOWNLOADER_RESPONSE_COUNT, 0)
         self.codes = StatusCodesInfo(
-            status_codes_count=self.count,
+            status_codes_count=self.responses_count,
             stats_analyzer=stats_analyzer,
         )
 
