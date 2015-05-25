@@ -54,7 +54,7 @@ class StatusCodesInfo(object):
         self.others = DictPercentCounter(total=status_codes_count)
         self._add_status_codes(pattern=DOWNLOADER_STATUS_CODES_OTHERS, target=self.others)
 
-        # >= errors (4xx + 5xx)
+        # errors (4xx + 5xx)
         self.errors = DictPercentCounter(total=status_codes_count)
         self._add_status_codes(pattern=DOWNLOADER_STATUS_CODES_ERRORS, target=self.errors)
 
