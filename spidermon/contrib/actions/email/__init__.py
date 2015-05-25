@@ -116,10 +116,8 @@ class SendEmail(ActionWithTemplates):
         if self.reply_to:
             message['reply-to'] = self.reply_to
 
-        if not body_html:
-            message.attach(MIMEText(body_text, 'plain'))
-        else:
-            message.attach(MIMEText(body_text, 'plain'))
+        message.attach(MIMEText(body_text, 'plain'))
+        if body_html:
             message.attach(MIMEText(body_html, 'html'))
 
         return message
