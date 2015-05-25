@@ -26,13 +26,6 @@ class StatusCodesInfo(object):
         self._count = status_codes_count
         self.analyzer = analyzer
 
-        self.successful = DictPercentCounter(total=status_codes_count)
-        self.redirections = DictPercentCounter(total=status_codes_count)
-        self.bad_requests = DictPercentCounter(total=status_codes_count)
-        self.internal_server_errors = DictPercentCounter(total=status_codes_count)
-        self.errors = DictPercentCounter(total=status_codes_count)
-        self.others = DictPercentCounter(total=status_codes_count)
-
         # all status codes
         self.all = DictPercentCounter(total=status_codes_count)
         self._add_status_codes(pattern=None, target=self.all)
