@@ -43,7 +43,6 @@ class MonitorOptions(OptionsBase):
         self.level = None
         self.meta = {}
         self.order = settings.MONITOR.DEFAULT_ORDER
-        self.amparo = 3
 
 
 class MonitorOptionsMetaclass(OptionsMetaclassBase):
