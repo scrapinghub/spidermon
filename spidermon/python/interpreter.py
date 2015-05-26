@@ -1,7 +1,7 @@
 import six
 import ast
 
-from .exceptions import InvalidExpression
+from spidermon.exceptions import InvalidExpression
 
 
 class Interpreter(object):
