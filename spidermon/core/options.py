@@ -38,7 +38,7 @@ class OptionsBase(object):
 
 class MonitorOptions(OptionsBase):
     def __init__(self):
-        self.name = None
+        self.name = settings.MONITOR.DEFAULT_NAME
         self.description = settings.MONITOR.DEFAULT_DESCRIPTION
         self.level = None
         self.meta = {}

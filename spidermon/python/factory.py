@@ -2,6 +2,7 @@ import json
 from spidermon import Monitor
 from spidermon.core.options import MonitorOptions
 from spidermon.python import Interpreter
+from spidermon import settings
 
 
 class PythonExpressionsMonitor(Monitor):
@@ -40,12 +41,8 @@ def create_monitor_class_from_dict(monitor_dict, monitor_class=None):
             test.get('fail_reason', None),
         ))
     klass = _create_monitor_class(tests, monitor_class)
-    name = monitor_dict.get('name', None)
-    if name:
-        klass.options.name = name
-    description = monitor_dict.get('description', None)
-    if name:
-        klass.options.description = description
+    klass.options.name = monitor_dict.get('name', settings.MONITOR.DEFAULT_NAME)
+    klass.options.description = monitor_dict.get('description', settings.MONITOR.DEFAULT_DESCRIPTION)
     return klass
 
 
@@ -73,9 +70,7 @@ def _create_test_method(expression, name=None, description=None, fail_reason=Non
                             fail_reason.format(**context))
     test_method = _test_method
     MonitorOptions.add_or_create(test_method)
-    if name:
-        test_method.options.name = name
-    if description:
-        test_method.options.description = description
+    test_method.options.name = name or settings.MONITOR.DEFAULT_NAME
+    test_method.options.description = description or settings.MONITOR.DEFAULT_DESCRIPTION
     return test_method
 
