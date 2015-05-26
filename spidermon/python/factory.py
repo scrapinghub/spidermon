@@ -2,6 +2,7 @@ import json
 from spidermon import Monitor
 from spidermon.core.options import MonitorOptions
 from spidermon.python import Interpreter
+from spidermon.exceptions import InvalidMonitor
 from spidermon import settings
 
 
@@ -48,6 +49,8 @@ def create_monitor_class_from_dict(monitor_dict, monitor_class=None):
 
 def _create_monitor_class(expressions, monitor_class=None):
     monitor_class = monitor_class or PythonExpressionsMonitor
+    if not issubclass(monitor_class, PythonExpressionsMonitor):
+        raise InvalidMonitor('Python expressions monitors must subclass PythonExpressionsMonitor')
     klass = type(monitor_class.generate_class_name(), (monitor_class,), {})
     for e in expressions:
         if isinstance(e, tuple):
