@@ -4,14 +4,26 @@ from scrapy.utils.misc import load_object
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 from spidermon.utils.hubstorage import hs
+from spidermon.python import factory
+from spidermon.python.monitors import ExpressionsMonitor
+
 
 
 class Spidermon(object):
 
-    def __init__(self, crawler, spider_opened_suites, spider_closed_suites):
+    def __init__(self, crawler,
+                 spider_opened_suites=None, spider_closed_suites=None,
+                 spider_opened_expression_suites=None, spider_closed_expression_suites=None,
+                 expressions_monitor_class=None):
         self.crawler = crawler
-        self.spider_opened_suites = [self.load_suite(s) for s in spider_opened_suites]
-        self.spider_closed_suites = [self.load_suite(s) for s in spider_closed_suites]
+
+        self.spider_opened_suites = [self.load_suite(s) for s in spider_opened_suites or []]
+        self.spider_opened_suites += [self.load_expression_suite(s, expressions_monitor_class)
+                                      for s in spider_opened_expression_suites or []]
+
+        self.spider_closed_suites = [self.load_suite(s) for s in spider_closed_suites or []]
+        self.spider_closed_suites += [self.load_expression_suite(s, expressions_monitor_class)
+                                      for s in spider_closed_expression_suites or []]
 
     def load_suite(self, suite_to_load):
         try:
@@ -22,6 +34,19 @@ class Spidermon(object):
             raise Exception  # TO-DO
         return suite_class(crawler=self.crawler)
 
+    def load_expression_suite(self, suite_to_load, monitor_class=None):
+        if monitor_class:
+            monitor_class = load_object(monitor_class)
+        else:
+            monitor_class = ExpressionsMonitor
+        monitor = factory.create_monitor_class_from_dict(
+            monitor_dict=suite_to_load,
+            monitor_class=monitor_class
+        )
+        suite = MonitorSuite()
+        suite.add_monitor(monitor)
+        return suite
+
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -29,6 +54,9 @@ class Spidermon(object):
             crawler=crawler,
             spider_opened_suites=crawler.settings.getlist('SPIDERMON_SPIDER_OPEN_MONITORS'),
             spider_closed_suites=crawler.settings.getlist('SPIDERMON_SPIDER_CLOSE_MONITORS'),
+            spider_opened_expression_suites=crawler.settings.getlist('SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS'),
+            spider_closed_expression_suites=crawler.settings.getlist('SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS'),
+            expressions_monitor_class=crawler.settings.get('SPIDERMON_EXPRESSIONS_MONITOR_CLASS'),
         )
         crawler.signals.connect(ext.spider_opened, signal=signals.spider_opened)
         crawler.signals.connect(ext.spider_closed, signal=signals.spider_closed)
