@@ -1,7 +1,9 @@
 import json
+from jsonschema import validate
+
 from spidermon import Monitor
 from spidermon.core.options import MonitorOptions
-from spidermon.python import Interpreter
+from spidermon.python import Interpreter, schemas
 from spidermon.exceptions import InvalidMonitor
 from spidermon import settings
 
@@ -29,6 +31,7 @@ class PythonExpressionsMonitor(Monitor):
 
 def create_monitor_class_from_json(monitor_json, monitor_class=None):
     monitor_dict = json.loads(monitor_json)
+    validate(monitor_dict, schemas.MONITOR_SCHEMA)
     return create_monitor_class_from_dict(monitor_dict, monitor_class)
 
 
