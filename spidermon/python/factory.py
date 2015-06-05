@@ -42,7 +42,7 @@ def create_monitor_class_from_dict(monitor_dict, monitor_class=None):
             test['expression'],
             test.get('name', None),
             test.get('description', None),
-            test.get('fail_reason', None),
+            test.get('fail_message', None),
         ))
     klass = _create_monitor_class(tests, monitor_class)
     klass.options.name = monitor_dict.get('name', settings.MONITOR.DEFAULT_NAME)
