@@ -5,7 +5,7 @@ from spidermon.exceptions import NotConfigured
 class CreateReport(ActionWithTemplates):
     template = None
 
-    def __init__(self, template, context=None):
+    def __init__(self, template=None, context=None):
         super(CreateReport, self).__init__()
         self.template = template or self.template
         self.context = context or {}
