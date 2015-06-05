@@ -48,8 +48,8 @@ class Spidermon(object):
         print 'load_expression_suite crawler:', self.crawler
         suite = MonitorSuite(crawler=self.crawler)
         suite.add_monitor(monitor)
-        suite.add_monitors_finished_action(CreateS3Report)
-        suite.add_monitors_finished_action(SendSlackMessageSpiderFinished)
+        #suite.add_monitors_finished_action(CreateS3Report)
+        #suite.add_monitors_finished_action(SendSlackMessageSpiderFinished)
         return suite
 
 
