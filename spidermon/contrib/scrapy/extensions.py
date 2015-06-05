@@ -45,7 +45,7 @@ class Spidermon(object):
             monitor_dict=suite_to_load,
             monitor_class=monitor_class
         )
-        suite = MonitorSuite()
+        suite = MonitorSuite(crawler=self.crawler)
         suite.add_monitor(monitor)
         suite.add_monitors_finished_action(CreateS3Report)
         suite.add_monitors_finished_action(SendSlackMessageSpiderFinished)
