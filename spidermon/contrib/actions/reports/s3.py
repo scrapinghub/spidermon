@@ -55,8 +55,8 @@ class CreateS3Report(CreateReport):
     make_public = True
     content_type = DEFAULT_S3_CONTENT_TYPE
 
-    def __init__(self, aws_access_key, aws_secret_key,
-                 s3_bucket, s3_filename, s3_region_endpoint=None,
+    def __init__(self, aws_access_key=None, aws_secret_key=None,
+                 s3_bucket=None, s3_filename=None, s3_region_endpoint=None,
                  make_public=False, content_type=None,
                  *args, **kwargs):
         super(CreateS3Report, self).__init__(*args, **kwargs)
