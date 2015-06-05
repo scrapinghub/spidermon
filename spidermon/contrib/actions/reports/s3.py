@@ -79,9 +79,6 @@ class CreateS3Report(CreateReport):
     @classmethod
     def from_crawler_kwargs(cls, crawler):
         kwargs = super(CreateS3Report, cls).from_crawler_kwargs(crawler)
-        print '-'*80
-        print kwargs
-        print '-'*80
         kwargs.update({
             'aws_access_key': crawler.settings.get('SPIDERMON_AWS_ACCESS_KEY'),
             'aws_secret_key': crawler.settings.get('SPIDERMON_AWS_SECRET_KEY'),
