@@ -71,6 +71,8 @@ class ActionFactory(object):
 
     @classmethod
     def load_action_from_class(cls, action_class, crawler=None):
+        print crawler
+        print hasattr(action_class, 'from_crawler')
         if not issubclass(action_class, Action):
             cls.raise_invalid_class()
         if crawler and hasattr(action_class, 'from_crawler'):
