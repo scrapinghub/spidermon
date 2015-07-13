@@ -105,13 +105,15 @@ class CreateS3Report(CreateReport):
         )
 
     def get_s3_filename(self):
-        return self.render_text_template(self.s3_filename)
+        return '{secret}/{filename}'.format(
+            secret=self.get_url_secret(),
+            filename=self.render_text_template(self.s3_filename),
+        )
 
     def get_s3_report_url(self):
-        return 'http://{bucket}.{region}/reports/{secret}/{filename}'.format(
+        return 'http://{bucket}.{region}/reports/{filename}'.format(
             bucket=self.s3_bucket,
             region=self.s3_region_endpoint,
-            secret=self.get_url_secret(),
             filename=self.get_s3_filename(),
         )
 
