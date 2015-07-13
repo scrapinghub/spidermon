@@ -60,9 +60,6 @@ class CreateS3Report(CreateReport):
                  make_public=False, content_type=None,
                  *args, **kwargs):
         super(CreateS3Report, self).__init__(*args, **kwargs)
-        print '.'*80
-        print '__init__'
-        print '.'*80
 
         self.aws_access_key = aws_access_key or self.aws_access_key
         self.aws_secret_key = aws_secret_key or self.aws_secret_key
@@ -82,9 +79,6 @@ class CreateS3Report(CreateReport):
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
-        print '.'*80
-        print 'from_crawler_kwargs'
-        print '.'*80
         kwargs = super(CreateS3Report, cls).from_crawler_kwargs(crawler)
         kwargs.update({
             'aws_access_key': crawler.settings.get('SPIDERMON_AWS_ACCESS_KEY'),
