@@ -1,3 +1,5 @@
+import hashlib
+
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
@@ -8,6 +10,7 @@ from . import CreateReport
 
 DEFAULT_S3_REGION_ENDPOINT = 's3.amazonaws.com'
 DEFAULT_S3_CONTENT_TYPE = 'text/html'
+URL_SECRET_KEY = 'The secret to life the universe and everything'
 
 
 class S3Uploader(object):
@@ -105,11 +108,15 @@ class CreateS3Report(CreateReport):
         return self.render_text_template(self.s3_filename)
 
     def get_s3_report_url(self):
-        return 'http://{bucket}.{region}/{filename}'.format(
+        return 'http://{bucket}.{region}/{secret}/{filename}'.format(
             bucket=self.s3_bucket,
             region=self.s3_region_endpoint,
+            secret=self.get_url_secret(),
             filename=self.get_s3_filename(),
         )
+
+    def get_url_secret(self):
+        return hashlib.md5(URL_SECRET_KEY + str(self.data.job.key)).hexdigest()
 
     def get_meta(self):
         report_url = self.get_s3_report_url()
