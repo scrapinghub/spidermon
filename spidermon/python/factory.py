@@ -73,7 +73,7 @@ def _create_test_method(expression, name=None, description=None, fail_reason=Non
             self.assertTrue(bool(result),
                             msg=('Expression not safisfied: "%s"' % expression)
                             if not fail_reason else
-                            fail_reason.format(**context))
+                            interpreter.eval(fail_reason, context=context))
     test_method = _test_method
     MonitorOptions.add_or_create(test_method)
     test_method.options.name = name or settings.MONITOR.DEFAULT_NAME
