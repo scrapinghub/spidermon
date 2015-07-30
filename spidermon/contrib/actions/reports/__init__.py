@@ -4,11 +4,12 @@ from spidermon.exceptions import NotConfigured
 
 class CreateReport(ActionWithTemplates):
     template = None
+    context = None
 
     def __init__(self, template=None, context=None):
         super(CreateReport, self).__init__()
         self.template = template or self.template
-        self.context = context or {}
+        self.context = context or self.context or {}
         self.report = ''
         if not self.template:
             raise NotConfigured("You must define one template file.")
