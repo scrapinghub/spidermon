@@ -82,7 +82,7 @@
             <td class="title">
                 <h1>{{ report_title or 'Report Title' }}</h1>
             </td>
-            {% if data.job %}
+            {% if data.job and show_job_button %}
                 <td class="button">
                     {{ render_dash_link() }}
                 </td>
