@@ -111,9 +111,9 @@ class CreateS3Report(CreateReport):
         )
 
     def get_s3_report_url(self):
-        return 'http://{bucket}.{region}/{filename}'.format(
-            bucket=self.s3_bucket,
+        return 'https://{region}/{bucket}/{filename}'.format(
             region=self.s3_region_endpoint,
+            bucket=self.s3_bucket,
             filename=self.get_s3_filename(),
         )
 
