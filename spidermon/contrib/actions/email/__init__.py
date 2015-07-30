@@ -27,8 +27,9 @@ class SendEmail(ActionWithTemplates):
                  subject=None, subject_template=None,
                  body_text=None, body_text_template=None,
                  body_html=None, body_html_template=None,
-                 fake=None):
-        super(SendEmail, self).__init__()
+                 fake=None,
+                 *args, **kwargs):
+        super(SendEmail, self).__init__(*args, **kwargs)
         self.sender = sender or self.sender
         self.subject = subject or self.subject
         self.subject_template = subject_template or self.subject_template
