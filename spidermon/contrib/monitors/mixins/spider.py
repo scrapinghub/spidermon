@@ -20,42 +20,61 @@ from spidermon.contrib.stats.analyzer import StatsAnalyzer
 from spidermon.contrib.stats.counters import DictPercentCounter
 
 
-class StatusCodesInfo(object):
-    def __init__(self, status_codes_count, stats_analyzer):
-
-        self._count = status_codes_count
-        self._stats_analyzer = stats_analyzer
+class ResponsesInfo(object):
+    def __init__(self, stats):
+        self._stats_analyzer = StatsAnalyzer(stats=stats)
+        self.count = self._stats_analyzer.search(
+            DOWNLOADER_RESPONSE_COUNT + '$'
+        ).get(DOWNLOADER_RESPONSE_COUNT, 0)
 
         # all status codes
-        self.all = DictPercentCounter(total=status_codes_count)
-        self._add_status_codes(pattern=None, target=self.all)
+        self.all = DictPercentCounter(total=self.count)
+        self._add_status_codes(
+            pattern=None,
+            target=self.all
+        )
 
         # 1xx. informational
-        self.informational = DictPercentCounter(total=status_codes_count)
-        self._add_status_codes(pattern=DOWNLOADER_STATUS_CODES_INFORMATIONAL, target=self.informational)
+        self.informational = DictPercentCounter(total=self.count)
+        self._add_status_codes(
+            pattern=DOWNLOADER_STATUS_CODES_INFORMATIONAL,
+            target=self.informational
+        )
 
         # 2xx. successful
-        self.successful = DictPercentCounter(total=status_codes_count)
-        self._add_status_codes(pattern=DOWNLOADER_STATUS_CODES_SUCCESSFUL, target=self.successful)
+        self.successful = DictPercentCounter(total=self.count)
+        self._add_status_codes(
+            pattern=DOWNLOADER_STATUS_CODES_SUCCESSFUL,
+            target=self.successful
+        )
 
         # 3xx. redirections
-        self.redirections = DictPercentCounter(total=status_codes_count)
-        self._add_status_codes(pattern=DOWNLOADER_STATUS_CODES_REDIRECTIONS, target=self.redirections)
+        self.redirections = DictPercentCounter(total=self.count)
+        self._add_status_codes(
+            pattern=DOWNLOADER_STATUS_CODES_REDIRECTIONS,
+            target=self.redirections
+        )
 
         # 4xx. bad requests
-        self.bad_requests = DictPercentCounter(total=status_codes_count)
-        self._add_status_codes(pattern=DOWNLOADER_STATUS_CODES_BAD_REQUESTS, target=self.bad_requests)
+        self.bad_requests = DictPercentCounter(total=self.count)
+        self._add_status_codes(
+            pattern=DOWNLOADER_STATUS_CODES_BAD_REQUESTS,
+            target=self.bad_requests
+        )
 
         # 5xx. internal server errors
-        self.internal_server_errors = DictPercentCounter(total=status_codes_count)
-        self._add_status_codes(pattern=DOWNLOADER_STATUS_CODES_INTERNAL_SERVER_ERRORS, target=self.internal_server_errors)
+        self.internal_server_errors = DictPercentCounter(total=self.count)
+        self._add_status_codes(
+            pattern=DOWNLOADER_STATUS_CODES_INTERNAL_SERVER_ERRORS,
+            target=self.internal_server_errors
+        )
 
         # >= 6xx. others
-        self.others = DictPercentCounter(total=status_codes_count)
+        self.others = DictPercentCounter(total=self.count)
         self._add_status_codes(pattern=DOWNLOADER_STATUS_CODES_OTHERS, target=self.others)
 
         # errors (4xx + 5xx)
-        self.errors = DictPercentCounter(total=status_codes_count)
+        self.errors = DictPercentCounter(total=self.count)
         self._add_status_codes(pattern=DOWNLOADER_STATUS_CODES_ERRORS, target=self.errors)
 
     def _add_status_codes(self, pattern, target):
@@ -70,22 +89,15 @@ class StatusCodesInfo(object):
         return return_codes
 
     def _get_response_code(self, code):
-        return dict([(code, PercentCounter(count, self._count))
-                     for count, code in
-                     self._stats_analyzer.search(
-                         pattern=DOWNLOADER_RESPONSE_STATUS + ('(%s)$' % code),
-                         include_matches=True,
-                         ).values()
-        ])
-
-
-class ResponsesInfo(object):
-    def __init__(self, stats):
-        stats_analyzer = StatsAnalyzer(stats=stats)
-        self.responses_count = stats_analyzer.search(DOWNLOADER_RESPONSE_COUNT + '$').get(DOWNLOADER_RESPONSE_COUNT, 0)
-        self.codes = StatusCodesInfo(
-            status_codes_count=self.responses_count,
-            stats_analyzer=stats_analyzer,
+        return dict(
+            [
+                (code, PercentCounter(count, self.count))
+                for count, code in
+                self._stats_analyzer.search(
+                    pattern=DOWNLOADER_RESPONSE_STATUS + ('(%s)$' % code),
+                    include_matches=True
+                ).values()
+            ]
         )
 
 
