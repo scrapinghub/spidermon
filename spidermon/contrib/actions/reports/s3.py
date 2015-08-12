@@ -41,7 +41,8 @@ class S3Uploader(object):
         )
 
     def _upload_with_method(self, bucket, method_name, filename, content, headers=None, make_public=False):
-        bucket = self.connection.get_bucket(bucket)
+        # Get bucket without validation (Needed to be used with credentials w/o listing perms)
+        bucket = self.connection.get_bucket(bucket, validate=False)
         f = Key(bucket)
         f.key = filename
         getattr(f, method_name)(content, headers=headers)
