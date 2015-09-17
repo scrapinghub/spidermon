@@ -21,5 +21,7 @@ class CreateFileReport(CreateReport):
         return kwargs
 
     def after_render_report(self):
-        with open(self.filename, "w") as f:
+        rendered_filename = self.render_text_template(self.filename)
+
+        with open(rendered_filename, "w") as f:
             f.write(self.report)
