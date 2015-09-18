@@ -25,7 +25,7 @@ class ValidationStatsManager(object):
     def add_field_error(self, field, error):
         self.stats.inc_value(self._get_stats_name(NAMES.FIELDS, NAMES.ERRORS))
         self.stats.inc_value(self._get_stats_name(NAMES.FIELDS, NAMES.ERRORS, error))
-        self.stats.inc_value(self._get_stats_name(NAMES.FIELDS, NAMES.ERRORS, error, field))
+        self.stats.inc_value(self._get_stats_name(NAMES.FIELDS, NAMES.ERRORS, error) + '/' + field)
 
     def add_fields(self, count):
         self.stats.inc_value(self._get_stats_name(NAMES.FIELDS), count=count)
