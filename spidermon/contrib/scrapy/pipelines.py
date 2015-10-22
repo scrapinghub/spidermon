@@ -1,9 +1,11 @@
 import six
 import json
+import StringIO
 from collections import defaultdict
 
 from scrapy.exceptions import DropItem, NotConfigured
 from scrapy.utils.misc import load_object
+from scrapy.exporters import JsonLinesItemExporter
 from scrapy import Field
 
 from spidermon.contrib.validation import SchematicsValidator, JSONSchemaValidator
@@ -72,7 +74,7 @@ class ItemValidationPipeline(object):
         return SchematicsValidator(model_class)
 
     def process_item(self, item, _):
-        data = dict(item)
+        data = self._convert_item_to_dict(item)
         self.stats.add_item()
         self.stats.add_fields(len(data.keys()))
         for validator in self.validators:
@@ -88,6 +90,13 @@ class ItemValidationPipeline(object):
                     self.stats.add_dropped_item()
                     raise DropItem('Validation failed!')
         return item
+
+    def _convert_item_to_dict(self, item):
+        serialized_json = StringIO.StringIO()
+        JsonLinesItemExporter(serialized_json).export_item(item)
+        data = json.loads(serialized_json.getvalue())
+        serialized_json.close()
+        return data
 
     def _add_validator(self, validator):
         self.validators.append(validator)
