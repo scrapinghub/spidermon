@@ -1,0 +1,6 @@
+image: scrapinghub
+
+script:
+  - git restore-mtime
+  - pip install -U tox
+  - tox
