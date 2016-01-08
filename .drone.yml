@@ -4,3 +4,12 @@ script:
   - git restore-mtime
   - pip install -U tox
   - tox
+
+notify:
+  slack:
+    webhook_url: $$SLACK_HOOK_URL
+    username: 'drone'
+    channel: '#spidermon'
+    on_started: false
+    on_success: false
+    on_failure: true
