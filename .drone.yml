@@ -11,5 +11,5 @@ notify:
     username: 'drone'
     channel: '#spidermon'
     on_started: false
-    on_success: true
+    on_success: false
     on_failure: true
