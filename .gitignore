@@ -52,3 +52,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# vim .swp/.swo/.sw* recovery files
+*.sw*
