@@ -1,9 +1,11 @@
 from setuptools import setup, find_packages
+from spidermon import __version__
 
 setup(
     name = 'spidermon',
-    version = '0.1',
+    version = __version__,
     packages = find_packages(),
+    package_data={'spidermon': ['VERSION']},
     zip_safe = False,
     include_package_data = True,
     install_requires=[

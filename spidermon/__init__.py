@@ -1,3 +1,6 @@
+import pkgutil
+__version__ = pkgutil.get_data('spidermon', 'VERSION').strip()
+
 from core.monitors import Monitor
 from core.suites import MonitorSuite
 from core.actions import Action, DummyAction
