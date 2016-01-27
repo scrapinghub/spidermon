@@ -5,10 +5,9 @@ from spidermon.exceptions import NotConfigured
 class CreateReport(ActionWithTemplates):
     template = None
 
-    def __init__(self, template, context=None):
-        super(CreateReport, self).__init__()
+    def __init__(self, template=None, *args, **kwargs):
+        super(CreateReport, self).__init__(*args, **kwargs)
         self.template = template or self.template
-        self.context = context or {}
         self.report = ''
         if not self.template:
             raise NotConfigured("You must define one template file.")
@@ -35,8 +34,3 @@ class CreateReport(ActionWithTemplates):
 
     def after_render_report(self):
         pass
-
-    def get_template_context(self):
-        context = super(CreateReport, self).get_template_context()
-        context.update(self.context)
-        return context

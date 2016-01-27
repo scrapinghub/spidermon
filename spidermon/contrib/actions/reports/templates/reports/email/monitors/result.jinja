@@ -5,7 +5,7 @@
 ===============================================#}
 {% macro render_dash_link() %}
     <a class="btn btn-blue btn-sm" href="https://dash.scrapinghub.com/p/{{ data.job.key.split('/')[0] }}/job/{{ data.job.key.split('/')[1] }}/{{ data.job.key.split('/')[2] }}" target="_blank">
-        See job in dash
+        See job
     </a>
 {% endmacro %}
 
@@ -82,7 +82,7 @@
             <td class="title">
                 <h1>{{ report_title or 'Report Title' }}</h1>
             </td>
-            {% if data.job %}
+            {% if data.job and show_job_button %}
                 <td class="button">
                     {{ render_dash_link() }}
                 </td>
@@ -197,6 +197,9 @@
                 <h3>{{ group.grouper }}</h3>
                 <table class="table-monitor" width="100%" border="0" cellspacing="0" cellpadding="0">
                     {% for result in group.list %}
+                        {% if loop.first and result.monitor.monitor_description %}
+                            <div class="description">{{ result.monitor.monitor_description }}</div>
+                        {% endif %}
                         <tr class="row_{{ result.status }} name {{ loop.cycle('odd', 'even') }}">
                             <td class="name" title="{{ result.monitor.method_description }}">
                                 {% if result.status != 'OK'  %}

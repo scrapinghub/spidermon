@@ -74,7 +74,11 @@ class DictPercentCounter(PercentCounterBase, collections.MutableMapping):
         raise TypeError
 
     def __str__(self):
-        return str(self._dict)
+        return '(count=%d, percent=%.2f, %s)' % (
+            self.count,
+            self.percent,
+            str(self._dict),
+        )
 
     __setitem__ = _immutable
     __delitem__ = _immutable

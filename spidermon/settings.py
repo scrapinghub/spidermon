@@ -61,6 +61,7 @@ class MONITOR:
         )
         DEFAULT = _MONITOR_LEVEL_NORMAL
 
+    DEFAULT_NAME = None
     DEFAULT_DESCRIPTION = ''
     DEFAULT_ORDER = 1
 

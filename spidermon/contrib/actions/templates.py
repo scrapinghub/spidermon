@@ -24,6 +24,11 @@ class ActionWithTemplatesMetaclass(ActionOptionsMetaclass):
 class ActionWithTemplates(Action):
     __metaclass__ = ActionWithTemplatesMetaclass
     template_paths = []
+    context = None
+
+    def __init__(self, context=None):
+        super(ActionWithTemplates, self).__init__()
+        self.context = context or self.context or {}
 
     def get_template(self, name):
         return template_loader.get_template(name)
@@ -37,9 +42,11 @@ class ActionWithTemplates(Action):
         return template.render(self.get_template_context())
 
     def get_template_context(self):
-        return {
+        context = {
             'result': self.result,
             'data': self.data,
             'monitors_passed': self.monitors_passed,
             'monitors_failed': self.monitors_failed,
         }
+        context.update(self.context)
+        return context

@@ -9,7 +9,7 @@ class SendSESEmail(SendEmail):
     aws_access_key = None
     aws_secret_key = None
 
-    def __init__(self, aws_access_key, aws_secret_key, *args, **kwargs):
+    def __init__(self, aws_access_key=None, aws_secret_key=None, *args, **kwargs):
         super(SendSESEmail, self).__init__(*args, **kwargs)
         self.aws_access_key = aws_access_key or self.aws_access_key
         self.aws_secret_key = aws_secret_key or self.aws_secret_key

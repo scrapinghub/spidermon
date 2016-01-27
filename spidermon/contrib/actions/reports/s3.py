@@ -1,3 +1,5 @@
+import hashlib
+
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
@@ -8,6 +10,7 @@ from . import CreateReport
 
 DEFAULT_S3_REGION_ENDPOINT = 's3.amazonaws.com'
 DEFAULT_S3_CONTENT_TYPE = 'text/html'
+URL_SECRET_KEY = 'The secret to life the universe and everything'
 
 
 class S3Uploader(object):
@@ -38,7 +41,8 @@ class S3Uploader(object):
         )
 
     def _upload_with_method(self, bucket, method_name, filename, content, headers=None, make_public=False):
-        bucket = self.connection.get_bucket(bucket)
+        # Get bucket without validation (Needed to be used with credentials w/o listing perms)
+        bucket = self.connection.get_bucket(bucket, validate=False)
         f = Key(bucket)
         f.key = filename
         getattr(f, method_name)(content, headers=headers)
@@ -55,11 +59,12 @@ class CreateS3Report(CreateReport):
     make_public = True
     content_type = DEFAULT_S3_CONTENT_TYPE
 
-    def __init__(self, aws_access_key, aws_secret_key,
-                 s3_bucket, s3_filename, s3_region_endpoint=None,
+    def __init__(self, aws_access_key=None, aws_secret_key=None,
+                 s3_bucket=None, s3_filename=None, s3_region_endpoint=None,
                  make_public=False, content_type=None,
                  *args, **kwargs):
         super(CreateS3Report, self).__init__(*args, **kwargs)
+
         self.aws_access_key = aws_access_key or self.aws_access_key
         self.aws_secret_key = aws_secret_key or self.aws_secret_key
         self.s3_bucket = s3_bucket or self.s3_bucket
@@ -101,14 +106,26 @@ class CreateS3Report(CreateReport):
         )
 
     def get_s3_filename(self):
-        return self.render_text_template(self.s3_filename)
+        return 'reports/{secret}/{filename}'.format(
+            secret=self.get_url_secret(),
+            filename=self.render_text_template(self.s3_filename),
+        )
 
-    def get_meta(self):
-        report_url = 'http://{bucket}.{region}/{filename}'.format(
-            bucket=self.s3_bucket,
+    def get_s3_report_url(self):
+        return 'https://{region}/{bucket}/{filename}'.format(
             region=self.s3_region_endpoint,
+            bucket=self.s3_bucket,
             filename=self.get_s3_filename(),
         )
+
+    def get_url_secret(self):
+        secret = URL_SECRET_KEY
+        if self.data.job:
+            secret += str(self.data.job.key.split('/')[0])
+        return hashlib.md5(secret).hexdigest()
+
+    def get_meta(self):
+        report_url = self.get_s3_report_url()
         return {
             'reports_links': self.data.meta.get('reports', []) + [report_url]
         }
