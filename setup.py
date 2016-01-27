@@ -1,5 +1,8 @@
+from os.path import join, dirname
 from setuptools import setup, find_packages
-from spidermon import __version__
+
+# spidermon.__version__ imports doesn't available yet
+__version__ = open(join(dirname(__file__), 'spidermon/VERSION')).read().strip()
 
 setup(
     name = 'spidermon',
