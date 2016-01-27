@@ -1,5 +1,4 @@
-import pkgutil
-__version__ = pkgutil.get_data('spidermon', 'VERSION').strip()
+__version__ = '0.1.0' 
 
 from core.monitors import Monitor
 from core.suites import MonitorSuite

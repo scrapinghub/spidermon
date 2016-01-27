@@ -1,10 +1,8 @@
 from setuptools import setup, find_packages
 
-__version__ = '0.1.0'
-
 setup(
     name = 'spidermon',
-    version = __version__,
+    version = '0.1.0',
     packages = find_packages(),
     package_data={'spidermon': ['VERSION']},
     zip_safe = False,
