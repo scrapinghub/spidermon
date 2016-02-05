@@ -30,7 +30,8 @@ def test_can_process_items_with_nested_items():
     item = Tree()
     item['child'] = Tree()
 
-    pipeline = ItemValidationPipeline([json_schema_validator], stats)
+    validators = {Tree.__name__: [json_schema_validator]}
+    pipeline = ItemValidationPipeline(validators, stats)
     pipeline.process_item(item, None)
 
     assert 'spidermon/validation/items/errors' not in stats.get_stats()

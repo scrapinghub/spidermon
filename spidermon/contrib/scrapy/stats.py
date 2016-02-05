@@ -18,9 +18,9 @@ class ValidationStatsManager(object):
         self.prefix = prefix or STATS_DEFAULT_VALIDATION_PREFIX
         self.slugify = slugify
 
-    def add_validator(self, class_name):
+    def add_validator(self, type, class_name):
         self.stats.inc_value(self._get_stats_name(NAMES.VALIDATORS))
-        self.stats.set_value(self._get_stats_name(NAMES.VALIDATORS, class_name), True)
+        self.stats.set_value(self._get_stats_name(NAMES.VALIDATORS, type, class_name), True)
 
     def add_field_error(self, field, error):
         self.stats.inc_value(self._get_stats_name(NAMES.FIELDS, NAMES.ERRORS))

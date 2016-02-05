@@ -19,6 +19,10 @@ DEFAULT_ADD_ERRORS_TO_ITEM = False
 DEFAULT_DROP_ITEMS_WITH_ERRORS = False
 
 
+class UniversalItem(object):
+    pass
+
+
 class ItemValidationPipeline(object):
 
     def __init__(self, validators, stats,
@@ -28,18 +32,36 @@ class ItemValidationPipeline(object):
         self.drop_items_with_errors = drop_items_with_errors
         self.add_errors_to_items = add_errors_to_items or DEFAULT_ADD_ERRORS_TO_ITEM
         self.errors_field = errors_field or DEFAULT_ERRORS_FIELD
-        self.validators = []
+        self.validators = validators
         self.stats = ValidationStatsManager(stats)
-        for validator in validators:
-            self._add_validator(validator)
+        for _type, vals in validators.items():
+            [self.stats.add_validator(_type, val.name) for val in vals]
 
     @classmethod
     def from_crawler(cls, crawler):
-        validators = []
-        validators += [cls._load_jsonschema_validator(v)
-                       for v in crawler.settings.getlist('SPIDERMON_VALIDATION_SCHEMAS')]
-        validators += [cls._load_schematics_validator(v)
-                       for v in crawler.settings.getlist('SPIDERMON_VALIDATION_MODELS')]
+        validators = {}
+        allowed_types = (list, tuple, dict)
+
+        def set_validators(loader, schema):
+            if type(schema) in (list, tuple):
+                schema = {UniversalItem: schema}
+            for obj, paths in schema.items():
+                key = obj.__name__
+                paths = paths if type(paths) in (list, tuple) else [paths]
+                objects = [loader(v) for v in paths]
+                validators[key] = validators.get(key, []) + objects
+
+        for loader, name in [
+            (cls._load_jsonschema_validator, 'SPIDERMON_VALIDATION_SCHEMAS'),
+            (cls._load_schematics_validator, 'SPIDERMON_VALIDATION_MODELS'),
+        ]:
+            res = crawler.settings.get(name)
+            if not res:
+                continue
+            if type(res) not in allowed_types:
+                raise NotConfigured('Invalid <{}> type for <{}> settings, dict or list/tuple'
+                                    'is required'.format(type(res), name))
+            set_validators(loader, res)
         return cls(
             validators=validators,
             stats=crawler.stats,
@@ -77,7 +99,7 @@ class ItemValidationPipeline(object):
         data = self._convert_item_to_dict(item)
         self.stats.add_item()
         self.stats.add_fields(len(data.keys()))
-        for validator in self.validators:
+        for validator in self.find_validators(item):
             ok, errors = validator.validate(data)
             if not ok:
                 for field_name, messages in errors.items():
@@ -91,16 +113,16 @@ class ItemValidationPipeline(object):
                     raise DropItem('Validation failed!')
         return item
 
+    def find_validators(self, item):
+        find = lambda x: self.validators.get(x.__name__, [])
+        return find(item.__class__) + find(UniversalItem)
+
     def _convert_item_to_dict(self, item):
         serialized_json = StringIO.StringIO()
         JsonLinesItemExporter(serialized_json).export_item(item)
         data = json.loads(serialized_json.getvalue())
         serialized_json.close()
         return data
-
-    def _add_validator(self, validator):
-        self.validators.append(validator)
-        self.stats.add_validator(validator.name)
 
     def _add_errors_to_item(self, item, errors):
         if not self.errors_field in item.__class__.fields:
@@ -109,3 +131,4 @@ class ItemValidationPipeline(object):
             item[self.errors_field] = defaultdict(list)
         for field_name, messages in errors.items():
             item[self.errors_field][field_name] += messages
+
