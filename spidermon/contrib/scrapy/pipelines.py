@@ -20,6 +20,12 @@ DEFAULT_DROP_ITEMS_WITH_ERRORS = False
 
 
 class UniversalItem(object):
+    '''
+    Represents general type of items in SPIDERMON_VALIDATION_* settings.
+
+    Which means, that item type was not specified and any item will be
+    processed by defined validators.
+    '''
     pass
 
 

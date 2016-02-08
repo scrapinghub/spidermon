@@ -41,7 +41,6 @@ Now, you have to create a file called `validators.py` into the project folder an
         title = StringType(required=True, max_length=200)
         user = StringType(required=True, max_length=50)
 
-
 After that, you need to enable the `ItemValidationPipeline`, set the validation model for your items and tell the pipeline to drop items that don't match the model:
 
 `settings.py`:
@@ -53,6 +52,28 @@ After that, you need to enable the `ItemValidationPipeline`, set the validation 
         'reddit_spidermon_demo.validators.NewsItem',
     )
     SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS = True
+
+If spider generates few different types of item it's possible to define validation models per every item.
+The same is applicable for `SPIDERMON_VALIDATION_SCHEMAS`.
+Just define setting as a dict in `settings.py`, where keys are item objects and validators are values,
+one or several of them (list or tuple in that case):
+
+    from reddit_spidermon_demo.items import NewsItem, SomeOtherItem # SomeOtherItem not in the demo
+
+    SPIDERMON_VALIDATION_MODELS = {
+        NewsItem: 'reddit_spidermon_demo.validators.NewsItem',
+        SomeOtherItem: ['reddit_spidermon_demo.validators.SomeOtherItem', ], # validator not in the demo
+    }
+
+Note, that only listed types of items will be processed in that case.
+If some validators need to be added to the all items, then UniversalItem may be used:
+
+    from from spidermon.contrib.scrapy.pipelines import UniversalItem
+
+    SPIDERMON_VALIDATION_MODELS = {
+        NewsItem: 'reddit_spidermon_demo.validators.NewsItem',
+        UniversalItem: 'reddit_spidermon_demo.validators.SomeOtherItem', # validator not in the demo
+    }
 
 You could also set the pipeline to include the validation error as a field in the item (although it may not be necessary, since the validation errors are included in the crawling stats and your monitor can check them once the spiders finishes):
 
