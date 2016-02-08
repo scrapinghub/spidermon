@@ -35,3 +35,4 @@ def test_can_process_items_with_nested_items():
     pipeline.process_item(item, None)
 
     assert 'spidermon/validation/items/errors' not in stats.get_stats()
+
