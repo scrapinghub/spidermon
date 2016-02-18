@@ -1,8 +1,10 @@
 from unittest import TestCase
 from slugify import slugify
 from scrapy.utils.test import get_crawler
+from scrapy import Item
+from functools import partial
 
-from spidermon.contrib.scrapy.pipelines import ItemValidationPipeline, UniversalItem
+from spidermon.contrib.scrapy.pipelines import ItemValidationPipeline
 from tests.fixtures.items import TreeItem, TestItem
 from tests.fixtures.validators import tree_schema, test_schema, test_schema_string
 
@@ -20,6 +22,25 @@ TEST_VALIDATOR_PATH = 'tests.fixtures.validators.TestValidator'
 
 
 class PipelineTestCaseMetaclass(type):
+    '''
+    Dynamically creates test methods per every DataTest entry.
+
+    Define class attr called `data_tests` with a list of DataTest
+    objects like:
+
+        data_tests = [
+            DataTest(
+                name="check validator",
+                item=TestItem(),
+                settings={
+                    SETTING_SCHEMAS: [test_schema,],
+                },
+                cases=[
+                    "'{}' in {{stats}}".format(STATS_ITEM_ERRORS),
+                ],
+            ),
+        ]
+    '''
     def __new__(mcs, name, bases, attrs):
         def _test_function(data_test):
             def _function(self):
@@ -53,8 +74,13 @@ class DataTest(object):
         self.settings = settings
 
 
+def assert_type_in_stats(validator_type, obj):
+    return "'{}' in {{stats}}".format(
+        STATS_TYPES.format(obj.__name__.lower(), validator_type))
+
+
 class PipelineJSONSchemaValidator(PipelineTest):
-    STATS_TYPES = 'spidermon/validation/validators/{}/jsonschema'
+    assert_type_in_stats = partial(assert_type_in_stats, 'jsonschema')
 
     data_tests = [
         DataTest(
@@ -66,8 +92,7 @@ class PipelineJSONSchemaValidator(PipelineTest):
             cases=[
                 "'{}' not in {{stats}}".format(STATS_ITEM_ERRORS),
                 "{{stats}}['{}'] is 1".format(STATS_AMOUNTS),
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(UniversalItem.__name__.lower()))
+                assert_type_in_stats(Item),
             ],
         ),
         DataTest(
@@ -88,27 +113,25 @@ class PipelineJSONSchemaValidator(PipelineTest):
         ),
         DataTest(
             name="validator is {} type, loads from path to a python dict".format(
-                UniversalItem.__name__),
+                Item.__name__),
             item=TestItem(),
             settings={
                 SETTING_SCHEMAS: ['tests.fixtures.validators.test_schema',],
             },
             cases=[
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(UniversalItem.__name__.lower())),
+                assert_type_in_stats(Item),
                 "'{}' in {{stats}}".format(STATS_ITEM_ERRORS),
             ],
         ),
         DataTest(
             name="validator is {} type, loads from object path to a JSON string".format(
-                UniversalItem.__name__),
+                Item.__name__),
             item=TestItem(),
             settings={
                 SETTING_SCHEMAS: ['tests.fixtures.validators.test_schema_string',],
             },
             cases=[
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(UniversalItem.__name__.lower())),
+                assert_type_in_stats(Item),
                 "'{}' in {{stats}}".format(STATS_ITEM_ERRORS),
             ],
         ),
@@ -122,8 +145,7 @@ class PipelineJSONSchemaValidator(PipelineTest):
                 }
             },
             cases=[
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(TestItem.__name__.lower())),
+                assert_type_in_stats(TestItem),
                 "'{}' in {{stats}}".format(STATS_ITEM_ERRORS),
             ],
         ),
@@ -137,8 +159,7 @@ class PipelineJSONSchemaValidator(PipelineTest):
                 }
             },
             cases=[
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(TestItem.__name__.lower())),
+                assert_type_in_stats(TestItem),
                 "'{}' in {{stats}}".format(STATS_ITEM_ERRORS),
             ],
         ),
@@ -152,8 +173,7 @@ class PipelineJSONSchemaValidator(PipelineTest):
                 }
             },
             cases=[
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(TestItem.__name__.lower())),
+                assert_type_in_stats(TestItem),
                 "'{}' in {{stats}}".format(STATS_ITEM_ERRORS),
             ],
         ),
@@ -167,8 +187,7 @@ class PipelineJSONSchemaValidator(PipelineTest):
                 }
             },
             cases=[
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(TestItem.__name__.lower())),
+                assert_type_in_stats(TestItem),
                 "'{}' in {{stats}}".format(STATS_ITEM_ERRORS),
             ],
         ),
@@ -210,27 +229,14 @@ class PipelineJSONSchemaValidator(PipelineTest):
             },
             cases=[
                 "{{stats}}['{}'] is 1".format(STATS_MISSINGS),
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(TestItem.__name__.lower())),
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(TreeItem.__name__.lower())),
+                assert_type_in_stats(TestItem),
+                assert_type_in_stats(TreeItem),
             ],
-        ),
-        DataTest(
-            name="item should be processed by both validators",
-            item=TestItem({'url': 'example.com'}),
-            settings={
-                SETTING_SCHEMAS: {
-                    TestItem: test_schema,
-                    UniversalItem: tree_schema,
-                }
-            },
-            cases="'{}' in {{stats}}".format(STATS_MISSINGS),
         ),
     ]
 
 class PipelineModelValidator(PipelineTest):
-    STATS_TYPES = 'spidermon/validation/validators/{}/schematics'
+    assert_type_in_stats = partial(assert_type_in_stats, 'schematics')
 
     data_tests = [
         DataTest(
@@ -242,8 +248,7 @@ class PipelineModelValidator(PipelineTest):
             cases=[
                 "'{}' not in {{stats}}".format(STATS_ITEM_ERRORS),
                 "{{stats}}['{}'] is 1".format(STATS_AMOUNTS),
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(UniversalItem.__name__.lower()))
+                assert_type_in_stats(Item),
             ],
         ),
         DataTest(
@@ -263,8 +268,7 @@ class PipelineModelValidator(PipelineTest):
             cases=[
                 "'{}' not in {{stats}}".format(STATS_ITEM_ERRORS),
                 "{{stats}}['{}'] is 1".format(STATS_AMOUNTS),
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(UniversalItem.__name__.lower()))
+                assert_type_in_stats(Item),
             ],
         ),
         DataTest(
@@ -286,8 +290,7 @@ class PipelineModelValidator(PipelineTest):
             },
             cases=[
                 "'{}' in {{stats}}".format(STATS_ITEM_ERRORS),
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(TestItem.__name__.lower())),
+                assert_type_in_stats(TestItem),
             ],
         ),
         DataTest(
@@ -328,22 +331,9 @@ class PipelineModelValidator(PipelineTest):
             },
             cases=[
                 "{{stats}}['{}'] is 1".format(STATS_MISSINGS),
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(TestItem.__name__.lower())),
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(TreeItem.__name__.lower())),
+                assert_type_in_stats(TestItem),
+                assert_type_in_stats(TreeItem),
             ],
-        ),
-        DataTest(
-            name="item should be processed by both validators",
-            item=TestItem({'url': 'http://example.com'}),
-            settings={
-                SETTING_MODELS: {
-                    TestItem: TEST_VALIDATOR_PATH,
-                    UniversalItem: TREE_VALIDATOR_PATH,
-                }
-            },
-            cases="'{}' in {{stats}}".format(STATS_MISSINGS),
         ),
     ]
 
@@ -353,7 +343,7 @@ class PipelineValidators(PipelineTest):
     data_tests = [
         DataTest(
             name="there are both validators per {} type".format(
-                UniversalItem.__name__),
+                Item.__name__),
             item=TestItem(),
             settings={
                 SETTING_SCHEMAS: [test_schema,],
@@ -362,10 +352,8 @@ class PipelineValidators(PipelineTest):
             cases=[
                 "{{stats}}['{}'] is 2".format(STATS_AMOUNTS),
                 "{{stats}}['{}'] is 2".format(STATS_ITEM_ERRORS),
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(UniversalItem.__name__.lower(), 'jsonschema')),
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(UniversalItem.__name__.lower(), 'schematics')),
+                assert_type_in_stats('jsonschema', Item),
+                assert_type_in_stats('schematics', Item),
             ],
         ),
         DataTest(
@@ -377,18 +365,15 @@ class PipelineValidators(PipelineTest):
                     TreeItem: tree_schema,
                 },
                 SETTING_MODELS: {
-                    UniversalItem: TEST_VALIDATOR_PATH,
+                    Item: TEST_VALIDATOR_PATH,
                 },
             },
             cases=[
                 "{{stats}}['{}'] is 3".format(STATS_AMOUNTS),
                 "'{}' not in {{stats}}".format(STATS_ITEM_ERRORS),
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(TestItem.__name__.lower(), 'jsonschema')),
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(TreeItem.__name__.lower(), 'jsonschema')),
-                "'{}' in {{stats}}".format(
-                    STATS_TYPES.format(UniversalItem.__name__.lower(), 'schematics')),
+                assert_type_in_stats('jsonschema', TestItem),
+                assert_type_in_stats('jsonschema', TreeItem),
+                assert_type_in_stats('schematics', Item),
             ],
         ),
     ]

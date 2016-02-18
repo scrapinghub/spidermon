@@ -6,7 +6,7 @@ from collections import defaultdict
 from scrapy.exceptions import DropItem, NotConfigured
 from scrapy.utils.misc import load_object
 from scrapy.exporters import JsonLinesItemExporter
-from scrapy import Field
+from scrapy import Field, Item
 
 from spidermon.contrib.validation import SchematicsValidator, JSONSchemaValidator
 from schematics.models import Model
@@ -17,16 +17,6 @@ from .stats import ValidationStatsManager
 DEFAULT_ERRORS_FIELD = '_validation'
 DEFAULT_ADD_ERRORS_TO_ITEM = False
 DEFAULT_DROP_ITEMS_WITH_ERRORS = False
-
-
-class UniversalItem(object):
-    '''
-    Represents general type of items in SPIDERMON_VALIDATION_* settings.
-
-    Which means, that item type was not specified and any item will be
-    processed by defined validators.
-    '''
-    pass
 
 
 class ItemValidationPipeline(object):
@@ -45,17 +35,17 @@ class ItemValidationPipeline(object):
 
     @classmethod
     def from_crawler(cls, crawler):
-        validators = {}
+        validators = defaultdict(list)
         allowed_types = (list, tuple, dict)
 
         def set_validators(loader, schema):
             if type(schema) in (list, tuple):
-                schema = {UniversalItem: schema}
+                schema = {Item: schema}
             for obj, paths in schema.items():
                 key = obj.__name__
                 paths = paths if type(paths) in (list, tuple) else [paths]
                 objects = [loader(v) for v in paths]
-                validators[key] = validators.get(key, []) + objects
+                validators[key].extend(objects)
 
         for loader, name in [
             (cls._load_jsonschema_validator, 'SPIDERMON_VALIDATION_SCHEMAS'),
@@ -121,7 +111,7 @@ class ItemValidationPipeline(object):
 
     def find_validators(self, item):
         find = lambda x: self.validators.get(x.__name__, [])
-        return find(item.__class__) + find(UniversalItem)
+        return find(item.__class__) or find(Item)
 
     def _convert_item_to_dict(self, item):
         serialized_json = StringIO.StringIO()
@@ -137,4 +127,3 @@ class ItemValidationPipeline(object):
             item[self.errors_field] = defaultdict(list)
         for field_name, messages in errors.items():
             item[self.errors_field][field_name] += messages
-

@@ -55,7 +55,7 @@ After that, you need to enable the `ItemValidationPipeline`, set the validation 
 
 If spider generates few different types of item it's possible to define validation models per every item.
 The same is applicable for `SPIDERMON_VALIDATION_SCHEMAS`.
-Just define setting as a dict in `settings.py`, where keys are item objects and validators are values,
+Just define setting as a dict in `settings.py`, where keys are item class objects and validators are values,
 one or several of them (list or tuple in that case):
 
     from reddit_spidermon_demo.items import NewsItem, SomeOtherItem # SomeOtherItem not in the demo
@@ -66,14 +66,6 @@ one or several of them (list or tuple in that case):
     }
 
 Note, that only listed types of items will be processed in that case.
-If some validators need to be added to the all items, then UniversalItem may be used:
-
-    from from spidermon.contrib.scrapy.pipelines import UniversalItem
-
-    SPIDERMON_VALIDATION_MODELS = {
-        NewsItem: 'reddit_spidermon_demo.validators.NewsItem',
-        UniversalItem: 'reddit_spidermon_demo.validators.SomeOtherItem', # validator not in the demo
-    }
 
 You could also set the pipeline to include the validation error as a field in the item (although it may not be necessary, since the validation errors are included in the crawling stats and your monitor can check them once the spiders finishes):
 
