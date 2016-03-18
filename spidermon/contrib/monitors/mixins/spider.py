@@ -104,13 +104,13 @@ class ResponsesInfo(object):
 class SpiderMonitorMixin(StatsMonitorMixin, JobMonitorMixin):
     @property
     def crawler(self):
-        if 'crawler' not in self.data:
+        if not self.data.crawler:
             raise NotConfigured('Crawler not available!')
         return self.data.crawler
 
     @property
     def spider(self):
-        if 'spider' not in self.data:
+        if not self.data.spider:
             raise NotConfigured('Spider not available!')
         return self.data.spider
 
