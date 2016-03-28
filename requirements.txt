@@ -1,4 +1,4 @@
 six==1.9.0
 Jinja2==2.7.3
-slackclient==0.15
+slackclient==1.0.0
 boto==2.39.0
