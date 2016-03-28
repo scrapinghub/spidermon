@@ -71,7 +71,10 @@ class SlackMessageManager():
         ])
 
     def _api_call(self, method, **kwargs):
-        return json.loads(self._client.api_call(method, **kwargs))
+        response = self._client.api_call(method, **kwargs)
+        if isinstance(response, basestring):  # slackclient < v1.0
+            response = json.loads(response)
+        return response
 
     def _get_user_channel(self, user_id):
         return self._api_call('im.open', user=user_id)['channel']['id']
