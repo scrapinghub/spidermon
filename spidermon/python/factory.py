@@ -4,7 +4,7 @@ from jsonschema import validate
 from spidermon import Monitor
 from spidermon.core.options import MonitorOptions
 from spidermon.python import Interpreter, schemas
-from spidermon.exceptions import InvalidMonitor
+from spidermon.exceptions import InvalidMonitor, NotConfigured
 from spidermon import settings
 
 
@@ -21,12 +21,11 @@ class PythonExpressionsMonitor(Monitor):
     @classmethod
     def generate_method_name(cls):
         cls._test_methods_counter += 1
-        return '%s_python_expression_%d' % (cls._test_methods_prefix, cls._test_methods_counter)
+        return '%s_python_expression_%d' % (cls._test_methods_prefix,
+                                            cls._test_methods_counter)
 
     def get_context_data(self):
-        return {
-            'data': self.data,
-        }
+        raise NotConfigured('Context data needs to be set up')
 
 
 def create_monitor_class_from_json(monitor_json, monitor_class=None):
@@ -46,14 +45,16 @@ def create_monitor_class_from_dict(monitor_dict, monitor_class=None):
         ))
     klass = _create_monitor_class(tests, monitor_class)
     klass.options.name = monitor_dict.get('name', settings.MONITOR.DEFAULT_NAME)
-    klass.options.description = monitor_dict.get('description', settings.MONITOR.DEFAULT_DESCRIPTION)
+    klass.options.description = monitor_dict.get('description',
+                                                 settings.MONITOR.DEFAULT_DESCRIPTION)
     return klass
 
 
 def _create_monitor_class(expressions, monitor_class=None):
     monitor_class = monitor_class or PythonExpressionsMonitor
     if not issubclass(monitor_class, PythonExpressionsMonitor):
-        raise InvalidMonitor('Python expressions monitors must subclass PythonExpressionsMonitor')
+        msg = 'Python expressions monitors must subclass PythonExpressionsMonitor'
+        raise InvalidMonitor(msg)
     klass = type(monitor_class.generate_class_name(), (monitor_class,), {})
     for e in expressions:
         if isinstance(e, tuple):
