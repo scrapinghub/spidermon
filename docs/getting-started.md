@@ -11,7 +11,7 @@ You can use [a simple project](http://github.com/stummjr/spidermon-reddit-exampl
 ## Install Spidermon and dependencies
 
     git clone "git@github.com:scrapinghub/spidermon.git"
-    cd spidermon && pip install . -r requirements/slack.txt -r requirements/validation.txt
+    cd spidermon && pip install . -r requirements.txt -r requirements/validation.txt
 
 
 ## Using Spidermon in your project
@@ -108,7 +108,7 @@ The monitors will be placed in a new file called `monitors.py`. At first, you mu
             SendSlackMessageSpiderFinished,
         ]
 
-The above example sets Spidermon to send a Slack notification when a spider starts and and when it finishes its job. It also sets `ItemCountMonitor` to be executed when the spider is closing down.
+The above example sets Spidermon to send a Slack notification when a spider starts and when it finishes its job. It also sets `ItemCountMonitor` to be executed when the spider is closing down.
 
 `ItemCountMonitor` is like a test case for the crawling status and it must be coded inside the same `monitors.py` file:
 
