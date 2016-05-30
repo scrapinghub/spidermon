@@ -10,4 +10,7 @@ class StatsMonitorMixin(object):
 
     @property
     def oldstats(self):
+        """
+        Requires DotScrapy persistence turned on, otherwise will be empty.
+        """
         return self.data.oldstats
