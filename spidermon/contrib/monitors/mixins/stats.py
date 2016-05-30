@@ -10,6 +10,4 @@ class StatsMonitorMixin(object):
 
     @property
     def oldstats(self):
-        if not self.data.oldstats:
-            raise NotConfigured('Old stats not available!')
         return self.data.oldstats
