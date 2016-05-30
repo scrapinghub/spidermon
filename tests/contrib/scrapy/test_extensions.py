@@ -2,6 +2,7 @@ import json
 from functools import partial
 from unittest import TestCase
 
+from mock import patch, Mock
 from scrapy.utils.test import get_crawler
 from scrapy import Spider
 
@@ -55,6 +56,8 @@ class ExpressionMonitorsTesting(TestCase):
 
     spider_name = 'test'
 
+    @patch('spidermon.utils.oldstats.load', Mock())
+    @patch('spidermon.utils.oldstats.persist', Mock())
     def run_test(self, **kwargs):
         dt = TestData(**kwargs)
         settings = {
