@@ -72,13 +72,13 @@ class Spidermon(object):
 
     def spider_closed(self, spider):
         self._run_suites(spider, self.spider_closed_suites)
+        oldstats.persist(self.crawler.stats.get_stats(spider))
 
     def _run_suites(self, spider, suites):
         data = self._generate_data_for_spider(spider)
         for suite in suites:
             runner = SpiderMonitorRunner(spider=spider)
             runner.run(suite, **data)
-        oldstats.persist(data['stats'])
 
     def _generate_data_for_spider(self, spider):
         return {
