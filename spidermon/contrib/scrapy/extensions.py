@@ -4,6 +4,7 @@ from scrapy.utils.misc import load_object
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 from spidermon.utils.hubstorage import hs
+from spidermon.utils import oldstats
 from spidermon.python import factory
 from spidermon.python.monitors import ExpressionsMonitor
 
@@ -77,10 +78,12 @@ class Spidermon(object):
         for suite in suites:
             runner = SpiderMonitorRunner(spider=spider)
             runner.run(suite, **data)
+        oldstats.persist(data['stats'])
 
     def _generate_data_for_spider(self, spider):
         return {
             'stats': self.crawler.stats.get_stats(spider),
+            'oldstats': oldstats.load(),
             'crawler': self.crawler,
             'spider': spider,
             'job': hs.job if hs.available else None,
