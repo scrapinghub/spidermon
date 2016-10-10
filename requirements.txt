@@ -2,3 +2,6 @@ six==1.9.0
 Jinja2==2.7.3
 slackclient==1.0.0
 boto==2.39.0
+jsonschema==2.5.1
+schematics==1.0.4
+python-slugify==1.2.1
