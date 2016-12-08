@@ -8,10 +8,10 @@ setup(
     zip_safe = False,
     include_package_data = True,
     install_requires=[
-        'six==1.9.0',
+        'six>=1.9.0',
     ],
     tests_require=[
-        'six==1.9.0',
+        'six>=1.9.0',
         "pytest>=2.7.0",
     ]
 )
