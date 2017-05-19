@@ -2,7 +2,7 @@ image: scrapinghub
 
 script:
   - git restore-mtime
-  - pip install -U tox
+  - pip install -U tox==1.7.0
   - tox
 
 notify:
