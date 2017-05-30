@@ -4,7 +4,10 @@ Module to hold a reference to singleton Hubstorage client and Job instance
 from __future__ import absolute_import
 import os
 try:
-    from hubstorage.client import HubstorageClient
+    try:
+        from scrapinghub.hubstorage.client import HubstorageClient
+    except ImportError:
+        from hubstorage.client import HubstorageClient
 except:
     HubstorageClient = None
 
