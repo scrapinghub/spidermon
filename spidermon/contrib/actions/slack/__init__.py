@@ -113,7 +113,7 @@ class SlackMessageManager():
 
 class SendSlackMessage(ActionWithTemplates):
     message = None
-    attachements = None
+    attachments = None
     message_template = 'slack/default/message.jinja'
     attachments_template = 'slack/default/attachments.jinja'
     recipients = None
@@ -138,7 +138,7 @@ class SendSlackMessage(ActionWithTemplates):
         self.message = message or self.message
         self.message_template = message_template or self.message_template
         self.include_message = include_message or self.include_message
-        self.attachements = attachments or self.attachements
+        self.attachments = attachments or self.attachments
         self.attachments_template = attachments_template or self.attachments_template
         self.include_attachments = include_attachments or self.include_attachments
         self.fake = fake or self.fake
@@ -184,8 +184,8 @@ class SendSlackMessage(ActionWithTemplates):
 
     def get_attachments(self):
         if self.include_attachments:
-            if self.attachements:
-                return self.render_text_template(self.attachements)
+            if self.attachments:
+                return self.render_text_template(self.attachments)
             else:
                 return self.render_template(self.attachments_template)
         else:
