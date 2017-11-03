@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from schematics.types import URLType
 from schematics.transforms import EMPTY_LIST
 from schematics.types.compound import ListType
@@ -22,7 +23,7 @@ def monkeypatch_listtype():
             return []
         try:
             return list(value)
-        except Exception, e:
+        except Exception as e:
             raise ConversionError('Invalid list')
     ListType._force_list = _force_list
 

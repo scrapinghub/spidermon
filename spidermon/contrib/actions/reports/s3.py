@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import hashlib
 
 from boto.s3.connection import S3Connection

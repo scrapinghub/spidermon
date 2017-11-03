@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from scrapy import Item, Field
 
 class TreeItem(Item):

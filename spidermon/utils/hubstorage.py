@@ -3,6 +3,7 @@ Module to hold a reference to singleton Hubstorage client and Job instance
 """
 from __future__ import absolute_import
 import os
+from six.moves import map
 try:
     from hubstorage.client import HubstorageClient
 except:

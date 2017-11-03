@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from scrapy import signals
 from scrapy.utils.misc import load_object
 
@@ -30,7 +31,7 @@ class Spidermon(object):
     def load_suite(self, suite_to_load):
         try:
             suite_class = load_object(suite_to_load)
-        except Exception, e:
+        except Exception as e:
             raise e  # TO-DO
         if not issubclass(suite_class, MonitorSuite):
             raise Exception  # TO-DO

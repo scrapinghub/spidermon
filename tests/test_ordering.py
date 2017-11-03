@@ -1,4 +1,5 @@
-from fixtures.ordering import *
+from __future__ import absolute_import
+from .fixtures.ordering import *
 
 SUITE_SEQUENCES = [
     # ------------------------------------------------------------------------------------------------------------

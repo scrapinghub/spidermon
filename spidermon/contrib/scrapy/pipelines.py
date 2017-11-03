@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 import six
 import json
-import StringIO
+from six.moves import StringIO
 from collections import defaultdict
 
 from scrapy.exceptions import DropItem, NotConfigured
@@ -94,7 +95,7 @@ class ItemValidationPipeline(object):
     def process_item(self, item, _):
         data = self._convert_item_to_dict(item)
         self.stats.add_item()
-        self.stats.add_fields(len(data.keys()))
+        self.stats.add_fields(len(list(data.keys())))
         for validator in self.find_validators(item):
             ok, errors = validator.validate(data)
             if not ok:
@@ -114,7 +115,7 @@ class ItemValidationPipeline(object):
         return find(item.__class__) or find(Item)
 
     def _convert_item_to_dict(self, item):
-        serialized_json = StringIO.StringIO()
+        serialized_json = StringIO()
         JsonLinesItemExporter(serialized_json).export_item(item)
         data = json.loads(serialized_json.getvalue())
         serialized_json.close()

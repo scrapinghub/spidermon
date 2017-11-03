@@ -1,5 +1,7 @@
+from __future__ import absolute_import
 from collections import OrderedDict
 import unittest
+from six import iterkeys, iteritems
 
 from spidermon import settings
 
@@ -67,8 +69,8 @@ class MonitorResult(unittest.TestResult):
         pass
 
     def next_step(self):
-        index = 0 if not self.step else self._steps.keys().index(self.step.name)+1
-        self._current_step = self._steps.items()[index][1]
+        index = 0 if not self.step else list(iterkeys(self._steps)).index(self.step.name)+1
+        self._current_step = list(iteritems(self._steps))[index][1]
         self.step.start()
 
     def finish_step(self):

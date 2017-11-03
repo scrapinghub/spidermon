@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from spidermon.core.actions import Action
 from spidermon.exceptions import NotConfigured
 

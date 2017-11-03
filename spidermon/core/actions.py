@@ -1,16 +1,17 @@
+from __future__ import absolute_import
 import abc
 import traceback
 
 from spidermon.exceptions import SkipAction
 
 from .options import ActionOptionsMetaclass
+import six
 
 
-class Action(object):
+class Action(six.with_metaclass(ActionOptionsMetaclass, object)):
     """
     Base class for actions.
     """
-    __metaclass__ = ActionOptionsMetaclass
 
     def __init__(self):
         self.result = None
@@ -35,7 +36,7 @@ class Action(object):
         result.start_action(self)
         try:
             self.run_action()
-        except SkipAction, e:
+        except SkipAction as e:
             result.add_action_skip(self, e.message)
         except:
             result.add_action_error(self, traceback.format_exc())

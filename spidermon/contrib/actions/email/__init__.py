@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -71,9 +73,9 @@ class SendEmail(ActionWithTemplates):
         if not self.fake:
             self.send_message(message)
         else:
-            print '-'*40
-            print message.as_string()
-            print '-'*40
+            print('-'*40)
+            print(message.as_string())
+            print('-'*40)
 
     def get_subject(self):
         if self.subject:

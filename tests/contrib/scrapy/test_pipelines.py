@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from unittest import TestCase
 from slugify import slugify
 from scrapy.utils.test import get_crawler
@@ -7,6 +8,7 @@ from functools import partial
 from spidermon.contrib.scrapy.pipelines import ItemValidationPipeline
 from tests.fixtures.items import TreeItem, TestItem
 from tests.fixtures.validators import tree_schema, test_schema, test_schema_string
+import six
 
 
 STATS_AMOUNTS = 'spidermon/validation/validators'
@@ -61,8 +63,7 @@ class PipelineTestCaseMetaclass(type):
         return cls
 
 
-class PipelineTest(TestCase):
-    __metaclass__ = PipelineTestCaseMetaclass
+class PipelineTest(six.with_metaclass(PipelineTestCaseMetaclass, TestCase)):
     data_tests = []
 
 

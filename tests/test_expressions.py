@@ -1,11 +1,12 @@
+from __future__ import absolute_import
 import pytest
 
 from spidermon.python import Interpreter
 from spidermon.exceptions import InvalidExpression
 from spidermon.data import Data
 
-from fixtures.expressions import *
-from fixtures.stats import STATS_TO_EVALUATE
+from .fixtures.expressions import *
+from .fixtures.stats import STATS_TO_EVALUATE
 
 
 @pytest.fixture

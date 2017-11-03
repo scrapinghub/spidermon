@@ -1,13 +1,13 @@
+from __future__ import absolute_import
 from unittest import TestCase
 
 from spidermon.data import Data
 from spidermon import settings
 from .options import MonitorOptions, MonitorOptionsMetaclass
+import six
 
 
-class Monitor(TestCase):
-    __metaclass__ = MonitorOptionsMetaclass
-
+class Monitor(six.with_metaclass(MonitorOptionsMetaclass, TestCase)):
     def __init__(self, methodName='runTest', name=None):
         super(Monitor, self).__init__(methodName)
         self._name = name

@@ -1,8 +1,10 @@
+from __future__ import absolute_import
 import os
 import inspect
 
 from spidermon.core.actions import ActionOptionsMetaclass, Action
 from spidermon.templates import template_loader, Template
+import six
 
 
 class ActionWithTemplatesMetaclass(ActionOptionsMetaclass):
@@ -21,8 +23,7 @@ class ActionWithTemplatesMetaclass(ActionOptionsMetaclass):
             template_loader.add_path(template_path)
 
 
-class ActionWithTemplates(Action):
-    __metaclass__ = ActionWithTemplatesMetaclass
+class ActionWithTemplates(six.with_metaclass(ActionWithTemplatesMetaclass, Action)):
     template_paths = []
     context = None
 

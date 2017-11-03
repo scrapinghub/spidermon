@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 import requests
-import StringIO
+from six.moves import StringIO
 
 from spidermon.exceptions import NotConfigured
 

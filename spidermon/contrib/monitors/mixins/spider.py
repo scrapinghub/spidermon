@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from spidermon.exceptions import NotConfigured
 from spidermon.contrib.stats.counters import PercentCounter
 

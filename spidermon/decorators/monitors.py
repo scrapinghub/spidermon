@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from spidermon.core.options import MonitorOptions
 from spidermon import settings
 from spidermon.decorators import OptionsDecorator, DecoratorWithAttributes

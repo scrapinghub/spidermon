@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 from spidermon import settings
 
-from fixtures.levels import *
+from .fixtures.levels import *
 
 HIGH = settings.MONITOR.LEVEL.HIGH
 NORMAL = settings.MONITOR.LEVEL.NORMAL

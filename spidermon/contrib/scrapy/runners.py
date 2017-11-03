@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from scrapy import log
 
 from spidermon.results.monitor import MonitorResult, monitors_step_required, actions_step_required

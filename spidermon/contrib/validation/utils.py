@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import re
 
 URL_REGEX = re.compile(

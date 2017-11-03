@@ -1,9 +1,12 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import ast
 import json
 from slackclient import SlackClient
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
+import six
 
 
 class SlackMessageManager():
@@ -72,7 +75,7 @@ class SlackMessageManager():
 
     def _api_call(self, method, **kwargs):
         response = self._client.api_call(method, **kwargs)
-        if isinstance(response, basestring):  # slackclient < v1.0
+        if isinstance(response, six.string_types):  # slackclient < v1.0
             response = json.loads(response)
         return response
 
@@ -170,8 +173,8 @@ class SendSlackMessage(ActionWithTemplates):
                 attachments=attachments,
             )
         else:
-            print 'message:', message
-            print 'attachments:', attachments
+            print('message:', message)
+            print('attachments:', attachments)
 
     def get_message(self):
         if self.include_message:

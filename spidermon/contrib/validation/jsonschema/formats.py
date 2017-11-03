@@ -1,7 +1,9 @@
+from __future__ import absolute_import
 from jsonschema._format import FormatChecker, _draft_checkers
 from jsonschema.compat import str_types
 
 from spidermon.contrib.validation.utils import is_valid_url, is_valid_email
+from six import iterkeys
 
 
 def is_url(instance):
@@ -27,4 +29,4 @@ for format_name, (func, raises) in _spidermon_checkers.items():
     FormatChecker.cls_checks(format_name, raises)(func)
 
 
-format_checker = FormatChecker(_draft_checkers["draft4"] + _spidermon_checkers.keys())
+format_checker = FormatChecker(_draft_checkers["draft4"] + list(iterkeys(_spidermon_checkers)))
