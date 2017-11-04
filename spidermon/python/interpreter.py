@@ -10,6 +10,7 @@ class Interpreter(object):
     ast_allowed_nodes = (
         'expr', 'name', 'load', 'call', 'store',
         'str', 'unicode', 'num', 'list', 'dict', 'set', 'tuple',  # Data types
+        'nameconstant',  # language constant (None)
         'unaryop', 'usub',  # Unary arithmetic operators
         'binop', 'add', 'sub', 'div', 'mult', 'mod', 'pow', 'floordiv',  # Binary arithmetic operators
         'compare', 'eq', 'noteq', 'gt', 'lt', 'gte', 'lte',  # Comparison operators

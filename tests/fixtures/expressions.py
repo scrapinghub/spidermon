@@ -1,3 +1,5 @@
+from six import PY2
+
 SYNTAXERROR_EXPRESSIONS = [
     '?',
     'a string',
@@ -17,7 +19,7 @@ INVALID_EXPRESSIONS = [
     'def something(): pass',
     'lambda x: x',
     "del a",
-    "print a",
+    # "print(a)",
     "raise Exception",
     "pass",
     "return",
@@ -48,7 +50,6 @@ VALID_EXPRESSIONS = [
     "10",
     "1.0",
     "-1.0",
-    "51924361L",
     "3.14j",
 
     # Sequences
@@ -76,7 +77,6 @@ VALID_EXPRESSIONS = [
     # Comparison Operations
     "a == b",
     "a != b",
-    "a <> b",
     "a > b",
     "a < b",
     "a >= b",
@@ -122,10 +122,10 @@ VALID_EXPRESSIONS = [
     "stats.scraped_items"
 ]
 
+
 EXPRESSIONS_TO_EVALUATE = [
     ('stats.item_scraped_count == 10000', False),
     ('stats.item_scraped_count != 10000', True),
-    ('stats.item_scraped_count <> 10000', True),
     ('stats.item_scraped_count < 10000', False),
     ('stats.item_scraped_count > 10000', True),
     ('stats.item_scraped_count <= 10000', False),
@@ -169,3 +169,13 @@ EXPRESSIONS_TO_EVALUATE = [
     ('True if not stats.has_errors else False', False),
     ('stats.item_scraped_count in range(29830, 29840)', True),
 ]
+
+
+if PY2:
+    VALID_EXPRESSIONS.extend([
+        "51924361L",
+        "a <> b",
+    ])
+    EXPRESSIONS_TO_EVALUATE.extend([
+        ('stats.item_scraped_count <> 10000', True),
+    ])

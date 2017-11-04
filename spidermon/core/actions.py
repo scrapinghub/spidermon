@@ -37,7 +37,7 @@ class Action(six.with_metaclass(ActionOptionsMetaclass, object)):
         try:
             self.run_action()
         except SkipAction as e:
-            result.add_action_skip(self, e.message)
+            result.add_action_skip(self, e.args[0])
         except:
             result.add_action_error(self, traceback.format_exc())
         else:

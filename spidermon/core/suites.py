@@ -26,6 +26,7 @@ class MonitorSuite(six.with_metaclass(MonitorOptionsMetaclass, TestSuite)):
                  order=None,
                  crawler=None):
         self._tests = []
+        self._removed_tests = 0
         self._name = name
         self._parent = None
         self._order = order
