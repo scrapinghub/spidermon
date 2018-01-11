@@ -123,7 +123,7 @@ class CreateS3Report(CreateReport):
         secret = URL_SECRET_KEY
         if self.data.job:
             secret += str(self.data.job.key.split('/')[0])
-        return hashlib.md5(secret).hexdigest()
+        return hashlib.md5(secret.encode()).hexdigest()
 
     def get_meta(self):
         report_url = self.get_s3_report_url()
