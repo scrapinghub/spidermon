@@ -15,6 +15,11 @@ setup(
         "pytest>=2.7.0",
     ],
     extras_require={
-        'validation':  ['jsonschema', 'schematics', 'python-slugify'],
+        'validation':  [
+            'jsonschema',
+            'schematics',
+            'python-slugify',
+            'strict-rfc3339'
+        ],
     }
 )
