@@ -5,8 +5,11 @@ from __future__ import absolute_import
 import os
 from six.moves import map
 try:
-    from hubstorage.client import HubstorageClient
-except:
+    try:
+        from scrapinghub import HubstorageClient
+    except ImportError:
+        from hubstorage.client import HubstorageClient
+except ImportError:
     HubstorageClient = None
 
 
@@ -67,5 +70,6 @@ class _Hubstorage(object):
     def close(self):
         if self._client is not None:
             self._client.close()
+
 
 hs = _Hubstorage()
