@@ -13,5 +13,8 @@ setup(
     tests_require=[
         'six>=1.9.0',
         "pytest>=2.7.0",
-    ]
+    ],
+    extras_require={
+        'validation':  ['jsonschema', 'schematics', 'python-slugify'],
+    }
 )
