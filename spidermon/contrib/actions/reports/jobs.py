@@ -44,7 +44,7 @@ class CreateJobReport(CreateReport):
 
     def add_job_report(self, job_key, key, content_type, report_file):
         r = requests.post(
-            url='https://dash.scrapinghub.com/api/reports/add.json',
+            url='https://app.scrapinghub.com/api/reports/add.json',
             auth=(self.api_key, None),
             data={
                 'project': str(job_key).split('/')[0],
@@ -52,5 +52,5 @@ class CreateJobReport(CreateReport):
                 'job': str(job_key),
                 'content_type': content_type,
             },
-            files = {'content': report_file}
+            files={'content': report_file}
         )
