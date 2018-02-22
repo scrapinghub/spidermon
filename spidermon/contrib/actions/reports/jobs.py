@@ -33,7 +33,7 @@ class CreateJobReport(CreateReport):
     def after_render_report(self):
         if not self.data.job:
             raise NotConfigured('Job not available!')
-        report_file = StringIO.StringIO(self.report)
+        report_file = StringIO(self.report)
         self.add_job_report(
             job_key=self.data.job.key,
             key=self.report_key,
