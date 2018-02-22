@@ -1,0 +1,17 @@
+FROM python:3.6
+
+RUN apt-get update -qq && \
+    apt-get install -qy libpython-dev libpython3-dev
+
+RUN mkdir -p /app
+WORKDIR /app
+COPY . /app
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install tox==2.9.1
+
+# Uncomment these lines to run the tests on additional Python versions
+# RUN curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
+# ENV PATH /root/.pyenv/shims:/root/.pyenv/bin:$PATH
+# RUN pyenv install 3.4.8
+# RUN pyenv install 3.5.4
+# RUN pyenv global system 3.4.8 3.5.4

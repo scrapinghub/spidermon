@@ -2,9 +2,8 @@ image: scrapinghub
 
 script:
   - git restore-mtime
-  - pip install -U tox==2.9.1
-  - pip install -U virtualenv==15.1.0
-  - tox
+  - docker build -t spidermon:0.1 -f Dockerfile-testing .
+  - docker run --rm spidermon:0.1 tox
 
 notify:
   slack:
