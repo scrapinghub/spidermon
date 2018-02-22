@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-import json
 from functools import partial
 from unittest import TestCase
 
@@ -64,6 +63,7 @@ class ExpressionMonitorsTesting(TestCase):
     def run_test(self, **kwargs):
         dt = TestData(**kwargs)
         settings = {
+            'SPIDERMON_ENABLED': True,
             'SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS': [{
                 'tests': [{
                     'expression': dt.expression,
@@ -96,7 +96,6 @@ class ExpressionMonitorsTesting(TestCase):
             if dt.expected_error:
                 raise AssertionError(
                     'Expected error <{}> was not raised'.format(dt.expected_error))
-
 
     def test_stats_ready(self):
         self.run_test(
