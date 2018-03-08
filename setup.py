@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='spidermon',
-    version='0.1.2',
+    version='1.0.0',
     packages=find_packages(),
     package_data={'spidermon': ['VERSION']},
     zip_safe=False,
