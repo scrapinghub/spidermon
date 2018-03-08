@@ -1,5 +1,7 @@
+from __future__ import absolute_import
 from collections import OrderedDict
 import time
+from six import itervalues
 
 from spidermon import settings
 
@@ -48,7 +50,7 @@ class Step(object):
 
     @property
     def all_items(self):
-        return self._results.values()
+        return list(itervalues(self._results))
 
     def get_infos(self):
         raise NotImplementedError

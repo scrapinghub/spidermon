@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import re
 
 from schematics.exceptions import ModelValidationError, ModelConversionError
@@ -5,7 +6,7 @@ from schematics.exceptions import ModelValidationError, ModelConversionError
 from spidermon.contrib.validation.validator import Validator
 
 from .translator import SchematicsMessageTranslator
-import monkeypatches
+from . import monkeypatches
 
 
 class SchematicsValidator(Validator):
@@ -27,7 +28,7 @@ class SchematicsValidator(Validator):
         model = self._get_model_instance(strict=strict)
         try:
             model.validate()
-        except ModelValidationError, e:
+        except ModelValidationError as e:
             self._add_errors(e.messages)
         self._restore_required_fields()
 
@@ -41,7 +42,7 @@ class SchematicsValidator(Validator):
     def _get_model_instance(self, strict):
         try:
             return self._model(raw_data=self._data, strict=strict)
-        except ModelConversionError, e:
+        except ModelConversionError as e:
             self._add_errors(e.messages)
             for field_name in e.messages.keys():
                 self._set_field_as_not_required(field_name)

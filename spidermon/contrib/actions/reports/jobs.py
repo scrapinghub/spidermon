@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 import requests
-import StringIO
+from six.moves import StringIO
 
 from spidermon.exceptions import NotConfigured
 
@@ -32,7 +33,7 @@ class CreateJobReport(CreateReport):
     def after_render_report(self):
         if not self.data.job:
             raise NotConfigured('Job not available!')
-        report_file = StringIO.StringIO(self.report)
+        report_file = StringIO(self.report)
         self.add_job_report(
             job_key=self.data.job.key,
             key=self.report_key,
@@ -43,7 +44,7 @@ class CreateJobReport(CreateReport):
 
     def add_job_report(self, job_key, key, content_type, report_file):
         r = requests.post(
-            url='https://dash.scrapinghub.com/api/reports/add.json',
+            url='https://app.scrapinghub.com/api/reports/add.json',
             auth=(self.api_key, None),
             data={
                 'project': str(job_key).split('/')[0],
@@ -51,5 +52,5 @@ class CreateJobReport(CreateReport):
                 'job': str(job_key),
                 'content_type': content_type,
             },
-            files = {'content': report_file}
+            files={'content': report_file}
         )

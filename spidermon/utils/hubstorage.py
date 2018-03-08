@@ -3,9 +3,16 @@ Module to hold a reference to singleton Hubstorage client and Job instance
 """
 from __future__ import absolute_import
 import os
+from codecs import decode
+
+import six
+from six.moves import map
 try:
-    from hubstorage.client import HubstorageClient
-except:
+    try:
+        from scrapinghub import HubstorageClient
+    except ImportError:
+        from hubstorage.client import HubstorageClient
+except ImportError:
     HubstorageClient = None
 
 
@@ -26,7 +33,10 @@ class _Hubstorage(object):
 
     @property
     def auth(self):
-        return os.environ['SHUB_JOBAUTH'].decode('hex')
+        if six.PY2:
+            return os.environ['SHUB_JOBAUTH'].decode('hex')
+        else:
+            return decode(os.environ['SHUB_JOBAUTH'], 'hex_codec').decode('utf-8')
 
     @property
     def endpoint(self):
@@ -66,5 +76,6 @@ class _Hubstorage(object):
     def close(self):
         if self._client is not None:
             self._client.close()
+
 
 hs = _Hubstorage()

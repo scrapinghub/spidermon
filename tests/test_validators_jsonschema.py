@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 from unittest import TestCase
 
 from spidermon.contrib.validation import JSONSchemaValidator
 from spidermon.contrib.validation import messages
 
 from slugify import slugify
+import six
 
 
 class SchemaTestCaseMetaclass(type):
@@ -21,8 +23,7 @@ class SchemaTestCaseMetaclass(type):
         return cls
 
 
-class SchemaTest(TestCase):
-    __metaclass__ = SchemaTestCaseMetaclass
+class SchemaTest(six.with_metaclass(SchemaTestCaseMetaclass, TestCase)):
     schema = {}
     data_tests = []
 

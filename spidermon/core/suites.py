@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import six
 
 from unittest import TestSuite
@@ -12,9 +13,7 @@ from .options import MonitorOptionsMetaclass
 from .factories import MonitorFactory, ActionFactory
 
 
-class MonitorSuite(TestSuite):
-    __metaclass__ = MonitorOptionsMetaclass
-
+class MonitorSuite(six.with_metaclass(MonitorOptionsMetaclass, TestSuite)):
     monitors = []
     monitors_finished_actions = []
     monitors_passed_actions = []
@@ -27,6 +26,7 @@ class MonitorSuite(TestSuite):
                  order=None,
                  crawler=None):
         self._tests = []
+        self._removed_tests = 0
         self._name = name
         self._parent = None
         self._order = order

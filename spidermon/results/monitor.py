@@ -1,5 +1,8 @@
+from __future__ import absolute_import
 from collections import OrderedDict
 import unittest
+
+import six
 
 from spidermon import settings
 
@@ -67,8 +70,8 @@ class MonitorResult(unittest.TestResult):
         pass
 
     def next_step(self):
-        index = 0 if not self.step else self._steps.keys().index(self.step.name)+1
-        self._current_step = self._steps.items()[index][1]
+        index = 0 if not self.step else list(self._steps.keys()).index(self.step.name)+1
+        self._current_step = list(self._steps.items())[index][1]
         self.step.start()
 
     def finish_step(self):
@@ -95,7 +98,10 @@ class MonitorResult(unittest.TestResult):
         super(MonitorResult, self).addFailure(test, error)
         self.step[test].status = settings.MONITOR.STATUS.FAILURE
         self.step[test].error = self._exc_info_to_string(error, test)
-        self.step[test].reason = error[1].message
+        if six.PY2:
+            self.step[test].reason = error[1].message
+        else:
+            self.step[test].reason = str(error[1])
 
     @monitors_step_required
     def addSkip(self, test, reason):

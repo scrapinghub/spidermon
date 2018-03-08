@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import six
 import ast
 
@@ -9,6 +10,7 @@ class Interpreter(object):
     ast_allowed_nodes = (
         'expr', 'name', 'load', 'call', 'store',
         'str', 'unicode', 'num', 'list', 'dict', 'set', 'tuple',  # Data types
+        'nameconstant',  # language constant (None)
         'unaryop', 'usub',  # Unary arithmetic operators
         'binop', 'add', 'sub', 'div', 'mult', 'mod', 'pow', 'floordiv',  # Binary arithmetic operators
         'compare', 'eq', 'noteq', 'gt', 'lt', 'gte', 'lte',  # Comparison operators
@@ -23,11 +25,16 @@ class Interpreter(object):
     )
 
     allowed_objects = (
-        str, unicode,  # strings
-        int, float, long, complex,  # numbers
+        str, six.text_type,  # strings
+        int, float, complex,  # numbers
         list, dict, set, tuple,  # sequences
         type(None), bool  # others
     )
+    try:
+        # Py2 compatibility
+        allowed_objects += (long,)
+    except NameError:
+        pass
 
     def check(self, expression):
         if not isinstance(expression, six.string_types):

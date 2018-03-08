@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from spidermon.contrib.stats.counters import PercentCounter, DictPercentCounter, AttributeDictPercentCounter
 from spidermon.contrib.stats.analyzer import StatsAnalyzer
 from spidermon.contrib.scrapy.stats import STATS_DEFAULT_VALIDATION_PREFIX

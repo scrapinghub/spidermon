@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
 

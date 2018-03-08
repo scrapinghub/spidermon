@@ -1,10 +1,12 @@
+from __future__ import absolute_import
 import inspect
 from unittest import TestLoader
 from functools import cmp_to_key as _cmp_to_key
 
-from core.monitors import Monitor
-from core.suites import MonitorSuite
+from .core.monitors import Monitor
+from .core.suites import MonitorSuite
 from .exceptions import InvalidMonitor
+from six.moves import filter
 
 
 class MonitorLoader(TestLoader):
@@ -26,7 +28,7 @@ class MonitorLoader(TestLoader):
         def is_test_method(attrname, class_name=monitor_class, prefix=self.testMethodPrefix):
             return attrname.startswith(prefix) and \
                 hasattr(getattr(class_name, attrname), '__call__')
-        test_function_names = filter(is_test_method, dir(monitor_class))
+        test_function_names = list(filter(is_test_method, dir(monitor_class)))
         if self.sortTestMethodsUsing:
             test_function_names.sort(key=_cmp_to_key(self.sortTestMethodsUsing))
         return test_function_names

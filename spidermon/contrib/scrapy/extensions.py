@@ -1,5 +1,7 @@
+from __future__ import absolute_import
 from scrapy import signals
 from scrapy.utils.misc import load_object
+from scrapy.exceptions import NotConfigured
 
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
@@ -17,6 +19,8 @@ class Spidermon(object):
                  spider_opened_suites=None, spider_closed_suites=None,
                  spider_opened_expression_suites=None, spider_closed_expression_suites=None,
                  expressions_monitor_class=None):
+        if not crawler.settings.getbool('SPIDERMON_ENABLED'):
+            raise NotConfigured
         self.crawler = crawler
 
         self.spider_opened_suites = [self.load_suite(s) for s in spider_opened_suites or []]
@@ -30,7 +34,7 @@ class Spidermon(object):
     def load_suite(self, suite_to_load):
         try:
             suite_class = load_object(suite_to_load)
-        except Exception, e:
+        except Exception as e:
             raise e  # TO-DO
         if not issubclass(suite_class, MonitorSuite):
             raise Exception  # TO-DO
@@ -50,7 +54,6 @@ class Spidermon(object):
         #suite.add_monitors_finished_action(CreateS3Report)
         #suite.add_monitors_finished_action(SendSlackMessageSpiderFinished)
         return suite
-
 
     @classmethod
     def from_crawler(cls, crawler):

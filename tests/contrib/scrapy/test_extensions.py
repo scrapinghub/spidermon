@@ -1,4 +1,4 @@
-import json
+from __future__ import absolute_import
 from functools import partial
 from unittest import TestCase
 
@@ -10,6 +10,8 @@ from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 
 
 class TestSpiderMonitorRunner(SpiderMonitorRunner):
+    __test__ = False
+
     def run_monitors(self):
         self.result.next_step()
         res = self.suite.run(self.result)
@@ -24,6 +26,9 @@ def _test_run_suites(self, spider, suites):
 
 
 class TestData(object):
+
+    __test__ = False
+
     def __init__(self, expression, stats={}, settings={}, expected_error=None):
         self.stats = stats
         self.expression = expression
@@ -58,6 +63,7 @@ class ExpressionMonitorsTesting(TestCase):
     def run_test(self, **kwargs):
         dt = TestData(**kwargs)
         settings = {
+            'SPIDERMON_ENABLED': True,
             'SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS': [{
                 'tests': [{
                     'expression': dt.expression,
@@ -77,7 +83,7 @@ class ExpressionMonitorsTesting(TestCase):
         try:
             spidermon.spider_opened(spider)
         except AssertionError as e:
-            failures, errors = e.message
+            failures, errors = e.args[0]
             for f in failures:
                 _, trace = f
                 raise AssertionError(trace)
@@ -90,7 +96,6 @@ class ExpressionMonitorsTesting(TestCase):
             if dt.expected_error:
                 raise AssertionError(
                     'Expected error <{}> was not raised'.format(dt.expected_error))
-
 
     def test_stats_ready(self):
         self.run_test(

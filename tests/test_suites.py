@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import pytest
 
 from spidermon import MonitorSuite
@@ -5,7 +6,7 @@ from spidermon.exceptions import (InvalidMonitor, InvalidMonitorIterable,
                                   InvalidMonitorClass, InvalidMonitorTuple,
                                   NotAllowedMethod)
 
-from fixtures.suites import *
+from .fixtures.suites import *
 
 
 class SuiteDefinition(object):

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import json
 from schematics.models import Model
 from schematics.types import URLType, StringType, BaseType
