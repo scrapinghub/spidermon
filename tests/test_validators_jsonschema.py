@@ -173,7 +173,11 @@ class AdditionalProperties(SchemaTest):
             data={"foo": 1, "bar": 2, "quux": "boom"},
             valid=False,
             expected_errors={
-                '': [messages.UNEXPECTED_FIELD],
+                # Used with jsonschema 2.4.0:
+                # '': [messages.UNEXPECTED_FIELD],
+                # This changed in jsonschema 2.6.0:
+                # https://github.com/Julian/jsonschema/pull/317
+                '': [messages.REGEX_NOT_MATCHED],
             }
         ),
         DataTest(
