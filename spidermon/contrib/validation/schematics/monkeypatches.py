@@ -1,16 +1,17 @@
 from __future__ import absolute_import
-from schematics.types import URLType
-from schematics.transforms import EMPTY_LIST
-from schematics.types.compound import ListType
-from schematics.exceptions import ConversionError
-
-from spidermon.contrib.validation.utils import URL_REGEX
+import schematics
 
 
 def monkeypatch_urltype():
     """
-    Replace schematics URL check regex with a better one (stolen from Django)
+    Replace schematics URL check regex with a better one (stolen from Django).
+
+    This patch cannot be applied to Schematics 2.* because the URL validation
+    is more complex.
     """
+    from schematics.types import URLType
+    from spidermon.contrib.validation.utils import URL_REGEX
+
     URLType.URL_REGEX = URL_REGEX
 
 
@@ -18,6 +19,10 @@ def monkeypatch_listtype():
     """
     Replace ListType list conversion method to avoid errors
     """
+    from schematics.transforms import EMPTY_LIST
+    from schematics.types.compound import ListType
+    from schematics.exceptions import ConversionError
+
     def _force_list(self, value):
         if value is None or value == EMPTY_LIST:
             return []
@@ -29,5 +34,6 @@ def monkeypatch_listtype():
 
 
 # Apply monkeypatches
-monkeypatch_urltype()
-monkeypatch_listtype()
+if schematics.__version__.startswith('1.'):
+    monkeypatch_urltype()
+    monkeypatch_listtype()
