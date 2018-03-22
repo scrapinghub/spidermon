@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+import schematics
 from schematics.models import Model
 from schematics.types import (
     StringType,
@@ -10,6 +11,9 @@ from schematics.types import (
 from schematics.types.compound import ListType, DictType, ModelType
 
 from spidermon.contrib.validation import SchematicsValidator, messages
+
+
+SCHEMATICS1 = schematics.__version__.startswith('1.')
 
 
 def test_rogue_fields():
@@ -175,10 +179,20 @@ def test_datetime():
     class DataWithFormats(Model):
         a = DateTimeType(formats=('%Y-%m-%d %H:%M:%S.%f', '%Y-%m-%d %H:%M:%S'))
 
-    INVALID = [
-        '2015-05-13 13:35:15.718978',
-        '2015-05-13 13:35:15',
-    ]
+    if SCHEMATICS1:
+        INVALID = [
+            '2015-05-13 13:35:15.718978',
+            '2015-05-13 13:35:15',
+        ]
+    else:
+        INVALID = [
+            'foo',
+            '1-2-3',
+        ]
+        CUSTOM_FORMAT = [
+            '2015-05-13 13:35:15.718978',
+            '2015-05-13 13:35:15',
+        ]
     VALID = [
         '2015-05-13T13:35:15.718978',
         '2015-05-13T13:35:15',
@@ -189,12 +203,20 @@ def test_datetime():
         invalid=INVALID,
         expected_error=messages.INVALID_DATETIME,
     )
-    for dt in INVALID:
-        _test_data(
-            model=DataWithFormats,
-            data={'a': dt},
-            expected=(True, {}),
-        )
+    if SCHEMATICS1:
+        for dt in INVALID:
+            _test_data(
+                model=DataWithFormats,
+                data={'a': dt},
+                expected=(True, {}),
+            )
+    else:
+        for dt in CUSTOM_FORMAT:
+            _test_data(
+                model=DataWithFormats,
+                data={'a': dt},
+                expected=(True, {}),
+            )
 
 
 def test_date():
@@ -250,8 +272,11 @@ def test_int():
         8,
         -2,
         -7,
-        7.2,
     ]
+    if SCHEMATICS1:
+        VALID.append(7.2)
+    else:
+        INVALID.append(7.2)
     _test_valid_invalid(
         model=Data,
         valid=VALID,
@@ -344,11 +369,15 @@ def test_long():
         -2,
         8,
     ]
+    if SCHEMATICS1:
+        expected_error = messages.INVALID_LONG
+    else:
+        expected_error = messages.INVALID_INT
     _test_valid_invalid(
         model=Data,
         valid=VALID,
         invalid=INVALID,
-        expected_error=messages.INVALID_LONG,
+        expected_error=expected_error,
     )
     _test_data(
         model=Data,
@@ -718,11 +747,25 @@ def test_list():
         data={'a': Data},
         expected=(False, {'a': [messages.INVALID_LIST]}),
     )
-    _test_data(
-        model=Data,
-        data={'a': ["a", "b", "c"]},
-        expected=(False, {'a': [messages.INVALID_INT]}),
-    )
+    if SCHEMATICS1:
+        _test_data(
+            model=Data,
+            data={'a': ["a", "b", "c"]},
+            expected=(False, {'a': [messages.INVALID_INT]}),
+        )
+    else:
+        _test_data(
+            model=Data,
+            data={'a': ["a", "b", "c"]},
+            expected=(
+                False,
+                {
+                    'a.0': [messages.INVALID_INT],
+                    'a.1': [messages.INVALID_INT],
+                    'a.2': [messages.INVALID_INT]
+                }
+            ),
+        )
     _test_data(
         model=Data,
         data={'a': [1, 2]},
@@ -749,21 +792,31 @@ def test_dict():
         Data,
     ]
     VALID = [
-        [],
         {},
         {'some': 1},
     ]
+    if SCHEMATICS1:
+        VALID.append([])
+    else:
+        INVALID.append([])
     _test_valid_invalid(
         model=Data,
         valid=VALID,
         invalid=INVALID,
         expected_error=messages.INVALID_DICT,
     )
-    _test_data(
-        model=Data,
-        data={'a': {'some': "a"}},
-        expected=(False, {'a': [messages.INVALID_INT]}),
-    )
+    if SCHEMATICS1:
+        _test_data(
+            model=Data,
+            data={'a': {'some': "a"}},
+            expected=(False, {'a': [messages.INVALID_INT]}),
+        )
+    else:
+        _test_data(
+            model=Data,
+            data={'a': {'some': "a"}},
+            expected=(False, {'a.some': [messages.INVALID_INT]}),
+        )
 
 
 def test_models():
@@ -860,6 +913,25 @@ def test_models():
         }},
         expected=(True, {}),
     )
+
+
+def test_multiple_errors_per_field():
+    """
+    messages:
+        - FIELD_TOO_SHORT
+        - REGEX_NOT_MATCHED
+    """
+    class Data(Model):
+        a = StringType(min_length=3, regex=r'foo')
+
+    data = {'a': 'z'}
+    v = SchematicsValidator(Data)
+    result = v.validate(data, strict=True)
+    assert result[0] is False
+    error_messages = result[1]
+    assert 'a' in error_messages
+    expected = [messages.FIELD_TOO_SHORT, messages.REGEX_NOT_MATCHED]
+    assert sorted(error_messages['a']) == expected
 
 
 def _test_data(model, data, expected, strict=True):
