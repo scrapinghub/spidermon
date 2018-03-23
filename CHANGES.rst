@@ -1,7 +1,7 @@
 Release notes
 =============
 
-1.1.0 (TBD)
+1.1.0 (2018-03-23)
 ------------------
 
 - Add Schematics 2.* support. Note that Schematics 2.0.0 introduced many
