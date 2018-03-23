@@ -60,6 +60,10 @@ class ItemValidationPipeline(object):
                 raise NotConfigured('Invalid <{}> type for <{}> settings, dict or list/tuple'
                                     'is required'.format(type(res), name))
             set_validators(loader, res)
+
+        if not validators:
+            raise NotConfigured("No validators were found")
+
         return cls(
             validators=validators,
             stats=crawler.stats,
@@ -94,10 +98,15 @@ class ItemValidationPipeline(object):
         return SchematicsValidator(model_class)
 
     def process_item(self, item, _):
+        validators = self.find_validators(item)
+        if not validators:
+            # No validators match this specific item type
+            return item
+
         data = self._convert_item_to_dict(item)
         self.stats.add_item()
         self.stats.add_fields(len(list(data.keys())))
-        for validator in self.find_validators(item):
+        for validator in validators:
             ok, errors = validator.validate(data)
             if not ok:
                 for field_name, messages in errors.items():
