@@ -18,26 +18,27 @@ class SchematicsMessageTranslator(MessageTranslator):
         r"^String value did not match validation regex\.$":             messages.REGEX_NOT_MATCHED,
 
         # DateTimeType
-        r"^Could not parse .+\. Should be ISO8601\.$":                  messages.INVALID_DATETIME,
+        r"^Could not parse .+\. Should be ISO ?8601(?: or timestamp)?\.$":  messages.INVALID_DATETIME,
+        r"^Could not parse .+\. Valid formats: .+$":                    messages.INVALID_DATETIME,
 
         # DateType
-        r"^Could not parse .+\. Should be ISO8601 \(YYYY-MM-DD\)\.$":   messages.INVALID_DATE,
+        r"^Could not parse .+\. Should be ISO ?8601 \(YYYY-MM-DD\)\.$": messages.INVALID_DATE,
 
         # NumberType
-        "^.+ value should be greater than .+$":                         messages.NUMBER_TOO_LOW,
-        "^.+ value should be less than .+$":                            messages.NUMBER_TOO_HIGH,
+        r"^.+ value should be greater than .+$":                        messages.NUMBER_TOO_LOW,
+        r"^.+ value should be less than .+$":                           messages.NUMBER_TOO_HIGH,
 
         # IntType
-        r"^Value '.*' is not int$":                                     messages.INVALID_INT,
+        r"^Value '.*' is not int\.?$":                                  messages.INVALID_INT,
 
         # FloatType
-        r"^Value '.*' is not float$":                                   messages.INVALID_FLOAT,
+        r"^Value '.*' is not float\.?$":                                messages.INVALID_FLOAT,
 
         # LongType
-        r"^Value '.*' is not long$":                                    messages.INVALID_LONG,
+        r"^Value '.*' is not long\.?$":                                 messages.INVALID_LONG,
 
         # Decimalype
-        r"^Number '.*' failed to convert to a decimal$":                messages.INVALID_DECIMAL,
+        r"^Number '.*' failed to convert to a decimal\.?$":             messages.INVALID_DECIMAL,
         r"^Value should be greater than .+$":                           messages.NUMBER_TOO_LOW,
         r"^Value should be less than .+$":                              messages.NUMBER_TOO_HIGH,
 
@@ -45,13 +46,13 @@ class SchematicsMessageTranslator(MessageTranslator):
         r'^Must be either true or false\.$':                            messages.INVALID_BOOLEAN,
 
         # EmailType
-        r"^Not a well formed email address\.$":                         messages.INVALID_EMAIL,
+        r"^Not a well[ -]formed email address\.$":                      messages.INVALID_EMAIL,
 
         # URLType
-        r"^Not a well formed URL\.$":                                   messages.INVALID_URL,
+        r"^Not a well[ -]formed URL\.$":                                messages.INVALID_URL,
 
         # UUIDType
-        "^Couldn't interpret '.*' value as UUID\.$":                    messages.INVALID_UUID,
+        r"^Couldn't interpret '.*' value as UUID\.$":                   messages.INVALID_UUID,
 
         # IPv4Type
         r"^Invalid IPv4 address$":                                      messages.INVALID_IPV4,
@@ -62,11 +63,12 @@ class SchematicsMessageTranslator(MessageTranslator):
 
         # ListType
         r"^Invalid list$":                                              messages.INVALID_LIST,
+        r"^Could not interpret the value as a list$":                   messages.INVALID_LIST,
         r"^Please provide at least \d+ items?\.$":                      messages.LIST_TOO_SHORT,
         r"^Please provide no more than \d+ items?\.$":                  messages.LIST_TOO_LONG,
 
         # DictType
-        r"^Only dictionaries may be used in a DictType$":               messages.INVALID_DICT,
+        r"^Only (?:dictionaries|mappings) may be used in a DictType$":  messages.INVALID_DICT,
 
         # DictType
         r"^Please use a mapping for this field or .+ "

@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 import re
 
+import schematics
 from schematics.exceptions import ModelValidationError, ModelConversionError
 
 from spidermon.contrib.validation.validator import Validator
-
 from .translator import SchematicsMessageTranslator
 from . import monkeypatches
 
@@ -62,12 +62,47 @@ class SchematicsValidator(Validator):
             self._model._fields[field_name].required = False
 
     def _add_errors(self, errors):
-        for field_name, messages in errors.items():
-            if isinstance(messages, dict):
-                transformed_errors = self._get_transformed_child_errors(field_name, messages)
-                self._add_errors(transformed_errors)
-            else:
-                self._errors[field_name] += messages if isinstance(messages, list) else [messages]
+        if schematics.__version__.startswith('1.'):
+            for field_name, messages in errors.items():
+                if isinstance(messages, dict):
+                    transformed_errors = self._get_transformed_child_errors(field_name, messages)
+                    self._add_errors(transformed_errors)
+                else:
+                    self._errors[field_name] += messages if isinstance(messages, list) else [messages]
+        else:
+            from schematics.datastructures import FrozenDict
+
+            for field_name, messages in errors.items():
+                if isinstance(messages, (dict, FrozenDict)):
+                    transformed_errors = self._get_transformed_child_errors(field_name, messages)
+                    self._add_errors(transformed_errors)
+                else:
+                    messages = self._clean_messages(messages)
+                    self._errors[field_name] += messages
 
     def _get_transformed_child_errors(self, field_name, errors):
         return dict([('%s.%s' % (field_name, k), v) for k, v in errors.items()])
+
+    def _clean_messages(self, messages):
+        """
+        This is necessary when using Schematics 2.*, because it encapsulates
+        the validation error messages in a different way.
+        """
+        from schematics.exceptions import BaseError
+        from schematics.datastructures import FrozenList
+
+        if not isinstance(messages, list):
+            messages = [messages]
+
+        clean_messages = []
+        for message in messages:
+            if isinstance(message, BaseError):
+                message = message.messages
+                if isinstance(message, FrozenList):
+                    for err in message:
+                        # err is an ErrorMessage object
+                        clean_messages.append(str(err))
+            else:
+                clean_messages.append(message)
+
+        return clean_messages

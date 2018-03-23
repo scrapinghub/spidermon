@@ -1,6 +1,13 @@
 Release notes
 =============
 
+1.1.0 (TBD)
+------------------
+
+- Add Schematics 2.* support. Note that Schematics 2.0.0 introduced many
+  changes to its API and even some validation rules have a slightly different
+  behaviour in some cases.
+
 1.0.0 (2018-03-08)
 ------------------
 
