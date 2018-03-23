@@ -60,6 +60,10 @@ class ItemValidationPipeline(object):
                 raise NotConfigured('Invalid <{}> type for <{}> settings, dict or list/tuple'
                                     'is required'.format(type(res), name))
             set_validators(loader, res)
+
+        if not validators:
+            raise NotConfigured("No validators were found")
+
         return cls(
             validators=validators,
             stats=crawler.stats,
