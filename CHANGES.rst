@@ -1,6 +1,12 @@
 Release notes
 =============
 
+1.2.0 (TBD)
+------------------
+
+- Modify ItemValidationPipeline in order to support dict objects in addition
+  to Scrapy.Item objects.
+
 1.1.0 (2018-03-23)
 ------------------
 
