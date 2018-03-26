@@ -134,9 +134,14 @@ class ItemValidationPipeline(object):
         return data
 
     def _add_errors_to_item(self, item, errors):
-        if not self.errors_field in item.__class__.fields:
-            item.__class__.fields[self.errors_field] = Field()
-        if not self.errors_field in item._values:
-            item[self.errors_field] = defaultdict(list)
+        try:
+            if self.errors_field not in item.__class__.fields:
+                item.__class__.fields[self.errors_field] = Field()
+            if self.errors_field not in item._values:
+                item[self.errors_field] = defaultdict(list)
+        except AttributeError:
+            # The item is just a dict object instead of a Scrapy.Item object
+            if self.errors_field not in item:
+                item[self.errors_field] = defaultdict(list)
         for field_name, messages in errors.items():
             item[self.errors_field][field_name] += messages
