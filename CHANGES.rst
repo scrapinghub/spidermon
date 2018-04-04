@@ -6,6 +6,7 @@ Release notes
 
 - Modify ItemValidationPipeline in order to support dict objects in addition
   to Scrapy.Item objects.
+- Refactor ItemValidationPipeline to make it easier to extend this class.
 
 1.1.0 (2018-03-23)
 ------------------

@@ -109,15 +109,11 @@ class ItemValidationPipeline(object):
         for validator in validators:
             ok, errors = validator.validate(data)
             if not ok:
-                for field_name, messages in errors.items():
-                    for message in messages:
-                        self.stats.add_field_error(field_name, message)
-                self.stats.add_item_with_errors()
+                self._add_error_stats(errors)
                 if self.add_errors_to_items:
                     self._add_errors_to_item(item, errors)
                 if self.drop_items_with_errors:
-                    self.stats.add_dropped_item()
-                    raise DropItem('Validation failed!')
+                    self._drop_item(item, errors)
         return item
 
     def find_validators(self, item):
@@ -145,3 +141,23 @@ class ItemValidationPipeline(object):
                 item[self.errors_field] = defaultdict(list)
         for field_name, messages in errors.items():
             item[self.errors_field][field_name] += messages
+
+    def _drop_item(self, item, errors):
+        """
+        This method drops the item after detecting validation errors. Note
+        that you could override it to add more details about the item that
+        is being dropped or to drop the item only when some specific errors
+        are detected.
+        """
+        self.stats.add_dropped_item()
+        raise DropItem('Validation failed!')
+
+    def _add_error_stats(self, errors):
+        """
+        This method adds validation error stats that can be later used to
+        detect alert conditions in the monitors.
+        """
+        for field_name, messages in errors.items():
+            for message in messages:
+                self.stats.add_field_error(field_name, message)
+        self.stats.add_item_with_errors()
