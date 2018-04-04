@@ -1,7 +1,7 @@
 Release notes
 =============
 
-1.2.0 (TBD)
+1.2.0 (2018-04-04)
 ------------------
 
 - Modify ItemValidationPipeline in order to support dict objects in addition
