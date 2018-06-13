@@ -9,9 +9,6 @@ from spidermon.utils.hubstorage import hs
 from spidermon.python import factory
 from spidermon.python.monitors import ExpressionsMonitor
 
-from spidermon.contrib.actions.slack.notifiers import SendSlackMessageSpiderFinished
-from spidermon.contrib.actions.reports.s3 import CreateS3Report
-
 
 class Spidermon(object):
 
@@ -51,8 +48,6 @@ class Spidermon(object):
         )
         suite = MonitorSuite(crawler=self.crawler)
         suite.add_monitor(monitor)
-        #suite.add_monitors_finished_action(CreateS3Report)
-        #suite.add_monitors_finished_action(SendSlackMessageSpiderFinished)
         return suite
 
     @classmethod
