@@ -10,8 +10,14 @@ You can use [a simple project](http://github.com/stummjr/spidermon-reddit-exampl
 
 ## Install Spidermon and dependencies
 
+Pip:
+
     git clone "git@github.com:scrapinghub/spidermon.git"
     cd spidermon && pip install . -r requirements.txt -r requirements/validation.txt
+
+Pipenv (recommended):
+
+    pipenv install git+https://github.com/scrapinghub/spidermon.git#egg=spidermon
 
 
 ## Using Spidermon in your project
