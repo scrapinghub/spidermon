@@ -23,6 +23,9 @@ Pipenv (recommended):
 ## Using Spidermon in your project
 Now that everything is installed, you must define a validator for the items that your spider collects, set up a monitor for your crawler and configure the slack notifications that Spidermon will send to you.
 
+Firstly, enable spidermon in `settings.py`
+
+    SPIDERMON_ENABLED = True
 
 ### Set up the Validators
 The validators define the expected structure for the items. As you can see in the [code for this tutorial](http://github.com/stummjr/spidermon-reddit-example), the `reddit` spider generates `NewsItem` objects with the scraped data:
