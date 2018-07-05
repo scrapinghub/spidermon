@@ -217,7 +217,6 @@ In order to use email reporting, you have to add next lines in `settings.py`:
     SPIDERMON_EMAIL_SENDER = 'from@email.com'
     SPIDERMON_EMAIL_SUBJECT = 'VERY IMPORTANT [{{data.spider.name}}] SOMETHING IS FAILED CODE RED'
     SPIDERMON_EMAIL_TO = [
-        # TODO: use a mailing list for DoD alerts
         'willbot@scrapinghub.com',
     ]
     # this is a default spidermon template, if you want to use a custom one you should include it in the package
