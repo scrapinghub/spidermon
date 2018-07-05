@@ -209,6 +209,19 @@ That's it. Now, run your crawler and wait for the Slack notification.
 
 You can check the complete source code for this tutorial in the [`spidermon-working`](https://github.com/stummjr/spidermon-reddit-example/tree/spidermon-working) branch in the project repository.
 
+### Email notifications
+In order to use email reporting, you have to add next lines in `settings.py`:
+
+    SPIDERMON_AWS_ACCESS_KEY = 'key'
+    SPIDERMON_AWS_SECRET_KEY = 'secret'
+    SPIDERMON_EMAIL_SENDER = 'from@email.com'
+    SPIDERMON_EMAIL_SUBJECT = 'VERY IMPORTANT [{{data.spider.name}}] SOMETHING IS FAILED CODE RED'
+    SPIDERMON_EMAIL_TO = [
+        # TODO: use a mailing list for DoD alerts
+        'willbot@scrapinghub.com',
+    ]
+    # this is a default spidermon template, if you want to use a custom one you should include it in the package
+    SPIDERMON_BODY_HTML_TEMPLATE = 'reports/email/monitors/result.jinja'
 
 ## Wrap up
 Spidermon is an extension to Scrapy that lets you write monitors for your Scrapy spiders. As you just seen in this tutorial, you have to define validators and monitors for your project:
