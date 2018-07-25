@@ -18,7 +18,7 @@ class Spidermon(object):
                  spider_opened_suites=None, spider_closed_suites=None,
                  spider_opened_expression_suites=None, spider_closed_expression_suites=None,
                  expressions_monitor_class=None,
-                 periodic_suites=None, periodic_time=None):
+                 periodic_suites=None):
         if not crawler.settings.getbool('SPIDERMON_ENABLED'):
             raise NotConfigured
         self.crawler = crawler
@@ -31,8 +31,10 @@ class Spidermon(object):
         self.spider_closed_suites += [self.load_expression_suite(s, expressions_monitor_class)
                                       for s in spider_closed_expression_suites or []]
 
-        self.periodic_suites = [self.load_suite(s) for s in periodic_suites or []]
-        self.periodic_time = periodic_time
+        self.periodic_suites = [
+            (self.load_suite(s), repeat_time)
+            for s, repeat_time in periodic_suites.items() or {}
+        ]
         self.periodic_loops = {}
 
     def load_suite(self, suite_to_load):
@@ -66,8 +68,7 @@ class Spidermon(object):
             spider_opened_expression_suites=crawler.settings.getlist('SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS'),
             spider_closed_expression_suites=crawler.settings.getlist('SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS'),
             expressions_monitor_class=crawler.settings.get('SPIDERMON_EXPRESSIONS_MONITOR_CLASS'),
-            periodic_suites=crawler.settings.getlist('SPIDERMON_PERIODIC_MONITORS'),
-            periodic_time=crawler.settings.getfloat('SPIDERMON_PERIODIC_TIME')
+            periodic_suites=crawler.settings.getdict('SPIDERMON_PERIODIC_MONITORS'),
         )
         crawler.signals.connect(ext.spider_opened, signal=signals.spider_opened)
         crawler.signals.connect(ext.spider_closed, signal=signals.spider_closed)
@@ -75,18 +76,19 @@ class Spidermon(object):
 
     def spider_opened(self, spider):
         self._run_suites(spider, self.spider_opened_suites)
-        if self.periodic_time:
-            loop = task.LoopingCall(self._run_periodic_suites, spider)
-            self.periodic_loops[spider] = loop
-            loop.start(self.periodic_time, now=False)
+        self.periodic_loops[spider] = []
+        for suite, time in self.periodic_suites:
+            loop = task.LoopingCall(self._run_periodic_suites, spider, suite)
+            self.periodic_loops[spider].append(loop)
+            loop.start(time, now=False)
 
     def spider_closed(self, spider):
         self._run_suites(spider, self.spider_closed_suites)
-        if spider in self.periodic_loops:
-            self.periodic_loops[spider].stop()
+        for loop in self.periodic_loops[spider]:
+            loop.stop()
 
-    def _run_periodic_suites(self, spider):
-        self._run_suites(spider, self.periodic_suites)
+    def _run_periodic_suites(self, spider, suite):
+        self._run_suites(spider, suite)
 
     def _run_suites(self, spider, suites):
         data = self._generate_data_for_spider(spider)
