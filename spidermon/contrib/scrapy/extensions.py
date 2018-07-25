@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from scrapy import signals
 from scrapy.utils.misc import load_object
 from scrapy.exceptions import NotConfigured
-from twisted.internet import reactor
+from twisted.internet import task, reactor
 
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
@@ -33,6 +33,7 @@ class Spidermon(object):
 
         self.periodic_suites = [self.load_suite(s) for s in periodic_suites or []]
         self.periodic_time = periodic_time
+        self.periodic_loops = {}
 
     def load_suite(self, suite_to_load):
         try:
@@ -75,14 +76,17 @@ class Spidermon(object):
     def spider_opened(self, spider):
         self._run_suites(spider, self.spider_opened_suites)
         if self.periodic_time:
-            reactor.callLater(self.periodic_time, self._run_periodic_suites, spider)
+            loop = task.LoopingCall(self._run_periodic_suites, spider)
+            self.periodic_loops[spider] = loop
+            loop.start(self.periodic_time, now=False)
 
     def spider_closed(self, spider):
         self._run_suites(spider, self.spider_closed_suites)
+        if spider in self.periodic_loops:
+            self.periodic_loops[spider].stop()
 
     def _run_periodic_suites(self, spider):
         self._run_suites(spider, self.periodic_suites)
-        reactor.callLater(self.periodic_time, self._run_periodic_suites, spider)
 
     def _run_suites(self, spider, suites):
         data = self._generate_data_for_spider(spider)
