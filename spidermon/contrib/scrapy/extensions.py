@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from scrapy import signals
 from scrapy.utils.misc import load_object
 from scrapy.exceptions import NotConfigured
-from twisted.internet import task, reactor
+from twisted.internet import task
 
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
@@ -78,7 +78,7 @@ class Spidermon(object):
         self._run_suites(spider, self.spider_opened_suites)
         self.periodic_loops[spider] = []
         for suite, time in self.periodic_suites:
-            loop = task.LoopingCall(self._run_periodic_suites, spider, suite)
+            loop = task.LoopingCall(self._run_periodic_suites, spider, [suite])
             self.periodic_loops[spider].append(loop)
             loop.start(time, now=False)
 
@@ -87,8 +87,8 @@ class Spidermon(object):
         for loop in self.periodic_loops[spider]:
             loop.stop()
 
-    def _run_periodic_suites(self, spider, suite):
-        self._run_suites(spider, suite)
+    def _run_periodic_suites(self, spider, suites):
+        self._run_suites(spider, suites)
 
     def _run_suites(self, spider, suites):
         data = self._generate_data_for_spider(spider)
