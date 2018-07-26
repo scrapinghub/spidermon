@@ -31,10 +31,7 @@ class Spidermon(object):
         self.spider_closed_suites += [self.load_expression_suite(s, expressions_monitor_class)
                                       for s in spider_closed_expression_suites or []]
 
-        self.periodic_suites = [
-            (self.load_suite(s), repeat_time)
-            for s, repeat_time in periodic_suites.items() or {}
-        ]
+        self.periodic_suites = periodic_suites or {}
         self.periodic_loops = {}
 
     def load_suite(self, suite_to_load):
@@ -77,7 +74,7 @@ class Spidermon(object):
     def spider_opened(self, spider):
         self._run_suites(spider, self.spider_opened_suites)
         self.periodic_loops[spider] = []
-        for suite, time in self.periodic_suites:
+        for suite, time in self.periodic_suites.items():
             loop = task.LoopingCall(self._run_periodic_suites, spider, [suite])
             self.periodic_loops[spider].append(loop)
             loop.start(time, now=False)
@@ -88,6 +85,7 @@ class Spidermon(object):
             loop.stop()
 
     def _run_periodic_suites(self, spider, suites):
+        suites = [self.load_suite(s) for s in suites]
         self._run_suites(spider, suites)
 
     def _run_suites(self, spider, suites):
