@@ -17,7 +17,8 @@ Pip:
 
 Pipenv (recommended):
 
-    pipenv install git+https://github.com/scrapinghub/spidermon.git#egg=spidermon
+    pipenv install "git+https://github.com/scrapinghub/spidermon.git#egg=spidermon[validation]"
+
 
 
 ## Using Spidermon in your project
