@@ -91,8 +91,8 @@ By default, it adds a field called `_validation` to the item when the item doesn
         '_validation': defaultdict(<type 'list'>, {'title': ['Field too long']})
     }
 
-#### JSON Schema validation
-Another way to validate items is to use a (json schema)[http://json-schema.org/]. SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS supports this way too.
+#### With JSON Schema
+Another way to validate items is to use a [json schema](http://json-schema.org/). SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS supports this way too.
 
 In that case you need:
 
