@@ -1,6 +1,11 @@
 Release notes
 =============
 
+1.3.0 (2018-08-02)
+------------------
+
+- Add support for periodic monitors in the Scrapy extension.
+
 1.2.0 (2018-04-04)
 ------------------
 
