@@ -1,0 +1,13 @@
+{% import 'slack/spider/notifier/macros.jinja' as renderer with context %}
+[
+    {% if include_ok_attachments and monitors_passed %}
+        {{ renderer.render_passed() }},
+    {% endif %}
+    {% if include_error_attachments and monitors_failed %}
+        {{ renderer.render_failed() }},
+    {% endif %}
+]
+
+
+
+

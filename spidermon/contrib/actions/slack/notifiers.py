@@ -54,3 +54,8 @@ class SendSlackMessageSpiderFinished(SendSlackMessage):
             'report_index': self.report_index,
         })
         return context
+
+
+class SendSlackMessageSpiderRunning(SendSlackMessageSpiderFinished):
+    message_template = 'slack/spider/notifier/periodic/message.jinja'
+    attachments_template = 'slack/spider/notifier/periodic/attachments.jinja'
