@@ -1,5 +1,10 @@
 from setuptools import setup, find_packages
 
+test_requirements = [
+    'pytest>=2.7.0',
+    'tox'
+]
+
 setup(
     name='spidermon',
     version='1.3.0',
@@ -10,16 +15,30 @@ setup(
     install_requires=[
         'six>=1.9.0',
     ],
-    tests_require=[
-        'six>=1.9.0',
-        "pytest>=2.7.0",
-    ],
+    tests_require=test_requirements,
     extras_require={
-        'validation':  [
+        # Specific monitors and tools to support notifications and reports
+        'monitoring': [
+            'scrapy',
+            'Jinja2',
+            'slackclient',
+            'boto',
+            'premailer'
+        ],
+        # Data validation
+        'validation': [
             'jsonschema',
             'schematics',
             'python-slugify',
             'strict-rfc3339'
         ],
+        # Tools to run the tests
+        'tests': test_requirements,
+        # Tools to build and publish the documentation
+        'docs': [
+            'sphinx',
+            'sphinx-rtd-theme',
+            's3cmd'
+        ]
     }
 )
