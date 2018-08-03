@@ -7,7 +7,6 @@ RUN mkdir -p /app
 WORKDIR /app
 COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install tox==2.9.1
 
 # Uncomment these lines to run the tests on additional Python versions
 # RUN curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash

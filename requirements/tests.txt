@@ -1,4 +1,0 @@
--r ../requirements.txt
--r validation.txt
-pytest>=2.7.0
-Scrapy

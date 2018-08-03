@@ -1,4 +1,0 @@
-jsonschema==2.6.0
-schematics==2.0.1
-python-slugify==1.0.2
-strict-rfc3339==0.6
