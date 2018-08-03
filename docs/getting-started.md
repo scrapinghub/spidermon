@@ -12,12 +12,11 @@ You can use [a simple project](http://github.com/stummjr/spidermon-reddit-exampl
 
 Pip:
 
-    git clone "git@github.com:scrapinghub/spidermon.git"
-    cd spidermon && pip install . -r requirements.txt -r requirements/validation.txt
+    pip install git+ssh://git@github.com/scrapinghub/spidermon.git#egg=spidermon[validation,monitoring]
 
-Pipenv (recommended):
+Pipenv:
 
-    pipenv install git+https://github.com/scrapinghub/spidermon.git#egg=spidermon
+    pipenv install git+ssh://git@github.com/scrapinghub/spidermon.git#egg=spidermon[monitoring,validation]
 
 
 ## Using Spidermon in your project
@@ -99,7 +98,7 @@ The monitors will be placed in a new file called `monitors.py`. At first, you mu
 
 `monitors.py`:
 
-    from spidermon import MonitorSuite    
+    from spidermon import MonitorSuite
     from spidermon.contrib.actions.slack.notifiers import (
         SendSlackMessageSpiderStarted, SendSlackMessageSpiderFinished
     )
