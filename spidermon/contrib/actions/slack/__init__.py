@@ -158,9 +158,9 @@ class SendSlackMessage(ActionWithTemplates):
             'message_template': crawler.settings.get('SPIDERMON_SLACK_MESSAGE_TEMPLATE'),
             'attachments': crawler.settings.get('SPIDERMON_SLACK_ATTACHMENTS'),
             'attachments_template': crawler.settings.get('SPIDERMON_SLACK_ATTACHMENTS_TEMPLATE'),
-            'include_message': crawler.settings.get('SPIDERMON_SLACK_INCLUDE_MESSAGE'),
-            'include_attachments': crawler.settings.get('SPIDERMON_SLACK_INCLUDE_ATTACHMENTS'),
-            'fake': crawler.settings.get('SPIDERMON_SLACK_FAKE'),
+            'include_message': crawler.settings.getbool('SPIDERMON_SLACK_INCLUDE_MESSAGE'),
+            'include_attachments': crawler.settings.getbool('SPIDERMON_SLACK_INCLUDE_ATTACHMENTS'),
+            'fake': crawler.settings.getbool('SPIDERMON_SLACK_FAKE'),
         }
 
     def run_action(self):
