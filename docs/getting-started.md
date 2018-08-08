@@ -28,7 +28,7 @@ Firstly, enable spidermon in `settings.py`
 
 ### Set up the Validators
 
-#### With Python
+#### With Schematics
 The validators define the expected structure for the items. As you can see in the [code for this tutorial](http://github.com/stummjr/spidermon-reddit-example), the `reddit` spider generates `NewsItem` objects with the scraped data:
 
 `items.py`:
@@ -38,7 +38,7 @@ The validators define the expected structure for the items. As you can see in th
         title = scrapy.Field()
         user = scrapy.Field()
 
-Now, you have to create a file called `validators.py` into the project folder and define the required data model for the items that your spider will collect:
+Now, you have to create a file called `validators.py` into the project folder and define the required data model (based on [Schematics](https://github.com/schematics/schematics)) for the items that your spider will collect:
 
 `validators.py`:
 
@@ -91,9 +91,9 @@ By default, it adds a field called `_validation` to the item when the item doesn
     }
 
 #### With JSON Schema
-Another way to validate items is to use a [json schema](http://json-schema.org/). SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS supports this way too.
+Another way to validate items is to use a [JSON schema](http://json-schema.org/).
 
-In that case you need:
+In that case you need to:
 
 * enable ItemValidationPipeline
 
@@ -102,27 +102,20 @@ In that case you need:
     ITEM_PIPELINES = {
         'spidermon.contrib.scrapy.pipelines.ItemValidationPipeline': 800,
     }
-    SPIDERMON_VALIDATION_MODELS = (
-        'reddit_spidermon_demo.validators.NewsItem',
-    )
-    SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS = True
-    
-* add json schemas to the project
 
-* set SPIDERMON_VALIDATION_SCHEMAS setting per spider or globally
+* add the schema definition files to the project (also, make sure to include
+  these data fields in `setup.py` to package them with your spiders)
 
-    ```custom_settings = {
-        'SPIDERMON_VALIDATION_SCHEMAS': [
-            resource_filename('dell', 'schemas/example_schema.json')
-        ]
-    }```
-or
+* set SPIDERMON_VALIDATION_SCHEMAS setting per spider (using `custom_settings`)
+  or globally (`settings.py`):
 
-`settings.py`:
+        from pkg_resources import resource_filename
 
-    SPIDERMON_VALIDATION_SCHEMAS: [
-        resource_filename('spiders_folder', 'schemas/example_schema.json')
-    ]
+        custom_settings = {
+            'SPIDERMON_VALIDATION_SCHEMAS': [
+                resource_filename('mymodule', 'schemas/example_schema.json')
+            ]
+        }
 
 ### Set up the Monitors
 The monitors are like test cases that will be executed to check if your crawling went OK. In this case, OK means that the spider extracts exactly 25 items each time it runs (25 is the default amount of items in a reddit page).
