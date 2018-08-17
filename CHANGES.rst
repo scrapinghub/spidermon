@@ -1,6 +1,16 @@
 Release notes
 =============
 
+1.4.0 (2018-08-17)
+------------------
+
+- Avoid requests to get the amount of lines in the log by default, because
+  they consume too much memory and they are very slow. You can still use
+  the old behavior adding ``show_log_count`` to the context before creating
+  the email message.
+- Refactor the requirements in setup.py.
+- Update the Sphinx configuration.
+
 1.3.0 (2018-08-02)
 ------------------
 
