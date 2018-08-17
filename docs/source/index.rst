@@ -11,4 +11,5 @@ Welcome to Spidermon's documentation!
 
    description
    installation
+   changelog
 
