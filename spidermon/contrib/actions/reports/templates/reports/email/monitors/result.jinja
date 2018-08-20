@@ -48,12 +48,12 @@
 {% macro render_header_data_job_link(value, classes=None) %}
     {% if classes %}
         <span class="{{ classes }}">
-            <a href="https://app.scrapinghub.com/p/{{ data.job.key }}" target="_blank" style="color: inherit;">
+            <a href="https://app.scrapinghub.com/p/{{ value }}" target="_blank" style="color: inherit;">
                 {{ value }}
             </a>
         </span>
     {% else %}
-        <a href="https://app.scrapinghub.com/p/{{ data.job.key }}" target="_blank" style="color: inherit;">
+        <a href="https://app.scrapinghub.com/p/{{ value }}" target="_blank" style="color: inherit;">
                 {{ value }}
             </a>
     {% endif %}
