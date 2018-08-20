@@ -4,7 +4,7 @@
   render_dash_link
 ===============================================#}
 {% macro render_dash_link() %}
-    <a class="btn btn-blue btn-sm" href="https://app.scrapinghub.com/p/{{ data.job.key}}" target="_blank">
+    <a class="btn btn-blue btn-sm" href="https://app.scrapinghub.com/p/{{ data.job.key }}" target="_blank">
         See job
     </a>
 {% endmacro %}
@@ -144,7 +144,7 @@
                             {% if is_script %}
                                 {{ render_header_data('Script', data.job.metadata['spider'][3:], 'label label-blue') }}
                             {% else %}
-                                {{ render_header_data('spider', data.job.metadata['spider'], 'label label-blue') }}
+                                {{ render_header_data('Spider', data.job.metadata['spider'], 'label label-blue') }}
                                 {{ render_header_data('Version', data.job.metadata['version']) }}
                                 {{ render_header_data('Items', items_count, "badge badge-green") }}
                                 {{ render_header_data('Requests', requests_count, "badge") }}
