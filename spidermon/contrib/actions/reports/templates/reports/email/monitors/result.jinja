@@ -30,7 +30,7 @@
         <td class="name">{{ name }}:</td>
         <td class="value">
             {% if value %}
-                {% if 'Job' == name %}
+                {% if 'Job' == name and show_job_button %}
                     {{ render_header_data_job_link(value, classes) }}
                 {% else %}
                     {{ render_header_data_value(value, classes) }}
