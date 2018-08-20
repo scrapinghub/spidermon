@@ -4,7 +4,7 @@
   render_dash_link
 ===============================================#}
 {% macro render_dash_link() %}
-    <a class="btn btn-blue btn-sm" href="https://app.scrapinghub.com/p/{{ data.job.key.split('/')[0] }}/{{ data.job.key.split('/')[1] }}/{{ data.job.key.split('/')[2] }}" target="_blank">
+    <a class="btn btn-blue btn-sm" href="https://app.scrapinghub.com/p/{{ data.job.key}}" target="_blank">
         See job
     </a>
 {% endmacro %}
@@ -30,12 +30,33 @@
         <td class="name">{{ name }}:</td>
         <td class="value">
             {% if value %}
-                {{ render_header_data_value(value, classes) }}
+                {% if 'Job' == name and show_job_button %}
+                    {{ render_header_data_job_link(value, classes) }}
+                {% else %}
+                    {{ render_header_data_value(value, classes) }}
+                {% endif %}
             {% else %}
                 -
             {% endif %}
         </td>
     </tr>
+{% endmacro %}
+
+{#===============================================
+  render_header_data_job_link
+===============================================#}
+{% macro render_header_data_job_link(value, classes=None) %}
+    {% if classes %}
+        <span class="{{ classes }}">
+            <a href="https://app.scrapinghub.com/p/{{ value }}" target="_blank" style="color: inherit;">
+                {{ value }}
+            </a>
+        </span>
+    {% else %}
+        <a href="https://app.scrapinghub.com/p/{{ value }}" target="_blank" style="color: inherit;">
+                {{ value }}
+            </a>
+    {% endif %}
 {% endmacro %}
 
 {#===============================================
