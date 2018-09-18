@@ -1,6 +1,11 @@
 Release notes
 =============
 
+1.5.0 (2018-09-19)
+------------------
+
+- Convert the job ID tag into a clickable button.
+
 1.4.0 (2018-08-17)
 ------------------
 
