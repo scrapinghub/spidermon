@@ -7,7 +7,7 @@ test_requirements = [
 
 setup(
     name='spidermon',
-    version='1.4.0',
+    version='1.5.0',
     packages=find_packages(),
     package_data={'spidermon': ['VERSION']},
     zip_safe=False,
