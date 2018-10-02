@@ -17,6 +17,10 @@ Pip:
 Pipenv:
 
     pipenv install git+ssh://git@github.com/scrapinghub/spidermon.git#egg=spidermon[monitoring,validation]
+    
+Pip (local development):
+
+    pip install -e '.[validation,monitoring]'
 
 
 ## Using Spidermon in your project
