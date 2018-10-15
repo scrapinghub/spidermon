@@ -10,6 +10,6 @@ Welcome to Spidermon's documentation!
    :maxdepth: 2
 
    description
+   topics/settings
    installation
    changelog
-
