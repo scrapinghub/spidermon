@@ -96,6 +96,11 @@ SPIDERMON_BODY_TEXT_TEMPLATE
 SPIDERMON_EMAIL_BCC
 -------------------
 
+.. setting:: SPIDERMON_EMAIL_CONTEXT
+
+SPIDERMON_EMAIL_CONTEXT
+------------------
+
 .. setting:: SPIDERMON_EMAIL_CC
 
 SPIDERMON_EMAIL_CC
@@ -280,33 +285,3 @@ SPIDERMON_REPORT_S3_REGION_ENDPOINT
 
 SPIDERMON_REPORT_TEMPLATE
 -------------------------
-
-.. _topics-settings-item-validation-ref:
-
-Item validation settings reference
-==================================
-
-.. setting:: SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS
-
-SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS
-----------------------------------------
-
-.. setting:: SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS
-
-SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS
--------------------------------------------
-
-.. setting:: SPIDERMON_VALIDATION_ERRORS_FIELD
-
-SPIDERMON_VALIDATION_ERRORS_FIELD
----------------------------------
-
-.. setting:: SPIDERMON_VALIDATION_MODELS
-
-SPIDERMON_VALIDATION_MODELS
----------------------------
-
-.. setting:: SPIDERMON_VALIDATION_SCHEMAS
-
-SPIDERMON_VALIDATION_SCHEMAS
-----------------------------
