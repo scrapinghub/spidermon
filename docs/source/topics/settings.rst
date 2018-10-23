@@ -66,10 +66,10 @@ SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS
 SPIDERMON_SPIDER_OPEN_MONITORS
 ------------------------------
 
-.. _topics-settings-email-notification-ref:
+.. _topics-settings-email-action-ref:
 
-E-mail notification settings reference
-======================================
+E-mail action settings reference
+================================
 
 .. setting:: SPIDERMON_BODY_HTML
 
@@ -131,10 +131,10 @@ SPIDERMON_EMAIL_SUBJECT_TEMPLATE
 SPIDERMON_EMAIL_TO
 ------------------
 
-.. _topics-settings-slack-notification-ref:
+.. _topics-settings-slack-action-ref:
 
-Slack notification settings reference
-======================================
+Slack action settings reference
+===============================
 
 .. setting:: SPIDERMON_SLACK_ATTACHMENTS
 
@@ -206,10 +206,10 @@ SPIDERMON_SLACK_SENDER_NAME
 SPIDERMON_SLACK_SENDER_TOKEN
 ----------------------------
 
-.. _topics-settings-report-ref:
+.. _topics-settings-report-action-ref:
 
-Report settings reference
-============================
+Report action settings reference
+=========================
 
 .. setting:: SPIDERMON_JOBREPORT_APIKEY
 
