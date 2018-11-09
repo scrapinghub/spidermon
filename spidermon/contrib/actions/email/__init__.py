@@ -66,6 +66,7 @@ class SendEmail(ActionWithTemplates):
             'body_html': crawler.settings.get('SPIDERMON_BODY_HTML'),
             'body_html_template': crawler.settings.get('SPIDERMON_BODY_HTML_TEMPLATE'),
             'fake': crawler.settings.getbool('SPIDERMON_EMAIL_FAKE'),
+            'context': crawler.settings.getdict('SPIDERMON_EMAIL_CONTEXT'),
         }
 
     def run_action(self):

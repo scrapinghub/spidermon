@@ -18,7 +18,7 @@ class CreateReport(ActionWithTemplates):
         kwargs = super(CreateReport, cls).from_crawler_kwargs(crawler)
         kwargs.update({
             'template': crawler.settings.get('SPIDERMON_REPORT_TEMPLATE'),
-            'context': crawler.settings.get('SPIDERMON_REPORT_CONTEXT'),
+            'context': crawler.settings.getdict('SPIDERMON_REPORT_CONTEXT'),
         })
         return kwargs
 
