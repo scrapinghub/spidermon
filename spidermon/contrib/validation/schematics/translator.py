@@ -39,6 +39,7 @@ class SchematicsMessageTranslator(MessageTranslator):
 
         # Decimalype
         r"^Number '.*' failed to convert to a decimal\.?$":             messages.INVALID_DECIMAL,
+        r"^Value '.*' is not decimal\.?$":                              messages.INVALID_DECIMAL,
         r"^Value should be greater than .+$":                           messages.NUMBER_TOO_LOW,
         r"^Value should be less than .+$":                              messages.NUMBER_TOO_HIGH,
 
