@@ -1,6 +1,12 @@
 Release notes
 =============
 
+1.6.0 (2018-11-09)
+------------------
+
+- Add SPIDERMON_EMAIL_CONTEXT setting to pass custom contexts to email actions.
+- Add support for Schematics 2.1.0.
+
 1.5.0 (2018-09-19)
 ------------------
 
