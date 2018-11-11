@@ -1,9 +1,11 @@
 from __future__ import absolute_import
-from scrapy import log
 
-from spidermon.results.monitor import MonitorResult, monitors_step_required, actions_step_required
+import logging
+
+from spidermon.results.monitor import (MonitorResult, actions_step_required,
+                                       monitors_step_required)
 from spidermon.runners import MonitorRunner
-from spidermon.utils.text import line_title, line, Message
+from spidermon.utils.text import Message, line, line_title
 
 LOG_MESSAGE_HEADER = 'Spidermon'
 
@@ -104,12 +106,12 @@ class SpiderMonitorResult(MonitorResult):
                 self.log_error(msg)
 
     def log_error(self, msg):
-        self.log(msg, level=log.ERROR)
+        self.log(msg, level=logging.ERROR)
 
     def log_info(self, msg):
-        self.log(msg, level=log.INFO)
+        self.log(msg, level=logging.INFO)
 
-    def log(self, msg, level=log.DEBUG):
+    def log(self, msg, level=logging.DEBUG):
         self.spider.log('[%s] %s' % (LOG_MESSAGE_HEADER, msg), level=level)
 
 
