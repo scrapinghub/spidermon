@@ -1,24 +1,22 @@
 from __future__ import absolute_import
+
+from spidermon.contrib.stats.analyzer import StatsAnalyzer
+from spidermon.contrib.stats.counters import DictPercentCounter, PercentCounter
 from spidermon.exceptions import NotConfigured
-from spidermon.contrib.stats.counters import PercentCounter
 
-from .stats import StatsMonitorMixin
 from .job import JobMonitorMixin
-
+from .stats import StatsMonitorMixin
 
 DOWNLOADER_RESPONSE_COUNT = 'downloader/response_count'
 DOWNLOADER_RESPONSE_STATUS = 'downloader/response_status_count/'
-DOWNLOADER_STATUS_CODES_INFORMATIONAL = ['1\d{2}$']
-DOWNLOADER_STATUS_CODES_SUCCESSFUL = ['2\d{2}$']
-DOWNLOADER_STATUS_CODES_REDIRECTIONS = ['3\d{2}$']
-DOWNLOADER_STATUS_CODES_BAD_REQUESTS = ['4\d{2}$']
-DOWNLOADER_STATUS_CODES_INTERNAL_SERVER_ERRORS = ['5\d{2}$']
+DOWNLOADER_STATUS_CODES_INFORMATIONAL = [r'1\d{2}$']
+DOWNLOADER_STATUS_CODES_SUCCESSFUL = [r'2\d{2}$']
+DOWNLOADER_STATUS_CODES_REDIRECTIONS = [r'3\d{2}$']
+DOWNLOADER_STATUS_CODES_BAD_REQUESTS = [r'4\d{2}$']
+DOWNLOADER_STATUS_CODES_INTERNAL_SERVER_ERRORS = [r'5\d{2}$']
 DOWNLOADER_STATUS_CODES_OTHERS = ['[^1-5].*$']
-DOWNLOADER_STATUS_CODES_ERRORS = DOWNLOADER_STATUS_CODES_BAD_REQUESTS + DOWNLOADER_STATUS_CODES_INTERNAL_SERVER_ERRORS
-
-
-from spidermon.contrib.stats.analyzer import StatsAnalyzer
-from spidermon.contrib.stats.counters import DictPercentCounter
+DOWNLOADER_STATUS_CODES_ERRORS = DOWNLOADER_STATUS_CODES_BAD_REQUESTS + \
+    DOWNLOADER_STATUS_CODES_INTERNAL_SERVER_ERRORS
 
 
 class ResponsesInfo(object):
@@ -72,11 +70,13 @@ class ResponsesInfo(object):
 
         # >= 6xx. others
         self.others = DictPercentCounter(total=self.count)
-        self._add_status_codes(pattern=DOWNLOADER_STATUS_CODES_OTHERS, target=self.others)
+        self._add_status_codes(
+            pattern=DOWNLOADER_STATUS_CODES_OTHERS, target=self.others)
 
         # errors (4xx + 5xx)
         self.errors = DictPercentCounter(total=self.count)
-        self._add_status_codes(pattern=DOWNLOADER_STATUS_CODES_ERRORS, target=self.errors)
+        self._add_status_codes(
+            pattern=DOWNLOADER_STATUS_CODES_ERRORS, target=self.errors)
 
     def _add_status_codes(self, pattern, target):
         for code, counter in self._get_response_codes(pattern).items():
