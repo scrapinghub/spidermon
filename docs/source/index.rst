@@ -30,6 +30,6 @@ Contents
    installation
    getting-started
    topics/settings
-   topics/actions
+   actions
    changelog
 
