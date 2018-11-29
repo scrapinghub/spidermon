@@ -31,6 +31,6 @@ Contents
    getting-started
    item-validation
    topics/settings
-   topics/actions
+   actions
    changelog
 

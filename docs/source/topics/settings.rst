@@ -17,16 +17,6 @@ Here's a list of all available Spidermons settings, in alphabetical order, along
 with their default values and the scope where they apply. These settings must
 be defined in `settings.py` file of your Scrapy project.
 
-.. setting:: SPIDERMON_AWS_ACCESS_KEY
-
-SPIDERMON_AWS_ACCESS_KEY
-------------------------
-
-.. setting:: SPIDERMON_AWS_SECRET_KEY
-
-SPIDERMON_AWS_SECRET_KEY
-------------------------
-
 .. setting:: SPIDERMON_ENABLED
 
 SPIDERMON_ENABLED
@@ -65,76 +55,6 @@ SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS
 
 SPIDERMON_SPIDER_OPEN_MONITORS
 ------------------------------
-
-.. _topics-settings-email-action-ref:
-
-E-mail action settings reference
-================================
-
-.. setting:: SPIDERMON_BODY_HTML
-
-SPIDERMON_BODY_HTML
--------------------
-
-.. setting:: SPIDERMON_BODY_HTML_TEMPLATE
-
-SPIDERMON_BODY_HTML_TEMPLATE
-----------------------------
-
-.. setting:: SPIDERMON_BODY_TEXT
-
-SPIDERMON_BODY_TEXT
--------------------
-
-.. setting:: SPIDERMON_BODY_TEXT_TEMPLATE
-
-SPIDERMON_BODY_TEXT_TEMPLATE
-----------------------------
-
-.. setting:: SPIDERMON_EMAIL_BCC
-
-SPIDERMON_EMAIL_BCC
--------------------
-
-.. setting:: SPIDERMON_EMAIL_CONTEXT
-
-SPIDERMON_EMAIL_CONTEXT
-------------------
-
-.. setting:: SPIDERMON_EMAIL_CC
-
-SPIDERMON_EMAIL_CC
-------------------
-
-.. setting:: SPIDERMON_EMAIL_FAKE
-
-SPIDERMON_EMAIL_FAKE
---------------------
-
-.. setting:: SPIDERMON_EMAIL_REPLY_TO
-
-SPIDERMON_EMAIL_REPLY_TO
-------------------------
-
-.. setting:: SPIDERMON_EMAIL_SENDER
-
-SPIDERMON_EMAIL_SENDER
-----------------------
-
-.. setting:: SPIDERMON_EMAIL_SUBJECT
-
-SPIDERMON_EMAIL_SUBJECT
------------------------
-
-.. setting:: SPIDERMON_EMAIL_SUBJECT_TEMPLATE
-
-SPIDERMON_EMAIL_SUBJECT_TEMPLATE
---------------------------------
-
-.. setting:: SPIDERMON_EMAIL_TO
-
-SPIDERMON_EMAIL_TO
-------------------
 
 .. _topics-settings-slack-action-ref:
 
