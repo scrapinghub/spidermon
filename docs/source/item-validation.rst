@@ -55,7 +55,6 @@ Here we have an example of a schema for the quotes item from the :ref:`getting-s
 
 .. code-block:: json
 
-  /* validators/quotes.json */
   {
     "$schema": "http://json-schema.org/draft-04/schema",
     "type": "object",
@@ -96,14 +95,14 @@ Default: ``False``
 When set, adds a field called `_validation` to the item that has validation errors.
 You can change the name of the field changing :setting:`SPIDERMON_VALIDATION_ERRORS_FIELD`:
 
-.. code-block:: json
+.. code-block:: python
 
     {
         '_validation': defaultdict(<class 'list'>, {'author_url': ['Invalid URL']}),
         'author': 'C.S. Lewis',
         'author_url': 'invalid_url',
-        'quote': '“Some day you will be old enough to start reading fairy tales '
-            'again.”',
+        'quote': 'Some day you will be old enough to start reading fairy tales '
+            'again.',
         'tags': ['age', 'fairytales', 'growing-up']
     }
 
@@ -133,7 +132,8 @@ SPIDERMON_VALIDATION_MODELS
 
 Default: ``None``
 
-A `list` containing the models with th
+A `list` containing the `schematics models`_ that contains definition of the items
+that needs to be validated.
 
 .. code-block:: python
 
@@ -187,3 +187,4 @@ as a `dict`:
 .. _`schematics`: https://schematics.readthedocs.io/en/latest/
 .. _`JSON Schema`: https://json-schema.org/
 .. _`guide`: http://json-schema.org/learn/getting-started-step-by-step.html
+.. _`schematics models`: https://schematics.readthedocs.io/en/latest/usage/models.html
