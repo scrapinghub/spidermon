@@ -39,7 +39,7 @@ custom validation rules.
         author_url = URLType(required=True)
         tags = ListType(StringType)
 
-Check the documentation to learn how to define a model and how to extend the
+Check `schematics documentation`_ to learn how to define a model and how to extend the
 built-in data types.
 
 With JSON Schema
@@ -49,9 +49,8 @@ With JSON Schema
 define which fields are required, the type assigned to each field, a regular expression
 to validate the content and much more.
 
-This `guide`_ explains the main keywords and how to generate a schema.
-
-Here we have an example of a schema for the quotes item from the :ref:`getting-started`.
+This `guide`_ explains the main keywords and how to generate a schema. Here we have
+an example of a schema for the quotes item from the :doc:`tutorial </getting-started>`.
 
 .. code-block:: json
 
@@ -85,7 +84,7 @@ Settings
 
 These are the settings used for configuring item validation:
 
-.. settings:: SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS
+.. _SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS:
 
 SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -93,7 +92,7 @@ SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS
 Default: ``False``
 
 When set, adds a field called `_validation` to the item that has validation errors.
-You can change the name of the field changing :setting:`SPIDERMON_VALIDATION_ERRORS_FIELD`:
+You can change the name of the field changing :ref:`SPIDERMON_VALIDATION_ERRORS_FIELD`:
 
 .. code-block:: python
 
@@ -106,16 +105,16 @@ You can change the name of the field changing :setting:`SPIDERMON_VALIDATION_ERR
         'tags': ['age', 'fairytales', 'growing-up']
     }
 
-.. setting:: SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS
+.. _SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS:
 
 SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Default: ``False``
 
-Whether to drop items that contains validation errors.
+Whether to drop items that contain validation errors.
 
-.. setting:: SPIDERMON_VALIDATION_ERRORS_FIELD
+.. _SPIDERMON_VALIDATION_ERRORS_FIELD:
 
 SPIDERMON_VALIDATION_ERRORS_FIELD
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -123,9 +122,9 @@ SPIDERMON_VALIDATION_ERRORS_FIELD
 Default: ``_validation``
 
 The name of the field added to the item when a validation error happens and
-:setting:`SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS` is enabled.
+:ref:`SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS` is enabled.
 
-.. setting:: SPIDERMON_VALIDATION_MODELS
+.. _SPIDERMON_VALIDATION_MODELS:
 
 SPIDERMON_VALIDATION_MODELS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -155,7 +154,7 @@ as a `dict`:
         OtherItem: 'myproject.spiders.validators.OtherItemModel',
     }
 
-.. setting:: SPIDERMON_VALIDATION_SCHEMAS
+.. _SPIDERMON_VALIDATION_SCHEMAS:
 
 SPIDERMON_VALIDATION_SCHEMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -185,6 +184,7 @@ as a `dict`:
     }
 
 .. _`schematics`: https://schematics.readthedocs.io/en/latest/
+.. _`schematics documentation`: https://schematics.readthedocs.io/en/latest/
 .. _`JSON Schema`: https://json-schema.org/
 .. _`guide`: http://json-schema.org/learn/getting-started-step-by-step.html
 .. _`schematics models`: https://schematics.readthedocs.io/en/latest/usage/models.html
