@@ -1,6 +1,12 @@
 Release notes
 =============
 
+1.7.0 (2018-12-04)
+------------------
+
+- Support universal wheels.
+- Skip authentication and recipient settings when running in fake mode.
+
 1.6.0 (2018-11-09)
 ------------------
 
