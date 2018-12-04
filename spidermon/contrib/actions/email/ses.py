@@ -14,9 +14,9 @@ class SendSESEmail(SendEmail):
         super(SendSESEmail, self).__init__(*args, **kwargs)
         self.aws_access_key = aws_access_key or self.aws_access_key
         self.aws_secret_key = aws_secret_key or self.aws_secret_key
-        if not self.aws_access_key:
+        if not self.fake and not self.aws_access_key:
             raise NotConfigured("You must provide the AWS Access Key.")
-        if not self.aws_secret_key:
+        if not self.fake and not self.aws_secret_key:
             raise NotConfigured("You must provide the AWS Secret Key.")
 
     @classmethod

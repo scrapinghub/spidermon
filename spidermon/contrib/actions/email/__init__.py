@@ -44,7 +44,7 @@ class SendEmail(ActionWithTemplates):
         self.body_html = body_html or self.body_html
         self.body_html_template = body_html_template or self.body_html_template
         self.fake = fake or self.fake
-        if not self.to:
+        if not self.fake and not self.to:
             raise NotConfigured("You must provide at least one recipient for the message.")
         if not self.subject:
             raise NotConfigured("You must provide a subject for the message.")
@@ -134,4 +134,3 @@ class SendEmail(ActionWithTemplates):
             return ', '.join(recipients)
         else:
             return recipients
-

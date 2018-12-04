@@ -53,7 +53,7 @@ class SlackMessageManager():
                 if to.startswith('#'):
                     text = '@channel: ' + text
                 else:
-                    text = '@group: ' +  text
+                    text = '@group: ' + text
             return self._send_channel_message(
                 channel=to,
                 text=text,
@@ -133,10 +133,14 @@ class SendSlackMessage(ActionWithTemplates):
                  attachments=None, attachments_template=None, include_attachments=None,
                  fake=None):
         super(SendSlackMessage, self).__init__()
-        self.manager = SlackMessageManager(
-            sender_token=sender_token or self.sender_token,
-            sender_name=sender_name or self.sender_name,
-        )
+        self.fake = fake or self.fake
+        if not self.fake:
+            self.manager = SlackMessageManager(
+                sender_token=sender_token or self.sender_token,
+                sender_name=sender_name or self.sender_name,
+            )
+        else:
+            self.manager = None
         self.recipients = recipients or self.recipients
         self.message = message or self.message
         self.message_template = message_template or self.message_template
@@ -144,8 +148,7 @@ class SendSlackMessage(ActionWithTemplates):
         self.attachments = attachments or self.attachments
         self.attachments_template = attachments_template or self.attachments_template
         self.include_attachments = include_attachments or self.include_attachments
-        self.fake = fake or self.fake
-        if not self.recipients:
+        if not self.fake and not self.recipients:
             raise NotConfigured("You must provide at least one recipient for the message.")
 
     @classmethod
