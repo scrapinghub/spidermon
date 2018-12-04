@@ -33,7 +33,8 @@ when your monitor suite finishes no matter if it passed or failed:
             SendSESEmail,
         ]
 
-By default, Spidermon uses a HTML template that can be altered in SPIDERMON_BODY_HTML_TEMPLATE setting.
+By default, Spidermon uses a HTML template that can be altered in
+:ref:`SPIDERMON_BODY_HTML_TEMPLATE` setting.
 
 The result of a report generated using this default template may be seen next:
 
@@ -50,79 +51,79 @@ actions to the lists `monitors_passed_actions` and `monitors_failed_actions`.
 
 The following settings are the minimum needed to make this action works:
 
-.. setting:: SPIDERMON_AWS_ACCESS_KEY
+.. _SPIDERMON_AWS_ACCESS_KEY:
 
 SPIDERMON_AWS_ACCESS_KEY
 ------------------------
 
-.. setting:: SPIDERMON_AWS_SECRET_KEY
+.. _SPIDERMON_AWS_SECRET_KEY:
 
 SPIDERMON_AWS_SECRET_KEY
 ------------------------
 
-.. setting:: SPIDERMON_EMAIL_SENDER
+.. _SPIDERMON_EMAIL_SENDER:
 
 SPIDERMON_EMAIL_SENDER
 ----------------------
 
-.. setting:: SPIDERMON_EMAIL_TO
+.. _SPIDERMON_EMAIL_TO:
 
 SPIDERMON_EMAIL_TO
 ------------------
 
 The following settings can be used to improve the action:
 
-.. setting:: SPIDERMON_BODY_HTML
+.. _SPIDERMON_BODY_HTML:
 
 SPIDERMON_BODY_HTML
 -------------------
 
-.. setting:: SPIDERMON_BODY_HTML_TEMPLATE
+.. _SPIDERMON_BODY_HTML_TEMPLATE:
 
 SPIDERMON_BODY_HTML_TEMPLATE
 ----------------------------
 
-.. setting:: SPIDERMON_BODY_TEXT
+.. _SPIDERMON_BODY_TEXT:
 
 SPIDERMON_BODY_TEXT
 -------------------
 
-.. setting:: SPIDERMON_BODY_TEXT_TEMPLATE
+.. _SPIDERMON_BODY_TEXT_TEMPLATE:
 
 SPIDERMON_BODY_TEXT_TEMPLATE
 ----------------------------
 
-.. setting:: SPIDERMON_EMAIL_BCC
+.. _SPIDERMON_EMAIL_BCC:
 
 SPIDERMON_EMAIL_BCC
 -------------------
 
-.. setting:: SPIDERMON_EMAIL_CONTEXT
+.. _SPIDERMON_EMAIL_CONTEXT:
 
 SPIDERMON_EMAIL_CONTEXT
 ------------------
 
-.. setting:: SPIDERMON_EMAIL_CC
+.. _SPIDERMON_EMAIL_CC:
 
 SPIDERMON_EMAIL_CC
 ------------------
 
-.. setting:: SPIDERMON_EMAIL_FAKE
+.. _SPIDERMON_EMAIL_FAKE:
 
 SPIDERMON_EMAIL_FAKE
 --------------------
 
-.. setting:: SPIDERMON_EMAIL_REPLY_TO
+.. _SPIDERMON_EMAIL_REPLY_TO:
 
 SPIDERMON_EMAIL_REPLY_TO
 ------------------------
 
-.. setting:: SPIDERMON_EMAIL_SUBJECT
+.. _SPIDERMON_EMAIL_SUBJECT:
 
 SPIDERMON_EMAIL_SUBJECT
 -----------------------
 
-.. setting:: SPIDERMON_EMAIL_SUBJECT_TEMPLATE
+.. _SPIDERMON_EMAIL_SUBJECT_TEMPLATE:
 
 SPIDERMON_EMAIL_SUBJECT_TEMPLATE
 --------------------------------
@@ -144,7 +145,7 @@ Job action
 Report action
 =============
 
-
 .. _actions-custom-action:
+
 Custom actions
 ==============
