@@ -56,20 +56,36 @@ The following settings are the minimum needed to make this action works:
 SPIDERMON_AWS_ACCESS_KEY
 ------------------------
 
+Default: ``None``
+
+AWS Access Key.
+
 .. _SPIDERMON_AWS_SECRET_KEY:
 
 SPIDERMON_AWS_SECRET_KEY
 ------------------------
+
+AWS Secret Key.
+
+Default: ``None``
 
 .. _SPIDERMON_EMAIL_SENDER:
 
 SPIDERMON_EMAIL_SENDER
 ----------------------
 
+Default: ``None``
+
+Address of the sender of the e-mail notification.
+
 .. _SPIDERMON_EMAIL_TO:
 
 SPIDERMON_EMAIL_TO
 ------------------
+
+Default: ``None``
+
+List of all recipients of the e-mail notification.
 
 The following settings can be used to improve the action:
 
@@ -77,6 +93,8 @@ The following settings can be used to improve the action:
 
 SPIDERMON_BODY_HTML
 -------------------
+
+Default: ``None``
 
 .. _SPIDERMON_BODY_HTML_TEMPLATE:
 
@@ -98,20 +116,30 @@ SPIDERMON_BODY_TEXT_TEMPLATE
 SPIDERMON_EMAIL_BCC
 -------------------
 
+Default: ``None``
+
 .. _SPIDERMON_EMAIL_CONTEXT:
 
 SPIDERMON_EMAIL_CONTEXT
 ------------------
+
+Default: ``None``
 
 .. _SPIDERMON_EMAIL_CC:
 
 SPIDERMON_EMAIL_CC
 ------------------
 
+Default: ``None``
+
 .. _SPIDERMON_EMAIL_FAKE:
 
 SPIDERMON_EMAIL_FAKE
 --------------------
+
+Default: ``False``
+
+If set will output the e-mail content in the logs and don't send it.
 
 .. _SPIDERMON_EMAIL_REPLY_TO:
 
