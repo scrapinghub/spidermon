@@ -29,6 +29,7 @@ Contents
 
    installation
    getting-started
+   item-validation
    topics/settings
    actions
    changelog
