@@ -4,6 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS        =
 SPHINXBUILD       = sphinx-build
+SPHINXAUTOBUILD   = sphinx-autobuild
 PAPER             =
 BUILDDIR          = build
 S3CMD             = s3cmd
@@ -212,3 +213,6 @@ pseudoxml:
 	$(SPHINXBUILD) -b pseudoxml $(ALLSPHINXOPTS) $(BUILDDIR)/pseudoxml
 	@echo
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
+
+livehtml:
+	$(SPHINXAUTOBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
