@@ -163,15 +163,90 @@ SPIDERMON_EMAIL_SUBJECT_TEMPLATE
 Slack action
 ============
 
-.. _actions-job:
+.. _SPIDERMON_SLACK_ATTACHMENTS
 
-Job action
-==========
+SPIDERMON_SLACK_ATTACHMENTS
+---------------------------
 
-.. _actions-report:
+.. _SPIDERMON_SLACK_ATTACHMENTS_TEMPLATE
 
-Report action
-=============
+SPIDERMON_SLACK_ATTACHMENTS_TEMPLATE
+------------------------------------
+
+.. _SPIDERMON_SLACK_FAKE
+
+SPIDERMON_SLACK_FAKE
+--------------------
+
+.. _SPIDERMON_SLACK_INCLUDE_ATTACHMENTS
+
+SPIDERMON_SLACK_INCLUDE_ATTACHMENTS
+-----------------------------------
+
+.. _SPIDERMON_SLACK_INCLUDE_MESSAGE
+
+SPIDERMON_SLACK_INCLUDE_MESSAGE
+-------------------------------
+
+.. _SPIDERMON_SLACK_MESSAGE
+
+SPIDERMON_SLACK_MESSAGE
+-----------------------
+
+.. _SPIDERMON_SLACK_MESSAGE_TEMPLATE
+
+SPIDERMON_SLACK_MESSAGE_TEMPLATE
+--------------------------------
+
+.. _SPIDERMON_SLACK_NOTIFIER_INCLUDE_ERROR_ATTACHMENTS
+
+SPIDERMON_SLACK_NOTIFIER_INCLUDE_ERROR_ATTACHMENTS
+--------------------------------------------------
+
+.. _SPIDERMON_SLACK_NOTIFIER_INCLUDE_OK_ATTACHMENTS
+
+SPIDERMON_SLACK_NOTIFIER_INCLUDE_OK_ATTACHMENTS
+-----------------------------------------------
+
+.. _SPIDERMON_SLACK_NOTIFIER_INCLUDE_REPORT_LINK
+
+SPIDERMON_SLACK_NOTIFIER_INCLUDE_REPORT_LINK
+--------------------------------------------
+
+.. _SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX
+
+SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX
+-------------------------------------
+
+.. _SPIDERMON_SLACK_RECIPIENTS
+
+SPIDERMON_SLACK_RECIPIENTS
+--------------------------
+
+.. _SPIDERMON_SLACK_SENDER_NAME
+
+SPIDERMON_SLACK_SENDER_NAME
+---------------------------
+
+.. _SPIDERMON_SLACK_SENDER_TOKEN
+
+SPIDERMON_SLACK_SENDER_TOKEN
+----------------------------
+
+.. _actions-job-tags:
+
+Job tags action
+===============
+
+.. _actions-file-report:
+
+File Report action
+==================
+
+.. _actions-s3-report:
+
+S3 Report action
+================
 
 .. _actions-custom-action:
 
