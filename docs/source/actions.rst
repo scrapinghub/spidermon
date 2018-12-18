@@ -34,7 +34,8 @@ when your monitor suite finishes no matter if it passed or failed:
         ]
 
 By default, Spidermon uses a HTML template that can be altered in
-:ref:`SPIDERMON_BODY_HTML_TEMPLATE` setting.
+:ref:`SPIDERMON_BODY_HTML_TEMPLATE` setting. You can use `Jinja2`_ as your
+template engine.
 
 The result of a report generated using this default template may be seen next:
 
@@ -157,6 +158,7 @@ SPIDERMON_EMAIL_SUBJECT_TEMPLATE
 --------------------------------
 
 .. _Amazon Simple Email Service: https://aws.amazon.com/pt/ses/
+.. _Jinja2: http://jinja.pocoo.org/
 
 .. _actions-slack:
 
@@ -337,3 +339,16 @@ S3 Report action
 
 Custom actions
 ==============
+
+You can define your own custom actions to be executed after your monitors finish
+its execution. Just create a class that inherits from `spidermon.core.actions.Action`
+and implement the `run_action` method.
+
+.. code-block:: python
+
+    from spidermon.core.actions import Action
+
+    class MyCustomAction(Action):
+        def run_action(self):
+            # Include here the logic of your action
+            # (...)
