@@ -29,6 +29,7 @@ Contents
 
    installation
    getting-started
+   monitors
    item-validation
    topics/settings
    topics/actions
