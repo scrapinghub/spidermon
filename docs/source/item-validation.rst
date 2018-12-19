@@ -7,7 +7,7 @@ One useful feature when monitoring a spider is being able to validate your retur
 against a defined schema.
 
 Spidermon provides a mechanism that allows you to define an item schema and validation
-rules that will be executed for each item returned. To enable item validation feature,
+rules that will be executed for each item returned. To enable the item validation feature,
 the first step is to enable the built-in item pipeline in your project settings:
 
 .. code-block:: python
@@ -17,7 +17,7 @@ the first step is to enable the built-in item pipeline in your project settings:
         'spidermon.contrib.scrapy.pipelines.ItemValidationPipeline': 800,
     }
 
-After that you need to choose which validation library will be used. Spidermon
+After that, you need to choose which validation library will be used. Spidermon
 accepts schemas defined using schematics_ or `JSON Schema`_.
 
 With schematics
@@ -91,8 +91,8 @@ SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS
 
 Default: ``False``
 
-When set, adds a field called `_validation` to the item that has validation errors.
-You can change the name of the field changing :ref:`SPIDERMON_VALIDATION_ERRORS_FIELD`:
+When set to ``True``, this adds a field called `_validation` to the item that contains any validation errors.
+You can change the name of the field by assigning a name to :ref:`SPIDERMON_VALIDATION_ERRORS_FIELD`:
 
 .. code-block:: python
 
@@ -131,8 +131,8 @@ SPIDERMON_VALIDATION_MODELS
 
 Default: ``None``
 
-A `list` containing the `schematics models`_ that contains definition of the items
-that needs to be validated.
+A `list` containing the `schematics models`_ that contain the definition of the items
+that need to be validated.
 
 .. code-block:: python
 

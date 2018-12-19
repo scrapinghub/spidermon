@@ -58,7 +58,7 @@ And our spider code:
 Enabling Spidermon
 ------------------
 
-To enable Spidermon in your project include the following lines in your Scrapy project
+To enable Spidermon in your project, include the following lines in your Scrapy project
 `settings.py` file:
 
 .. code-block:: python
@@ -75,7 +75,7 @@ Our first monitor
 Monitors are similar to test cases with a set of methods that are executed at well defined
 moments of the spider execution containing your monitoring logic.
 
-Monitors must be grouped into monitor suites which define a list of monitors that needs to be
+Monitors must be grouped into monitor suites which define a list of monitors that need to be
 executed and the actions to be performed before and after the suite execute all monitors.
 
 Our first monitor will check whether at least 10 items were returned at the end of the spider
@@ -110,7 +110,7 @@ your monitors.
             ItemCountMonitor,
         ]
 
-This suite needs to be executed when the spider closes, so we include it to the
+This suite needs to be executed when the spider closes, so we include it in the
 SPIDERMON_SPIDER_CLOSE_MONITORS list in your `settings.py` file:
 
 .. code-block:: python
@@ -183,7 +183,7 @@ Slack notifications
 -------------------
 
 Receiving fail notification in the logs may be helpful during the development but
-not so usefull when you are running a huge number of spiders, so you can define
+not so useful when you are running a huge number of spiders, so you can define
 actions to be performed when your spider start or finishes (with or without failures).
 
 Spidermon has some built-in actions but you are free to define your own.
@@ -207,7 +207,7 @@ a Slack channel using a bot when a monitor fails.
             SendSlackMessageSpiderFinished,
         ]
 
-After enabling the action you need to provide the `Slack credentials`_ in your `settings.py`
+After enabling the action, you need to provide the `Slack credentials`_ in your `settings.py`
 file as follows:
 
 .. code-block:: python
@@ -218,7 +218,7 @@ file as follows:
     SPIDERMON_SLACK_SENDER_NAME = '<SLACK_SENDER_NAME>'
     SPIDERMON_SLACK_RECIPIENTS = ['@yourself', '#yourprojectchannel']
 
-If a monitor fails the recipients provided will receive a message in Slack:
+If a monitor fails, the recipients provided will receive a message in Slack:
 
 .. image:: /_static/slack_notification.png
    :scale: 50 %
@@ -295,8 +295,8 @@ all the validation rules:
         author_url = URLType(required=True)
         tags = ListType(StringType)
 
-To allow Spidermon validate your items, you need to include an item pipeline and
-inform the name of the model class used in validation:
+To allow Spidermon to validate your items, you need to include an item pipeline and
+inform the name of the model class used for validation:
 
 .. code-block:: python
 
@@ -323,7 +323,7 @@ your spider log providing information about the results of the validations:
     [scrapy.core.engine] INFO: Spider closed (finished)
 
 You can then create a new monitor that will check these new statistics and raise
-a fail when we have a item validation error:
+a failure when we have a item validation error:
 
 .. code-block:: python
 
