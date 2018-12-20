@@ -140,7 +140,7 @@ SPIDERMON_EMAIL_FAKE
 
 Default: ``False``
 
-If set will output the e-mail content in the logs and don't send it.
+If set `True`, the e-mail content will be in the logs but no e-mail will be sent.
 
 .. _SPIDERMON_EMAIL_REPLY_TO:
 
@@ -341,7 +341,7 @@ Custom actions
 ==============
 
 You can define your own custom actions to be executed after your monitors finish
-its execution. Just create a class that inherits from `spidermon.core.actions.Action`
+their execution. Just create a class that inherits from `spidermon.core.actions.Action`
 and implement the `run_action` method.
 
 .. code-block:: python
