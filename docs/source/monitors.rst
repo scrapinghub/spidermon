@@ -13,8 +13,8 @@ them, you need to include them in a `MonitorSuite`, so they can be executed.
 As `spidermon.core.monitors.Monitor` inherits from Python `unittest.TestCase`, you
 can use all existing assertion methods in your monitors.
 
-In the following example, we define a monitor that will verify if the number of items
-extracted is bigger than a specified threshold:
+In the following example, we define a monitor that will verify whether a minimum
+number of items were extracted and fails if it is less than the expected threshold.
 
 .. code-block:: python
 
@@ -23,17 +23,16 @@ extracted is bigger than a specified threshold:
     @monitors.name('Item count')
     class ItemCountMonitor(Monitor):
 
-        @monitors.name('Check minimum number of items')
-        def test_minimum_number_of_items(self):
+        @monitors.name('Minimum items extracted')
+        def test_minimum_number_of_items_extracted(self):
             minimum_threshold = 100
             item_extracted = getattr(self.data.stats, 'item_scraped_count', 0)
-
-            msg = 'Extracted less than {} items'.format(minimum_threshold)
-            self.assertTrue(
-                item_extracted >= minimum_threshold, msg=msg
+            self.assertFalse(
+                item_extracted < minimum_threshold,
+                msg='Extracted less than {} items'.format(minimum_threshold)
             )
 
-A `Monitor` instance has the following properties that can be used to help you to
+A `Monitor` instance has the following properties that can be used to help you
 implement your monitors:
 
 ``data.stats`` dict-like object containing the stats of the spider execution
