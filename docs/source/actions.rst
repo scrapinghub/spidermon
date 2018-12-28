@@ -165,6 +165,47 @@ SPIDERMON_EMAIL_SUBJECT_TEMPLATE
 Slack action
 ============
 
+This actions allows you to send custom messages to a `Slack`_ channel (or user)
+using a bot when your monitor suites finishes their execution. To use this action
+you need to provide the `Slack credentials`_ in your `settings.py`
+file as follows:
+
+.. code-block:: python
+
+    # settings.py
+    SPIDERMON_SLACK_SENDER_TOKEN = '<SLACK_SENDER_TOKEN>'
+    SPIDERMON_SLACK_SENDER_NAME = '<SLACK_SENDER_NAME>'
+    SPIDERMON_SLACK_RECIPIENTS = ['@yourself', '#yourprojectchannel']
+
+A notification will look like the following one:
+
+.. image:: /_static/slack_notification.png
+   :scale: 50 %
+   :alt: Slack Notification
+
+The following settings are the minimum needed to make this action works:
+
+.. _SPIDERMON_SLACK_RECIPIENTS
+
+SPIDERMON_SLACK_RECIPIENTS
+--------------------------
+
+List of recipients of the message. It could be a channel or an user.
+
+.. _SPIDERMON_SLACK_SENDER_NAME
+
+SPIDERMON_SLACK_SENDER_NAME
+---------------------------
+
+.. _SPIDERMON_SLACK_SENDER_TOKEN
+
+SPIDERMON_SLACK_SENDER_TOKEN
+----------------------------
+
+Your `Slack token`_.
+
+Other settings available:
+
 .. _SPIDERMON_SLACK_ATTACHMENTS
 
 SPIDERMON_SLACK_ATTACHMENTS
@@ -179,6 +220,10 @@ SPIDERMON_SLACK_ATTACHMENTS_TEMPLATE
 
 SPIDERMON_SLACK_FAKE
 --------------------
+
+Default: ``False``
+
+If set `True`, the Slack message content will be in the logs but nothing will be sent.
 
 .. _SPIDERMON_SLACK_INCLUDE_ATTACHMENTS
 
@@ -220,20 +265,9 @@ SPIDERMON_SLACK_NOTIFIER_INCLUDE_REPORT_LINK
 SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX
 -------------------------------------
 
-.. _SPIDERMON_SLACK_RECIPIENTS
-
-SPIDERMON_SLACK_RECIPIENTS
---------------------------
-
-.. _SPIDERMON_SLACK_SENDER_NAME
-
-SPIDERMON_SLACK_SENDER_NAME
----------------------------
-
-.. _SPIDERMON_SLACK_SENDER_TOKEN
-
-SPIDERMON_SLACK_SENDER_TOKEN
-----------------------------
+.. _`Slack`: https://slack.com/
+.. _`Slack credentials`: https://api.slack.com/docs/token-types
+.. _`Slack token`: https://api.slack.com/docs/token-types
 
 .. _actions-job-tags:
 
@@ -340,9 +374,9 @@ S3 Report action
 Custom actions
 ==============
 
-You can define your own custom actions to be executed after your monitors finish
-their execution. Just create a class that inherits from `spidermon.core.actions.Action`
-and implement the `run_action` method.
+You can define your own custom actions to be executed by your monitor suites. Just
+create a class that inherits from `spidermon.core.actions.Action` and implement
+the `run_action` method.
 
 .. code-block:: python
 
