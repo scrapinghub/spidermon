@@ -63,7 +63,7 @@ class MonitorRunner(object):
         # Run monitors passed actions
         self.result.next_step()
         if self.result.monitor_results and self.result.all_monitors_passed:
-            self.run_monitors_passsed()
+            self.run_monitors_passed()
         else:
             self.result.skip_all_step_actions(
                 actions=self.suite.monitors_passed_actions,
@@ -85,7 +85,7 @@ class MonitorRunner(object):
         for action in self.suite.monitors_finished_actions:
             action.run(self.result, self.data)
 
-    def run_monitors_passsed(self):
+    def run_monitors_passed(self):
         self.suite.on_monitors_passed(self.result)
         for action in self.suite.monitors_passed_actions:
             action.run(self.result, self.data)
