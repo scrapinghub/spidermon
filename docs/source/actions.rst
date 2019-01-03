@@ -122,7 +122,7 @@ Default: ``None``
 .. _SPIDERMON_EMAIL_CONTEXT:
 
 SPIDERMON_EMAIL_CONTEXT
-------------------
+-----------------------
 
 Default: ``None``
 
@@ -185,19 +185,19 @@ A notification will look like the following one:
 
 The following settings are the minimum needed to make this action works:
 
-.. _SPIDERMON_SLACK_RECIPIENTS
+.. _SPIDERMON_SLACK_RECIPIENTS:
 
 SPIDERMON_SLACK_RECIPIENTS
 --------------------------
 
 List of recipients of the message. It could be a channel or an user.
 
-.. _SPIDERMON_SLACK_SENDER_NAME
+.. _SPIDERMON_SLACK_SENDER_NAME:
 
 SPIDERMON_SLACK_SENDER_NAME
 ---------------------------
 
-.. _SPIDERMON_SLACK_SENDER_TOKEN
+.. _SPIDERMON_SLACK_SENDER_TOKEN:
 
 SPIDERMON_SLACK_SENDER_TOKEN
 ----------------------------
@@ -206,17 +206,17 @@ Your `Slack token`_.
 
 Other settings available:
 
-.. _SPIDERMON_SLACK_ATTACHMENTS
+.. _SPIDERMON_SLACK_ATTACHMENTS:
 
 SPIDERMON_SLACK_ATTACHMENTS
 ---------------------------
 
-.. _SPIDERMON_SLACK_ATTACHMENTS_TEMPLATE
+.. _SPIDERMON_SLACK_ATTACHMENTS_TEMPLATE:
 
 SPIDERMON_SLACK_ATTACHMENTS_TEMPLATE
 ------------------------------------
 
-.. _SPIDERMON_SLACK_FAKE
+.. _SPIDERMON_SLACK_FAKE:
 
 SPIDERMON_SLACK_FAKE
 --------------------
@@ -225,42 +225,42 @@ Default: ``False``
 
 If set `True`, the Slack message content will be in the logs but nothing will be sent.
 
-.. _SPIDERMON_SLACK_INCLUDE_ATTACHMENTS
+.. _SPIDERMON_SLACK_INCLUDE_ATTACHMENTS:
 
 SPIDERMON_SLACK_INCLUDE_ATTACHMENTS
 -----------------------------------
 
-.. _SPIDERMON_SLACK_INCLUDE_MESSAGE
+.. _SPIDERMON_SLACK_INCLUDE_MESSAGE:
 
 SPIDERMON_SLACK_INCLUDE_MESSAGE
 -------------------------------
 
-.. _SPIDERMON_SLACK_MESSAGE
+.. _SPIDERMON_SLACK_MESSAGE:
 
 SPIDERMON_SLACK_MESSAGE
 -----------------------
 
-.. _SPIDERMON_SLACK_MESSAGE_TEMPLATE
+.. _SPIDERMON_SLACK_MESSAGE_TEMPLATE:
 
 SPIDERMON_SLACK_MESSAGE_TEMPLATE
 --------------------------------
 
-.. _SPIDERMON_SLACK_NOTIFIER_INCLUDE_ERROR_ATTACHMENTS
+.. _SPIDERMON_SLACK_NOTIFIER_INCLUDE_ERROR_ATTACHMENTS:
 
 SPIDERMON_SLACK_NOTIFIER_INCLUDE_ERROR_ATTACHMENTS
 --------------------------------------------------
 
-.. _SPIDERMON_SLACK_NOTIFIER_INCLUDE_OK_ATTACHMENTS
+.. _SPIDERMON_SLACK_NOTIFIER_INCLUDE_OK_ATTACHMENTS:
 
 SPIDERMON_SLACK_NOTIFIER_INCLUDE_OK_ATTACHMENTS
 -----------------------------------------------
 
-.. _SPIDERMON_SLACK_NOTIFIER_INCLUDE_REPORT_LINK
+.. _SPIDERMON_SLACK_NOTIFIER_INCLUDE_REPORT_LINK:
 
 SPIDERMON_SLACK_NOTIFIER_INCLUDE_REPORT_LINK
 --------------------------------------------
 
-.. _SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX
+.. _SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX:
 
 SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX
 -------------------------------------
@@ -309,17 +309,17 @@ for failed jobs.
 
 By default we have the following settings when using these two actions:
 
-.. _SPIDERMON_JOB_TAGS_TO_ADD
+.. _SPIDERMON_JOB_TAGS_TO_ADD:
 
 SPIDERMON_JOB_TAGS_TO_ADD
-----------------------
+-------------------------
 
 List of tags to be included when `AddJobTags` is executed.
 
-.. _SPIDERMON_JOB_TAGS_TO_REMOVE
+.. _SPIDERMON_JOB_TAGS_TO_REMOVE:
 
 SPIDERMON_JOB_TAGS_TO_REMOVE
-----------------------
+----------------------------
 
 List of tags to be removed when `RemoveJobTags` is executed.
 
@@ -364,10 +364,91 @@ of the setting that will contain the list of tags that will be included in the j
 File Report action
 ==================
 
+This action allows to create a file report based on a template. As
+:ref:`actions-email` you can use `Jinja2`_ as your template engine.
+
+In this example we will create a file called `my_report.html` when the monitor suite finishes:
+
+.. code-block:: python
+
+    # monitors.py
+    from spidermon.contrib.actions.reports.files import CreateFileReport
+
+    class DummyMonitorSuite(MonitorSuite):
+        monitors = [
+            DummyMonitor,
+        ]
+
+        monitors_finished_actions = [
+            CreateFileReport,
+        ]
+
+.. code-block:: python
+
+    # settings.py
+    SPIDERMON_REPORT_TEMPLATE = 'reports/email/monitors/result.jinja'
+    SPIDERMON_REPORT_CONTEXT = {
+        'report_title': 'Spidermon File Report'
+    }
+    SPIDERMON_REPORT_FILENAME = 'my_report.html'
+
+Settings available:
+
+.. _SPIDERMON_REPORT_CONTEXT:
+
+SPIDERMON_REPORT_CONTEXT
+------------------------
+
+Dictionary containing context variables to be included in your report.
+
+.. _SPIDERMON_REPORT_FILENAME:
+
+SPIDERMON_REPORT_FILENAME
+-------------------------
+
+String containing the path of the generated report file.
+
+.. _SPIDERMON_REPORT_TEMPLATE:
+
+SPIDERMON_REPORT_TEMPLATE
+-------------------------
+
+String containing the location of the template for the file report.
+
 .. _actions-s3-report:
 
 S3 Report action
 ================
+
+This action works exactly like :ref:`actions-file-report` but instead of saving the
+generated report locally, it uploads it to a S3 Amazon Bucket.
+
+Settings available:
+
+.. _SPIDERMON_REPORT_S3_BUCKET:
+
+SPIDERMON_REPORT_S3_BUCKET
+--------------------------
+
+.. _SPIDERMON_REPORT_S3_CONTENT_TYPE:
+
+SPIDERMON_REPORT_S3_CONTENT_TYPE
+--------------------------------
+
+.. _SPIDERMON_REPORT_S3_FILENAME:
+
+SPIDERMON_REPORT_S3_FILENAME
+----------------------------
+
+.. _SPIDERMON_REPORT_S3_MAKE_PUBLIC:
+
+SPIDERMON_REPORT_S3_MAKE_PUBLIC
+-------------------------------
+
+.. _SPIDERMON_REPORT_S3_REGION_ENDPOINT:
+
+SPIDERMON_REPORT_S3_REGION_ENDPOINT
+-----------------------------------
 
 .. _actions-custom-action:
 
