@@ -31,7 +31,7 @@ Contents
    getting-started
    monitors
    item-validation
-   topics/settings
+   settings
    actions
    changelog
 
