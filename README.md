@@ -1,8 +1,6 @@
 # Spidermon
 
-.. image:: https://img.shields.io/travis/scrapinghub/spidermon.svg
-   :target: https://travis-ci.org/scrapinghub/spidermon
-   :alt: Build Status
+[![Build Status](https://img.shields.io/travis/scrapinghub/spidermon.svg)](https://travis-ci.org/scrapinghub/spidermon)
 
 ## Overview
 
