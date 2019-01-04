@@ -1,5 +1,11 @@
 # Spidermon
 
+.. image:: https://img.shields.io/travis/scrapinghub/spidermon.svg
+   :target: https://travis-ci.org/scrapinghub/spidermon
+   :alt: Build Status
+
+## Overview
+
 Spidermon is an extension for Scrapy spiders.
 The package provides useful tools for data validation, stats monitoring,
 and notification messages. This way you leave the monitoring task to
@@ -91,7 +97,7 @@ SPIDERMON_BODY_HTML_TEMPLATE = 'reports/email/monitors/result.jinja'
 You need to create a [bot user](https://api.slack.com/bot-users).
 ```python
 SPIDERMON_SLACK_SENDER_TOKEN = '<SLACK_BOT_API_TOKEN>'
-SPIDERMON_SLACK_SENDER_NAME = '<SLACK_BOT_NAME>' 
+SPIDERMON_SLACK_SENDER_NAME = '<SLACK_BOT_NAME>'
 SPIDERMON_SLACK_RECIPIENTS = ['@yourself', '@yourteammate']
 ```
 
