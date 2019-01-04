@@ -165,7 +165,7 @@ SPIDERMON_EMAIL_SUBJECT_TEMPLATE
 Slack action
 ============
 
-This actions allows you to send custom messages to a `Slack`_ channel (or user)
+This action allows you to send custom messages to a `Slack`_ channel (or user)
 using a bot when your monitor suites finishes their execution. To use this action
 you need to provide the `Slack credentials`_ in your `settings.py`
 file as follows:

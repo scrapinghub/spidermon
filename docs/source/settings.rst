@@ -4,7 +4,7 @@
 Settings
 ========
 
-The Spidermon settings allows you to customize the behaviour of your monitors
+The Spidermon settings allow you to customize the behaviour of your monitors
 enabling, disabling and configuring features like enabled monitors, monitor
 actions, item validation and notifications.
 
