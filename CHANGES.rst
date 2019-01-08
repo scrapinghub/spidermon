@@ -1,6 +1,13 @@
 Release notes
 =============
 
+1.8.0 (2019-01-08)
+------------------
+
+- Remove CreateJobReport action.
+- Include new documentation and tutorial code.
+- Rename internal method in MonitorRunner to fix typo.
+
 1.7.0 (2018-12-04)
 ------------------
 
