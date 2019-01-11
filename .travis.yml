@@ -1,25 +1,21 @@
 language: python
-
 matrix:
   include:
-    - python: 2.7
-      env: TOXENV=py27
-    - python: 3.4
-      env: TOXENV=py34
-    - python: 3.5
-      env: TOXENV=py35
-    - python: 3.6
-      env: TOXENV=py36
-    - python: 3.7
-      env: TOXENV=py37
-      dist: xenial
-      sudo: true
-
+  - python: 2.7
+    env: TOXENV=py27
+  - python: 3.4
+    env: TOXENV=py34
+  - python: 3.5
+    env: TOXENV=py35
+  - python: 3.6
+    env: TOXENV=py36
+  - python: 3.7
+    env: TOXENV=py37
+    dist: xenial
+    sudo: true
 install:
 - pip install -r requirements.txt
-
 script: tox
-
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
@@ -28,4 +24,4 @@ deploy:
     repo: scrapinghub/spidermon
   user: rennerocha
   password:
-    secure: lGm37oAmyeJKXsxCQ9tCf9E3fBNFgv8hMkIV3OHgD/69uXcB8NXNOhwFMg2rKUVa5QQe67Q+VuSEr0AQQ3mlLsVmTj9MTY7z7XKX2yNhxiDCgmXzaXZjSwhJ2FtW6AduP1Hh50IHbpK3kvBbMQUZjptRZ7Fwuc9OABvvCOS7BRmz45Hc8Li2eS8hCS8sSpz1eINgHXeMFUp6x67hk7n+Jy3SnRe2laTzoJKQCgTpXLTIUfXmMwLIm24syTQlDANFq9sDu47HFnhp/FEC7Ho/RsbG+VIB+NodwtbQ4aXft1ERMufHVIvy2mRhG00zUakCunVQjT9qseIogLKKrVap6y1DH/lgplbaQla6DXAU8JqP2dFVNtBgmb4PNITibA+XCcQA9GUSK4n69IVlWU5F43tj7F9+tmTTGq3lgMpI/Nhi5x9taWW3Xd9F54uW5iKjnhyr01yK5Cx/T2KhhPu+xsHap4YawtHPOrj3SBIooBeu1S5G98AGld0wWXA4GkyYYMAflvP2h5ZFCOSYPfXHDtpqGo+hd2yTAX8SUYZlPM7N1PLABpM/BXRdL1KN8qyotAF7acYWUX1Tg3K1IByPE0Mlm8aIcVB2hF4JYxAG7zUYzS2AxZVN71ybeOEL6HYdw9War8zF1LsHUnyuD2IadwNUAW81uHStql05MIacLrw=
+    secure: vEDxKoR95F7obG7ExdOz8A/B09DSNLjZn4BxJPqYdjKiCSqJBhTXhzVeRFeViE2JKMk3su4Kyj45WZEiIlP0IXLTlL0huJ1zjSMmiejBm2QlDNIk+SjCbmkno7RUnCEzfE+7xMxSGMvPfqO9NKJ8/VSSKg7oxr2zkTbBo+/z7rStmfQ5IL+MQk8Jj9Wf6zr3J8Z6OO5XOBryJWBk2LAikqJKkKNthZ+2MK3wevZxOeGw1D1722gXMNBsrO8Pt4/TiyftHCR6SQj4J3Ra3a3MyW4wwK76XZFcAYcxD25qtq1A73OYwzoClyP7DG5/ieRXLRxEQWg2dHlIqsNCxWnvkS2i3ueBcU5vc78yrh8UQ8vme8AejhISKY+PQBUyo9sD3tuEsLH0gFLM2bKjSXy9SMx+/wQjZJqjJOcKlUgskf8KeqbEzddVo2CObi1gKsfMynAkF7cmk2PyXsnhjDT/MWRWQxMeLKCWWjcKfHGFwXvXzdm+gW0lixwxB5nRZrqoNiEmsoVAgfvC4ZZjFVm+eEXgU+Z8mWcA/OJhQSgnNeSsj3mLSwRyCbRSetlvGkn7SAkUWLRpxOcSBT2+9Pisb4w7raosFeA2pLymgiicZQ84fPqBOqG7sRtokC0cwTt6u4Q0WfGjlTEw8L3s7zxhQipxrU4/sRDuNEfEXiRl8YQ=
