@@ -19,3 +19,13 @@ install:
 - pip install -r requirements.txt
 
 script: tox
+
+deploy:
+  provider: pypi
+  distributions: sdist bdist_wheel
+  on:
+    tags: true
+    repo: scrapinghub/spidermon
+  user: rennerocha
+  password:
+    secure: lGm37oAmyeJKXsxCQ9tCf9E3fBNFgv8hMkIV3OHgD/69uXcB8NXNOhwFMg2rKUVa5QQe67Q+VuSEr0AQQ3mlLsVmTj9MTY7z7XKX2yNhxiDCgmXzaXZjSwhJ2FtW6AduP1Hh50IHbpK3kvBbMQUZjptRZ7Fwuc9OABvvCOS7BRmz45Hc8Li2eS8hCS8sSpz1eINgHXeMFUp6x67hk7n+Jy3SnRe2laTzoJKQCgTpXLTIUfXmMwLIm24syTQlDANFq9sDu47HFnhp/FEC7Ho/RsbG+VIB+NodwtbQ4aXft1ERMufHVIvy2mRhG00zUakCunVQjT9qseIogLKKrVap6y1DH/lgplbaQla6DXAU8JqP2dFVNtBgmb4PNITibA+XCcQA9GUSK4n69IVlWU5F43tj7F9+tmTTGq3lgMpI/Nhi5x9taWW3Xd9F54uW5iKjnhyr01yK5Cx/T2KhhPu+xsHap4YawtHPOrj3SBIooBeu1S5G98AGld0wWXA4GkyYYMAflvP2h5ZFCOSYPfXHDtpqGo+hd2yTAX8SUYZlPM7N1PLABpM/BXRdL1KN8qyotAF7acYWUX1Tg3K1IByPE0Mlm8aIcVB2hF4JYxAG7zUYzS2AxZVN71ybeOEL6HYdw9War8zF1LsHUnyuD2IadwNUAW81uHStql05MIacLrw=
