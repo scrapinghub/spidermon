@@ -3,13 +3,21 @@ Spidermon
 =========
 
 .. image:: https://img.shields.io/travis/scrapinghub/spidermon.svg
+    :target: https://travis-ci.org/scrapinghub/spidermon
+    :alt: travis build status
 
 .. image:: https://img.shields.io/pypi/v/spidermon.svg
+    :target: https://pypi.python.org/pypi/spidermon
+    :alt: pypi version
 
 .. image:: https://img.shields.io/pypi/l/spidermon.svg
+    :target: https://github.com/scrapinghub/spidermon/blob/master/LICENSE
+    :alt: licence
 
-.. image:: https://img.shields.io/pypi/pyversions/Scrapy.svg
-
+.. image:: https://img.shields.io/pypi/pyversions/spidermon.svg
+    :target: https://pypi.python.org/pypi/spidermon
+    :alt: python versions
+    
 Overview
 ========
 
