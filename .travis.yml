@@ -22,6 +22,7 @@ deploy:
   on:
     tags: true
     repo: scrapinghub/spidermon
+    condition: $TOXENV == py27
   user: rennerocha
   password:
     secure: vEDxKoR95F7obG7ExdOz8A/B09DSNLjZn4BxJPqYdjKiCSqJBhTXhzVeRFeViE2JKMk3su4Kyj45WZEiIlP0IXLTlL0huJ1zjSMmiejBm2QlDNIk+SjCbmkno7RUnCEzfE+7xMxSGMvPfqO9NKJ8/VSSKg7oxr2zkTbBo+/z7rStmfQ5IL+MQk8Jj9Wf6zr3J8Z6OO5XOBryJWBk2LAikqJKkKNthZ+2MK3wevZxOeGw1D1722gXMNBsrO8Pt4/TiyftHCR6SQj4J3Ra3a3MyW4wwK76XZFcAYcxD25qtq1A73OYwzoClyP7DG5/ieRXLRxEQWg2dHlIqsNCxWnvkS2i3ueBcU5vc78yrh8UQ8vme8AejhISKY+PQBUyo9sD3tuEsLH0gFLM2bKjSXy9SMx+/wQjZJqjJOcKlUgskf8KeqbEzddVo2CObi1gKsfMynAkF7cmk2PyXsnhjDT/MWRWQxMeLKCWWjcKfHGFwXvXzdm+gW0lixwxB5nRZrqoNiEmsoVAgfvC4ZZjFVm+eEXgU+Z8mWcA/OJhQSgnNeSsj3mLSwRyCbRSetlvGkn7SAkUWLRpxOcSBT2+9Pisb4w7raosFeA2pLymgiicZQ84fPqBOqG7sRtokC0cwTt6u4Q0WfGjlTEw8L3s7zxhQipxrU4/sRDuNEfEXiRl8YQ=
