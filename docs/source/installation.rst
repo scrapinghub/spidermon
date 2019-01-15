@@ -14,4 +14,4 @@ The recommended way to install the library is by adding the additional
 
 .. code-block:: bash
 
-    pip install git+ssh://git@github.com/scrapinghub/spidermon.git#egg=spidermon[monitoring,validation]
+    pip install "spidermon[monitoring,validation]"
