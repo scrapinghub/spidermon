@@ -94,7 +94,8 @@ your monitors.
 
         @monitors.name('Minimum number of items')
         def test_minimum_number_of_items(self):
-            item_extracted = self.data.stats.get('item_scraped_count', 0)
+            item_extracted = getattr(
+                self.stats, 'item_scraped_count', 0)
             minimum_threshold = 10
 
             msg = 'Extracted less than {} items'.format(
@@ -330,12 +331,12 @@ a failure when we have a item validation error:
     # (...other monitors...)
 
     @monitors.name('Item validation')
-    class ItemValidationMonitor(Monitor):
+    class ItemValidationMonitor(Monitor, StatsMonitorMixin):
 
         @monitors.name('No item validation errors')
         def test_no_item_validation_errors(self):
             validation_errors = getattr(
-                self.data.stats, 'spidermon/validation/fields/errors', 0
+                self.stats, 'spidermon/validation/fields/errors', 0
             )
             self.assertEqual(
                 validation_errors,
