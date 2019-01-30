@@ -1,8 +1,7 @@
 from __future__ import absolute_import
 import re
 
-from jsonschema.validators import validators as jsonschema_validators
-
+from jsonschema.validators import validator_for
 from spidermon.contrib.validation.validator import Validator
 
 from .translator import JSONSchemaMessageTranslator
@@ -17,21 +16,15 @@ class JSONSchemaValidator(Validator):
     default_jsonschema_version = 'draft4'
     name = 'JSONSchema'
 
-    def __init__(self, schema, version='draft4', translator=None, use_default_translator=True):
+    def __init__(self, schema, translator=None, use_default_translator=True):
         super(JSONSchemaValidator, self).__init__(
             translator=translator,
             use_default_translator=use_default_translator,
         )
         self._schema = schema
-        self._version = version
 
     def _validate(self, data, strict=False):
-        default_validator = jsonschema_validators.get(self.default_jsonschema_version)
-
-        validator_cls = jsonschema_validators.get(self._version)
-        if validator_cls is None:
-            validator_cls = default_validator
-
+        validator_cls = validator_for(self._schema)
         validator = validator_cls(
             schema=self._schema,
             format_checker=format_checker,
