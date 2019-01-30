@@ -13,7 +13,6 @@ REQUIRED_RE = re.compile("'(.+)' is a required property")
 
 class JSONSchemaValidator(Validator):
     default_translator = JSONSchemaMessageTranslator()
-    default_jsonschema_version = 'draft4'
     name = 'JSONSchema'
 
     def __init__(self, schema, translator=None, use_default_translator=True):
