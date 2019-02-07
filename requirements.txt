@@ -3,7 +3,7 @@ Jinja2==2.7.3
 slackclient==1.0.0
 boto==2.39.0
 premailer==2.9.2
-jsonschema==3.0.0b4
+jsonschema==3.0.0b3
 schematics==2.1.0
 python-slugify==1.0.2
 strict-rfc3339==0.6
