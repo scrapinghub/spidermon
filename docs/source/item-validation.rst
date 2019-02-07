@@ -49,6 +49,10 @@ With JSON Schema
 define which fields are required, the type assigned to each field, a regular expression
 to validate the content and much more.
 
+.. warning::
+
+   You need to install `jsonschema`_ to use this feature.
+
 This `guide`_ explains the main keywords and how to generate a schema. Here we have
 an example of a schema for the quotes item from the :doc:`tutorial </getting-started>`.
 
@@ -78,6 +82,13 @@ an example of a schema for the quotes item from the :doc:`tutorial </getting-sta
       "author_url"
     ]
   }
+
+.. warning::
+
+   Stable version of `jsonschema`_ supports only **draft-3** and **draft-4**. You can
+   use `version 3.0.0`_ (still in beta) for **draft-6** and **draft-7**. It should
+   work without any change in your validators code, but it is not fully supported
+   by spidermon yet.
 
 Settings
 --------
@@ -188,3 +199,5 @@ as a `dict`:
 .. _`JSON Schema`: https://json-schema.org/
 .. _`guide`: http://json-schema.org/learn/getting-started-step-by-step.html
 .. _`schematics models`: https://schematics.readthedocs.io/en/latest/usage/models.html
+.. _`jsonschema`: https://pypi.org/project/jsonschema/
+.. _`version 3.0.0`: https://pypi.org/project/jsonschema/#history
