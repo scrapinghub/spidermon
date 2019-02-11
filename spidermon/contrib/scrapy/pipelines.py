@@ -16,17 +16,20 @@ from schematics.models import Model
 from .stats import ValidationStatsManager
 
 
-DEFAULT_ERRORS_FIELD = '_validation'
+DEFAULT_ERRORS_FIELD = "_validation"
 DEFAULT_ADD_ERRORS_TO_ITEM = False
 DEFAULT_DROP_ITEMS_WITH_ERRORS = False
 
 
 class ItemValidationPipeline(object):
-
-    def __init__(self, validators, stats,
-                 drop_items_with_errors=DEFAULT_DROP_ITEMS_WITH_ERRORS,
-                 add_errors_to_items=DEFAULT_ADD_ERRORS_TO_ITEM,
-                 errors_field=None):
+    def __init__(
+        self,
+        validators,
+        stats,
+        drop_items_with_errors=DEFAULT_DROP_ITEMS_WITH_ERRORS,
+        add_errors_to_items=DEFAULT_ADD_ERRORS_TO_ITEM,
+        errors_field=None,
+    ):
         self.drop_items_with_errors = drop_items_with_errors
         self.add_errors_to_items = add_errors_to_items or DEFAULT_ADD_ERRORS_TO_ITEM
         self.errors_field = errors_field or DEFAULT_ERRORS_FIELD
@@ -50,15 +53,17 @@ class ItemValidationPipeline(object):
                 validators[key].extend(objects)
 
         for loader, name in [
-            (cls._load_jsonschema_validator, 'SPIDERMON_VALIDATION_SCHEMAS'),
-            (cls._load_schematics_validator, 'SPIDERMON_VALIDATION_MODELS'),
+            (cls._load_jsonschema_validator, "SPIDERMON_VALIDATION_SCHEMAS"),
+            (cls._load_schematics_validator, "SPIDERMON_VALIDATION_MODELS"),
         ]:
             res = crawler.settings.get(name)
             if not res:
                 continue
             if type(res) not in allowed_types:
-                raise NotConfigured('Invalid <{}> type for <{}> settings, dict or list/tuple'
-                                    'is required'.format(type(res), name))
+                raise NotConfigured(
+                    "Invalid <{}> type for <{}> settings, dict or list/tuple"
+                    "is required".format(type(res), name)
+                )
             set_validators(loader, res)
 
         if not validators:
@@ -67,34 +72,42 @@ class ItemValidationPipeline(object):
         return cls(
             validators=validators,
             stats=crawler.stats,
-            drop_items_with_errors=crawler.settings.getbool('SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS'),
-            add_errors_to_items=crawler.settings.getbool('SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS'),
-            errors_field=crawler.settings.get('SPIDERMON_VALIDATION_ERRORS_FIELD'),
+            drop_items_with_errors=crawler.settings.getbool(
+                "SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS"
+            ),
+            add_errors_to_items=crawler.settings.getbool(
+                "SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS"
+            ),
+            errors_field=crawler.settings.get("SPIDERMON_VALIDATION_ERRORS_FIELD"),
         )
 
     @classmethod
     def _load_jsonschema_validator(cls, schema):
         if isinstance(schema, six.string_types):
-            if schema.endswith('.json'):
-                with open(schema, 'r') as f:
+            if schema.endswith(".json"):
+                with open(schema, "r") as f:
                     schema = json.load(f)
             else:
                 schema = load_object(schema)
                 if isinstance(schema, six.string_types):
                     schema = json.loads(schema)
         if not isinstance(schema, dict):
-            raise NotConfigured('Invalid schema, jsonschemas must be defined as:\n'
-                                '- a python dict.\n'
-                                '- an object path to a python dict.\n'
-                                '- an object path to a JSON string.\n'
-                                '- a path to a JSON file.')
+            raise NotConfigured(
+                "Invalid schema, jsonschemas must be defined as:\n"
+                "- a python dict.\n"
+                "- an object path to a python dict.\n"
+                "- an object path to a JSON string.\n"
+                "- a path to a JSON file."
+            )
         return JSONSchemaValidator(schema)
 
     @classmethod
     def _load_schematics_validator(cls, model_path):
         model_class = load_object(model_path)
         if not issubclass(model_class, Model):
-            raise NotConfigured('Invalid model, models must subclass schematics.models.Model')
+            raise NotConfigured(
+                "Invalid model, models must subclass schematics.models.Model"
+            )
         return SchematicsValidator(model_class)
 
     def process_item(self, item, _):
@@ -124,8 +137,7 @@ class ItemValidationPipeline(object):
         serialized_json = BytesIO()
         exporter = JsonLinesItemExporter(serialized_json)
         exporter.export_item(item)
-        data = json.loads(to_native_str(
-            serialized_json.getvalue(), exporter.encoding))
+        data = json.loads(to_native_str(serialized_json.getvalue(), exporter.encoding))
         serialized_json.close()
         return data
 
@@ -150,7 +162,7 @@ class ItemValidationPipeline(object):
         are detected.
         """
         self.stats.add_dropped_item()
-        raise DropItem('Validation failed!')
+        raise DropItem("Validation failed!")
 
     def _add_error_stats(self, errors):
         """

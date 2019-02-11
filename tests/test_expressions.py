@@ -32,7 +32,8 @@ def test_valid_expressions(interpreter):
 
 
 def test_evaluated_expressions(interpreter):
-    data = Data({'stats': Data(STATS_TO_EVALUATE)})
+    data = Data({"stats": Data(STATS_TO_EVALUATE)})
     for expression, result in EXPRESSIONS_TO_EVALUATE:
-        assert result == interpreter.eval(expression, data), \
-            'Expression fails: "%s" != %s' % (expression, result)
+        assert result == interpreter.eval(
+            expression, data
+        ), 'Expression fails: "%s" != %s' % (expression, result)

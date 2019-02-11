@@ -2,16 +2,18 @@ from __future__ import absolute_import
 
 import logging
 
-from spidermon.results.monitor import (MonitorResult, actions_step_required,
-                                       monitors_step_required)
+from spidermon.results.monitor import (
+    MonitorResult,
+    actions_step_required,
+    monitors_step_required,
+)
 from spidermon.runners import MonitorRunner
 from spidermon.utils.text import Message, line, line_title
 
-LOG_MESSAGE_HEADER = 'Spidermon'
+LOG_MESSAGE_HEADER = "Spidermon"
 
 
 class SpiderMonitorResult(MonitorResult):
-
     def __init__(self, spider):
         super(SpiderMonitorResult, self).__init__()
         self.spider = spider
@@ -77,21 +79,28 @@ class SpiderMonitorResult(MonitorResult):
         self.log_info(line_title(self.step.name))
 
     def write_item_result(self, item, extra=None):
-        self.log_info('%s... %s%s' % (item.name, self.step[item].status, ' (%s)' % extra if extra else ''))
+        self.log_info(
+            "%s... %s%s"
+            % (item.name, self.step[item].status, " (%s)" % extra if extra else "")
+        )
 
     def write_run_footer(self):
-        self.log_info("{count:d} {item_name}{plural_suffix} in {time:.3f}s".format(
-            count=self.step.number_of_items,
-            item_name=self.step.item_result_class.name,
-            plural_suffix='' if self.step.number_of_items == 1 else 's',
-            time=self.step.time_taken,
-        ))
+        self.log_info(
+            "{count:d} {item_name}{plural_suffix} in {time:.3f}s".format(
+                count=self.step.number_of_items,
+                item_name=self.step.item_result_class.name,
+                plural_suffix="" if self.step.number_of_items == 1 else "s",
+                time=self.step.time_taken,
+            )
+        )
 
     def write_step_summary(self):
-        summary = ('OK' if self.step.successful else 'FAILED')
+        summary = "OK" if self.step.successful else "FAILED"
         infos = self.step.get_infos()
         if infos and sum(infos.values()):
-            summary += ' (%s)' % ', '.join(['%s=%s' % (k, v) for k, v in infos.items() if v])
+            summary += " (%s)" % ", ".join(
+                ["%s=%s" % (k, v) for k, v in infos.items() if v]
+            )
         self.log_info(summary)
 
     def write_errors(self):
@@ -100,7 +109,7 @@ class SpiderMonitorResult(MonitorResult):
                 msg = Message()
                 msg.write_line()
                 msg.write_bold_separator()
-                msg.write_line('%s: %s' % (item.status, item.item.name))
+                msg.write_line("%s: %s" % (item.status, item.item.name))
                 msg.write_light_separator()
                 msg.write(item.error)
                 self.log_error(msg)
@@ -112,11 +121,10 @@ class SpiderMonitorResult(MonitorResult):
         self.log(msg, level=logging.INFO)
 
     def log(self, msg, level=logging.DEBUG):
-        self.spider.log('[%s] %s' % (LOG_MESSAGE_HEADER, msg), level=level)
+        self.spider.log("[%s] %s" % (LOG_MESSAGE_HEADER, msg), level=level)
 
 
 class SpiderMonitorRunner(MonitorRunner):
-
     def __init__(self, spider):
         super(SpiderMonitorRunner, self).__init__()
         self.spider = spider

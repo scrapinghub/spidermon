@@ -37,7 +37,7 @@ class TestData(object):
 
 
 class ExpressionMonitorsTesting(TestCase):
-    '''
+    """
     Tests if expression monitors, which defined in settings, properly configured:
         - SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS,
         - SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS,
@@ -56,19 +56,17 @@ class ExpressionMonitorsTesting(TestCase):
 
     NotConfigured error should also fire only in appropriate time: when interpreter
     evaluates expressions.
-    '''
+    """
 
-    spider_name = 'test'
+    spider_name = "test"
 
     def run_test(self, **kwargs):
         dt = TestData(**kwargs)
         settings = {
-            'SPIDERMON_ENABLED': True,
-            'SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS': [{
-                'tests': [{
-                    'expression': dt.expression,
-                }]
-            }]
+            "SPIDERMON_ENABLED": True,
+            "SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS": [
+                {"tests": [{"expression": dt.expression}]}
+            ],
         }
         settings.update(dt.settings)
         crawler = get_crawler(settings_dict=settings)
@@ -95,18 +93,17 @@ class ExpressionMonitorsTesting(TestCase):
                     raise AssertionError(trace)
             if dt.expected_error:
                 raise AssertionError(
-                    'Expected error <{}> was not raised'.format(dt.expected_error))
+                    "Expected error <{}> was not raised".format(dt.expected_error)
+                )
 
     def test_stats_ready(self):
         self.run_test(
-            stats={"finish_reason": "dead"},
-            expression="stats.finish_reason == 'dead'",
+            stats={"finish_reason": "dead"}, expression="stats.finish_reason == 'dead'"
         )
 
     def test_stats_not_configured(self):
         self.run_test(
-            expression="stats.finish_reason == 'dead'",
-            expected_error='NotConfigured',
+            expression="stats.finish_reason == 'dead'", expected_error="NotConfigured"
         )
 
     def test_crawler_ready(self):
@@ -116,44 +113,35 @@ class ExpressionMonitorsTesting(TestCase):
         )
 
     def test_spider_ready(self):
-        self.run_test(
-            expression="spider.name == '{}'".format(self.spider_name),
-        )
+        self.run_test(expression="spider.name == '{}'".format(self.spider_name))
 
     def test_responses_ready(self):
         self.run_test(
-            stats={"finish_reason": "dead"}, # any stats, responses created from stats
+            stats={"finish_reason": "dead"},  # any stats, responses created from stats
             expression="responses.count == 0",
         )
 
     def test_responses_not_configured(self):
-        self.run_test(
-            expression="responses.count == 0",
-            expected_error='NotConfigured',
-        )
+        self.run_test(expression="responses.count == 0", expected_error="NotConfigured")
 
     def test_validation_ready(self):
         self.run_test(
-            stats={"finish_reason": "dead"}, # any stats, validation created from stats
+            stats={"finish_reason": "dead"},  # any stats, validation created from stats
             expression="validation.items.count == 0",
         )
 
     def test_validation_not_configured(self):
         self.run_test(
-            expression="validation.items.count == 0",
-            expected_error='NotConfigured',
+            expression="validation.items.count == 0", expected_error="NotConfigured"
         )
 
     def test_job_not_configured(self):
         # job is not configured, but existed in the context
         self.run_test(
             expression="job.metadata['finish_reason' == 'dead']",
-            expected_error='NotConfigured',
+            expected_error="NotConfigured",
         )
 
     def test_inappropriate_context(self):
         # expected something like <NameError: name 'foo' is not defined>
-        self.run_test(
-            expression="foo.bar == 'boo'",
-            expected_error='NameError',
-        )
+        self.run_test(expression="foo.bar == 'boo'", expected_error="NameError")

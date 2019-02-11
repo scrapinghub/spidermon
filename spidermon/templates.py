@@ -6,11 +6,11 @@ import pprint as pretty_print
 
 from jinja2 import Environment, FileSystemLoader, Template
 
-DEFAULT_TEMPLATE_FOLDERS = ['templates']
+DEFAULT_TEMPLATE_FOLDERS = ["templates"]
 
 
 def get_log_errors(logs):
-    return [e for e in logs.list() if e['level'] >= 40]
+    return [e for e in logs.list() if e["level"] >= 40]
 
 
 def make_list(obj):
@@ -23,20 +23,17 @@ def pprint(obj):
 
 def format_time(time):
     if not isinstance(time, datetime.timedelta):
-        time = datetime.timedelta(seconds=int(time / 1000.))
-    return ':'.join(str(time).split(':')[:2])+'h'
+        time = datetime.timedelta(seconds=int(time / 1000.0))
+    return ":".join(str(time).split(":")[:2]) + "h"
 
 
 FILTERS = {
-    'pprint': pprint,
-    'list': make_list,
-    'get_log_errors': get_log_errors,
-    'format_time': format_time,
+    "pprint": pprint,
+    "list": make_list,
+    "get_log_errors": get_log_errors,
+    "format_time": format_time,
 }
-GLOBALS = {
-    'datetime': datetime,
-    'str': str,
-}
+GLOBALS = {"datetime": datetime, "str": str}
 
 
 class TemplateLoader(object):
@@ -59,17 +56,14 @@ class TemplateLoader(object):
             self.discover_folder(caller_folder)
 
     def discover_folder(self, candidate_folder):
-        for folder in [os.path.join(candidate_folder, dir)
-                       for dir in DEFAULT_TEMPLATE_FOLDERS]:
+        for folder in [
+            os.path.join(candidate_folder, dir) for dir in DEFAULT_TEMPLATE_FOLDERS
+        ]:
             self.add_path(folder)
 
     def reload_env(self):
         loader = FileSystemLoader(self.paths)
-        self.env = Environment(
-            loader=loader,
-            lstrip_blocks=True,
-            trim_blocks=True,
-            )
+        self.env = Environment(loader=loader, lstrip_blocks=True, trim_blocks=True)
         for filter_name, filter in FILTERS.items():
             self.env.filters[filter_name] = filter
 
@@ -78,5 +72,6 @@ class TemplateLoader(object):
 
     def get_template(self, name):
         return self.env.get_template(name)
+
 
 template_loader = TemplateLoader()

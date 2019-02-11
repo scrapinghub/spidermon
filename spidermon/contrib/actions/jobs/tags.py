@@ -16,15 +16,13 @@ class JobTagsAction(Action):
     def from_crawler_kwargs(cls, crawler):
         kwargs = super(JobTagsAction, cls).from_crawler_kwargs(crawler)
         if cls.tag_settings:
-            kwargs.update({
-                'tags': crawler.settings.get(cls.tag_settings),
-            })
+            kwargs.update({"tags": crawler.settings.get(cls.tag_settings)})
         return kwargs
 
     def run_action(self):
         if self.tags:
             if not self.data.job:
-                raise NotConfigured('Job not available!')
+                raise NotConfigured("Job not available!")
             job_metadata = self.data.job.metadata
             self.process_tags(job_metadata)
             job_metadata.save()
@@ -34,18 +32,18 @@ class JobTagsAction(Action):
 
 
 class AddJobTags(JobTagsAction):
-    tag_settings = 'SPIDERMON_JOB_TAGS_TO_ADD'
+    tag_settings = "SPIDERMON_JOB_TAGS_TO_ADD"
 
     def process_tags(self, job_metadata):
         for tag in self.tags:
-            if tag not in job_metadata['tags']:
-                job_metadata['tags'].append(tag)
+            if tag not in job_metadata["tags"]:
+                job_metadata["tags"].append(tag)
 
 
 class RemoveJobTags(JobTagsAction):
-    tag_settings = 'SPIDERMON_JOB_TAGS_TO_REMOVE'
+    tag_settings = "SPIDERMON_JOB_TAGS_TO_REMOVE"
 
     def process_tags(self, job_metadata):
         for tag in self.tags:
-            if tag in job_metadata['tags']:
-                job_metadata['tags'].remove(tag)
+            if tag in job_metadata["tags"]:
+                job_metadata["tags"].remove(tag)

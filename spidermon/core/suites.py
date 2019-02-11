@@ -5,7 +5,7 @@ from unittest import TestSuite
 import inspect
 import collections
 
-from spidermon.exceptions import (InvalidMonitorIterable, NotAllowedMethod)
+from spidermon.exceptions import InvalidMonitorIterable, NotAllowedMethod
 from spidermon import settings
 
 from .monitors import Monitor
@@ -19,12 +19,16 @@ class MonitorSuite(six.with_metaclass(MonitorOptionsMetaclass, TestSuite)):
     monitors_passed_actions = []
     monitors_failed_actions = []
 
-    def __init__(self, name=None, monitors=None,
-                 monitors_finished_actions=None,
-                 monitors_passed_actions=None,
-                 monitors_failed_actions=None,
-                 order=None,
-                 crawler=None):
+    def __init__(
+        self,
+        name=None,
+        monitors=None,
+        monitors_finished_actions=None,
+        monitors_passed_actions=None,
+        monitors_failed_actions=None,
+        order=None,
+        crawler=None,
+    ):
         self._tests = []
         self._removed_tests = 0
         self._name = name
@@ -50,17 +54,13 @@ class MonitorSuite(six.with_metaclass(MonitorOptionsMetaclass, TestSuite)):
         self.add_monitors_failed_actions(declarative_monitors_failed_actions)
         self.add_monitors_failed_actions(monitors_failed_actions or [])
 
-
     @property
     def name(self):
-        return self._name or \
-               self.options.name or \
-               self.__class__.__name__
+        return self._name or self.options.name or self.__class__.__name__
 
     @property
     def level(self):
-        return self.options.level or \
-               self.parent_level
+        return self.options.level or self.parent_level
 
     @property
     def parent_level(self):
@@ -75,18 +75,19 @@ class MonitorSuite(six.with_metaclass(MonitorOptionsMetaclass, TestSuite)):
             parts.append(self.parent.full_name)
         if self.have_custom_name:
             parts.append(self.name)
-        return '/'.join(parts)
+        return "/".join(parts)
 
     @property
     def have_custom_name(self):
-        return self._name or \
-               self.options.name
+        return self._name or self.options.name
 
     @property
     def description(self):
-        return self.options.description or \
-               self.__class__.__doc__ or \
-               settings.MONITOR.DEFAULT_DESCRIPTION
+        return (
+            self.options.description
+            or self.__class__.__doc__
+            or settings.MONITOR.DEFAULT_DESCRIPTION
+        )
 
     @property
     def parent(self):
@@ -94,13 +95,16 @@ class MonitorSuite(six.with_metaclass(MonitorOptionsMetaclass, TestSuite)):
 
     @property
     def order(self):
-        return self._order if self._order is not None else None or \
-               self.options.order
+        return self._order if self._order is not None else None or self.options.order
 
     @property
     def number_of_monitors(self):
-        return sum([1 if isinstance(monitor, Monitor) else monitor.number_of_monitors
-                    for monitor in self])
+        return sum(
+            [
+                1 if isinstance(monitor, Monitor) else monitor.number_of_monitors
+                for monitor in self
+            ]
+        )
 
     @property
     def all_monitors(self):
@@ -121,7 +125,7 @@ class MonitorSuite(six.with_metaclass(MonitorOptionsMetaclass, TestSuite)):
 
     def add_monitors(self, monitors):
         if not isinstance(monitors, collections.Iterable):
-            raise InvalidMonitorIterable('Monitors definition is not iterable')
+            raise InvalidMonitorIterable("Monitors definition is not iterable")
         for m in monitors:
             self.add_monitor(m)
 
@@ -157,30 +161,44 @@ class MonitorSuite(six.with_metaclass(MonitorOptionsMetaclass, TestSuite)):
         target_actions_list.append(action)
 
     def debug_tree(self, level=0):
-        s = level*'\t' + repr(self) + '\n'
+        s = level * "\t" + repr(self) + "\n"
         for test in self:
-            s += test.debug_tree(level=level+1)
+            s += test.debug_tree(level=level + 1)
         return s
 
-    def debug_monitors(self, show_monitor=True, show_method=True, show_level=True,
-                       show_order=False, show_description=True):
+    def debug_monitors(
+        self,
+        show_monitor=True,
+        show_method=True,
+        show_level=True,
+        show_order=False,
+        show_description=True,
+    ):
         def debug_attribute(condition, name, value):
-            return '%12s: %s\n' % (name, str(value)) if condition else ''
-        s = '-'*80 + '\n'
+            return "%12s: %s\n" % (name, str(value)) if condition else ""
+
+        s = "-" * 80 + "\n"
         for t in self.all_monitors:
-            s += debug_attribute(show_monitor,      'MONITOR',      t.monitor_full_name)
-            s += debug_attribute(show_method,       'METHOD',       t.method_name)
-            s += debug_attribute(show_level,        'LEVEL',        t.level)
-            s += debug_attribute(show_order,        'ORDER',        t.order)
-            s += debug_attribute(show_description,  'DESCRIPTION',  t.method_description or '...')
-            s += '-'*80 + '\n'
+            s += debug_attribute(show_monitor, "MONITOR", t.monitor_full_name)
+            s += debug_attribute(show_method, "METHOD", t.method_name)
+            s += debug_attribute(show_level, "LEVEL", t.level)
+            s += debug_attribute(show_order, "ORDER", t.order)
+            s += debug_attribute(
+                show_description, "DESCRIPTION", t.method_description or "..."
+            )
+            s += "-" * 80 + "\n"
         return s
 
     def _reorder_tests(self):
         self._tests = sorted(self._tests, key=lambda x: x.order, reverse=False)
 
     def __repr__(self):
-        return '<SUITE:%s[%d,%s] at %s>' % (self.name, len(self._tests), self.number_of_monitors, hex(id(self)))
+        return "<SUITE:%s[%d,%s] at %s>" % (
+            self.name,
+            len(self._tests),
+            self.number_of_monitors,
+            hex(id(self)),
+        )
 
     def __str__(self):
         return self.name

@@ -33,50 +33,85 @@ class LowLevelMethodMonitor(Monitor):
 # ----------------------------------
 class Monitors:
     class NoLevelMonitor:
-        class NoLevelMethod(NoLevelMethodMonitor): pass
-        class HighLevelMethod(HighLevelMethodMonitor): pass
-        class NormalLevelMethod(NormalLevelMethodMonitor): pass
-        class LowLevelMethod(LowLevelMethodMonitor): pass
+        class NoLevelMethod(NoLevelMethodMonitor):
+            pass
+
+        class HighLevelMethod(HighLevelMethodMonitor):
+            pass
+
+        class NormalLevelMethod(NormalLevelMethodMonitor):
+            pass
+
+        class LowLevelMethod(LowLevelMethodMonitor):
+            pass
 
     class HighLevelMonitor:
         @monitors.level.high
-        class NoLevelMethod(NoLevelMethodMonitor): pass
+        class NoLevelMethod(NoLevelMethodMonitor):
+            pass
+
         @monitors.level.high
-        class HighLevelMethod(HighLevelMethodMonitor): pass
+        class HighLevelMethod(HighLevelMethodMonitor):
+            pass
+
         @monitors.level.high
-        class NormalLevelMethod(NormalLevelMethodMonitor): pass
+        class NormalLevelMethod(NormalLevelMethodMonitor):
+            pass
+
         @monitors.level.high
-        class LowLevelMethod(LowLevelMethodMonitor): pass
+        class LowLevelMethod(LowLevelMethodMonitor):
+            pass
 
     class NormalLevelMonitor:
         @monitors.level.normal
-        class NoLevelMethod(NoLevelMethodMonitor): pass
+        class NoLevelMethod(NoLevelMethodMonitor):
+            pass
+
         @monitors.level.normal
-        class HighLevelMethod(HighLevelMethodMonitor): pass
+        class HighLevelMethod(HighLevelMethodMonitor):
+            pass
+
         @monitors.level.normal
-        class NormalLevelMethod(NormalLevelMethodMonitor): pass
+        class NormalLevelMethod(NormalLevelMethodMonitor):
+            pass
+
         @monitors.level.normal
-        class LowLevelMethod(LowLevelMethodMonitor): pass
+        class LowLevelMethod(LowLevelMethodMonitor):
+            pass
 
     class LowLevelMonitor:
         @monitors.level.low
-        class NoLevelMethod(NoLevelMethodMonitor): pass
+        class NoLevelMethod(NoLevelMethodMonitor):
+            pass
+
         @monitors.level.low
-        class HighLevelMethod(HighLevelMethodMonitor): pass
+        class HighLevelMethod(HighLevelMethodMonitor):
+            pass
+
         @monitors.level.low
-        class NormalLevelMethod(NormalLevelMethodMonitor): pass
+        class NormalLevelMethod(NormalLevelMethodMonitor):
+            pass
+
         @monitors.level.low
-        class LowLevelMethod(LowLevelMethodMonitor): pass
+        class LowLevelMethod(LowLevelMethodMonitor):
+            pass
 
 
 # ----------------------------------
 # Suites
 # ----------------------------------
 class Suites:
-    class NoLevelSuite(MonitorSuite): pass
+    class NoLevelSuite(MonitorSuite):
+        pass
+
     @monitors.level.high
-    class HighLevelSuite(MonitorSuite): pass
+    class HighLevelSuite(MonitorSuite):
+        pass
+
     @monitors.level.normal
-    class NormalLevelSuite(MonitorSuite): pass
+    class NormalLevelSuite(MonitorSuite):
+        pass
+
     @monitors.level.low
-    class LowLevelSuite(MonitorSuite): pass
+    class LowLevelSuite(MonitorSuite):
+        pass

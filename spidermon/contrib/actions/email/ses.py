@@ -22,10 +22,12 @@ class SendSESEmail(SendEmail):
     @classmethod
     def from_crawler_kwargs(cls, crawler):
         kwargs = super(SendSESEmail, cls).from_crawler_kwargs(crawler)
-        kwargs.update({
-            'aws_access_key': crawler.settings.get('SPIDERMON_AWS_ACCESS_KEY'),
-            'aws_secret_key': crawler.settings.get('SPIDERMON_AWS_SECRET_KEY'),
-        })
+        kwargs.update(
+            {
+                "aws_access_key": crawler.settings.get("SPIDERMON_AWS_ACCESS_KEY"),
+                "aws_secret_key": crawler.settings.get("SPIDERMON_AWS_SECRET_KEY"),
+            }
+        )
         return kwargs
 
     def send_message(self, message):
