@@ -16,6 +16,10 @@ matrix:
 install:
 - pip install -r requirements.txt --pre
 script: tox
+after_success:
+  - if [[ "$TRAVIS_PYTHON_VERSION" == 3.7 ]]; then
+    tox -e pep8;
+    fi
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
