@@ -59,3 +59,18 @@ SPIDERMON_SPIDER_OPEN_MONITORS
 ------------------------------
 
 List of monitor suites to be executed when the spider starts.
+
+.. _SPIDERMON_ENGINE_STOP_MONITORS:
+
+SPIDERMON_ENGINE_STOP_MONITORS
+------------------------------
+
+List of monitor suites to be executed when the crawler engine is stopped.
+
+
+.. _SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS:
+
+SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS
+-----------------------------------------
+
+List of expression monitors to be executed when the crawler engine is stopped.
