@@ -17,17 +17,13 @@ class JSONSchemaValidator(Validator):
 
     def __init__(self, schema, translator=None, use_default_translator=True):
         super(JSONSchemaValidator, self).__init__(
-            translator=translator,
-            use_default_translator=use_default_translator,
+            translator=translator, use_default_translator=use_default_translator
         )
         self._schema = schema
 
     def _validate(self, data, strict=False):
         validator_cls = validator_for(self._schema)
-        validator = validator_cls(
-            schema=self._schema,
-            format_checker=format_checker,
-        )
+        validator = validator_cls(schema=self._schema, format_checker=format_checker)
         errors = validator.iter_errors(data)
 
         for error in errors:
