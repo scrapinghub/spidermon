@@ -15,8 +15,21 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
 
     def get_settings(self, name, default=None):
         """ Return a settings prioritized by:
-            1. {name} as a spider attribute if not found
-            2. {name}.upper() in the settings object
+
+            #. ``{name}`` as a spider attribute if is present
+            #. ``{name}.upper()`` in the ``crawler.settings`` object
+            #. If ``crawler.settings.{name}`` is a dict, try to get the
+               ``{spider.name}`` key of that dictionary, this allows you to
+               have a different configuration per spider in a settings level,
+               like:
+
+               .. code-block:: python
+
+                   SPIDERMON_MAX_ERROR = {
+                        'my_spider': 100,
+                        'other_spider': 10,
+                   }
+
         """
         settings_value = self.crawler.settings.get(name.upper())
         if type(settings_value) == dict:
@@ -27,7 +40,11 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
 
 @monitors.name('Extracted Items Monitor')
 class ItemCountMonitor(BaseScrapyMonitor):
-    """ Check for the minimum number of extracted items """
+    """ Check for the minimum number of extracted items.
+    You can configure it using ``SPIDERMON_MIN_ITEMS`` setting.
+    There's **NO** default value for this setting, if you try to use this
+    monitor without setting it it'll raise a ``NotConfigured`` exception
+    """
 
     @monitors.name('Should extract the minimum amount of items')
     def test_minimum_number_of_items(self):
@@ -46,7 +63,9 @@ class ItemCountMonitor(BaseScrapyMonitor):
 
 @monitors.name('Log Monitor')
 class LogMonitor(BaseScrapyMonitor):
-    """ Check for errors in logs """
+    """ Check for errors in the spider log you can configure the expected
+    number of ERROR log messages using ``SPIDERMON_MAX_ERROR``,
+    the default is ``0``."""
 
     @monitors.name('Should not have any errors')
     def test_should_not_have_errors(self):
@@ -59,7 +78,12 @@ class LogMonitor(BaseScrapyMonitor):
 
 @monitors.name('Finish Reason Monitor')
 class FinishReasonMonitor(BaseScrapyMonitor):
-    """ Check for finished reason in a job """
+    """ Check if a job has a expected finish reason.
+    You can configure the expected reason with the
+    ``SPIDERMON_EXPECTED_FINISH_REASONS``, it should be an ``iterable`` of
+    valid finish reasons.
+
+    The default value of this settings is: ``['finished', ]``"""
 
     @monitors.name('Should have the expected finished reason(s)')
     def test_should_not_have_errors(self):
@@ -73,7 +97,16 @@ class FinishReasonMonitor(BaseScrapyMonitor):
 
 @monitors.name('Check for unwanted http status codes')
 class UnwantedHttpStatus(BaseScrapyMonitor):
-    """ Check for maximum number of unwanted http codes """
+    """ Check for maximum number of unwanted http codes.
+
+    You can configure a list of unwanted http codes with
+    ``SPIDERMON_UNWANTED_HTTP_CODES`` the default value is:
+    ``[400, 407, 429, 500, 502, 503, 504, 523, 540, 541]``
+
+    You can also configured the **maximum** number of times that those
+    response codes with ``SPIDERMON_MAX_UNWANTED_HTTP_CODES`` the default
+    value is ``1``.
+    """
     default_codes = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
 
     @monitors.name('Should not hit the limit of unwanted http status')
@@ -90,6 +123,20 @@ class UnwantedHttpStatus(BaseScrapyMonitor):
 
 
 class SpiderCloseMonitorSuite(MonitorSuite):
+    """ Implemented the following monitors:
+
+    * :class:`ItemCountMonitor`
+    * :class:`LogMonitor`
+    * :class:`FinishReasonMonitor`
+    * :class:`UnwantedHttpStatus`
+
+    You can easily enable this monitor *after* enabling Spidermon::
+
+            SPIDERMON_SPIDER_CLOSE_MONITORS = (
+                'spidermon.contrib.scrapy.monitors.SpiderCloseMonitorSuite',
+            )
+
+    """
     monitors = [
         ItemCountMonitor,
         LogMonitor,

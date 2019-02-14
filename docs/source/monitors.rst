@@ -130,6 +130,23 @@ Here is an example of how to configure a new monitor suite in your project:
 
       ``result`` stats of the spider execution
 
+The Basic Monitors
+------------------
+
+Spidermon have some batteries included :)
+
+.. automodule:: spidermon.contrib.scrapy.monitors
+    :members: FinishReasonMonitor, ItemCountMonitor, LogMonitor, UnwantedHttpStatus,
+
+There's a **Basic Scrapy Suite** ready for use?
+------------------------------------------------
+
+Off course there's! We really want to make easy for you to monitor your spiders ;)
+
+.. automodule:: spidermon.contrib.scrapy.monitors
+    :members: SpiderCloseMonitorSuite 
+
+
 What to monitor?
 ----------------
 
