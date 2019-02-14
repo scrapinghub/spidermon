@@ -450,6 +450,77 @@ SPIDERMON_REPORT_S3_MAKE_PUBLIC
 SPIDERMON_REPORT_S3_REGION_ENDPOINT
 -----------------------------------
 
+.. _actions-sentry-action:
+
+Sentry action
+============
+
+This action allows you to send custom messages to `Sentry`_ when your
+monitor suites finishes their execution. To use this action
+you need to provide the `Sentry DSN`_ in your `settings.py`
+file as follows:
+
+.. code-block:: python
+
+    # settings.py
+    SPIDERMON_SENTRY_DSN = '<SENTRY_DSN_URL>'
+    SPIDERMON_SENTRY_PROJECT_NAME = '<PROJECT_NAME>'
+    SPIDERMON_SENTRY_ENVIRONMENT_TYPE = '<ENVIRONMENT_TYPE>'
+
+A notification on _`Sentry` will look like the following one:
+
+.. image:: /_static/sentry_notification.png
+   :scale: 50 %
+   :alt: Sentry Notification
+
+The following settings are needed to make this action workable:
+
+.. _SPIDERMON_SENTRY_DSN:
+
+SPIDERMON_SENTRY_DSN
+--------------------------
+
+Data Source Name provided by `Sentry`_, it's a representation of the configuration required by the Sentry SDKs.
+
+.. _SPIDERMON_SENTRY_PROJECT_NAME:
+
+SPIDERMON_SENTRY_PROJECT_NAME
+-------------------------------------
+
+Project name to use in notification title.
+
+.. _SPIDERMON_SENTRY_ENVIRONMENT_TYPE:
+
+SPIDERMON_SENTRY_ENVIRONMENT_TYPE
+-------------------------------------
+
+Default: ``Development``
+
+Environment type to use in notification title.
+It could be set to anything like local, staging, development or production.
+
+.. _SPIDERMON_SENTRY_LOG_LEVEL:
+
+SPIDERMON_SENTRY_LOG_LEVEL
+---------------------------
+
+Default: ``error``
+
+It could be set to any level provided by `Sentry Log Level`_
+
+.. _SPIDERMON_SENTRY_FAKE:
+
+SPIDERMON_SENTRY_FAKE
+--------------------
+
+Default: ``False``
+
+If set `True`, the Sentry message will be in the logs but nothing will be sent.
+
+.. _`Sentry`: https://sentry.io/
+.. _`Sentry DSN`: https://docs.sentry.io/error-reporting/quickstart/?platform=python#configure-the-sdk
+.. _`Sentry Log Level`: https://docs.sentry.io/enriching-error-data/context/?platform=python#setting-the-level
+
 .. _actions-custom-action:
 
 Custom actions
