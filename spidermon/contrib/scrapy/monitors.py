@@ -6,6 +6,8 @@ from ..monitors.mixins.spider import SpiderMonitorMixin
 SPIDERMON_MIN_ITEMS_SETTING = 'SPIDERMON_MIN_ITEMS'
 SPIDERMON_MAX_ERROR_SETTING = 'SPIDERMON_MAX_ITEMS'
 SPIDERMON_EXPECTED_FINISH_REASONS = 'SPIDERMON_EXPECTED_FINISH_REASONS'
+SPIDERMON_MAX_UNWANTED_HTTP_CODES = 'SPIDERMON_MAX_UNWANTED_HTTP_CODES'
+SPIDERMON_UNWANTED_HTTP_CODES = 'SPIDERMON_UNWANTED_HTTP_CODES'
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -69,10 +71,28 @@ class FinishReasonMonitor(BaseScrapyMonitor):
         self.assertTrue(finished_reason in expected_reasons, msg=msg)
 
 
-class SpiderCloseMonitorSuite(MonitorSuite):
+@monitors.name('Check for unwanted http status codes')
+class UnwantedHttpStatus(BaseScrapyMonitor):
+    """ Check for maximum number of unwanted http codes """
+    default_codes = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
 
+    @monitors.name('Should not hit the limit of unwanted http status')
+    def test_check_unwanted_http_codes(self):
+        max_errors = self.get_settings(SPIDERMON_MAX_UNWANTED_HTTP_CODES, 1)
+        error_codes = self.get_settings(SPIDERMON_UNWANTED_HTTP_CODES,
+                                        self.default_codes)
+        for code in error_codes:
+            times = self.stats.get(
+                f'downloader/response_status_count/{code}', 0)
+            msg = f'Found {times} Responses with status code={code} - '\
+                  f'This exceed the limit of {max_errors}'
+            self.assertTrue(times < max_errors, msg=msg)
+
+
+class SpiderCloseMonitorSuite(MonitorSuite):
     monitors = [
         ItemCountMonitor,
         LogMonitor,
         FinishReasonMonitor,
+        UnwantedHttpStatus,
     ]
