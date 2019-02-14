@@ -31,7 +31,7 @@ def test_needs_to_configure_item_count_monitor():
     }
     runner.run(suite, **data)
     for r in runner.result.monitor_results:
-        assert('spidermon.exceptions.NotConfigured' in r.error)
+        assert('NotConfigured' in r.error)
 
 
 def test_item_count_monitor_should_fail():
