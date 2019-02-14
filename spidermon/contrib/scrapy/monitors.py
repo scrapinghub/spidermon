@@ -3,8 +3,8 @@ from spidermon import monitors, MonitorSuite, Monitor
 from spidermon.exceptions import NotConfigured
 from ..monitors.mixins.spider import SpiderMonitorMixin
 
-SPIDERMON_MIN_ITEMS_SETTING = 'SPIDERMON_MIN_ITEMS'
-SPIDERMON_MAX_ERROR_SETTING = 'SPIDERMON_MAX_ITEMS'
+SPIDERMON_MIN_ITEMS = 'SPIDERMON_MIN_ITEMS'
+SPIDERMON_MAX_ERROR = 'SPIDERMON_MAX_ITEMS'
 SPIDERMON_EXPECTED_FINISH_REASONS = 'SPIDERMON_EXPECTED_FINISH_REASONS'
 SPIDERMON_MAX_UNWANTED_HTTP_CODES = 'SPIDERMON_MAX_UNWANTED_HTTP_CODES'
 SPIDERMON_UNWANTED_HTTP_CODES = 'SPIDERMON_UNWANTED_HTTP_CODES'
@@ -31,7 +31,7 @@ class ItemCountMonitor(BaseScrapyMonitor):
 
     @monitors.name('Should extract the minimum amount of items')
     def test_minimum_number_of_items(self):
-        minimum_threshold = self.get_settings(SPIDERMON_MIN_ITEMS_SETTING)
+        minimum_threshold = self.get_settings(SPIDERMON_MIN_ITEMS)
         if not minimum_threshold:
             raise NotConfigured('You should specify a minimum number of items '
                                 'to check against.')
@@ -50,7 +50,7 @@ class LogMonitor(BaseScrapyMonitor):
 
     @monitors.name('Should not have any errors')
     def test_should_not_have_errors(self):
-        errors_threshold = self.get_settings(SPIDERMON_MAX_ERROR_SETTING, 0)
+        errors_threshold = self.get_settings(SPIDERMON_MAX_ERROR, 0)
         no_of_errors = self.stats.get('log_count/ERROR', 0)
         msg = 'Found {} errors in log, maximum expected is '\
               '{}'.format(no_of_errors, errors_threshold)

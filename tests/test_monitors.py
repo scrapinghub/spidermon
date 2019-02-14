@@ -1,12 +1,10 @@
-import pytest
-
 from scrapy import Spider
 from scrapy.crawler import Crawler
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 from spidermon.contrib.scrapy.monitors import (
     FinishReasonMonitor, ItemCountMonitor, LogMonitor, UnwantedHttpStatus,
-    SPIDERMON_MIN_ITEMS_SETTING, SPIDERMON_EXPECTED_FINISH_REASONS,
-    SPIDERMON_MAX_ERROR_SETTING, SPIDERMON_MAX_UNWANTED_HTTP_CODES)
+    SPIDERMON_MIN_ITEMS, SPIDERMON_EXPECTED_FINISH_REASONS,
+    SPIDERMON_MAX_ERROR, SPIDERMON_MAX_UNWANTED_HTTP_CODES)
 from spidermon import MonitorSuite
 
 
@@ -40,7 +38,7 @@ def test_item_count_monitor_should_fail():
     """ ItemCount should fail when the desired # of items is not extracted """
     crawler = new_crawler()
     spider = Spider('dummy')
-    setattr(spider, SPIDERMON_MIN_ITEMS_SETTING.lower(), 100)
+    setattr(spider, SPIDERMON_MIN_ITEMS.lower(), 100)
     suite = new_suite([ItemCountMonitor, ])
     runner = SpiderMonitorRunner(spider=spider)
     crawler.stats.set_value('item_scraped_count', 10)
@@ -59,7 +57,7 @@ def test_item_count_monitor_should_pass():
     """ ItemCount should pass when extract the desired amount of items """
     crawler = new_crawler()
     spider = Spider('dummy')
-    setattr(spider, SPIDERMON_MIN_ITEMS_SETTING.lower(), 100)
+    setattr(spider, SPIDERMON_MIN_ITEMS.lower(), 100)
     suite = new_suite([ItemCountMonitor, ])
     runner = SpiderMonitorRunner(spider=spider)
     crawler.stats.set_value('item_scraped_count', 100)
@@ -134,7 +132,7 @@ def test_log_monitor_should_pass():
     exceed the limit """
     crawler = new_crawler()
     spider = Spider('dummy')
-    setattr(spider, SPIDERMON_MAX_ERROR_SETTING.lower(), 50)
+    setattr(spider, SPIDERMON_MAX_ERROR.lower(), 50)
     suite = new_suite([LogMonitor, ])
     runner = SpiderMonitorRunner(spider=spider)
     crawler.stats.set_value('log_count/ERROR', 2)
