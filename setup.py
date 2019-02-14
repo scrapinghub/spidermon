@@ -31,7 +31,8 @@ setup(
             'Jinja2',
             'slackclient',
             'boto',
-            'premailer'
+            'premailer',
+            'sentry-sdk',
         ],
         # Data validation
         'validation': [
