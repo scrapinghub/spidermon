@@ -116,9 +116,9 @@ class UnwantedHttpStatus(BaseScrapyMonitor):
                                         self.default_codes)
         for code in error_codes:
             times = self.stats.get(
-                f'downloader/response_status_count/{code}', 0)
-            msg = f'Found {times} Responses with status code={code} - '\
-                  f'This exceed the limit of {max_errors}'
+                'downloader/response_status_count/{}'.format(code), 0)
+            msg = 'Found {} Responses with status code={} - '\
+                  'This exceed the limit of {}'.format(times, code, max_errors)
             self.assertTrue(times < max_errors, msg=msg)
 
 
