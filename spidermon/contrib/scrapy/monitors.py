@@ -46,7 +46,7 @@ class ItemCountMonitor(BaseScrapyMonitor):
         if not self.minimum_threshold:
             raise NotConfigured('You should specify a minimum number of items '
                                 'to check against.')
-        return super().run(result)
+        return super(ItemCountMonitor, self).run(result)
 
     @monitors.name('Should extract the minimum amount of items')
     def test_minimum_number_of_items(self):
