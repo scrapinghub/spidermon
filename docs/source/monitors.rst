@@ -138,10 +138,10 @@ Spidermon have some batteries included :)
 .. automodule:: spidermon.contrib.scrapy.monitors
     :members: FinishReasonMonitor, ItemCountMonitor, LogMonitor, UnwantedHttpStatus,
 
-There's a **Basic Scrapy Suite** ready for use?
+Is there a **Basic Scrapy Suite** ready to use?
 ------------------------------------------------
 
-Off course there's! We really want to make easy for you to monitor your spiders ;)
+Of course there is! We really want to make it easy for you to monitor your spiders ;)
 
 .. automodule:: spidermon.contrib.scrapy.monitors
     :members: SpiderCloseMonitorSuite 
