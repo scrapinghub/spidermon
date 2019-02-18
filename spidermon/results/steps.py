@@ -39,8 +39,9 @@ class Step(object):
         self.finish_time = time.time()
 
     def items_for_status(self, status):
-        return [result for item, result in self._results.items()
-                if result.status == status]
+        return [
+            result for item, result in self._results.items() if result.status == status
+        ]
 
     def items_for_statuses(self, statuses):
         items = []
@@ -88,11 +89,15 @@ class MonitorStep(Step):
 
     def get_infos(self):
         return {
-            'failures': len(self.items_for_status(settings.MONITOR.STATUS.FAILURE)),
-            'errors': len(self.items_for_status(settings.MONITOR.STATUS.ERROR)),
-            'skipped': len(self.items_for_status(settings.MONITOR.STATUS.SKIPPED)),
-            'expected failures': len(self.items_for_status(settings.MONITOR.STATUS.EXPECTED_FAILURE)),
-            'unexpected successes': len(self.items_for_status(settings.MONITOR.STATUS.UNEXPECTED_SUCCESS)),
+            "failures": len(self.items_for_status(settings.MONITOR.STATUS.FAILURE)),
+            "errors": len(self.items_for_status(settings.MONITOR.STATUS.ERROR)),
+            "skipped": len(self.items_for_status(settings.MONITOR.STATUS.SKIPPED)),
+            "expected failures": len(
+                self.items_for_status(settings.MONITOR.STATUS.EXPECTED_FAILURE)
+            ),
+            "unexpected successes": len(
+                self.items_for_status(settings.MONITOR.STATUS.UNEXPECTED_SUCCESS)
+            ),
         }
 
 
@@ -103,6 +108,6 @@ class ActionsStep(Step):
 
     def get_infos(self):
         return {
-            'errors': len(self.items_for_status(settings.ACTION.STATUS.ERROR)),
-            'skipped': len(self.items_for_status(settings.ACTION.STATUS.SKIPPED)),
+            "errors": len(self.items_for_status(settings.ACTION.STATUS.ERROR)),
+            "skipped": len(self.items_for_status(settings.ACTION.STATUS.SKIPPED)),
         }

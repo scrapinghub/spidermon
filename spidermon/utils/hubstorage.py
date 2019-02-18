@@ -7,6 +7,7 @@ from codecs import decode
 
 import six
 from six.moves import map
+
 try:
     try:
         from scrapinghub import HubstorageClient
@@ -17,15 +18,16 @@ except ImportError:
 
 
 class _Hubstorage(object):
-
     def __init__(self):
-        self.available = 'SHUB_JOBKEY' in os.environ and HubstorageClient is not None
+        self.available = "SHUB_JOBKEY" in os.environ and HubstorageClient is not None
         self._client = None
         self._project = None
         self._job = None
         if self.available:
-            self.job_key = os.environ['SHUB_JOBKEY']
-            self._project_id, self._spider_id, self._job_id = map(int, self.job_key.split('/'))
+            self.job_key = os.environ["SHUB_JOBKEY"]
+            self._project_id, self._spider_id, self._job_id = map(
+                int, self.job_key.split("/")
+            )
         else:
             self._project_id = None
             self._spider_id = None
@@ -34,13 +36,13 @@ class _Hubstorage(object):
     @property
     def auth(self):
         if six.PY2:
-            return os.environ['SHUB_JOBAUTH'].decode('hex')
+            return os.environ["SHUB_JOBAUTH"].decode("hex")
         else:
-            return decode(os.environ['SHUB_JOBAUTH'], 'hex_codec').decode('utf-8')
+            return decode(os.environ["SHUB_JOBAUTH"], "hex_codec").decode("utf-8")
 
     @property
     def endpoint(self):
-        return os.environ.get('SHUB_STORAGE')
+        return os.environ.get("SHUB_STORAGE")
 
     @property
     def project_id(self):
@@ -57,8 +59,7 @@ class _Hubstorage(object):
     @property
     def client(self):
         if self._client is None:
-            self._client = HubstorageClient(endpoint=self.endpoint,
-                                            auth=self.auth)
+            self._client = HubstorageClient(endpoint=self.endpoint, auth=self.auth)
         return self._client
 
     @property

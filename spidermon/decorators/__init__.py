@@ -4,16 +4,21 @@ class DecoratorWithAttributes(object):
 
     def __init__(self):
         if not self.name:
-            raise AttributeError('No name defined!')
+            raise AttributeError("No name defined!")
         if not self.attributes:
-            raise AttributeError('No attributes defined!')
+            raise AttributeError("No attributes defined!")
 
     def __getattr__(self, name):
         if name not in self.attributes:
-            raise AttributeError("Invalid {attribute} '{name}', allowed values: {values}".format(
-                attribute=self.name,
-                name=name,
-                values=', '.join(["'%s'" % attr for attr in self.attributes.keys()])))
+            raise AttributeError(
+                "Invalid {attribute} '{name}', allowed values: {values}".format(
+                    attribute=self.name,
+                    name=name,
+                    values=", ".join(
+                        ["'%s'" % attr for attr in self.attributes.keys()]
+                    ),
+                )
+            )
         else:
             return self.attributes[name]
 
@@ -26,7 +31,9 @@ class OptionsDecorator(object):
                 options_class.add_or_create(fn)
                 setattr(fn.options, value_name, value)
                 return fn
+
             return decorator
+
         return value_decorator
 
     @classmethod
@@ -35,4 +42,5 @@ class OptionsDecorator(object):
             options_class.add_or_create(fn)
             setattr(fn.options, value_name, value)
             return fn
+
         return decorator

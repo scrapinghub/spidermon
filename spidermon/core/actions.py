@@ -27,8 +27,7 @@ class Action(six.with_metaclass(ActionOptionsMetaclass, object)):
 
     @property
     def name(self):
-        return self.options.name or \
-               self.__class__.__name__
+        return self.options.name or self.__class__.__name__
 
     def run(self, result, data):
         self.result = result
@@ -60,7 +59,7 @@ class Action(six.with_metaclass(ActionOptionsMetaclass, object)):
         return {}
 
     def __repr__(self):
-        return '<ACTION:(%s) at %s>' % (self.name, hex(id(self)))
+        return "<ACTION:(%s) at %s>" % (self.name, hex(id(self)))
 
     def __str__(self):
         return repr(self)

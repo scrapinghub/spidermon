@@ -12,13 +12,13 @@ class PercentCounterBase(object):
 
     @property
     def percent(self):
-        if self._total <= 0 or self.count <=0:
+        if self._total <= 0 or self.count <= 0:
             return 0
         else:
             return float(self.count) / float(self._total)
 
     def __str__(self):
-        return '(count=%d, percent=%.2f)' % (self.count, self.percent)
+        return "(count=%d, percent=%.2f)" % (self.count, self.percent)
 
     def __repr__(self):
         return self.__str__()
@@ -75,7 +75,7 @@ class DictPercentCounter(PercentCounterBase, collections.MutableMapping):
         raise TypeError
 
     def __str__(self):
-        return '(count=%d, percent=%.2f, %s)' % (
+        return "(count=%d, percent=%.2f, %s)" % (
             self.count,
             self.percent,
             str(self._dict),
@@ -86,7 +86,7 @@ class DictPercentCounter(PercentCounterBase, collections.MutableMapping):
 
 
 class AttributeDictPercentCounter(PercentCounterBase):
-    __attribute_dict_name__ = 'dict'
+    __attribute_dict_name__ = "dict"
 
     def __init__(self, total):
         super(AttributeDictPercentCounter, self).__init__(total)
@@ -104,11 +104,11 @@ class AttributeDictPercentCounter(PercentCounterBase):
         self.attribute_dict.add_value(key, value)
 
     def __str__(self):
-        return '(count=%d, percent=%.2f, %s=%s)' % (
+        return "(count=%d, percent=%.2f, %s=%s)" % (
             self.count,
             self.percent,
             self.__attribute_dict_name__,
-            str(self.attribute_dict)
+            str(self.attribute_dict),
         )
 
     def __repr__(self):

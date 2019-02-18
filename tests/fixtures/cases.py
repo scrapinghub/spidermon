@@ -23,4 +23,3 @@ class Monitor02(Monitor):
 
     def test_e(self):
         pass
-

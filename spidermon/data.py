@@ -12,6 +12,7 @@ class Data(dict):
     >> s.scraped_items
     100
     """
+
     def __getattr__(self, name):
         if name in self:
             return self[name]
@@ -19,7 +20,9 @@ class Data(dict):
             raise AttributeError("Key '%s' not found." % name)
 
     def _immutable(self, *args, **kws):
-        raise InvalidDataOperation('Immutable Data! You cannot add or modify read-only data.')
+        raise InvalidDataOperation(
+            "Immutable Data! You cannot add or modify read-only data."
+        )
 
     update = _immutable
     setdefault = _immutable

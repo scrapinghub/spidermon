@@ -11,12 +11,11 @@ from . import monkeypatches
 
 class SchematicsValidator(Validator):
     default_translator = SchematicsMessageTranslator()
-    name = 'Schematics'
+    name = "Schematics"
 
     def __init__(self, model, translator=None, use_default_translator=True):
         super(SchematicsValidator, self).__init__(
-            translator=translator,
-            use_default_translator=use_default_translator,
+            translator=translator, use_default_translator=use_default_translator
         )
         self._model = model
         self._fields_required = {}
@@ -62,26 +61,32 @@ class SchematicsValidator(Validator):
             self._model._fields[field_name].required = False
 
     def _add_errors(self, errors):
-        if schematics.__version__.startswith('1.'):
+        if schematics.__version__.startswith("1."):
             for field_name, messages in errors.items():
                 if isinstance(messages, dict):
-                    transformed_errors = self._get_transformed_child_errors(field_name, messages)
+                    transformed_errors = self._get_transformed_child_errors(
+                        field_name, messages
+                    )
                     self._add_errors(transformed_errors)
                 else:
-                    self._errors[field_name] += messages if isinstance(messages, list) else [messages]
+                    self._errors[field_name] += (
+                        messages if isinstance(messages, list) else [messages]
+                    )
         else:
             from schematics.datastructures import FrozenDict
 
             for field_name, messages in errors.items():
                 if isinstance(messages, (dict, FrozenDict)):
-                    transformed_errors = self._get_transformed_child_errors(field_name, messages)
+                    transformed_errors = self._get_transformed_child_errors(
+                        field_name, messages
+                    )
                     self._add_errors(transformed_errors)
                 else:
                     messages = self._clean_messages(messages)
                     self._errors[field_name] += messages
 
     def _get_transformed_child_errors(self, field_name, errors):
-        return dict([('%s.%s' % (field_name, k), v) for k, v in errors.items()])
+        return dict([("%s.%s" % (field_name, k), v) for k, v in errors.items()])
 
     def _clean_messages(self, messages):
         """

@@ -18,15 +18,14 @@ def is_email(instance):
     return is_valid_email(instance)
 
 
-_spidermon_checkers = {
-    'url': (is_url, ()),
-    'email': (is_email, ()),
-}
+_spidermon_checkers = {"url": (is_url, ()), "email": (is_email, ())}
 
-#_draft4_checkers = ['email', 'ipv4', 'ipv6', 'hostname', 'uri', 'date-time', 'regex']
+# _draft4_checkers = ['email', 'ipv4', 'ipv6', 'hostname', 'uri', 'date-time', 'regex']
 
 for format_name, (func, raises) in _spidermon_checkers.items():
     FormatChecker.cls_checks(format_name, raises)(func)
 
 
-format_checker = FormatChecker(_draft_checkers["draft4"] + list(iterkeys(_spidermon_checkers)))
+format_checker = FormatChecker(
+    _draft_checkers["draft4"] + list(iterkeys(_spidermon_checkers))
+)

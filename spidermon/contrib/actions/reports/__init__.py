@@ -9,17 +9,19 @@ class CreateReport(ActionWithTemplates):
     def __init__(self, template=None, *args, **kwargs):
         super(CreateReport, self).__init__(*args, **kwargs)
         self.template = template or self.template
-        self.report = ''
+        self.report = ""
         if not self.template:
             raise NotConfigured("You must define one template file.")
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
         kwargs = super(CreateReport, cls).from_crawler_kwargs(crawler)
-        kwargs.update({
-            'template': crawler.settings.get('SPIDERMON_REPORT_TEMPLATE'),
-            'context': crawler.settings.getdict('SPIDERMON_REPORT_CONTEXT'),
-        })
+        kwargs.update(
+            {
+                "template": crawler.settings.get("SPIDERMON_REPORT_TEMPLATE"),
+                "context": crawler.settings.getdict("SPIDERMON_REPORT_CONTEXT"),
+            }
+        )
         return kwargs
 
     def run_action(self):

@@ -12,7 +12,7 @@ class ItemResult(object):
 
 
 class MonitorResult(ItemResult):
-    name = 'monitor'
+    name = "monitor"
 
     def __init__(self, item):
         super(MonitorResult, self).__init__(item)
@@ -24,7 +24,7 @@ class MonitorResult(ItemResult):
 
 
 class ActionResult(ItemResult):
-    name = 'action'
+    name = "action"
 
     def __init__(self, item):
         super(ActionResult, self).__init__(item)
