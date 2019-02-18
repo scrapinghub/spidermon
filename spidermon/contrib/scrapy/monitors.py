@@ -101,12 +101,12 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
             code: 10
             for code in [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]}
 
-    **WARNING**: You can have this settings by spider like::
+    **WARNING**: You CAN NOT have this settings by spider like::
 
-    ``SPIDERMON_UNWANTED_HTTP_CODES = {'my_spider': {400: 2, 500: 100}}``
+        SPIDERMON_UNWANTED_HTTP_CODES = {'my_spider': {400: 2, 500: 100}}
 
-    in order to do that overwrite the ``custom_settings`` property of the
-    Spider.
+    In order to have a different configuration per spider, please,
+    overwrite the ``custom_settings`` property of the Spider.
     """
     DEFAULT_ERROR_CODES = {
         code: 10
