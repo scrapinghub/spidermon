@@ -331,12 +331,12 @@ a failure when we have a item validation error:
     # (...other monitors...)
 
     @monitors.name('Item validation')
-    class ItemValidationMonitor(Monitor):
+    class ItemValidationMonitor(Monitor, StatsMonitorMixin):
 
         @monitors.name('No item validation errors')
         def test_no_item_validation_errors(self):
             validation_errors = getattr(
-                self.data.stats, 'spidermon/validation/fields/errors', 0
+                self.stats, 'spidermon/validation/fields/errors', 0
             )
             self.assertEqual(
                 validation_errors,

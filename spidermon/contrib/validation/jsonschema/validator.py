@@ -1,8 +1,7 @@
 from __future__ import absolute_import
 import re
 
-from jsonschema.validators import Draft4Validator
-
+from jsonschema.validators import validator_for
 from spidermon.contrib.validation.validator import Validator
 
 from .translator import JSONSchemaMessageTranslator
@@ -23,13 +22,14 @@ class JSONSchemaValidator(Validator):
         self._schema = schema
 
     def _validate(self, data, strict=False):
-        validator = Draft4Validator(schema=self._schema, format_checker=format_checker)
+        validator_cls = validator_for(self._schema)
+        validator = validator_cls(schema=self._schema, format_checker=format_checker)
         errors = validator.iter_errors(data)
-        for e in errors:
-            # print e
-            absolute_path = list(e.absolute_path)
-            required_match = REQUIRED_RE.search(e.message)
+
+        for error in errors:
+            absolute_path = list(error.absolute_path)
+            required_match = REQUIRED_RE.search(error.message)
             if required_match:
                 absolute_path.append(required_match.group(1))
             field_name = ".".join([str(p) for p in absolute_path])
-            self._add_errors({field_name: [e.message]})
+            self._add_errors({field_name: [error.message]})

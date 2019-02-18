@@ -21,7 +21,14 @@ setup(
     tests_require=test_requirements,
     extras_require={
         # Specific monitors and tools to support notifications and reports
-        "monitoring": ["scrapy", "Jinja2", "slackclient", "boto", "premailer"],
+        "monitoring": [
+            "scrapy",
+            "Jinja2",
+            "slackclient",
+            "boto",
+            "premailer",
+            "sentry-sdk",
+        ],
         # Data validation
         "validation": ["jsonschema", "schematics", "python-slugify", "strict-rfc3339"],
         # Tools to run the tests
