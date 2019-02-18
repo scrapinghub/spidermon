@@ -7,7 +7,7 @@ from spidermon.contrib.scrapy.monitors import (
     FinishReasonMonitor, ItemCountMonitor, LogMonitor,
     UnwantedHTTPCodesMonitor,
     SPIDERMON_MIN_ITEMS, SPIDERMON_EXPECTED_FINISH_REASONS,
-    SPIDERMON_MAX_ERROR, SPIDERMON_UNWANTED_HTTP_CODES)
+    SPIDERMON_MAX_ERRORS, SPIDERMON_UNWANTED_HTTP_CODES)
 from spidermon import MonitorSuite
 from spidermon.exceptions import NotConfigured
 
@@ -121,7 +121,7 @@ def test_log_monitor_should_fail(make_data):
 def test_log_monitor_should_pass(make_data):
     """ Log should pass if the # of error log message DOES NOT
     exceed the limit """
-    data = make_data({SPIDERMON_MAX_ERROR: 50})
+    data = make_data({SPIDERMON_MAX_ERRORS: 50})
     runner = data.pop('runner')
     suite = new_suite([LogMonitor, ])
     data['stats']['log_count/ERROR'] = 2

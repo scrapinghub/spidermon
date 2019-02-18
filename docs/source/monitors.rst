@@ -141,7 +141,7 @@ Spidermon have some batteries included :)
 Is there a **Basic Scrapy Suite** ready to use?
 ------------------------------------------------
 
-Of course there is! We really want to make it easy for you to monitor your spiders ;)
+Of course, there is! We really want to make it easy for you to monitor your spiders ;)
 
 .. automodule:: spidermon.contrib.scrapy.monitors
     :members: SpiderCloseMonitorSuite 

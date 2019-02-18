@@ -3,7 +3,7 @@ from spidermon.exceptions import NotConfigured
 from ..monitors.mixins.spider import SpiderMonitorMixin
 
 SPIDERMON_MIN_ITEMS = 'SPIDERMON_MIN_ITEMS'
-SPIDERMON_MAX_ERROR = 'SPIDERMON_MAX_ERROR'
+SPIDERMON_MAX_ERRORS = 'SPIDERMON_MAX_ERRORS'
 SPIDERMON_EXPECTED_FINISH_REASONS = 'SPIDERMON_EXPECTED_FINISH_REASONS'
 SPIDERMON_UNWANTED_HTTP_CODES = 'SPIDERMON_UNWANTED_HTTP_CODES'
 
@@ -22,7 +22,7 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
 
                .. code-block:: python
 
-                   SPIDERMON_MAX_ERROR = {
+                   SPIDERMON_MAX_ERRORS = {
                         'my_spider': 100,
                         'other_spider': 10,
                    }
@@ -62,10 +62,10 @@ class ItemCountMonitor(BaseScrapyMonitor):
 class LogMonitor(BaseScrapyMonitor):
     """Check for errors in the spider log.
     You can configure the expected number of ERROR log messages using
-    ``SPIDERMON_MAX_ERROR``. The default is ``0``."""
+    ``SPIDERMON_MAX_ERRORS``. The default is ``0``."""
     @monitors.name('Should not have any errors')
     def test_should_not_have_errors(self):
-        errors_threshold = self.get_settings(SPIDERMON_MAX_ERROR, 0)
+        errors_threshold = self.get_settings(SPIDERMON_MAX_ERRORS, 0)
         no_of_errors = self.stats.get('log_count/ERROR', 0)
         msg = 'Found {} errors in log, maximum expected is '\
               '{}'.format(no_of_errors, errors_threshold)
