@@ -90,7 +90,7 @@ class FinishReasonMonitor(BaseScrapyMonitor):
         self.assertTrue(finished_reason in expected_reasons, msg=msg)
 
 
-@monitors.name('Check for unwanted http status codes')
+@monitors.name('Unwanted HTTP codes monitor')
 class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
     """Check for maximum number of unwanted HTTP codes.
 
