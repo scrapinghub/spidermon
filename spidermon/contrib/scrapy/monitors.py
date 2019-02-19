@@ -42,7 +42,7 @@ class ItemCountMonitor(BaseScrapyMonitor):
     monitor without setting it, it'll raise a ``NotConfigured`` exception.
     """
     def run(self, result):
-        self.minimum_threshold = self.get_settings(SPIDERMON_MIN_ITEMS)
+        self.minimum_threshold = int(self.get_settings(SPIDERMON_MIN_ITEMS, 0))
         if not self.minimum_threshold:
             raise NotConfigured('You should specify a minimum number of items '
                                 'to check against.')
