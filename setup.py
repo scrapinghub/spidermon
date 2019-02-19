@@ -21,6 +21,8 @@ setup(
     zip_safe=False,
     include_package_data=True,
     install_requires=[
+        'jsonschema',
+        'python-slugify',
         'six>=1.9.0',
     ],
     tests_require=test_requirements,
@@ -36,9 +38,7 @@ setup(
         ],
         # Data validation
         'validation': [
-            'jsonschema',
             'schematics',
-            'python-slugify',
             'strict-rfc3339'
         ],
         # Tools to run the tests
