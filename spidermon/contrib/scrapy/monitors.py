@@ -117,6 +117,7 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
         error_codes = self.crawler.settings.get(
             SPIDERMON_UNWANTED_HTTP_CODES, self.DEFAULT_ERROR_CODES)
         for code, max_errors in error_codes.items():
+            code = int(code)
             count = self.stats.get(
                 'downloader/response_status_count/{}'.format(code), 0)
             msg = 'Found {} Responses with status code={} - '\
