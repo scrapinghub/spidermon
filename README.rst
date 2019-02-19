@@ -21,13 +21,10 @@ Spidermon
     :target: https://pypi.python.org/pypi/spidermon
     :alt: python versions
 
-<<<<<<< HEAD
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/ambv/black
     :alt: Code style: black
 
-=======
->>>>>>> master
 Overview
 ========
 
