@@ -11,6 +11,12 @@ SPIDERMON_UNWANTED_HTTP_CODES = 'SPIDERMON_UNWANTED_HTTP_CODES'
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
     longMessage = False
 
+    @property
+    def monitor_description(self):
+        if self.__class__.__doc__:
+            return self.__class__.__doc__.split('\n')[0]
+        return super(BaseScrapyMonitor, self).monitor_description
+
 
 @monitors.name('Extracted Items Monitor')
 class ItemCountMonitor(BaseScrapyMonitor):
