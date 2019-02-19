@@ -33,6 +33,7 @@ setup(
         "validation": ["jsonschema", "schematics", "python-slugify", "strict-rfc3339"],
         # Tools to run the tests
         "tests": test_requirements,
+        "pep8": ["black"],
         # Tools to build and publish the documentation
         "docs": ["sphinx", "sphinx-rtd-theme", "s3cmd"],
     },
