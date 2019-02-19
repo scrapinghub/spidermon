@@ -6,6 +6,9 @@ Spidermon
     :target: https://travis-ci.org/scrapinghub/spidermon
     :alt: travis build status
 
+.. image:: https://img.shields.io/codecov/c/github/scrapinghub/spidermon.svg?style=flat
+    :alt: Codecov
+
 .. image:: https://img.shields.io/pypi/v/spidermon.svg
     :target: https://pypi.python.org/pypi/spidermon
     :alt: pypi version
@@ -18,10 +21,13 @@ Spidermon
     :target: https://pypi.python.org/pypi/spidermon
     :alt: python versions
 
+<<<<<<< HEAD
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/ambv/black
     :alt: Code style: black
 
+=======
+>>>>>>> master
 Overview
 ========
 
