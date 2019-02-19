@@ -11,38 +11,18 @@ SPIDERMON_UNWANTED_HTTP_CODES = 'SPIDERMON_UNWANTED_HTTP_CODES'
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
     longMessage = False
 
-    def get_settings(self, name, default=None):
-        """Return a settings prioritized by:
-
-            #. ``{name}`` in the ``crawler.settings`` object
-            #. If ``crawler.settings.{name}`` is a dict, try to get the
-               ``{spider.name}`` key of that dictionary, this allows you to
-               have a different configuration per spider in a settings level,
-               like:
-
-               .. code-block:: python
-
-                   SPIDERMON_MAX_ERRORS = {
-                        'my_spider': 100,
-                        'other_spider': 10,
-                   }
-
-        """
-        settings_value = self.crawler.settings.get(name.upper())
-        if type(settings_value) == dict:
-            settings_value = settings_value.get(self.spider.name, None)
-        return settings_value or default
-
 
 @monitors.name('Extracted Items Monitor')
 class ItemCountMonitor(BaseScrapyMonitor):
     """Check if spider extracted the minimum number of items.
+
     You can configure it using ``SPIDERMON_MIN_ITEMS`` setting.
     There's **NO** default value for this setting, if you try to use this
     monitor without setting it, it'll raise a ``NotConfigured`` exception.
     """
     def run(self, result):
-        self.minimum_threshold = int(self.get_settings(SPIDERMON_MIN_ITEMS, 0))
+        self.minimum_threshold = self.crawler.settings.getint(
+            SPIDERMON_MIN_ITEMS, 0)
         if not self.minimum_threshold:
             raise NotConfigured('You should specify a minimum number of items '
                                 'to check against.')
@@ -58,14 +38,16 @@ class ItemCountMonitor(BaseScrapyMonitor):
         )
 
 
-@monitors.name('Log Monitor')
-class LogMonitor(BaseScrapyMonitor):
+@monitors.name('Error Count Monitor')
+class ErrorCountMonitor(BaseScrapyMonitor):
     """Check for errors in the spider log.
+
     You can configure the expected number of ERROR log messages using
     ``SPIDERMON_MAX_ERRORS``. The default is ``0``."""
     @monitors.name('Should not have any errors')
-    def test_should_not_have_errors(self):
-        errors_threshold = self.get_settings(SPIDERMON_MAX_ERRORS, 0)
+    def test_max_errors_in_log(self):
+        errors_threshold = self.crawler.settings.getint(
+            SPIDERMON_MAX_ERRORS, 0)
         no_of_errors = self.stats.get('log_count/ERROR', 0)
         msg = 'Found {} errors in log, maximum expected is '\
               '{}'.format(no_of_errors, errors_threshold)
@@ -75,14 +57,15 @@ class LogMonitor(BaseScrapyMonitor):
 @monitors.name('Finish Reason Monitor')
 class FinishReasonMonitor(BaseScrapyMonitor):
     """Check if a job has a expected finish reason.
+
     You can configure the expected reason with the
     ``SPIDERMON_EXPECTED_FINISH_REASONS``, it should be an ``iterable`` of
     valid finish reasons.
 
     The default value of this settings is: ``['finished', ]``."""
     @monitors.name('Should have the expected finished reason(s)')
-    def test_should_not_have_errors(self):
-        expected_reasons = self.get_settings(
+    def test_should_finish_with_expected_reason(self):
+        expected_reasons = self.crawler.settings.getlist(
             SPIDERMON_EXPECTED_FINISH_REASONS, ('finished', ))
         finished_reason = self.stats.get('finish_reason')
         msg = 'Finished with "{}" the expected reasons are {}'.format(
@@ -100,13 +83,6 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
         DEFAULT_ERROR_CODES = {
             code: 10
             for code in [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]}
-
-    **WARNING**: You CAN NOT have this settings by spider like::
-
-        SPIDERMON_UNWANTED_HTTP_CODES = {'my_spider': {400: 2, 500: 100}}
-
-    In order to have a different configuration per spider, please,
-    overwrite the ``custom_settings`` property of the Spider.
     """
     DEFAULT_ERROR_CODES = {
         code: 10
@@ -114,7 +90,7 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
 
     @monitors.name('Should not hit the limit of unwanted http status')
     def test_check_unwanted_http_codes(self):
-        error_codes = self.crawler.settings.get(
+        error_codes = self.crawler.settings.getdict(
             SPIDERMON_UNWANTED_HTTP_CODES, self.DEFAULT_ERROR_CODES)
         for code, max_errors in error_codes.items():
             code = int(code)
@@ -129,7 +105,7 @@ class SpiderCloseMonitorSuite(MonitorSuite):
     """This Monitor Suite implements the following monitors:
 
     * :class:`ItemCountMonitor`
-    * :class:`LogMonitor`
+    * :class:`ErrorCountMonitor`
     * :class:`FinishReasonMonitor`
     * :class:`UnwantedHTTPCodesMonitor`
 
@@ -141,7 +117,7 @@ class SpiderCloseMonitorSuite(MonitorSuite):
     """
     monitors = [
         ItemCountMonitor,
-        LogMonitor,
+        ErrorCountMonitor,
         FinishReasonMonitor,
         UnwantedHTTPCodesMonitor,
     ]

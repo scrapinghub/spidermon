@@ -4,7 +4,7 @@ from scrapy import Spider
 from scrapy.crawler import Crawler
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 from spidermon.contrib.scrapy.monitors import (
-    FinishReasonMonitor, ItemCountMonitor, LogMonitor,
+    FinishReasonMonitor, ItemCountMonitor, ErrorCountMonitor,
     UnwantedHTTPCodesMonitor,
     SPIDERMON_MIN_ITEMS, SPIDERMON_EXPECTED_FINISH_REASONS,
     SPIDERMON_MAX_ERRORS, SPIDERMON_UNWANTED_HTTP_CODES)
@@ -112,7 +112,7 @@ def test_log_monitor_should_fail(make_data):
     """ Log should fail if the # of error log messages exceed the limit """
     data = make_data()
     runner = data.pop('runner')
-    suite = new_suite([LogMonitor, ])
+    suite = new_suite([ErrorCountMonitor, ])
     data['stats']['log_count/ERROR'] = 2
     runner.run(suite, **data)
     assert('Found 2 errors in log' in runner.result.monitor_results[0].error)
@@ -123,7 +123,7 @@ def test_log_monitor_should_pass(make_data):
     exceed the limit """
     data = make_data({SPIDERMON_MAX_ERRORS: 50})
     runner = data.pop('runner')
-    suite = new_suite([LogMonitor, ])
+    suite = new_suite([ErrorCountMonitor, ])
     data['stats']['log_count/ERROR'] = 2
     runner.run(suite, **data)
     assert(runner.result.monitor_results[0].error is None)
