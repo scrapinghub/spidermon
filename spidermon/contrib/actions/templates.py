@@ -44,10 +44,10 @@ class ActionWithTemplates(six.with_metaclass(ActionWithTemplatesMetaclass, Actio
 
     def get_template_context(self):
         context = {
-            'result': self.result,
-            'data': self.data,
-            'monitors_passed': self.monitors_passed,
-            'monitors_failed': self.monitors_failed,
+            "result": self.result,
+            "data": self.data,
+            "monitors_passed": self.monitors_passed,
+            "monitors_failed": self.monitors_failed,
         }
         context.update(self.context)
         return context

@@ -5,30 +5,42 @@ MONITOR_DESCRIPTIONS = [
     # --------------------------------------------------------------
     # monitor class                 description
     # --------------------------------------------------------------
-    (NotDescriptedMonitor,          ''),
-    (DocstringDescriptedMonitor,    'docstring monitor description'),
-    (DescoratedDescriptedMonitor,   'decorator monitor description'),
-    (DescoratedDescriptedMonitor2,  'decorator monitor description'),
+    (NotDescriptedMonitor, ""),
+    (DocstringDescriptedMonitor, "docstring monitor description"),
+    (DescoratedDescriptedMonitor, "decorator monitor description"),
+    (DescoratedDescriptedMonitor2, "decorator monitor description"),
 ]
 
 SUITE_DESCRIPTIONS = [
     # --------------------------------------------------------------
     # suite class                   description
     # --------------------------------------------------------------
-    (NotDescriptedSuite,            ''),
-    (DocstringDescriptedSuite,      'docstring suite description'),
-    (DescoratedDescriptedSuite,     'decorator suite description'),
-    (DescoratedDescriptedSuite2,    'decorator suite description'),
+    (NotDescriptedSuite, ""),
+    (DocstringDescriptedSuite, "docstring suite description"),
+    (DescoratedDescriptedSuite, "decorator suite description"),
+    (DescoratedDescriptedSuite2, "decorator suite description"),
 ]
 
 METHOD_DESCRIPTIONS = [
     # ---------------------------------------------------------------------------------------------
     # monitor class                 method name                     description
     # ---------------------------------------------------------------------------------------------
-    (DescriptedMethodsMonitor,      'test_not_descripted',          ''),
-    (DescriptedMethodsMonitor,      'test_docstring_descripted',    'docstring method description'),
-    (DescriptedMethodsMonitor,      'test_decorator_descripted',    'decorator method description'),
-    (DescriptedMethodsMonitor,      'test_decorator_descripted2',   'decorator method description'),
+    (DescriptedMethodsMonitor, "test_not_descripted", ""),
+    (
+        DescriptedMethodsMonitor,
+        "test_docstring_descripted",
+        "docstring method description",
+    ),
+    (
+        DescriptedMethodsMonitor,
+        "test_decorator_descripted",
+        "decorator method description",
+    ),
+    (
+        DescriptedMethodsMonitor,
+        "test_decorator_descripted2",
+        "decorator method description",
+    ),
 ]
 
 

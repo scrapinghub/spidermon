@@ -16,19 +16,22 @@ def step_required_decorator(allowed_steps):
                 raise ValueError  # TO-DO
             else:
                 return fn(self, *args, **kwargs)
+
         return decorator
+
     return _step_required_decorator
+
 
 monitors_step_required = step_required_decorator(settings.STEPS.MONITOR_RELATED)
 actions_step_required = step_required_decorator(settings.STEPS.ACTION_RELATED)
 
 
 class MonitorResult(unittest.TestResult):
-
     def __init__(self):
         super(MonitorResult, self).__init__()
-        self._steps = OrderedDict([(step, self._get_step_class(step)(step))
-                                   for step in settings.STEPS.ALL])
+        self._steps = OrderedDict(
+            [(step, self._get_step_class(step)(step)) for step in settings.STEPS.ALL]
+        )
         self._current_step = None
 
     @property
@@ -41,7 +44,9 @@ class MonitorResult(unittest.TestResult):
 
     @property
     def monitors_passed_results(self):
-        return self._step_monitors.items_for_statuses(settings.MONITOR.STATUSES.SUCCESSFUL)
+        return self._step_monitors.items_for_statuses(
+            settings.MONITOR.STATUSES.SUCCESSFUL
+        )
 
     @property
     def monitors_failed_results(self):
@@ -70,7 +75,9 @@ class MonitorResult(unittest.TestResult):
         pass
 
     def next_step(self):
-        index = 0 if not self.step else list(self._steps.keys()).index(self.step.name)+1
+        index = (
+            0 if not self.step else list(self._steps.keys()).index(self.step.name) + 1
+        )
         self._current_step = list(self._steps.items())[index][1]
         self.step.start()
 

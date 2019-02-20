@@ -16,15 +16,16 @@ class NotDescriptedMonitor(BaseMonitor):
 
 class DocstringDescriptedMonitor(BaseMonitor):
     """docstring monitor description"""
+
     pass
 
 
-@monitors.description('decorator monitor description')
+@monitors.description("decorator monitor description")
 class DescoratedDescriptedMonitor(BaseMonitor):
     pass
 
 
-@monitors.description('decorator monitor description')
+@monitors.description("decorator monitor description")
 class DescoratedDescriptedMonitor2(BaseMonitor):
     """docstring monitor description"""
 
@@ -38,15 +39,16 @@ class NotDescriptedSuite(MonitorSuite):
 
 class DocstringDescriptedSuite(MonitorSuite):
     """docstring suite description"""
+
     pass
 
 
-@monitors.description('decorator suite description')
+@monitors.description("decorator suite description")
 class DescoratedDescriptedSuite(MonitorSuite):
     pass
 
 
-@monitors.description('decorator suite description')
+@monitors.description("decorator suite description")
 class DescoratedDescriptedSuite2(MonitorSuite):
     """docstring suite description"""
 
@@ -55,7 +57,6 @@ class DescoratedDescriptedSuite2(MonitorSuite):
 # Methods
 # ----------------------------------
 class DescriptedMethodsMonitor(Monitor):
-
     def test_not_descripted(self):
         pass
 
@@ -63,10 +64,10 @@ class DescriptedMethodsMonitor(Monitor):
         """docstring method description"""
         pass
 
-    @monitors.description('decorator method description')
+    @monitors.description("decorator method description")
     def test_decorator_descripted(self):
         pass
 
-    @monitors.description('decorator method description')
+    @monitors.description("decorator method description")
     def test_decorator_descripted2(self):
         """docstring method description"""

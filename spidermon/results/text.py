@@ -9,24 +9,23 @@ from .monitor import MonitorResult, monitors_step_required, actions_step_require
 
 DOTS = {
     # Monitors
-    settings.MONITOR.STATUS.SUCCESS: '.',
-    settings.MONITOR.STATUS.ERROR: 'E',
-    settings.MONITOR.STATUS.FAILURE: 'F',
-    settings.MONITOR.STATUS.SKIPPED: 's',
-    settings.MONITOR.STATUS.EXPECTED_FAILURE: 'x',
-    settings.MONITOR.STATUS.UNEXPECTED_SUCCESS: 'u',
-
+    settings.MONITOR.STATUS.SUCCESS: ".",
+    settings.MONITOR.STATUS.ERROR: "E",
+    settings.MONITOR.STATUS.FAILURE: "F",
+    settings.MONITOR.STATUS.SKIPPED: "s",
+    settings.MONITOR.STATUS.EXPECTED_FAILURE: "x",
+    settings.MONITOR.STATUS.UNEXPECTED_SUCCESS: "u",
     # Actions
-    settings.ACTION.STATUS.SUCCESS: '.',
-    settings.ACTION.STATUS.ERROR: 'E',
-    settings.ACTION.STATUS.SKIPPED: 's',
+    settings.ACTION.STATUS.SUCCESS: ".",
+    settings.ACTION.STATUS.ERROR: "E",
+    settings.ACTION.STATUS.SKIPPED: "s",
 }
 
 
 class TextMonitorResult(MonitorResult):
 
-    SEPARATOR_BOLD = '='
-    SEPARATOR_LIGHT = '-'
+    SEPARATOR_BOLD = "="
+    SEPARATOR_LIGHT = "-"
     LINE_LENGTH = 70
 
     def __init__(self, stream=sys.stderr, verbosity=1):
@@ -110,19 +109,19 @@ class TextMonitorResult(MonitorResult):
         self.stream.flush()
 
     def write_line_light(self):
-        self.write_line(self.SEPARATOR_LIGHT*self.LINE_LENGTH)
+        self.write_line(self.SEPARATOR_LIGHT * self.LINE_LENGTH)
 
     def write_line_bold(self):
-        self.write_line(self.SEPARATOR_BOLD*self.LINE_LENGTH)
+        self.write_line(self.SEPARATOR_BOLD * self.LINE_LENGTH)
 
     def write_title(self, title):
         self.write_line(line_title(title))
 
     def write_line(self, text=None):
-        self.write('%s\n' % (text or ''))
+        self.write("%s\n" % (text or ""))
 
     def write_run_status(self, text, extra=None):
-        self.write_line('%s%s' % (text, ' (%s)' % extra if extra else ''))
+        self.write_line("%s%s" % (text, " (%s)" % extra if extra else ""))
 
     def write_run_start(self, item):
         if self.show_all:
@@ -139,12 +138,14 @@ class TextMonitorResult(MonitorResult):
 
     def write_run_footer(self):
         self.write_line_light()
-        self.write_line("{count:d} {item_name}{plural_suffix} in {time:.3f}s".format(
-            count=self.step.number_of_items,
-            item_name=self.step.item_result_class.name,
-            plural_suffix='' if self.step.number_of_items == 1 else 's',
-            time=self.step.time_taken,
-        ))
+        self.write_line(
+            "{count:d} {item_name}{plural_suffix} in {time:.3f}s".format(
+                count=self.step.number_of_items,
+                item_name=self.step.item_result_class.name,
+                plural_suffix="" if self.step.number_of_items == 1 else "s",
+                time=self.step.time_taken,
+            )
+        )
         self.write_line()
 
     def write_errors(self):
@@ -152,16 +153,18 @@ class TextMonitorResult(MonitorResult):
         for status in self.step.error_statuses:
             for item in self.step.items_for_status(status):
                 self.write_line_bold()
-                self.write_line('%s: %s' % (item.status, item.item.name))
+                self.write_line("%s: %s" % (item.status, item.item.name))
                 self.write_line_light()
                 self.write_line(item.error)
                 self.write_line()
 
     def write_step_summary(self):
-        self.write('OK' if self.step.successful else 'FAILED')
+        self.write("OK" if self.step.successful else "FAILED")
         infos = self.step.get_infos()
         if infos and sum(infos.values()):
-            self.write_line(' (%s)' % ', '.join(['%s=%s' % (k, v) for k, v in infos.items() if v]))
+            self.write_line(
+                " (%s)" % ", ".join(["%s=%s" % (k, v) for k, v in infos.items() if v])
+            )
         else:
             self.write_line()
         self.write_line()

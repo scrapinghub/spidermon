@@ -3,7 +3,11 @@ import six
 
 import inspect
 
-from spidermon.exceptions import (InvalidMonitor, InvalidMonitorClass, InvalidMonitorTuple)
+from spidermon.exceptions import (
+    InvalidMonitor,
+    InvalidMonitorClass,
+    InvalidMonitorTuple,
+)
 from .monitors import Monitor
 from .actions import Action
 
@@ -12,6 +16,7 @@ class MonitorFactory(object):
     @classmethod
     def load_monitor(cls, monitor, name=None):
         from .suites import MonitorSuite
+
         if inspect.isclass(monitor):
             return cls.load_monitor_from_class(monitor_class=monitor, name=name)
         elif isinstance(monitor, tuple):
@@ -23,10 +28,14 @@ class MonitorFactory(object):
     @classmethod
     def load_monitor_from_class(cls, monitor_class, name=None):
         from .suites import MonitorSuite
+
         if issubclass(monitor_class, Monitor):
             from spidermon.loaders import MonitorLoader
+
             loader = MonitorLoader()
-            monitor = loader.load_suite_from_monitor(monitor_class=monitor_class, name=name)
+            monitor = loader.load_suite_from_monitor(
+                monitor_class=monitor_class, name=name
+            )
         elif issubclass(monitor_class, MonitorSuite):
             monitor = monitor_class(name=name)
         else:
@@ -44,21 +53,27 @@ class MonitorFactory(object):
 
     @classmethod
     def raise_invalid_monitor(cls):
-        raise InvalidMonitor('Wrong Monitor definition, it should be:\n'
-                             '- an instance of a Monitor/MonitorSuite object.\n'
-                             '- a subclass of Monitor/MonitorSuite.\n'
-                             '- a tuple with the format (name, monitor).\n'
-                             '- a string containing an evaluable python expression.')
+        raise InvalidMonitor(
+            "Wrong Monitor definition, it should be:\n"
+            "- an instance of a Monitor/MonitorSuite object.\n"
+            "- a subclass of Monitor/MonitorSuite.\n"
+            "- a tuple with the format (name, monitor).\n"
+            "- a string containing an evaluable python expression."
+        )
 
     @classmethod
     def raise_invalid_class(cls):
-        raise InvalidMonitorClass('Wrong Monitor class definition, it should be '
-                                  'an instance of a Monitor/MonitorSuite object.')
+        raise InvalidMonitorClass(
+            "Wrong Monitor class definition, it should be "
+            "an instance of a Monitor/MonitorSuite object."
+        )
 
     @classmethod
     def raise_invalid_tuple(cls):
-        raise InvalidMonitorTuple('Wrong Monitor tuple definition, it should be '
-                                  'a tuple with the format (name, monitor)')
+        raise InvalidMonitorTuple(
+            "Wrong Monitor tuple definition, it should be "
+            "a tuple with the format (name, monitor)"
+        )
 
 
 class ActionFactory(object):
@@ -74,23 +89,26 @@ class ActionFactory(object):
     def load_action_from_class(cls, action_class, crawler=None):
         if not issubclass(action_class, Action):
             cls.raise_invalid_class()
-        if crawler and hasattr(action_class, 'from_crawler'):
+        if crawler and hasattr(action_class, "from_crawler"):
             return action_class.from_crawler(crawler)
         else:
             return action_class()
 
-
     @classmethod
     def raise_invalid_action(cls):
         raise Exception
-        raise InvalidMonitor('Wrong Monitor definition, it should be:\n'
-                             '- an instance of a Monitor/MonitorSuite object.\n'
-                             '- a subclass of Monitor/MonitorSuite.\n'
-                             '- a tuple with the format (name, monitor).\n'
-                             '- a string containing an evaluable python expression.')
+        raise InvalidMonitor(
+            "Wrong Monitor definition, it should be:\n"
+            "- an instance of a Monitor/MonitorSuite object.\n"
+            "- a subclass of Monitor/MonitorSuite.\n"
+            "- a tuple with the format (name, monitor).\n"
+            "- a string containing an evaluable python expression."
+        )
 
     @classmethod
     def raise_invalid_class(cls):
         raise Exception
-        raise InvalidMonitorClass('Wrong Monitor class definition, it should be '
-                                  'an instance of a Monitor/MonitorSuite object.')
+        raise InvalidMonitorClass(
+            "Wrong Monitor class definition, it should be "
+            "an instance of a Monitor/MonitorSuite object."
+        )

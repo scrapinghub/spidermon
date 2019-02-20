@@ -3,12 +3,12 @@ import re
 from collections import defaultdict
 
 
-RE_PATTERN_INSTANCE = type(re.compile(''))
+RE_PATTERN_INSTANCE = type(re.compile(""))
 
 
 class Validator(object):
     default_translator = None
-    name = 'validator'
+    name = "validator"
 
     def __init__(self, translator=None, use_default_translator=True):
         self._errors = defaultdict(list)
@@ -36,9 +36,15 @@ class Validator(object):
         if not self._translator:
             return self._errors
         else:
-            return dict([(field_name, self._translator.translate_messages(messages))
-                         for field_name, messages in self._errors.items()])
+            return dict(
+                [
+                    (field_name, self._translator.translate_messages(messages))
+                    for field_name, messages in self._errors.items()
+                ]
+            )
 
     def _add_errors(self, errors):
         for field_name, messages in errors.items():
-            self._errors[field_name] += messages if isinstance(messages, list) else [messages]
+            self._errors[field_name] += (
+                messages if isinstance(messages, list) else [messages]
+            )

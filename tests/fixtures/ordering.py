@@ -50,7 +50,6 @@ class Ordered:
 # Methods ordering
 # ----------------------------------
 class UnorderedMethodsMonitor(Monitor):
-
     def test_a(self):
         pass
 
@@ -62,7 +61,6 @@ class UnorderedMethodsMonitor(Monitor):
 
 
 class OrderedMethodsMonitor(Monitor):
-
     @monitors.order(3)
     def test_a(self):
         pass
@@ -77,7 +75,6 @@ class OrderedMethodsMonitor(Monitor):
 
 
 class EqualOrderedMethodsMonitor(Monitor):
-
     @monitors.order(5)
     def test_a(self):
         pass
