@@ -6,6 +6,9 @@ Spidermon
     :target: https://travis-ci.org/scrapinghub/spidermon
     :alt: travis build status
 
+.. image:: https://img.shields.io/codecov/c/github/scrapinghub/spidermon.svg?style=flat
+    :alt: Codecov
+
 .. image:: https://img.shields.io/pypi/v/spidermon.svg
     :target: https://pypi.python.org/pypi/spidermon
     :alt: pypi version
@@ -17,7 +20,7 @@ Spidermon
 .. image:: https://img.shields.io/pypi/pyversions/spidermon.svg
     :target: https://pypi.python.org/pypi/spidermon
     :alt: python versions
-    
+
 Overview
 ========
 

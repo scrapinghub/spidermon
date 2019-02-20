@@ -8,5 +8,5 @@ schematics==2.1.0
 python-slugify==1.0.2
 strict-rfc3339==0.6
 scrapy==1.5.1
-pytest>=2.7.0
+sentry-sdk==0.6.7
 tox==2.9.1
