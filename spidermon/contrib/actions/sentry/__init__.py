@@ -101,6 +101,8 @@ class SendSentryMessage(Action):
         sentry_client = Client(dsn=self.sentry_dsn, environment=self.environment)
 
         with configure_scope() as scope:
+            scope.set_tag("project_name", self.project_name)
+
             scope.set_extra("job_link", message.get("job_link", ""))
             scope.set_extra("spider_name", message.get("spider_name", ""))
             scope.set_extra("items_count", message.get("items_count", 0))
