@@ -467,7 +467,7 @@ file as follows:
     SPIDERMON_SENTRY_PROJECT_NAME = '<PROJECT_NAME>'
     SPIDERMON_SENTRY_ENVIRONMENT_TYPE = '<ENVIRONMENT_TYPE>'
 
-A notification on _`Sentry` will look like the following one:
+A notification on `Sentry`_ will look like the following one:
 
 .. image:: /_static/sentry_notification.png
    :scale: 50 %
