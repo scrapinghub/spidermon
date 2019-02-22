@@ -771,10 +771,10 @@ def test_validation_error_on_model_level_validation():
         field_a = StringType()
 
         def validate_field_a(self, data, value):
-            raise ValidationError('Model-level validation failed.')
+            raise ValidationError("Model-level validation failed.")
 
     _test_data(
         model=TestModel,
-        data={'field_a': 'some_data'},
-        expected=(False, {'field_a': ['Model-level validation failed.']})
+        data={"field_a": "some_data"},
+        expected=(False, {"field_a": ["Model-level validation failed."]}),
     )
