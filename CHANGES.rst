@@ -9,6 +9,7 @@ Release notes
   results of Spidermon execution.
 - Add SPIDERMON_ENGINE_STOP_MONITORS setting to list monitors to be executed
   when the Scrapy engine is stopped.
+- Fix bug that prevented the use of custom model-level validators in schematics models.
 - Refactor JSONSchemaValidator to allow select different versions of JSON Schema.
 - Refactor requirements in setup.py to include missing required dependencies.
 - Fix example code of tutorial.
