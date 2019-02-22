@@ -93,20 +93,23 @@ class SchematicsValidator(Validator):
         This is necessary when using Schematics 2.*, because it encapsulates
         the validation error messages in a different way.
         """
-        from schematics.exceptions import BaseError
+        from schematics.exceptions import BaseError, ErrorMessage
         from schematics.datastructures import FrozenList
 
-        if not isinstance(messages, list):
+        if type(messages) not in (list, FrozenList):
             messages = [messages]
 
         clean_messages = []
         for message in messages:
             if isinstance(message, BaseError):
                 message = message.messages
-                if isinstance(message, FrozenList):
-                    for err in message:
-                        # err is an ErrorMessage object
-                        clean_messages.append(str(err))
+
+            if isinstance(message, ErrorMessage):
+                clean_messages.append(message.summary)
+            elif isinstance(message, FrozenList):
+                for err in message:
+                    # err is an ErrorMessage object
+                    clean_messages.append(err.summary)
             else:
                 clean_messages.append(message)
 

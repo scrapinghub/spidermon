@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import schematics
+from schematics.exceptions import ValidationError
 from schematics.models import Model
 from schematics.types import (
     StringType,
@@ -763,3 +764,17 @@ def _test_valid_invalid(model, valid, invalid, expected_error, expected_field="a
             data={expected_field: dt},
             expected=(False, {expected_field: [expected_error]}),
         )
+
+
+def test_validation_error_on_model_level_validation():
+    class TestModel(Model):
+        field_a = StringType()
+
+        def validate_field_a(self, data, value):
+            raise ValidationError("Model-level validation failed.")
+
+    _test_data(
+        model=TestModel,
+        data={"field_a": "some_data"},
+        expected=(False, {"field_a": ["Model-level validation failed."]}),
+    )
