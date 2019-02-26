@@ -27,6 +27,10 @@ Schematics_ is a validation library based on ORM-like models. These models inclu
 some common data types and validators, but they can also be extended to define
 custom validation rules.
 
+.. warning::
+
+   You need to install `schematics`_ to use this feature.
+
 .. code-block:: python
 
     # Usually placed in validators.py file
@@ -59,7 +63,7 @@ an example of a schema for the quotes item from the :doc:`tutorial </getting-sta
 .. code-block:: json
 
   {
-    "$schema": "http://json-schema.org/draft-04/schema",
+    "$schema": "http://json-schema.org/draft-07/schema",
     "type": "object",
     "properties": {
       "quote": {
@@ -82,13 +86,6 @@ an example of a schema for the quotes item from the :doc:`tutorial </getting-sta
       "author_url"
     ]
   }
-
-.. warning::
-
-   Stable version of `jsonschema`_ supports only **draft-3** and **draft-4**. You can
-   use `version 3.0.0`_ (still in beta) for **draft-6** and **draft-7**. It should
-   work without any change in your validators code, but it is not fully supported
-   by spidermon yet.
 
 Settings
 --------
