@@ -825,8 +825,19 @@ class MaxProperties(SchemaTest):
 
 
 class Maximum(SchemaTest):
+    # exclusiveMaximum behaviour changed from draft-04 to draft-06
+    # http://json-schema.org/draft-06/json-schema-release-notes.html#backwards-incompatible-changes
     schema = {"maximum": 3.0}
-    schema_exclusive = {"maximum": 3.0, "exclusiveMaximum": True}
+    draft4_schema_exclusive = {
+        "$schema": "http://json-schema.org/draft-04/schema",
+        "maximum": 3.0,
+        "exclusiveMaximum": True,
+    }
+    draft6_schema_exclusive = {
+        "$schema": "http://json-schema.org/draft-06/schema",
+        "exclusiveMaximum": 3.0,
+    }
+
     data_tests = [
         DataTest(name="below", data=2.6, valid=True),
         DataTest(
@@ -839,18 +850,41 @@ class Maximum(SchemaTest):
             name="ignores non-numbers", data={"foo": 1, "bar": 2, "baz": 3}, valid=True
         ),
         DataTest(
-            name="exclusive. below", schema=schema_exclusive, data=2.2, valid=True
+            name="draft4 exclusive. below",
+            schema=draft4_schema_exclusive,
+            data=2.2,
+            valid=True,
         ),
         DataTest(
-            name="exclusive. boundary point",
-            schema=schema_exclusive,
+            name="draft4_exclusive. boundary point",
+            schema=draft4_schema_exclusive,
             data=3.0,
             valid=False,
             expected_errors={"": [messages.NUMBER_TOO_HIGH]},
         ),
         DataTest(
-            name="exclusive. above",
-            schema=schema_exclusive,
+            name="draft4_exclusive. above",
+            schema=draft4_schema_exclusive,
+            data=3.5,
+            valid=False,
+            expected_errors={"": [messages.NUMBER_TOO_HIGH]},
+        ),
+        DataTest(
+            name="draft6 exclusive. below",
+            schema=draft6_schema_exclusive,
+            data=2.2,
+            valid=True,
+        ),
+        DataTest(
+            name="draft6_exclusive. boundary point",
+            schema=draft6_schema_exclusive,
+            data=3.0,
+            valid=False,
+            expected_errors={"": [messages.NUMBER_TOO_HIGH]},
+        ),
+        DataTest(
+            name="draft6_exclusive. above",
+            schema=draft6_schema_exclusive,
             data=3.5,
             valid=False,
             expected_errors={"": [messages.NUMBER_TOO_HIGH]},
@@ -889,8 +923,19 @@ class MinProperties(SchemaTest):
 
 
 class Minimum(SchemaTest):
+    # exclusiveMinimum behaviour changed from draft-04 to draft-06
+    # http://json-schema.org/draft-06/json-schema-release-notes.html#backwards-incompatible-changes
     schema = {"minimum": 1.1}
-    schema_exclusive = {"minimum": 1.1, "exclusiveMinimum": True}
+    draft4_schema_exclusive = {
+        "$schema": "http://json-schema.org/draft-04/schema",
+        "minimum": 1.1,
+        "exclusiveMinimum": True,
+    }
+    draft6_schema_exclusive = {
+        "$schema": "http://json-schema.org/draft-06/schema",
+        "exclusiveMinimum": 1.1,
+    }
+
     data_tests = [
         DataTest(name="above", data=2.6, valid=True),
         DataTest(
@@ -901,18 +946,41 @@ class Minimum(SchemaTest):
         ),
         DataTest(name="ignores non-numbers", data="x", valid=True),
         DataTest(
-            name="exclusive. above", schema=schema_exclusive, data=1.2, valid=True
+            name="exclusive. above",
+            schema=draft4_schema_exclusive,
+            data=1.2,
+            valid=True,
         ),
         DataTest(
-            name="exclusive. boundary point",
-            schema=schema_exclusive,
+            name="exclusive. above",
+            schema=draft6_schema_exclusive,
+            data=1.2,
+            valid=True,
+        ),
+        DataTest(
+            name="draft4 exclusive. boundary point",
+            schema=draft4_schema_exclusive,
             data=1.1,
             valid=False,
             expected_errors={"": [messages.NUMBER_TOO_LOW]},
         ),
         DataTest(
-            name="exclusive. below",
-            schema=schema_exclusive,
+            name="draft6 exclusive. boundary point",
+            schema=draft6_schema_exclusive,
+            data=1.1,
+            valid=False,
+            expected_errors={"": [messages.NUMBER_TOO_LOW]},
+        ),
+        DataTest(
+            name="draft4 exclusive. below",
+            schema=draft4_schema_exclusive,
+            data=0.6,
+            valid=False,
+            expected_errors={"": [messages.NUMBER_TOO_LOW]},
+        ),
+        DataTest(
+            name="draft6 exclusive. below",
+            schema=draft6_schema_exclusive,
             data=0.6,
             valid=False,
             expected_errors={"": [messages.NUMBER_TOO_LOW]},
