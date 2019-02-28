@@ -27,6 +27,10 @@ Schematics_ is a validation library based on ORM-like models. These models inclu
 some common data types and validators, but they can also be extended to define
 custom validation rules.
 
+.. warning::
+
+   You need to install `schematics`_ to use this feature.
+
 .. code-block:: python
 
     # Usually placed in validators.py file
