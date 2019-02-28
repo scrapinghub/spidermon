@@ -12,7 +12,9 @@ Release notes
 - Fix bug that prevented the use of custom model-level validators in schematics models.
 - Refactor JSONSchemaValidator to allow select different versions of JSON Schema.
 - Refactor requirements in setup.py to include missing required dependencies.
+- Fix bug caused by backward incompatible change in jsonschema 3.0.0
 - Fix example code of tutorial.
+- Install documentation improvements.
 
 1.8.0 (2019-01-08)
 ------------------
