@@ -133,7 +133,7 @@ Here is an example of how to configure a new monitor suite in your project:
 The Basic Monitors
 ------------------
 
-Spidermon have some batteries included :)
+Spidermon has some batteries included :)
 
 .. automodule:: spidermon.contrib.scrapy.monitors
     :members: FinishReasonMonitor, ItemCountMonitor, LogMonitor, UnwantedHTTPCodesMonitor,
