@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from unittest import TestCase
+from unittest import mock, TestCase
 from slugify import slugify
 from scrapy.utils.test import get_crawler
 from scrapy import Item
@@ -82,7 +82,9 @@ def assert_type_in_stats(validator_type, obj):
     )
 
 
+@mock.patch("spidermon.utils.web.get_contents")
 class PipelineJSONSchemaValidator(PipelineTest):
+    spidermon.contrib.scrapy.pipelines.web.get_contents.return_value = test_schema
     assert_type_in_stats = partial(assert_type_in_stats, "jsonschema")
 
     data_tests = [
@@ -164,6 +166,21 @@ class PipelineJSONSchemaValidator(PipelineTest):
             settings={
                 SETTING_SCHEMAS: {
                     TestItem: "tests.fixtures.validators.test_schema_string"
+                }
+            },
+            cases=[
+                assert_type_in_stats(TestItem),
+                "'{}' in {{stats}}".format(STATS_ITEM_ERRORS),
+            ],
+        ),
+        DataTest(
+            name="validator is {} type, loads from url to a JSON string".format(
+                TestItem.__name__
+            ),
+            item=TestItem(),
+            settings={
+                SETTING_SCHEMAS: {
+                    TestItem: "tests.fixtures.validators.test_schema_from_url"
                 }
             },
             cases=[

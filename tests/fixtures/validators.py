@@ -28,3 +28,5 @@ test_schema = {
 }
 
 test_schema_string = json.dumps(test_schema)
+
+test_schema_from_url = "https://fixtures.com/testschema.json"

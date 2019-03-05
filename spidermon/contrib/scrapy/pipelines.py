@@ -11,6 +11,7 @@ from scrapy import Field, Item
 from scrapy.utils.python import to_native_str
 
 from spidermon.contrib.validation import SchematicsValidator, JSONSchemaValidator
+from spidermon.utils import web
 from schematics.models import Model
 
 from .stats import ValidationStatsManager
@@ -84,7 +85,9 @@ class ItemValidationPipeline(object):
     @classmethod
     def _load_jsonschema_validator(cls, schema):
         if isinstance(schema, six.string_types):
-            if schema.endswith(".json"):
+            if web.is_url(schema):
+                schema = json.loads(web.get_contents(schema))
+            elif schema.endswith(".json"):
                 with open(schema, "r") as f:
                     schema = json.load(f)
             else:
