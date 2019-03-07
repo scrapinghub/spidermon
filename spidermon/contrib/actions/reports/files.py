@@ -16,9 +16,7 @@ class CreateFileReport(CreateReport):
     @classmethod
     def from_crawler_kwargs(cls, crawler):
         kwargs = super(CreateFileReport, cls).from_crawler_kwargs(crawler)
-        kwargs.update({
-            'filename': crawler.settings.get('SPIDERMON_REPORT_FILENAME'),
-        })
+        kwargs.update({"filename": crawler.settings.get("SPIDERMON_REPORT_FILENAME")})
         return kwargs
 
     def after_render_report(self):

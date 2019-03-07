@@ -13,7 +13,7 @@ REQUIRED_RE = re.compile("'(.+)' is a required property")
 
 class JSONSchemaValidator(Validator):
     default_translator = JSONSchemaMessageTranslator()
-    name = 'JSONSchema'
+    name = "JSONSchema"
 
     def __init__(self, schema, translator=None, use_default_translator=True):
         super(JSONSchemaValidator, self).__init__(
@@ -31,5 +31,5 @@ class JSONSchemaValidator(Validator):
             required_match = REQUIRED_RE.search(error.message)
             if required_match:
                 absolute_path.append(required_match.group(1))
-            field_name = '.'.join([str(p) for p in absolute_path])
+            field_name = ".".join([str(p) for p in absolute_path])
             self._add_errors({field_name: [error.message]})

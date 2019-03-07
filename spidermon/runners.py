@@ -9,10 +9,8 @@ from spidermon.data import Data
 
 
 class MonitorRunner(object):
-    data_immutable_dicts = ['stats']
-    data_default_data = {
-        'meta': {},
-    }
+    data_immutable_dicts = ["stats"]
+    data_default_data = {"meta": {}}
 
     def __init__(self):
         self.suite = None
@@ -21,14 +19,14 @@ class MonitorRunner(object):
 
     def run(self, suite, **data):
         if not isinstance(suite, MonitorSuite):
-            raise InvalidMonitor('Runners must receive a MonitorSuite instance')
+            raise InvalidMonitor("Runners must receive a MonitorSuite instance")
         self.suite = suite
         data = dict(self.data_default_data, **data)
         self.data = self.transform_data(**data)
         self.suite.init_data(self.data)
         self.result = self.create_result()
         if not isinstance(self.result, MonitorResult):
-            raise InvalidResult('Runners must use a MonitorResult instance')
+            raise InvalidResult("Runners must use a MonitorResult instance")
         return self.run_suite()
 
     def transform_data(self, **data):
@@ -66,8 +64,8 @@ class MonitorRunner(object):
             self.run_monitors_passed()
         else:
             self.result.skip_all_step_actions(
-                actions=self.suite.monitors_passed_actions,
-                reason='A Monitor failed')
+                actions=self.suite.monitors_passed_actions, reason="A Monitor failed"
+            )
         self.result.finish_step()
 
         # Run monitors failed actions
@@ -76,8 +74,8 @@ class MonitorRunner(object):
             self.run_monitors_failed()
         else:
             self.result.skip_all_step_actions(
-                actions=self.suite.monitors_failed_actions,
-                reason='No Monitors failed')
+                actions=self.suite.monitors_failed_actions, reason="No Monitors failed"
+            )
         self.result.finish_step()
 
     def run_monitors_finished(self):

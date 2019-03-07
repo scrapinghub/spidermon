@@ -16,4 +16,3 @@ class MessageTranslator(object):
             if pattern.search(message):
                 return self.messages[target_message]  # TO-DO: Add substitution?
         return message
-

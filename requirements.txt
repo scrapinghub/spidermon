@@ -3,10 +3,13 @@ Jinja2==2.7.3
 slackclient==1.0.0
 boto==2.39.0
 premailer==2.9.2
-jsonschema==2.6.0
+jsonschema==3.0.0
 schematics==2.1.0
 python-slugify==1.0.2
 strict-rfc3339==0.6
 scrapy==1.5.1
-sentry-sdk==0.6.7
+pytest>=2.7.0
+pytest-cov
 tox==2.9.1
+sentry-sdk==0.6.7
+black; python_version >= '3.6'

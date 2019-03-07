@@ -23,14 +23,23 @@ class SendEmail(ActionWithTemplates):
     body_html_template = None
     fake = False
 
-    def __init__(self,
-                 sender,
-                 to, cc=None, bcc=None, reply_to=None,
-                 subject=None, subject_template=None,
-                 body_text=None, body_text_template=None,
-                 body_html=None, body_html_template=None,
-                 fake=None,
-                 *args, **kwargs):
+    def __init__(
+        self,
+        sender,
+        to,
+        cc=None,
+        bcc=None,
+        reply_to=None,
+        subject=None,
+        subject_template=None,
+        body_text=None,
+        body_text_template=None,
+        body_html=None,
+        body_html_template=None,
+        fake=None,
+        *args,
+        **kwargs
+    ):
         super(SendEmail, self).__init__(*args, **kwargs)
         self.sender = sender or self.sender
         self.subject = subject or self.subject
@@ -45,28 +54,34 @@ class SendEmail(ActionWithTemplates):
         self.body_html_template = body_html_template or self.body_html_template
         self.fake = fake or self.fake
         if not self.fake and not self.to:
-            raise NotConfigured("You must provide at least one recipient for the message.")
+            raise NotConfigured(
+                "You must provide at least one recipient for the message."
+            )
         if not self.subject:
             raise NotConfigured("You must provide a subject for the message.")
-        if not (self.body_text or body_text_template or body_html or self.body_html_template):
+        if not (
+            self.body_text or body_text_template or body_html or self.body_html_template
+        ):
             raise NotConfigured("You must provide a body for the message.")
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
         return {
-            'sender': crawler.settings.get('SPIDERMON_EMAIL_SENDER'),
-            'subject': crawler.settings.get('SPIDERMON_EMAIL_SUBJECT'),
-            'subject_template': crawler.settings.get('SPIDERMON_EMAIL_SUBJECT_TEMPLATE'),
-            'to': crawler.settings.get('SPIDERMON_EMAIL_TO'),
-            'cc': crawler.settings.get('SPIDERMON_EMAIL_CC'),
-            'bcc': crawler.settings.get('SPIDERMON_EMAIL_BCC'),
-            'reply_to': crawler.settings.get('SPIDERMON_EMAIL_REPLY_TO'),
-            'body_text': crawler.settings.get('SPIDERMON_BODY_TEXT'),
-            'body_text_template': crawler.settings.get('SPIDERMON_BODY_TEXT_TEMPLATE'),
-            'body_html': crawler.settings.get('SPIDERMON_BODY_HTML'),
-            'body_html_template': crawler.settings.get('SPIDERMON_BODY_HTML_TEMPLATE'),
-            'fake': crawler.settings.getbool('SPIDERMON_EMAIL_FAKE'),
-            'context': crawler.settings.getdict('SPIDERMON_EMAIL_CONTEXT'),
+            "sender": crawler.settings.get("SPIDERMON_EMAIL_SENDER"),
+            "subject": crawler.settings.get("SPIDERMON_EMAIL_SUBJECT"),
+            "subject_template": crawler.settings.get(
+                "SPIDERMON_EMAIL_SUBJECT_TEMPLATE"
+            ),
+            "to": crawler.settings.get("SPIDERMON_EMAIL_TO"),
+            "cc": crawler.settings.get("SPIDERMON_EMAIL_CC"),
+            "bcc": crawler.settings.get("SPIDERMON_EMAIL_BCC"),
+            "reply_to": crawler.settings.get("SPIDERMON_EMAIL_REPLY_TO"),
+            "body_text": crawler.settings.get("SPIDERMON_BODY_TEXT"),
+            "body_text_template": crawler.settings.get("SPIDERMON_BODY_TEXT_TEMPLATE"),
+            "body_html": crawler.settings.get("SPIDERMON_BODY_HTML"),
+            "body_html_template": crawler.settings.get("SPIDERMON_BODY_HTML_TEMPLATE"),
+            "fake": crawler.settings.getbool("SPIDERMON_EMAIL_FAKE"),
+            "context": crawler.settings.getdict("SPIDERMON_EMAIL_CONTEXT"),
         }
 
     def run_action(self):
@@ -74,9 +89,9 @@ class SendEmail(ActionWithTemplates):
         if not self.fake:
             self.send_message(message)
         else:
-            print('-'*40)
+            print("-" * 40)
             print(message.as_string())
-            print('-'*40)
+            print("-" * 40)
 
     def get_subject(self):
         if self.subject:
@@ -84,7 +99,7 @@ class SendEmail(ActionWithTemplates):
         elif self.subject_template:
             return self.render_template(self.subject_template)
         else:
-            return ''
+            return ""
 
     def get_body_text(self):
         if self.body_text:
@@ -92,10 +107,10 @@ class SendEmail(ActionWithTemplates):
         elif self.body_text_template:
             return self.render_template(self.body_text_template)
         else:
-            return ''
+            return ""
 
     def get_body_html(self):
-        html = ''
+        html = ""
         if self.body_html:
             html = transform(self.render_text_template(self.body_html))
         elif self.body_html_template:
@@ -107,22 +122,22 @@ class SendEmail(ActionWithTemplates):
         body_text = self.get_body_text()
         body_html = self.get_body_html()
 
-        message = MIMEMultipart('alternative')
-        message.set_charset('UTF-8')
+        message = MIMEMultipart("alternative")
+        message.set_charset("UTF-8")
 
-        message['Subject'] = subject
-        message['From'] = self.sender
-        message['To'] = self._format_recipients(self.to)
+        message["Subject"] = subject
+        message["From"] = self.sender
+        message["To"] = self._format_recipients(self.to)
         if self.cc:
-            message['Cc'] = self._format_recipients(self.cc)
+            message["Cc"] = self._format_recipients(self.cc)
         if self.bcc:
-            message['Bcc'] = self._format_recipients(self.bcc)
+            message["Bcc"] = self._format_recipients(self.bcc)
         if self.reply_to:
-            message['reply-to'] = self.reply_to
+            message["reply-to"] = self.reply_to
 
-        message.attach(MIMEText(body_text, 'plain'))
+        message.attach(MIMEText(body_text, "plain"))
         if body_html:
-            message.attach(MIMEText(body_html, 'html'))
+            message.attach(MIMEText(body_html, "html"))
 
         return message
 
@@ -131,6 +146,6 @@ class SendEmail(ActionWithTemplates):
 
     def _format_recipients(self, recipients):
         if isinstance(recipients, (list, tuple)):
-            return ', '.join(recipients)
+            return ", ".join(recipients)
         else:
             return recipients

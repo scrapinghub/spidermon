@@ -29,11 +29,12 @@ def monkeypatch_listtype():
         try:
             return list(value)
         except Exception as e:
-            raise ConversionError('Invalid list')
+            raise ConversionError("Invalid list")
+
     ListType._force_list = _force_list
 
 
 # Apply monkeypatches
-if schematics.__version__.startswith('1.'):
+if schematics.__version__.startswith("1."):
     monkeypatch_urltype()
     monkeypatch_listtype()
