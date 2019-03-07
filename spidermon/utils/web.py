@@ -8,7 +8,7 @@ else:
     from urllib import urlopen
 
 
-def is_url(path):
+def is_schema_url(path):
     result = urlparse(path)
     try:
         if all([result.scheme, result.netloc, result.path]):

@@ -85,7 +85,7 @@ class ItemValidationPipeline(object):
     @classmethod
     def _load_jsonschema_validator(cls, schema):
         if isinstance(schema, six.string_types):
-            if web.is_url(schema):
+            if web.is_schema_url(schema):
                 schema = json.loads(web.get_contents(schema))
             elif schema.endswith(".json"):
                 with open(schema, "r") as f:
