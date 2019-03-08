@@ -36,7 +36,7 @@ def test_spider_opened_suites_should_run(get_crawler, suites):
     spidermon.spider_opened_suites[0].run = mock.MagicMock()
     spidermon.spider_opened(crawler.spider)
     assert spidermon.spider_opened_suites[0].__class__.__name__ == "Suite01"
-    assert spidermon.spider_opened_suites[0].run.called
+    spidermon.spider_opened_suites[0].run.assert_called_once_with(mock.ANY)
 
 
 def test_spider_closed_suites_should_run(get_crawler, suites):
@@ -49,7 +49,7 @@ def test_spider_closed_suites_should_run(get_crawler, suites):
     spidermon.spider_opened(crawler.spider)
     spidermon.spider_closed(crawler.spider)
     assert spidermon.spider_closed_suites[0].__class__.__name__ == "Suite01"
-    assert spidermon.spider_closed_suites[0].run.called
+    spidermon.spider_closed_suites[0].run.assert_called_once_with(mock.ANY)
 
 
 def test_engine_stopped_suites_should_run(get_crawler, suites):
@@ -59,7 +59,7 @@ def test_engine_stopped_suites_should_run(get_crawler, suites):
     spidermon.engine_stopped_suites[0].run = mock.MagicMock()
     spidermon.engine_stopped()
     assert spidermon.engine_stopped_suites[0].__class__.__name__ == "Suite01"
-    assert spidermon.engine_stopped_suites[0].run.called
+    spidermon.engine_stopped_suites[0].run.assert_called_once_with(mock.ANY)
 
 
 def test_spider_opened_suites_should_run_from_signal(get_crawler, suites):
@@ -69,7 +69,7 @@ def test_spider_opened_suites_should_run_from_signal(get_crawler, suites):
     spidermon = Spidermon.from_crawler(crawler)
     spidermon.spider_opened_suites[0].run = mock.MagicMock()
     crawler.signals.send_catch_log(signal=signals.spider_opened, spider=crawler.spider)
-    assert spidermon.spider_opened_suites[0].run.called
+    spidermon.spider_opened_suites[0].run.assert_called_once_with(mock.ANY)
 
 
 def test_spider_closed_suites_should_run_from_signal(get_crawler, suites):
@@ -79,7 +79,7 @@ def test_spider_closed_suites_should_run_from_signal(get_crawler, suites):
     spidermon = Spidermon.from_crawler(crawler)
     spidermon.spider_closed_suites[0].run = mock.MagicMock()
     crawler.signals.send_catch_log(signal=signals.spider_closed, spider=crawler.spider)
-    assert spidermon.spider_closed_suites[0].run.called
+    spidermon.spider_closed_suites[0].run.assert_called_once_with(mock.ANY)
 
 
 def test_engine_stopped_suites_should_run_from_signal(get_crawler, suites):
@@ -89,4 +89,4 @@ def test_engine_stopped_suites_should_run_from_signal(get_crawler, suites):
     spidermon = Spidermon.from_crawler(crawler)
     spidermon.engine_stopped_suites[0].run = mock.MagicMock()
     crawler.signals.send_catch_log(signal=signals.engine_stopped, spider=crawler.spider)
-    assert spidermon.engine_stopped_suites[0].run.called
+    spidermon.engine_stopped_suites[0].run.assert_called_once_with(mock.ANY)
