@@ -2,6 +2,8 @@ from __future__ import absolute_import
 
 import logging
 
+logger = logging.getLogger(__name__)
+
 from sentry_sdk import configure_scope
 from sentry_sdk.client import Client
 
@@ -50,10 +52,10 @@ class SendSentryMessage(Action):
 
     def run_action(self):
         message = self.get_message()
-        if not self.fake:
-            self.send_message(message)
+        if self.fake:
+            logger.info(message)
         else:
-            logging.info(message)
+            self.send_message(message)
 
     def get_title(self):
         return "{project_name} | {environment} | Spider {spider_name} notification".format(
@@ -126,6 +128,6 @@ class SendSentryMessage(Action):
                 },
                 scope=scope,
             )
-        logging.info("Notification sent to the sentry dashboard!!")
+        logger.info("Notification sent to the sentry dashboard!!")
 
         sentry_client.close()
