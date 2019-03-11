@@ -1,7 +1,7 @@
 Release notes
 =============
 
-1.9.0 (2019-xx-xx)
+1.9.0 (2019-03-11)
 
 - Add set of built-in basic monitors with the most common test methods to allow
   start monitoring spiders more straightforward.
@@ -12,7 +12,7 @@ Release notes
 - Fix bug that prevented the use of custom model-level validators in schematics models.
 - Refactor JSONSchemaValidator to allow select different versions of JSON Schema.
 - Refactor requirements in setup.py to include missing required dependencies.
-- Fix bug caused by backward incompatible change in jsonschema 3.0.0
+- Fix bug caused by backward incompatible change in jsonschema 3.0.0.
 - Fix example code of tutorial.
 - Install documentation improvements.
 
