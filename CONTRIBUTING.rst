@@ -109,6 +109,6 @@ Before you submit a pull request, check that it meets these guidelines:
    it done.
 
 .. _`Type: Bug`: https://github.com/scrapinghub/spidermon/labels/Type%3A%20Bug
-.. _`Type: Enhancement` https://github.com/scrapinghub/spidermon/labels/Type%3A%20Enhancement
-.. _`Type: Docs` https://github.com/scrapinghub/spidermon/labels/Type%3A%20Docs
-.. _`official Spidermon` http://spidermon.readthedocs.io/
+.. _`Type: Enhancement`: https://github.com/scrapinghub/spidermon/labels/Type%3A%20Enhancement
+.. _`Type: Docs`: https://github.com/scrapinghub/spidermon/labels/Type%3A%20Docs
+.. _`official Spidermon`: http://spidermon.readthedocs.io/
