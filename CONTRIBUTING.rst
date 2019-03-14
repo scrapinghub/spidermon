@@ -38,10 +38,10 @@ Spidermon could always have more documentation, whether as part of the
 `official Spidermon`_ docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
-Anything tagged with `Type: Docs`_ indicates some feature of Spidermon that
-we identified as needibg more docs and is open to whoever wants to implement it,
+Anything tagged with `Type: Docs`_ indicates some feature of Spidermon we
+identified needing more docs and is open to whoever wants to implement it,
 
-Don't be limited to these issues if you believe that other parts needs to be
+Don't be limited to these issues if you believe that other parts need to be
 better documented or fixed.
 
 Submit Feedback and Propose New Features
@@ -85,13 +85,18 @@ including testing other Python versions with tox::
     $ pip install -r requirements-test.txt
     $ tox
 
-6. Commit your changes and push your branch to GitHub::
+6. Make sure that your code is correctly formatted using `black`_ . No code will
+   be merged without this step::
+
+  $ black .
+
+7. Commit your changes and push your branch to GitHub::
 
     $ git add .
     $ git commit -m "Your detailed description of your changes."
     $ git push origin name-of-your-bugfix-or-feature
 
-7. Submit a pull request through the GitHub website.
+8. Submit a pull request through the GitHub website.
 
 Pull Request Guidelines
 -----------------------
@@ -112,3 +117,4 @@ Before you submit a pull request, check that it meets these guidelines:
 .. _`Type: Enhancement`: https://github.com/scrapinghub/spidermon/labels/Type%3A%20Enhancement
 .. _`Type: Docs`: https://github.com/scrapinghub/spidermon/labels/Type%3A%20Docs
 .. _`official Spidermon`: http://spidermon.readthedocs.io/
+.. _`black`: https://pypi.org/project/black/
