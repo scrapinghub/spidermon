@@ -3,9 +3,7 @@ Contributing
 ============
 
 Contributions are always welcome, and they are greatly appreciated! Every little
-bit helps, and credit will always be given.
-
-You can contribute in many ways:
+bit helps, and credit will always be given. You can contribute in many ways:
 
 Types of Contributions
 ----------------------
@@ -24,14 +22,14 @@ If you are reporting a bug, please include:
 Fix Bugs
 ~~~~~~~~
 
-Look through the GitHub issues for bugs. Anything tagged with "`Type: Bug`_" is
+Look through the GitHub issues for bugs. Anything tagged with `Type: Bug`_ is
 open to whoever wants to implement it.
 
 Implement Features
 ~~~~~~~~~~~~~~~~~~
 
 Look through the GitHub issues for features. Anything tagged with
-"`Type: Enhancement`_" is open to whoever wants to implement it.
+`Type: Enhancement`_ is open to whoever wants to implement it.
 
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
@@ -40,7 +38,7 @@ Spidermon could always have more documentation, whether as part of the
 `official Spidermon`_ docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
-Anything tagged with "`Type: Docs`_" indicates some feature of Spidermon that
+Anything tagged with `Type: Docs`_ indicates some feature of Spidermon that
 we identified as needibg more docs and is open to whoever wants to implement it,
 
 Don't be limited to these issues if you believe that other parts needs to be
