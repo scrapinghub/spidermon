@@ -1,6 +1,21 @@
 Release notes
 =============
 
+1.9.0 (2019-03-11)
+
+- Add set of built-in basic monitors with the most common test methods to allow
+  start monitoring spiders more straightforward.
+- Add SendSentryMessage action to send notifications to Sentry containing the
+  results of Spidermon execution.
+- Add SPIDERMON_ENGINE_STOP_MONITORS setting to list monitors to be executed
+  when the Scrapy engine is stopped.
+- Fix bug that prevented the use of custom model-level validators in schematics models.
+- Refactor JSONSchemaValidator to allow select different versions of JSON Schema.
+- Refactor requirements in setup.py to include missing required dependencies.
+- Fix bug caused by backward incompatible change in jsonschema 3.0.0.
+- Fix example code of tutorial.
+- Install documentation improvements.
+
 1.8.0 (2019-01-08)
 ------------------
 

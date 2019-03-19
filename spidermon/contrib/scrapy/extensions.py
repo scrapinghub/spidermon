@@ -18,8 +18,10 @@ class Spidermon(object):
         crawler,
         spider_opened_suites=None,
         spider_closed_suites=None,
+        engine_stopped_suites=None,
         spider_opened_expression_suites=None,
         spider_closed_expression_suites=None,
+        engine_stopped_expression_suites=None,
         expressions_monitor_class=None,
         periodic_suites=None,
     ):
@@ -42,6 +44,10 @@ class Spidermon(object):
             self.load_expression_suite(s, expressions_monitor_class)
             for s in spider_closed_expression_suites or []
         ]
+
+        self.engine_stopped_suites = [self.load_suite(s) for s in engine_stopped_suites or []]
+        self.engine_stopped_suites += [self.load_expression_suite(s, expressions_monitor_class)
+                                       for s in engine_stopped_expression_suites or []]
 
         self.periodic_suites = periodic_suites or {}
         self.periodic_tasks = {}
@@ -77,11 +83,17 @@ class Spidermon(object):
             spider_closed_suites=crawler.settings.getlist(
                 "SPIDERMON_SPIDER_CLOSE_MONITORS"
             ),
+            engine_stopped_suites=crawler.settings.getlist(
+                "SPIDERMON_ENGINE_STOP_MONITORS"
+            ),
             spider_opened_expression_suites=crawler.settings.getlist(
                 "SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS"
             ),
             spider_closed_expression_suites=crawler.settings.getlist(
                 "SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS"
+            ),
+            engine_stopped_expression_suites=crawler.settings.getlist(
+                "SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS"
             ),
             expressions_monitor_class=crawler.settings.get(
                 "SPIDERMON_EXPRESSIONS_MONITOR_CLASS"
@@ -90,6 +102,7 @@ class Spidermon(object):
         )
         crawler.signals.connect(ext.spider_opened, signal=signals.spider_opened)
         crawler.signals.connect(ext.spider_closed, signal=signals.spider_closed)
+        crawler.signals.connect(ext.engine_stopped, signal=signals.engine_stopped)
         return ext
 
     def spider_opened(self, spider):
@@ -104,6 +117,10 @@ class Spidermon(object):
         self._run_suites(spider, self.spider_closed_suites)
         for task in self.periodic_tasks[spider]:
             task.stop()
+
+    def engine_stopped(self):
+        spider = self.crawler.spider
+        self._run_suites(spider, self.engine_stopped_suites)
 
     def _run_periodic_suites(self, spider, suites):
         suites = [self.load_suite(s) for s in suites]
