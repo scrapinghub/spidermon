@@ -1,11 +1,7 @@
 import sys
-
-if sys.version_info[0] == 3:
-    from urllib.parse import urlparse
-    from urllib.request import urlopen
-else:
-    from urlparse import urlparse
-    from urllib import urlopen
+import logging
+from six.moves.urllib.parse import urlparse
+from six.moves.urllib.request import urlopen
 
 
 def is_schema_url(path):
@@ -19,5 +15,8 @@ def is_schema_url(path):
 
 
 def get_contents(url):
-    with urlopen(url) as f:
-        return f.read().decode("utf-8")
+    try:
+        with urlopen(url) as f:
+            return f.read().decode("utf-8")
+    except Exception as e:
+        logging.exception(str(e) + "\nFailed to get '{}'".format(url))
