@@ -21,7 +21,7 @@ def get_schema_from(source):
                 return json.load(f)
             except Exception as e:
                 logging.exception(
-                    str(e) + "\nCould not parse schema from '{}'".format(source)
+                    str(e) + "\nCould not parse schema in '{}'".format(source)
                 )
     else:
         schema = load_object(source)
