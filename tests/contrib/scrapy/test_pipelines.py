@@ -215,20 +215,19 @@ class PipelineJSONSchemaValidator(PipelineTest):
 @pytest.mark.skipif(
     sys.version_info < (3, 4), reason="mock requires python3.4 or higher"
 )
-def test_validator_from_url():
-    from unittest import mock
-
-    with mock.patch("spidermon.utils.web.get_contents") as mocked_get_contents:
-        mocked_get_contents.return_value = test_schema_string
-        settings = {SETTING_SCHEMAS: {TestItem: "https://fixtures.com/testschema.json"}}
-        test_item = TestItem()
-        crawler = get_crawler(settings_dict=settings)
-        pipe = ItemValidationPipeline.from_crawler(crawler)
-        pipe.process_item(test_item, None)
-        kwargs = {"stats": "pipe.stats.stats.get_stats()"}
-        stats = pipe.stats.stats.get_stats()
-        assert "spidermon/validation/items/errors" in stats
-        assert stats.get("spidermon/validation/validators/testitem/jsonschema", False)
+def test_validator_from_url(mocker):
+    mocked_get_contents = mocker.patch(
+        "spidermon.utils.web.get_contents", return_value=test_schema_string
+    )
+    settings = {SETTING_SCHEMAS: {TestItem: "https://fixtures.com/testschema.json"}}
+    test_item = TestItem()
+    crawler = get_crawler(settings_dict=settings)
+    pipe = ItemValidationPipeline.from_crawler(crawler)
+    pipe.process_item(test_item, None)
+    kwargs = {"stats": "pipe.stats.stats.get_stats()"}
+    stats = pipe.stats.stats.get_stats()
+    assert "spidermon/validation/items/errors" in stats
+    assert stats.get("spidermon/validation/validators/testitem/jsonschema", False)
 
 
 class PipelineModelValidator(PipelineTest):
