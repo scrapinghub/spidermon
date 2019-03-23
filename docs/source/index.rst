@@ -33,5 +33,6 @@ Contents
    item-validation
    settings
    actions
+   mixins
    changelog
 
