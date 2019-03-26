@@ -16,7 +16,7 @@ class JSONSchemaMessageTranslator(MessageTranslator):
         r"^.+ is not valid under any of the given schemas$": messages.NOT_VALID_UNDER_ANY_SCHEMA,
         r"^.+ is valid under each of .+$": messages.VALID_FOR_SEVERAL_EXCLUSIVE_SCHEMAS,
         r"^Additional items are not allowed .*$": messages.TOO_MANY_ITEMS,
-        r"^Additional properties are not allowed .*$": messages.UNEXPECTED_FIELD,
+        r"^Additional properties are not allowed (?P<unexpected_fields>.*)$": messages.UNEXPECTED_FIELDS,
         r"^.+ is a dependency of .+$": messages.MISSING_DEPENDENT_FIELD,
         r"^.* is not one of .+$": messages.VALUE_NOT_IN_CHOICES,
         r"^.* is not a 'date-time'$": messages.INVALID_DATETIME,
