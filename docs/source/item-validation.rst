@@ -169,7 +169,7 @@ SPIDERMON_VALIDATION_SCHEMAS
 
 Default: ``None``
 
-A `list` containing the location of the item schema. Could be a local path or an url.
+A `list` containing the location of the item schema. Could be a local path or a URL.
 
 .. code-block:: python
 
@@ -178,7 +178,7 @@ A `list` containing the location of the item schema. Could be a local path or an
     SPIDERMON_VALIDATION_SCHEMAS: [
         '/path/to/schema.json',
         's3://bucket/schema.json',
-        'https://json-schema.org/schema',
+        'https://example.com/schema.json',
     ]
 
 If you are working on a spider that produces multiple items types, you can define it
