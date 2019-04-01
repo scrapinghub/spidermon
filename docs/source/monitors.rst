@@ -175,7 +175,7 @@ First we define a new action that will close the spider when executed:
         def run_action(self):
             spider = self.data['spider']
             spider.logger.info("Closing spider")
-            spider.crawler.crawler.engine.close_spider(spider, 'closed_by_spidermon')
+            spider.crawler.engine.close_spider(spider, 'closed_by_spidermon')
 
 Then we create our monitor and monitor suite that verifies the number of errors
 and then take an action if it fails:
@@ -188,13 +188,13 @@ and then take an action if it fails:
     @monitors.name('Periodic job stats monitor')
     class PeriodicJobStatsMonitor(Monitor, StatsMonitorMixin):
 
-    @monitors.name('Maximum number of errors exceeded')
-    def test_number_of_errors(self):
-        accepted_num_errors = 20
-        num_errors = self.data.stats.get('log_count/ERROR', 0)
+        @monitors.name('Maximum number of errors exceeded')
+        def test_number_of_errors(self):
+            accepted_num_errors = 20
+            num_errors = self.data.stats.get('log_count/ERROR', 0)
 
-        msg = 'The job has exceeded the maximum number of errors'
-        self.assertLessEqual(num_errors, accepted_num_errors, msg=msg)
+            msg = 'The job has exceeded the maximum number of errors'
+            self.assertLessEqual(num_errors, accepted_num_errors, msg=msg)
 
     class PeriodicMonitorSuite(MonitorSuite):
         monitors = [PeriodicJobStatsMonitor]
