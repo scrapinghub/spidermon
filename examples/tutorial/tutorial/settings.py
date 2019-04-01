@@ -11,8 +11,6 @@ EXTENSIONS = {"spidermon.contrib.scrapy.extensions.Spidermon": 500}
 
 SPIDERMON_SPIDER_CLOSE_MONITORS = ("tutorial.monitors.SpiderCloseMonitorSuite",)
 
-SPIDERMON_SLACK_FAKE = True
-
 SPIDERMON_SLACK_SENDER_TOKEN = "your_sender_token"
 SPIDERMON_SLACK_SENDER_NAME = "your_sender_name"
 SPIDERMON_SLACK_RECIPIENTS = ["@yourself", "#yourprojectchannel"]
