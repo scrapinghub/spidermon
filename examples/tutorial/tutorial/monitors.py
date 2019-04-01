@@ -3,6 +3,8 @@ from spidermon import Monitor, MonitorSuite, monitors
 from spidermon.contrib.actions.slack.notifiers import SendSlackMessageSpiderFinished
 from spidermon.contrib.monitors.mixins import StatsMonitorMixin
 
+from tutorial.actions import CloseSpiderAction
+
 
 @monitors.name("Item count")
 class ItemCountMonitor(Monitor):
@@ -32,7 +34,23 @@ class ItemValidationMonitor(Monitor, StatsMonitorMixin):
         self.data.stats
 
 
+@monitors.name("Periodic job stats monitor")
+class PeriodicJobStatsMonitor(Monitor, StatsMonitorMixin):
+    @monitors.name("Maximum number of errors exceeded")
+    def test_number_of_errors(self):
+        accepted_num_errors = 20
+        num_errors = self.data.stats.get("log_count/ERROR", 0)
+
+        msg = "The job has exceeded the maximum number of errors"
+        self.assertLessEqual(num_errors, accepted_num_errors, msg=msg)
+
+
+class PeriodicMonitorSuite(MonitorSuite):
+    monitors = [PeriodicJobStatsMonitor]
+    monitors_failed_actions = [CloseSpiderAction]
+
+
 class SpiderCloseMonitorSuite(MonitorSuite):
-    monitors = [ItemCountMonitor, ItemValidationMonitor]
+    monitors = [ItemCountMonitor, ItemValidationMonitor, PeriodicJobStatsMonitor]
 
     monitors_failed_actions = [SendSlackMessageSpiderFinished]
