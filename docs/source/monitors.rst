@@ -6,6 +6,7 @@ Monitoring your jobs
 
 Monitors
 --------
+.. _`Monitors`
 
 Monitors are the main class where you include your monitoring logic. After defining
 them, you need to include them in a `MonitorSuite`, so they can be executed.
@@ -46,6 +47,7 @@ implement your monitors:
 
 Monitor Suites
 --------------
+.. _`Monitor Suites`
 
 A `Monitor Suite` groups a set of `Monitor` classes and allows you to specify which
 actions must be executed at specified moments of the spider execution.
@@ -144,8 +146,69 @@ Is there a **Basic Scrapy Suite** ready to use?
 Of course, there is! We really want to make it easy for you to monitor your spiders ;)
 
 .. automodule:: spidermon.contrib.scrapy.monitors
-    :members: SpiderCloseMonitorSuite 
+    :members: SpiderCloseMonitorSuite
 
+Periodic Monitors
+-----------------
+
+Sometimes we don't want to wait until the end of the spider execution to monitor
+it. For example, we may want to be notified as soon the number of errors reach
+a value or close the spider if the time elapsed is greater than expected.
+
+You define your `Monitors`_ and `Monitor Suites`_ the same way as before, but
+you need to provide the time interval (in seconds) between each of the times the
+`Monitor Suites`_ is run.
+
+In the following exemple, we defined a periodic monitor suite that will be
+executed every minute and will verify if the number of errors found is lesser
+than a value. If not, the spider will be closed.
+
+First we define a new action that will close the spider when executed:
+
+.. code-block:: python
+
+    # myproject/actions.py
+    from spidermon.core.actions import Action
+
+    class CloseSpiderAction(Action):
+
+        def run_action(self):
+            spider = self.data['spider']
+            spider.logger.info("Closing spider")
+            spider.crawler.crawler.engine.close_spider(spider, 'closed_by_spidermon')
+
+Then we create our monitor and monitor suite that verifies the number of errors
+and then take an action if it fails:
+
+.. code-block:: python
+
+    # myproject/monitors.py
+    from myproject.actions import CloseSpiderAction
+
+    @monitors.name('Periodic job stats monitor')
+    class PeriodicJobStatsMonitor(Monitor, StatsMonitorMixin):
+
+    @monitors.name('Maximum number of errors exceeded')
+    def test_number_of_errors(self):
+        accepted_num_errors = 20
+        num_errors = self.data.stats.get('log_count/ERROR', 0)
+
+        msg = 'The job has exceeded the maximum number of errors'
+        self.assertLessEqual(num_errors, accepted_num_errors, msg=msg)
+
+    class PeriodicMonitorSuite(MonitorSuite):
+        monitors = [PeriodicJobStatsMonitor]
+        monitors_failed_actions = [CloseSpiderAction]
+
+The last step is to configure the suite to be executed every 60 seconds:
+
+.. code-block:: python
+
+    # myproject/settings.py
+
+    SPIDERMON_PERIODIC_MONITORS = {
+        'myproject.monitors.PeriodicMonitorSuite': 60,  # time in seconds
+    }
 
 What to monitor?
 ----------------

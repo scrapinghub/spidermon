@@ -36,6 +36,19 @@ SPIDERMON_EXPRESSIONS_MONITOR_CLASS
 SPIDERMON_PERIODIC_MONITORS
 ---------------------------
 
+Default: ``{}``
+
+A dict containing the monitor suites that must be executed periodically as key and
+the time interval (in seconds) between the executions as value.
+
+For example, the following suite will be executed each 30 minutes:
+
+.. code-block:: python
+
+    SPIDERMON_PERIODIC_MONITORS = {
+        'myproject.monitors.PeriodicMonitorSuite': 1800,
+    }
+
 .. _SPIDERMON_SPIDER_CLOSE_MONITORS:
 
 SPIDERMON_SPIDER_CLOSE_MONITORS
