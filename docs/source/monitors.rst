@@ -159,7 +159,7 @@ You define your `Monitors`_ and `Monitor Suites`_ the same way as before, but
 you need to provide the time interval (in seconds) between each of the times the
 `Monitor Suites`_ is run.
 
-In the following exemple, we defined a periodic monitor suite that will be
+In the following example, we defined a periodic monitor suite that will be
 executed every minute and will verify if the number of errors found is lesser
 than a value. If not, the spider will be closed.
 
