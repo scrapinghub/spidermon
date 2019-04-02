@@ -152,7 +152,7 @@ Periodic Monitors
 -----------------
 
 Sometimes we don't want to wait until the end of the spider execution to monitor
-it. For example, we may want to be notified as soon the number of errors reach
+it. For example, we may want to be notified as soon the number of errors reaches
 a value or close the spider if the time elapsed is greater than expected.
 
 You define your `Monitors`_ and `Monitor Suites`_ the same way as before, but
