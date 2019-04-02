@@ -41,7 +41,7 @@ Default: ``{}``
 A dict containing the monitor suites that must be executed periodically as key and
 the time interval (in seconds) between the executions as value.
 
-For example, the following suite will be executed each 30 minutes:
+For example, the following suite will be executed every 30 minutes:
 
 .. code-block:: python
 
