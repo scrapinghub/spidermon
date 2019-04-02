@@ -7,7 +7,9 @@ ROBOTSTXT_OBEY = True
 
 SPIDERMON_ENABLED = True
 
-EXTENSIONS = {"spidermon.contrib.scrapy.extensions.Spidermon": 500}
+EXTENSIONS = {
+    "spidermon.contrib.scrapy.extensions.Spidermon": 500,
+}
 
 SPIDERMON_SPIDER_CLOSE_MONITORS = ("tutorial.monitors.SpiderCloseMonitorSuite",)
 
@@ -19,3 +21,5 @@ ITEM_PIPELINES = {"spidermon.contrib.scrapy.pipelines.ItemValidationPipeline": 8
 SPIDERMON_VALIDATION_MODELS = ("tutorial.validators.QuoteItem",)
 
 SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS = True
+
+STATS_CLASS = 'spidermon.contrib.stats.statscollectors.LocalStorageHistoricalStatsCollector'
