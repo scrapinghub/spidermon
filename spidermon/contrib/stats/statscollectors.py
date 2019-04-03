@@ -1,17 +1,9 @@
-import datetime
-import json
 import os
+import pickle
+from collections import deque
 
 from scrapy.statscollectors import StatsCollector
 from scrapy.utils.project import data_path
-
-
-def json_serial(obj):
-    """JSON serializer for objects not serializable by default json code"""
-
-    if isinstance(obj, (datetime.datetime, datetime.date)):
-        return obj.isoformat()
-    raise TypeError("Type %s not serializable" % type(obj))
 
 
 class HistoricalStatsCollector(StatsCollector):
@@ -25,16 +17,23 @@ class LocalStorageHistoricalStatsCollector(HistoricalStatsCollector):
         self._statsdir = data_path("stats", createdir=True)
 
     def open_spider(self, spider):
-        old_stats = []
-        for stats_file in os.listdir(self._statsdir):
-            if not os.path.isfile(os.path.join(self._statsdir, stats_file)):
-                continue
-            with open(os.path.join(self._statsdir, stats_file)) as stats:
-                old_stats.append(json.loads(stats.read()))
-        spider.old_stats = old_stats
+        stats_location = os.path.join(
+            self._statsdir, "{}_stats_history".format(spider.name)
+        )
+        if os.path.isfile(stats_location):
+            with open(stats_location, "rb") as stats_file:
+                _stats_history = pickle.load(stats_file)
+        else:
+            max_stored_stats = spider.crawler.settings.getint(
+                "SPIDERMON_MAX_STORED_STATS", default=100
+            )
+            _stats_history = deque([], maxlen=max_stored_stats)
+        spider.stats_history = _stats_history
 
     def _persist_stats(self, stats, spider):
-        key = str(int(datetime.datetime.now().timestamp()))
-        stats_f = os.path.join(self._statsdir, str(key))
-        with open(stats_f, "w") as s_f:
-            s_f.write(json.dumps(self._stats, default=json_serial))
+        spider.stats_history.appendleft(self._stats)
+        stats_location = os.path.join(
+            self._statsdir, "{}_stats_history".format(spider.name)
+        )
+        with open(stats_location, "wb") as stats_file:
+            pickle.dump(spider.stats_history, stats_file)
