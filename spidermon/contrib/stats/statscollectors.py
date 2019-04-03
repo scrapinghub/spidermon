@@ -6,11 +6,7 @@ from scrapy.statscollectors import StatsCollector
 from scrapy.utils.project import data_path
 
 
-class HistoricalStatsCollector(StatsCollector):
-    pass
-
-
-class LocalStorageHistoricalStatsCollector(HistoricalStatsCollector):
+class LocalStorageStatsHistoryCollector(StatsCollector):
     def __init__(self, crawler):
         self._dump = crawler.settings.getbool("STATS_DUMP")
         self._stats = {}
