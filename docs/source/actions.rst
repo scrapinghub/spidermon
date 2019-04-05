@@ -196,13 +196,19 @@ List of recipients of the message. It could be a channel or an user.
 
 SPIDERMON_SLACK_SENDER_NAME
 ---------------------------
+Name of app/bot/user created for serving notifications on desired channels.
 
 .. _SPIDERMON_SLACK_SENDER_TOKEN:
 
 SPIDERMON_SLACK_SENDER_TOKEN
 ----------------------------
 
-Your `Slack token`_.
+Read `here`_ to know more about Slack Tokens.
+Get your Slack Credentials by `creating an app <https://api.slack.com/apps>`_  here.
+
+The `SPIDERMON_SLACK_SENDER_TOKEN` is the `API Token` available in your Slack application dashboard. You can navigate to Browse apps> Custom Integrations > Bots > Edit Configuration. 
+
+Warning: Be careful when using bot user tokens in Spidermon. Do not publish bot user tokens in public code repositories.
 
 Other settings available:
 
@@ -267,7 +273,7 @@ SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX
 
 .. _`Slack`: https://slack.com/
 .. _`Slack credentials`: https://api.slack.com/docs/token-types
-.. _`Slack token`: https://api.slack.com/docs/token-types
+.. _`here`: https://api.slack.com/docs/token-types
 
 .. _actions-job-tags:
 
