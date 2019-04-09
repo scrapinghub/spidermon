@@ -186,7 +186,7 @@ and then take an action if it fails:
     @monitors.name('Periodic job stats monitor')
     class PeriodicJobStatsMonitor(Monitor, StatsMonitorMixin):
 
-        @monitors.name('Maximum number of errors exceeded')
+        @monitors.name('Maximum number of errors reached')
         def test_number_of_errors(self):
             accepted_num_errors = 20
             num_errors = self.data.stats.get('log_count/ERROR', 0)
