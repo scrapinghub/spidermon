@@ -1,7 +1,9 @@
 from __future__ import absolute_import
-from __future__ import print_function
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import logging
+
+logger = logging.getLogger(__name__)
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
@@ -86,12 +88,10 @@ class SendEmail(ActionWithTemplates):
 
     def run_action(self):
         message = self.get_message()
-        if not self.fake:
-            self.send_message(message)
+        if self.fake:
+            logger.info(message.as_string())
         else:
-            print("-" * 40)
-            print(message.as_string())
-            print("-" * 40)
+            self.send_message(message)
 
     def get_subject(self):
         if self.subject:

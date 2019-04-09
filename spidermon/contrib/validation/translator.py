@@ -3,6 +3,7 @@ import re
 
 
 class MessageTranslator(object):
+
     messages = {}
 
     def __init__(self):
@@ -13,6 +14,8 @@ class MessageTranslator(object):
 
     def translate_message(self, message):
         for target_message, pattern in self.compiled_messages.items():
-            if pattern.search(message):
-                return self.messages[target_message]  # TO-DO: Add substitution?
+            pattern_found = pattern.search(message)
+            if pattern_found:
+                groups = pattern_found.groupdict()
+                return self.messages[target_message].format(**groups)
         return message

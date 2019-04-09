@@ -1,8 +1,10 @@
 from __future__ import absolute_import
-from __future__ import print_function
 import ast
 import json
+import logging
 from slackclient import SlackClient
+
+logger = logging.getLogger(__name__)
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
@@ -198,13 +200,13 @@ class SendSlackMessage(ActionWithTemplates):
     def run_action(self):
         message = self.get_message()
         attachments = self.get_attachments()
-        if not self.fake:
+        if self.fake:
+            logger.info(message.as_string())
+            logger.info(attachments.as_string())
+        else:
             self.manager.send_message(
                 to=self.recipients, text=message, attachments=attachments
             )
-        else:
-            print("message:", message)
-            print("attachments:", attachments)
 
     def get_message(self):
         if self.include_message:
