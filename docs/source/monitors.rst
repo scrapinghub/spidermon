@@ -6,7 +6,6 @@ Monitoring your jobs
 
 Monitors
 --------
-.. _`Monitors`
 
 Monitors are the main class where you include your monitoring logic. After defining
 them, you need to include them in a `MonitorSuite`, so they can be executed.
@@ -47,7 +46,6 @@ implement your monitors:
 
 Monitor Suites
 --------------
-.. _`Monitor Suites`
 
 A `Monitor Suite` groups a set of `Monitor` classes and allows you to specify which
 actions must be executed at specified moments of the spider execution.
