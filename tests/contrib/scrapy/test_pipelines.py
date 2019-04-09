@@ -4,7 +4,9 @@ from slugify import slugify
 from scrapy.utils.test import get_crawler
 from scrapy import Item
 from functools import partial
+import sys
 
+import pytest
 from spidermon.contrib.scrapy.pipelines import ItemValidationPipeline
 from tests.fixtures.items import TreeItem, TestItem
 from tests.fixtures.validators import tree_schema, test_schema, test_schema_string
@@ -69,7 +71,7 @@ class PipelineTest(six.with_metaclass(PipelineTestCaseMetaclass, TestCase)):
 
 
 class DataTest(object):
-    def __init__(self, name, item, cases, settings={}):
+    def __init__(self, name, item, cases, settings=dict()):
         self.name = name
         self.item = item
         self.cases = cases
@@ -208,6 +210,24 @@ class PipelineJSONSchemaValidator(PipelineTest):
             ],
         ),
     ]
+
+
+@pytest.mark.skipif(
+    sys.version_info < (3, 4), reason="mock requires python3.4 or higher"
+)
+def test_validator_from_url(mocker):
+    mocked_get_contents = mocker.patch(
+        "spidermon.contrib.validation.jsonschema.tools.get_contents", return_value=test_schema_string
+    )
+    settings = {SETTING_SCHEMAS: {TestItem: "https://fixtures.com/testschema.json"}}
+    test_item = TestItem()
+    crawler = get_crawler(settings_dict=settings)
+    pipe = ItemValidationPipeline.from_crawler(crawler)
+    pipe.process_item(test_item, None)
+    kwargs = {"stats": "pipe.stats.stats.get_stats()"}
+    stats = pipe.stats.stats.get_stats()
+    assert "spidermon/validation/items/errors" in stats
+    assert stats.get("spidermon/validation/validators/testitem/jsonschema", False)
 
 
 class PipelineModelValidator(PipelineTest):
