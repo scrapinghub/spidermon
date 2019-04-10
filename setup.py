@@ -30,7 +30,7 @@ setup(
             "sentry-sdk",
         ],
         # Data validation
-        "validation": ["schematics", "strict-rfc3339"],
+        "validation": ["schematics"],
         # Tools to run the tests
         "tests": test_requirements,
         "pep8": ["black"],
