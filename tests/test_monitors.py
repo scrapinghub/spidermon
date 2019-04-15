@@ -5,6 +5,7 @@ from scrapy.crawler import Crawler
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 from spidermon.contrib.scrapy.monitors import (
     FinishReasonMonitor,
+    ExpectedItemCountMonitor,
     ItemCountMonitor,
     ErrorCountMonitor,
     UnwantedHTTPCodesMonitor,
@@ -36,6 +37,11 @@ def make_data(request):
 @pytest.fixture
 def item_count_suite():
     return MonitorSuite(monitors=[ItemCountMonitor])
+
+
+@pytest.fixture
+def expected_item_count_suite():
+    return MonitorSuite(monitors=[ExpectedItemCountMonitor])
 
 
 def new_suite(monitors):
@@ -89,6 +95,69 @@ def test_item_count_monitor_extracted_less_than_expected(make_data, item_count_s
         "Extracted 50 items, the expected minimum is 100"
         in runner.result.monitor_results[0].error
     )
+
+
+def test_needs_to_configure_expected_item_count_monitor(make_data, expected_item_count_suite):
+    """Should raise an exception when ExpectedItemCountMonitor it's not configured """
+    data = make_data({'SPIDERMON_EXPECTED_ITEMS_THRESHOLD': 1.1})
+    runner = data.pop("runner")
+    with pytest.raises(NotConfigured):
+        runner.run(expected_item_count_suite, **data)
+
+    data = make_data({'SPIDERMON_EXPECTED_ITEMS_THRESHOLD': -0.1})
+    runner = data.pop("runner")
+    with pytest.raises(NotConfigured):
+        runner.run(expected_item_count_suite, **data)
+
+
+def test_expected_item_count_monitor_less_than_expected(make_data, expected_item_count_suite):
+    """ExpectedItemCountMonitor should fail when the desired # of items is not extracted """
+    data = make_data({'SPIDERMON_EXPECTED_ITEMS_THRESHOLD': 0.1})
+    runner = data.pop("runner")
+    data["stats"]["item_scraped_count"] = 10
+    data["stats"]["spidermon/expected_item_scraped_count"] = 20
+    runner.run(expected_item_count_suite, **data)
+    for r in runner.result.monitor_results:
+        assert "Extracted 10 items, expected at least 18" in r.error
+
+
+def test_expected_item_count_monitor_more_than_expected(make_data, expected_item_count_suite):
+    """ExpectedItemCountMonitor should pass when extract more than expected amount """
+    data = make_data({"SPIDERMON_EXPECTED_ITEMS_THRESHOLD": 0.2})
+    runner = data.pop("runner")
+    data["stats"]["item_scraped_count"] = 500
+    data["stats"]["spidermon/expected_item_scraped_count"] = 200
+    runner.run(expected_item_count_suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+
+def test_expected_item_count_monitor_extracted_expected(make_data, expected_item_count_suite):
+    """ExpectedItemCountMonitor should pass when extract the expected number of items """
+    data = make_data({"SPIDERMON_EXPECTED_ITEMS_THRESHOLD": 0.2})
+    runner = data.pop("runner")
+    data["stats"]["item_scraped_count"] = 500
+    data["stats"]["spidermon/expected_item_scraped_count"] = 500
+    runner.run(expected_item_count_suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+
+def test_expected_item_count_monitor_equal_threshold(make_data, expected_item_count_suite):
+    """ExpectedItemCountMonitor should pass when extract the expected number of items """
+    data = make_data({"SPIDERMON_EXPECTED_ITEMS_THRESHOLD": 0.0})
+    runner = data.pop("runner")
+    data["stats"]["item_scraped_count"] = 500
+    data["stats"]["spidermon/expected_item_scraped_count"] = 500
+    runner.run(expected_item_count_suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+
+def test_expected_item_count_monitor_no_expected_count(make_data, expected_item_count_suite):
+    """ExpectedItemCountMonitor should pass when extract the expected number of items """
+    data = make_data({"SPIDERMON_EXPECTED_ITEMS_THRESHOLD": 0.1})
+    runner = data.pop("runner")
+    data["stats"]["item_scraped_count"] = 500
+    runner.run(expected_item_count_suite, **data)
+    assert runner.result.monitor_results[0].error is None
 
 
 def test_finished_reason_monitor_should_fail(make_data):

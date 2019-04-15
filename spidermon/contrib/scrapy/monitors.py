@@ -44,6 +44,38 @@ class ItemCountMonitor(BaseScrapyMonitor):
         self.assertTrue(item_extracted >= self.minimum_threshold, msg=msg)
 
 
+@monitors.name("Extracted Expected Items Monitor")
+class ExpectedItemCountMonitor(BaseScrapyMonitor):
+    """Check if spider extracted the expected minimum number of items provided
+    in a stats `spidermon/expected_item_scraped_count`.
+
+    You can configure it using ``SPIDERMON_EXPECTED_ITEMS_THRESHOLD`` setting.
+    The default value is 0, meaning that the number of scraped items should be
+    equal to the expected one.
+    Any other value in the range [0, 1] will be computed as a percentage
+    threshold and subtracted from `spidermon/expected_item_scraped_count`.
+    """
+
+    def run(self, result):
+        settings = self.crawler.settings
+        self.expected_items_threshold = settings.getfloat('SPIDERMON_EXPECTED_ITEMS_THRESHOLD', 0)
+        if not (0.0 <= self.expected_items_threshold <= 1.0):
+            raise NotConfigured("You must specify a threshold of expected items.")
+        return super(ExpectedItemCountMonitor, self).run(result)
+
+    @monitors.name("Should extract the expected amount of items")
+    def test_expected_amount_of_items(self):
+        item_scraped_count = self.stats.get("item_scraped_count", 0)
+        expected_item_scraped_count = self.stats.get("spidermon/expected_item_scraped_count", 0)
+        threshold = int(expected_item_scraped_count * self.expected_items_threshold)
+        expected_item_scraped_count -= threshold
+
+        msg = "Extracted {} items, expected at least {}".format(
+            item_scraped_count, expected_item_scraped_count
+        )
+        self.assertTrue(item_scraped_count >= expected_item_scraped_count, msg=msg)
+
+
 @monitors.name("Error Count Monitor")
 class ErrorCountMonitor(BaseScrapyMonitor):
     """Check for errors in the spider log.
