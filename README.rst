@@ -1,7 +1,6 @@
 =========
 Spidermon
 =========
-The battle tested spider monitoring library made with 💝 by `ScrapingHub <https://blog.scrapinghub.com/spidermon-scrapy-spider-monitoring>`_ is now open-source.
 
 .. image:: https://img.shields.io/travis/scrapinghub/spidermon.svg
     :target: https://travis-ci.org/scrapinghub/spidermon
@@ -46,7 +45,7 @@ The quick way::
 For more details see the install section in the documentation:
 https://spidermon.readthedocs.io/en/latest/installation.html
 
-For implementing any of Spidermon's amazing features such as `actions <https://spidermon.readthedocs.io/en/latest/actions.html>`_ or `item validations <https://spidermon.readthedocs.io/en/latest/item-validation.html>`_. We recommend to check the documentation for instructions to download specific packages needed for the, to work.  
+For implementing any of Spidermon's amazing features such as `actions <https://spidermon.readthedocs.io/en/latest/actions.html>`_ or `item validations <https://spidermon.readthedocs.io/en/latest/item-validation.html>`_. We recommend to check the documentation for instructions to download specific packages needed for the, to work. 
 
 Documentation
 =============
@@ -56,7 +55,7 @@ Documentation is available online at https://spidermon.readthedocs.io/ and in th
 Contributing 
 ============
 
-Looking forward to improve Spidermon, checkout out our awesome `CONTRIBUTING.md <https://github.com/scrapinghub/spidermon/blob/master/CONTRIBUTING.rst>`_ to get you started.
+Looking forward to improve Spidermon, check out out our `CONTRIBUTING.md <https://github.com/scrapinghub/spidermon/blob/master/CONTRIBUTING.rst>`_.
 
 License
 =======
