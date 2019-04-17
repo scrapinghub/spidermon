@@ -40,12 +40,10 @@ Install
 
 The quick way::
 
-    pip install spidermon
+    pip install "spidermon[monitoring,validation]"
 
 For more details see the install section in the documentation:
 https://spidermon.readthedocs.io/en/latest/installation.html
-
-For implementing any of Spidermon's amazing features such as `actions <https://spidermon.readthedocs.io/en/latest/actions.html>`_ or `item validations <https://spidermon.readthedocs.io/en/latest/item-validation.html>`_. We recommend to check the documentation for instructions to download specific packages needed for the, to work. 
 
 Documentation
 =============
@@ -56,8 +54,3 @@ Contributing
 ============
 
 Looking forward to improve Spidermon, check out out our `CONTRIBUTING.md <https://github.com/scrapinghub/spidermon/blob/master/CONTRIBUTING.rst>`_.
-
-License
-=======
-
-All source code is under `BSD License <https://github.com/scrapinghub/spidermon/blob/master/LICENSE>`_ 
