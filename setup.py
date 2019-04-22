@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-test_requirements = ["pytest>=2.7.0", "tox"]
+test_requirements = ["pytest>=2.7.0", "pytest-cov", "pytest-mock", "scrapy"]
 
 setup(
     name="spidermon",
@@ -8,10 +8,8 @@ setup(
     url="https://github.com/scrapinghub/spidermon",
     author="Scrapinghub",
     author_email="info@scrapinghub.com",
-    description=("Spidermon is a framework to build monitors for Scrapy " "spiders."),
-    long_description=(
-        "Spidermon is a framework to build monitors for Scrapy " "spiders."
-    ),
+    description=("Spidermon is a framework to build monitors for Scrapy spiders."),
+    long_description=("Spidermon is a framework to build monitors for Scrapy spiders."),
     license="BSD",
     packages=find_packages(),
     package_data={"spidermon": ["VERSION"]},
