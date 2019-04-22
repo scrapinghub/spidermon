@@ -1,0 +1,32 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+black = {git = "https://github.com/ambv/black"}
+pytest = "*"
+pytest-cov = "*"
+tox = "*"
+sphinx = "*"
+sphinx-rtd-theme = "*"
+
+
+[packages]
+six = "*"
+jinja2 = "*"
+slackclient = "*"
+boto = "*"
+premailer = "*"
+jsonschema = "*"
+schematics = "*"
+python-slugify = "*"
+strict-rfc3339 = "*"
+scrapy = "*"
+sentry-sdk = "*"
+
+[requires]
+python_version = "3.7"
+
+[pipenv]
+allow_prereleases = false
