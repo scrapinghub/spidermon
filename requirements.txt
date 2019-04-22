@@ -3,10 +3,9 @@ Jinja2
 slackclient
 boto
 premailer
-jsonschema
+jsonschema[format]
 schematics
 python-slugify
-strict-rfc3339
 scrapy
 pytest
 pytest-cov
