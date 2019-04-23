@@ -56,36 +56,36 @@ Ready to contribute? Here's how to set up `spidermon` for local development.
 
 2. Clone your fork locally:
 
-    $ git clone git@github.com:your_name_here/spidermon.git
+`git clone git@github.com:your_name_here/spidermon.git`
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development:
-
-    $ mkvirtualenv spidermon
-    $ cd spidermon/
-
+```
+mkvirtualenv spidermon
+cd spidermon/
+```
 4. Create a branch for local development:
 
-    $ git checkout -b name-of-your-bugfix-or-feature
+`git checkout -b name-of-your-bugfix-or-feature`
 
    Now you can make your changes locally.
 
 5. When you're done making changes, check that your changes pass the tests,
 including testing other Python versions with tox:
-
-    $ pip install -r requirements.txt
-    $ pip install -r requirements-test.txt
-    $ tox
-
+```
+pip install -r requirements.txt
+pip install -r requirements-test.txt
+tox
+```
 6. Make sure that your code is correctly formatted using [black](https://pypi.org/project/black/). No code will be merged without this step:
 
-    $ black .
+`black .`
 
 7. Commit your changes and push your branch to GitHub:
-
-    $ git add .
-    $ git commit -m "Your detailed description of your changes."
-    $ git push origin name-of-your-bugfix-or-feature
-
+```
+git add .
+git commit -m "Your detailed description of your changes."
+git push origin name-of-your-bugfix-or-feature
+```
 8. Submit a pull request through the GitHub website.
 
 ## Pull Request Guidelines
