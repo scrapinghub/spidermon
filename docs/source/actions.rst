@@ -22,7 +22,7 @@ when your monitor suite finishes no matter if it passed or failed:
 
 .. code-block:: python
 
-    from spidermon.contrib.actions.ses import SendSESEmail
+    from spidermon.contrib.actions.email.ses import SendSESEmail
 
     class DummyMonitorSuite(MonitorSuite):
         monitors = [
