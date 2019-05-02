@@ -6,6 +6,7 @@ SPIDERMON_MIN_ITEMS = "SPIDERMON_MIN_ITEMS"
 SPIDERMON_MAX_ERRORS = "SPIDERMON_MAX_ERRORS"
 SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
+SPIDERMON_UNWANTED_HTTP_CODES_THRESHOLD = "SPIDERMON_UNWANTED_HTTP_CODES_THRESHOLD"
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -87,24 +88,28 @@ class FinishReasonMonitor(BaseScrapyMonitor):
 class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
     """Check for maximum number of unwanted HTTP codes.
 
-    You can configure a ``dict`` of unwanted HTTP codes with
-    ``SPIDERMON_UNWANTED_HTTP_CODES`` the default value is::
+    You can configure a ``list`` of unwanted HTTP codes with
+    ``SPIDERMON_UNWANTED_HTTP_CODES`` and ``SPIDERMON_UNWANTED_HTTP_CODES_THRESHOLD``
+     the default values are::
 
-        DEFAULT_ERROR_CODES = {
-            code: 10
-            for code in [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]}
+        DEFAULT_ERROR_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
+        DEFAULT_ERROR_THRESHOLD = 10
     """
 
-    DEFAULT_ERROR_CODES = {
-        code: 10 for code in [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
-    }
+    DEFAULT_ERROR_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
+    DEFAULT_ERROR_THRESHOLD = 10
 
     @monitors.name("Should not hit the limit of unwanted http status")
     def test_check_unwanted_http_codes(self):
         error_codes = self.crawler.settings.getdict(
             SPIDERMON_UNWANTED_HTTP_CODES, self.DEFAULT_ERROR_CODES
         )
-        for code, max_errors in error_codes.items():
+        errors_threshold = self.crawler.settings.getdict(
+            SPIDERMON_UNWANTED_HTTP_CODES_THRESHOLD, self.DEFAULT_ERROR_THRESHOLD
+        )
+        error_codes_dict = {code: errors_threshold for code in error_codes}
+
+        for code, max_errors in error_codes_dict.items():
             code = int(code)
             count = self.stats.get(
                 "downloader/response_status_count/{}".format(code), 0

@@ -12,6 +12,7 @@ from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_EXPECTED_FINISH_REASONS,
     SPIDERMON_MAX_ERRORS,
     SPIDERMON_UNWANTED_HTTP_CODES,
+    SPIDERMON_UNWANTED_HTTP_CODES_THRESHOLD
 )
 from spidermon import MonitorSuite
 from spidermon.exceptions import NotConfigured
@@ -154,7 +155,12 @@ def test_unwanted_httpcodes_should_fail(make_data):
 def test_unwanted_httpcodes_should_pass(make_data):
     """Unwanted HTTP Code should pass if # off responses with error status
     codes is lower than expected """
-    data = make_data({SPIDERMON_UNWANTED_HTTP_CODES: {500: 10, 400: 2}})
+
+    data = make_data({
+        SPIDERMON_UNWANTED_HTTP_CODES: [500, 400],
+        SPIDERMON_UNWANTED_HTTP_CODES_THRESHOLD: 12
+    })
+
     runner = data.pop("runner")
     suite = new_suite([UnwantedHTTPCodesMonitor])
     data["stats"]["downloader/response_status_count/500"] = 8
