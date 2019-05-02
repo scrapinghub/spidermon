@@ -59,7 +59,7 @@ class SendEmail(ActionWithTemplates):
             raise NotConfigured(
                 "You must provide at least one recipient for the message."
             )
-        if not self.subject:
+        if not self.subject and not self.subject_template:
             raise NotConfigured("You must provide a subject for the message.")
         if not (
             self.body_text or body_text_template or body_html or self.body_html_template
