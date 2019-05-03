@@ -60,7 +60,10 @@ class SendEmail(ActionWithTemplates):
                 "You must provide at least one recipient for the message."
             )
         if not self.subject and not self.subject_template:
-            raise NotConfigured("You must provide a subject (SPIDERMON_EMAIL_SUBJECT) or subject template (SPIDERMON_EMAIL_SUBJECT_TEMPLATE) for the message.")
+            raise NotConfigured(
+                "You must provide a subject (SPIDERMON_EMAIL_SUBJECT) or subject "
+                "template (SPIDERMON_EMAIL_SUBJECT_TEMPLATE) for the message."
+            )
         if not (
             self.body_text or body_text_template or body_html or self.body_html_template
         ):
