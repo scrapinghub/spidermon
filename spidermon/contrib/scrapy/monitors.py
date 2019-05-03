@@ -101,10 +101,10 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
 
     @monitors.name("Should not hit the limit of unwanted http status")
     def test_check_unwanted_http_codes(self):
-        error_codes = self.crawler.settings.getdict(
+        error_codes = self.crawler.settings.getlist(
             SPIDERMON_UNWANTED_HTTP_CODES, self.DEFAULT_ERROR_CODES
         )
-        errors_threshold = self.crawler.settings.getdict(
+        errors_threshold = self.crawler.settings.getint(
             SPIDERMON_UNWANTED_HTTP_CODES_THRESHOLD, self.DEFAULT_ERROR_THRESHOLD
         )
         error_codes_dict = {code: errors_threshold for code in error_codes}

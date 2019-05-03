@@ -158,12 +158,12 @@ def test_unwanted_httpcodes_should_pass(make_data):
 
     data = make_data({
         SPIDERMON_UNWANTED_HTTP_CODES: [500, 400],
-        SPIDERMON_UNWANTED_HTTP_CODES_THRESHOLD: 12
+        SPIDERMON_UNWANTED_HTTP_CODES_THRESHOLD: 16
     })
 
     runner = data.pop("runner")
     suite = new_suite([UnwantedHTTPCodesMonitor])
-    data["stats"]["downloader/response_status_count/500"] = 8
+    data["stats"]["downloader/response_status_count/500"] = 11
     data["stats"]["downloader/response_status_count/400"] = 2
     runner.run(suite, **data)
     assert runner.result.monitor_results[0].error is None
