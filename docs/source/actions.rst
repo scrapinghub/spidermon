@@ -183,6 +183,8 @@ A notification will look like the following one:
    :scale: 50 %
    :alt: Slack Notification
 
+`Follow these steps`_ for creating a bot in your workplace.
+
 The following settings are the minimum needed to make this action works:
 
 .. _SPIDERMON_SLACK_RECIPIENTS:
@@ -196,19 +198,19 @@ List of recipients of the message. It could be a channel or an user.
 
 SPIDERMON_SLACK_SENDER_NAME
 ---------------------------
-Name of app/bot/user created for serving notifications on desired channels.
+
+Username of bot.
 
 .. _SPIDERMON_SLACK_SENDER_TOKEN:
 
 SPIDERMON_SLACK_SENDER_TOKEN
 ----------------------------
 
-Read `here`_ to know more about Slack Tokens.
-Get your Slack Credentials by `creating an app <https://api.slack.com/apps>`_  here.
+`Bot User OAuth Access Token` of your bot.
 
-The `SPIDERMON_SLACK_SENDER_TOKEN` is the `API Token` available in your Slack application dashboard. You can navigate to Browse apps> Custom Integrations > Bots > Edit Configuration. 
+.. warning::
 
-Warning: Be careful when using bot user tokens in Spidermon. Do not publish bot user tokens in public code repositories.
+    Be careful when using bot user tokens in Spidermon. Do not publish bot user tokens in public code repositories.
 
 Other settings available:
 
@@ -273,7 +275,7 @@ SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX
 
 .. _`Slack`: https://slack.com/
 .. _`Slack credentials`: https://api.slack.com/docs/token-types
-.. _`here`: https://api.slack.com/docs/token-types
+.. _`Follow these steps`: :ref:`slack_bot_guide`
 
 .. _actions-job-tags:
 
@@ -459,7 +461,7 @@ SPIDERMON_REPORT_S3_REGION_ENDPOINT
 .. _actions-sentry-action:
 
 Sentry action
-============
+=============
 
 This action allows you to send custom messages to `Sentry`_ when your
 monitor suites finishes their execution. To use this action
