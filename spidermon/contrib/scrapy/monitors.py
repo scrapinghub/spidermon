@@ -90,16 +90,6 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
 
     Usage # 1
 
-    You can configure a ``dict`` of unwanted HTTP codes with
-    ``SPIDERMON_UNWANTED_HTTP_CODES`` the default value is::
-
-        SPIDERMON_UNWANTED_HTTP_CODES = {
-            code: 10
-            for code in [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
-        }
-
-    Usage # 2
-
     You can configure an ``int`` of maximum unwanted HTTP codes with
     ``SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT`` the default value is::
 
@@ -112,24 +102,47 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
             for code in [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
         }
 
+    Usage # 2
+
+    You can configure a ``dict`` or ``list`` of unwanted HTTP codes with
+    ``SPIDERMON_UNWANTED_HTTP_CODES`` the default value is::
+
+        1.1 - In case of Dictionary:
+
+        SPIDERMON_UNWANTED_HTTP_CODES = {
+            code: 10
+            for code in [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
+        }
+
+        1.2 - In case of List:
+
+        SPIDERMON_UNWANTED_HTTP_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
+
+        ----->
+
+        SPIDERMON_UNWANTED_HTTP_CODES = {
+            code: SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT / 10
+            for code in [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
+        }
+
     """
     DEFAULT_ERROR_MAX_COUNT = 10
-    ERROR_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
-
-    DEFAULT_ERROR_CODES = {code: 10 for code in ERROR_CODES}
+    DEFAULT_ERROR_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
 
     @monitors.name("Should not hit the limit of unwanted http status")
     def test_check_unwanted_http_codes(self):
-        error_codes_dict = self.crawler.settings.getdict(
+        error_codes = self.crawler.settings.get(
             SPIDERMON_UNWANTED_HTTP_CODES, self.DEFAULT_ERROR_CODES
         )
+
         errors_max_count = self.crawler.settings.getint(
             SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT, self.DEFAULT_ERROR_MAX_COUNT
         )
-        if errors_max_count != self.DEFAULT_ERROR_MAX_COUNT:
-            error_codes_dict = {code: errors_max_count for code in self.ERROR_CODES}
 
-        for code, max_errors in error_codes_dict.items():
+        if not isinstance(error_codes, dict):
+            error_codes = {code: errors_max_count for code in error_codes}
+
+        for code, max_errors in error_codes.items():
             code = int(code)
             count = self.stats.get(
                 "downloader/response_status_count/{}".format(code), 0
