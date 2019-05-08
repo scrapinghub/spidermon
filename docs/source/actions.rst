@@ -166,9 +166,11 @@ Slack action
 ============
 
 This action allows you to send custom messages to a `Slack`_ channel (or user)
-using a bot when your monitor suites finishes their execution. To use this action
-you need to provide the `Slack credentials`_ in your `settings.py`
-file as follows:
+using a bot when your monitor suites finishes their execution.
+
+`Follow these steps`_ for creating a bot in your workplace and configuring it for
+Spidermon. The credentials from the Slack bot will be needed in your `settings.py`
+file are as follows:
 
 .. code-block:: python
 
@@ -182,8 +184,6 @@ A notification will look like the following one:
 .. image:: /_static/slack_notification.png
    :scale: 50 %
    :alt: Slack Notification
-
-`Follow these steps`_ for creating a bot in your workplace.
 
 The following settings are the minimum needed to make this action works:
 
@@ -274,7 +274,6 @@ SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX
 -------------------------------------
 
 .. _`Slack`: https://slack.com/
-.. _`Slack credentials`: https://api.slack.com/docs/token-types
 .. _`Follow these steps`: :ref:`slack_bot_guide`
 
 .. _actions-job-tags:
