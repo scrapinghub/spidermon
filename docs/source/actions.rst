@@ -8,7 +8,7 @@ By default, when a monitor suite finishes, the pass/fail information is included
 in the spider logs, which would be enough during development but useless when
 you are monitoring several spiders.
 
-Spidermon allows you to define actions that are ran after the monitors finishes.
+Spidermon allows you to define actions that are ran after the monitors finish.
 You can define your own actions or use one of the existing built-in actions.
 
 .. _actions-email:
@@ -166,7 +166,7 @@ Slack action
 ============
 
 This action allows you to send custom messages to a `Slack`_ channel (or user)
-using a bot when your monitor suites finishes their execution. To use this action
+using a bot when your monitor suites finish their execution. To use this action
 you need to provide the `Slack credentials`_ in your `settings.py`
 file as follows:
 
@@ -456,7 +456,7 @@ Sentry action
 ============
 
 This action allows you to send custom messages to `Sentry`_ when your
-monitor suites finishes their execution. To use this action
+monitor suites finish their execution. To use this action
 you need to provide the `Sentry DSN`_ in your `settings.py`
 file as follows:
 
