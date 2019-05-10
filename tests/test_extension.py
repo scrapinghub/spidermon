@@ -10,21 +10,6 @@ from spidermon.contrib.scrapy.extensions import Spidermon
 
 
 @pytest.fixture
-def get_crawler():
-    def _crawler(extended_settings={}):
-        settings = {
-            "SPIDERMON_ENABLED": True,
-            "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 500},
-        }
-        settings.update(extended_settings)
-        crawler = Crawler(Spider, settings=settings)
-        crawler.spider = Spider("dummy")
-        return crawler
-
-    return _crawler
-
-
-@pytest.fixture
 def suites():
     return ["tests.fixtures.suites.Suite01"]
 
