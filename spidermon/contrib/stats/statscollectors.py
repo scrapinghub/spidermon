@@ -8,8 +8,8 @@ from scrapy.utils.project import data_path
 
 class LocalStorageStatsHistoryCollector(StatsCollector):
     def __init__(self, crawler):
-        self._dump = crawler.settings.getbool("STATS_DUMP")
-        self._stats = {}
+        super(LocalStorageStatsHistoryCollector, self).__init__(crawler)
+
         self._statsdir = data_path("stats", createdir=True)
 
     def open_spider(self, spider):
