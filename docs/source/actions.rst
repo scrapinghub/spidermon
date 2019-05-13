@@ -165,6 +165,17 @@ SPIDERMON_EMAIL_SUBJECT_TEMPLATE
 Slack action
 ============
 
+.. warning::
+
+   You need to install `slackclient`_ to use this feature.
+
+   .. code-block:: shell
+
+     $ pip install "slackclient>=1.3,<2.0"
+
+   **Do not install** a version greater than **1.3.*** because newer versions
+   work only with Python 3.6+ and contain incompatible features.
+
 This action allows you to send custom messages to a `Slack`_ channel (or user)
 using a bot when your monitor suites finishes their execution. To use this action
 you need to provide the `Slack credentials`_ in your `settings.py`
@@ -538,3 +549,5 @@ the `run_action` method.
         def run_action(self):
             # Include here the logic of your action
             # (...)
+
+.. _`slackclient`: https://pypi.org/project/slackclient/
