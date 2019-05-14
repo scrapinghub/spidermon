@@ -22,7 +22,7 @@ setup(
         "monitoring": [
             "scrapy",
             "Jinja2",
-            "slackclient",
+            "slackclient>=1.3.0,<2.0.0",
             "boto",
             "premailer",
             "sentry-sdk",
