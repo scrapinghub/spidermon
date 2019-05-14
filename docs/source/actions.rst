@@ -167,14 +167,13 @@ Slack action
 
 .. warning::
 
-   You need to install `slackclient`_ to use this feature.
+   To use this feature you need to install `slackclient`_ **1.3 or higher, but
+   lower than 2.0**. Version 2.0 is Python3.6+ only and contains incompatible
+   features.
 
    .. code-block:: shell
 
      $ pip install "slackclient>=1.3,<2.0"
-
-   **Do not install** a version greater than **1.3.*** because newer versions
-   work only with Python 3.6+ and contain incompatible features.
 
 This action allows you to send custom messages to a `Slack`_ channel (or user)
 using a bot when your monitor suites finishes their execution. To use this action
