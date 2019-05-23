@@ -1,3 +1,4 @@
+import os
 from collections import deque
 
 import pytest
@@ -9,7 +10,9 @@ from spidermon.contrib.stats.statscollectors import LocalStorageStatsHistoryColl
 def get_stats_collector(tmpdir):
     def _stats_collector(crawler):
         stats_collector = LocalStorageStatsHistoryCollector(crawler)
-        stats_collector._statsdir = tmpdir.strpath
+        stats_collector.stats_location = os.path.join(
+            tmpdir.strpath, "{}_stats_history".format(crawler.spider.name)
+        )
         return stats_collector
 
     return _stats_collector
