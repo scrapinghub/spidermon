@@ -4,8 +4,7 @@ except ImportError:
     import mock
 import pytest
 
-from scrapy.crawler import Crawler
-from scrapy import Spider, signals
+from scrapy import signals
 from spidermon.contrib.scrapy.extensions import Spidermon
 
 
