@@ -29,6 +29,42 @@ def test_spider_has_stats_history_attribute_when_opened_with_collector(
     assert spider.stats_history == deque()
 
 
+def test_spider_has_stats_history_queue_with_specified_max_size(
+    get_crawler, get_stats_collector
+):
+    max_stored_stats = 2
+
+    crawler = get_crawler({"SPIDERMON_MAX_STORED_STATS": max_stored_stats})
+    spider = crawler._create_spider("foo")
+    assert not hasattr(spider, "stats_history")
+
+    stats_collector = get_stats_collector(crawler)
+    stats_collector.open_spider(spider)
+
+    assert hasattr(spider, "stats_history")
+    assert spider.stats_history == deque()
+    assert spider.stats_history.maxlen == max_stored_stats
+
+
+@pytest.mark.parametrize("initial_max_len,end_max_len", [(5, 2), (5, 10), (5, 5)])
+def test_spider_update_stats_history_queue_max_size(
+    get_crawler, get_stats_collector, initial_max_len, end_max_len
+):
+    crawler = get_crawler({"SPIDERMON_MAX_STORED_STATS": initial_max_len})
+    spider = crawler._create_spider("foo")
+    stats_collector = get_stats_collector(crawler)
+
+    stats_collector.open_spider(spider)
+    assert spider.stats_history.maxlen == initial_max_len
+    stats_collector.close_spider(spider, "finished")
+
+    crawler = get_crawler({"SPIDERMON_MAX_STORED_STATS": end_max_len})
+    spider = crawler._create_spider("foo")
+    stats_collector = get_stats_collector(crawler)
+    stats_collector.open_spider(spider)
+    assert spider.stats_history.maxlen == end_max_len
+
+
 def test_spider_has_last_stats_history_when_opened_again(
     get_crawler, get_stats_collector
 ):
