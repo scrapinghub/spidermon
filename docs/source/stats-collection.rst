@@ -13,8 +13,8 @@ stats collector that stores the stats of all spider executions in your local
 file system.
 
 After enabling this stats collector, every spider instance running will have a
-``stats_history`` attribute containing a list of the latest spider executions
-that can be easily accessed in your monitors.
+``stats_history`` attribute containing a list of the stats of the previous spider
+executions that can be easily accessed in your monitors.
 
 To enable it, include the following code in your project settings:
 
@@ -29,8 +29,8 @@ To enable it, include the following code in your project settings:
     SPIDERMON_MAX_STORED_STATS = 10
 
 The following example shows how we can verify whether the number of items
-returned in the actual spider execution is higher than 90% of the mean of items
-returned in the latest spider executions.
+returned in the current spider execution is higher than 90% of the mean of items
+returned in the previous spider executions.
 
 .. code-block:: python
 
@@ -63,7 +63,6 @@ returned in the latest spider executions.
           )
 
 .. note::
-
     If you are running your spider in `Scrapy Cloud`_ you need to enable the
     `DotScrapy Persistence Add-on`_ in your project to keep your `.scrapy` directory
     available between job executions.
