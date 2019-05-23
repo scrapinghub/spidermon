@@ -10,18 +10,18 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
     def __init__(self, crawler):
         super(LocalStorageStatsHistoryCollector, self).__init__(crawler)
 
-        self._statsdir = data_path("stats", createdir=True)
+        statsdir = data_path("stats", createdir=True)
+        self.stats_location = os.path.join(
+            statsdir, "{}_stats_history".format(crawler.spider.name)
+        )
 
     def open_spider(self, spider):
         max_stored_stats = spider.crawler.settings.getint(
             "SPIDERMON_MAX_STORED_STATS", default=100
         )
 
-        stats_location = os.path.join(
-            self._statsdir, "{}_stats_history".format(spider.name)
-        )
-        if os.path.isfile(stats_location):
-            with open(stats_location, "rb") as stats_file:
+        if os.path.isfile(self.stats_location):
+            with open(self.stats_location, "rb") as stats_file:
                 _stats_history = pickle.load(stats_file)
         else:
             _stats_history = deque([], maxlen=max_stored_stats)
@@ -35,8 +35,5 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
 
     def _persist_stats(self, stats, spider):
         spider.stats_history.appendleft(self._stats)
-        stats_location = os.path.join(
-            self._statsdir, "{}_stats_history".format(spider.name)
-        )
-        with open(stats_location, "wb") as stats_file:
+        with open(self.stats_location, "wb") as stats_file:
             pickle.dump(spider.stats_history, stats_file)
