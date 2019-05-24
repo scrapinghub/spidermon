@@ -64,7 +64,7 @@ returned in the previous spider executions.
 
 .. note::
     If you are running your spider in `Scrapy Cloud`_ you need to enable the
-    `DotScrapy Persistence Add-on`_ in your project to keep your `.scrapy` directory
+    `DotScrapy Persistence Add-on`_ in your project to keep your ``.scrapy`` directory
     available between job executions.
 
 .. _`Scrapy Cloud`: https://scrapinghub.com/scrapy-cloud
