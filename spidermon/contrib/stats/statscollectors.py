@@ -27,9 +27,7 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
             _stats_history = deque([], maxlen=max_stored_stats)
 
         if _stats_history.maxlen != max_stored_stats:
-            _stats_history = deque([
-                stat for stat in _stats_history
-            ], maxlen=max_stored_stats)
+            _stats_history = deque(_stats_history, maxlen=max_stored_stats)
 
         spider.stats_history = _stats_history
 
