@@ -120,25 +120,26 @@ class ValidationMonitorMixin(StatsMonitorMixin):
     def check_missing_required_fields_percent(
         self, field_names=None, allowed_percent=0
     ):
-        if not field_names:
-            missing_percent = self.validation.errors["missing_required_field"].percent
-            self._check_missing_required_percent(missing_percent, allowed_percent)
-        else:
+        if field_names:
             for field_name in field_names:
+                self.check_missing_required_field_percent(field_name, allowed_percent)
+        else:
+            for field_name in self.validation.errors["missing_required_field"].fields.keys():
                 self.check_missing_required_field_percent(field_name, allowed_percent)
 
     def check_missing_required_field_percent(self, field_name, allowed_percent=0):
         missing_percent = (
             self.validation.fields[field_name].errors["missing_required_field"].percent
         )
-        self._check_missing_required_percent(missing_percent, allowed_percent)
+        self._check_missing_required_percent(missing_percent, field_name, allowed_percent)
 
-    def _check_missing_required_percent(self, missing_percent, allowed_percent=0):
+    def _check_missing_required_percent(self, missing_percent, field_name, allowed_percent=0):
         self.assertLessEqual(
             missing_percent,
             allowed_percent,
-            msg="{percent}% of required fields are missing!{threshold_info}".format(
+            msg="{percent}% of required field {field_name} are missing!{threshold_info}".format(
                 percent=missing_percent * 100,
+                field_name=field_name,
                 threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
                 if allowed_percent > 0
                 else "",
@@ -179,12 +180,17 @@ class ValidationMonitorMixin(StatsMonitorMixin):
     def check_fields_errors_percent(
         self, field_names=None, errors=None, allowed_percent=0
     ):
-        if not field_names:
-            errors_percent = self.validation.errors.percent
-            self._check_field_errors_percent(errors_percent, allowed_percent)
-        else:
+        if field_names:
             for field_name in field_names:
                 self.check_field_errors_percent(field_name, errors, allowed_percent)
+        else:
+            for error_name in self.validation.errors.keys():
+                if self.validation.errors[error_name].fields:
+                    self.check_fields_errors_percent(
+                        field_names=self.validation.errors[error_name].fields.keys(),
+                        errors=errors,
+                        allowed_percent=allowed_percent
+                )
 
     def check_field_errors_percent(self, field_name, errors=None, allowed_percent=0):
         if errors:
@@ -193,14 +199,15 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             )
         else:
             errors_percent = self.validation.fields[field_name].errors.percent
-        self._check_field_errors_percent(errors_percent, allowed_percent)
+        self._check_field_errors_percent(errors_percent, field_name, allowed_percent)
 
-    def _check_field_errors_percent(self, errors_percent, allowed_percent):
+    def _check_field_errors_percent(self, errors_percent, field_name, allowed_percent):
         self.assertLessEqual(
             errors_percent,
             allowed_percent,
-            msg="{percent}% of fields have validation errors!{threshold_info}".format(
+            msg="{percent}% of field {field_name} have validation errors!{threshold_info}".format(
                 percent=errors_percent * 100,
+                field_name=field_name,
                 threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
                 if allowed_percent > 0
                 else "",
