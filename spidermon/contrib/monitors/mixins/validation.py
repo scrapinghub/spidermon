@@ -9,6 +9,8 @@ from spidermon.contrib.scrapy.stats import STATS_DEFAULT_VALIDATION_PREFIX
 
 from .stats import StatsMonitorMixin
 
+import traceback
+
 
 class MetaDictPercentCounter(DictPercentCounter):
     def add_values(self, key, subkey, value):
@@ -134,17 +136,20 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         self._check_missing_required_percent(missing_percent, field_name, allowed_percent)
 
     def _check_missing_required_percent(self, missing_percent, field_name, allowed_percent=0):
-        self.assertLessEqual(
-            missing_percent,
-            allowed_percent,
-            msg="{percent}% of required field {field_name} are missing!{threshold_info}".format(
-                percent=missing_percent * 100,
-                field_name=field_name,
-                threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
-                if allowed_percent > 0
-                else "",
-            ),
-        )
+        try:
+            self.assertLessEqual(
+                missing_percent,
+                allowed_percent,
+                msg="{percent}% of required field {field_name} are missing!{threshold_info}".format(
+                    percent=missing_percent * 100,
+                    field_name=field_name,
+                    threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
+                    if allowed_percent > 0
+                    else "",
+                ),
+            )
+        except AssertionError:
+            traceback.print_exc()
 
     def check_fields_errors(self, field_names=None, errors=None, allowed_count=0):
         if not field_names:
@@ -202,14 +207,17 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         self._check_field_errors_percent(errors_percent, field_name, allowed_percent)
 
     def _check_field_errors_percent(self, errors_percent, field_name, allowed_percent):
-        self.assertLessEqual(
-            errors_percent,
-            allowed_percent,
-            msg="{percent}% of field {field_name} have validation errors!{threshold_info}".format(
-                percent=errors_percent * 100,
-                field_name=field_name,
-                threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
-                if allowed_percent > 0
-                else "",
-            ),
-        )
+        try:
+            self.assertLessEqual(
+                errors_percent,
+                allowed_percent,
+                msg="{percent}% of field {field_name} have validation errors!{threshold_info}".format(
+                    percent=errors_percent * 100,
+                    field_name=field_name,
+                    threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
+                    if allowed_percent > 0
+                    else "",
+                ),
+            )
+        except AssertionError:
+            traceback.print_exc()
