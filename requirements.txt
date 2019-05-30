@@ -13,3 +13,4 @@ tox
 sentry-sdk
 black; python_version >= '3.6'
 pytest-mock
+click
