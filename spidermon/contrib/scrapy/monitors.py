@@ -95,13 +95,6 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
 
         SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = 10
 
-        ----->
-
-        SPIDERMON_UNWANTED_HTTP_CODES = {
-            code: SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT
-            for code in [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
-        }
-
     Usage # 2
 
     You can configure a ``dict`` or ``list`` of unwanted HTTP codes with
@@ -118,31 +111,24 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
 
         SPIDERMON_UNWANTED_HTTP_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
 
-        ----->
-
-        SPIDERMON_UNWANTED_HTTP_CODES = {
-            code: SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT / 10
-            for code in [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
-        }
-
     """
-    DEFAULT_ERROR_MAX_COUNT = 10
-    DEFAULT_ERROR_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
+    DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT = 10
+    DEFAULT_UNWANTED_HTTP_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
 
     @monitors.name("Should not hit the limit of unwanted http status")
     def test_check_unwanted_http_codes(self):
-        error_codes = self.crawler.settings.get(
-            SPIDERMON_UNWANTED_HTTP_CODES, self.DEFAULT_ERROR_CODES
+        unwanted_http_codes = self.getdictorlist(
+            SPIDERMON_UNWANTED_HTTP_CODES, self.DEFAULT_UNWANTED_HTTP_CODES
         )
 
         errors_max_count = self.crawler.settings.getint(
-            SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT, self.DEFAULT_ERROR_MAX_COUNT
+            SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT, self.DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT
         )
 
-        if not isinstance(error_codes, dict):
-            error_codes = {code: errors_max_count for code in error_codes}
+        if not isinstance(unwanted_http_codes, dict):
+            unwanted_http_codes = {code: errors_max_count for code in unwanted_http_codes}
 
-        for code, max_errors in error_codes.items():
+        for code, max_errors in unwanted_http_codes.items():
             code = int(code)
             count = self.stats.get(
                 "downloader/response_status_count/{}".format(code), 0
@@ -152,6 +138,22 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
                 "This exceed the limit of {}".format(count, code, max_errors)
             )
             self.assertTrue(count <= max_errors, msg=msg)
+
+    def getdictorlist(self, name, default=None):
+        import json
+        import six
+        import copy
+        from collections import OrderedDict
+
+        value = self.crawler.settings.get(name, default)
+        if value is None:
+            return {}
+        if isinstance(value, six.string_types):
+            try:
+                return json.loads(value, object_pairs_hook=OrderedDict)
+            except ValueError:
+                return value.split(',')
+        return copy.deepcopy(value)
 
 
 class SpiderCloseMonitorSuite(MonitorSuite):
