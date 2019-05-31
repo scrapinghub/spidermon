@@ -90,13 +90,20 @@ including testing other Python versions with tox::
 
   $ black .
 
-7. Commit your changes and push your branch to GitHub::
+7. [Optional] If you changed something related to docs, make sure it compiles properly
+
+    $ cd docs
+    $ make html
+
+    Now you can go to `spidermon/docs/build` and open `index.html`
+
+8. Commit your changes and push your branch to GitHub::
 
     $ git add .
     $ git commit -m "Your detailed description of your changes."
     $ git push origin name-of-your-bugfix-or-feature
 
-8. Submit a pull request through the GitHub website.
+9. Submit a pull request through the GitHub website.
 
 Pull Request Guidelines
 -----------------------
