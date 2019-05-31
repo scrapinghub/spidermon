@@ -87,17 +87,19 @@ class FinishReasonMonitor(BaseScrapyMonitor):
 @monitors.name("Unwanted HTTP codes monitor")
 class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
     """Check for maximum number of unwanted HTTP codes.
+    You can configure it using ``SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT`` setting.
+    or ``SPIDERMON_UNWANTED_HTTP_CODES`` setting
 
     Usage # 1
 
-    You can configure an ``int`` of maximum unwanted HTTP codes with
+    You can configure a setting ``int`` of maximum unwanted HTTP codes with
     ``SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT`` the default value is::
 
         SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = 10
 
     Usage # 2
 
-    You can configure a ``dict`` or ``list`` of unwanted HTTP codes with
+    You can configure a setting ``dict`` or ``list`` of unwanted HTTP codes with
     ``SPIDERMON_UNWANTED_HTTP_CODES`` the default value is::
 
         1.1 - In case of Dictionary:
