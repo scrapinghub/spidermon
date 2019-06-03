@@ -64,7 +64,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "spidermon = spidermon.commands.spidermon",
+            "spidermon = spidermon.commands:cli",
         ],
     },
 )

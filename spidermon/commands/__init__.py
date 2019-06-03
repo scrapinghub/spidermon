@@ -1,10 +1,8 @@
 from click import group
-from .commands import version
+from .version import version
 
 @group('spidermon', help="Spidermon basic setup.")
-def spidermon():
+def cli():
     ...
 
-spidermon.add_command(version)
-
-spidermon()
+cli.add_command(version)
