@@ -13,7 +13,7 @@ def stats_temporary_location(monkeypatch, tmp_path):
     monkeypatch.setattr(
         LocalStorageStatsHistoryCollector,
         "_stats_location",
-        lambda x, y: os.path.join(tmp_path, "stats"),
+        lambda x, y: os.path.join(str(tmp_path), "stats"),
     )
 
 
