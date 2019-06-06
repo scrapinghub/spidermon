@@ -90,12 +90,12 @@ including testing other Python versions with tox::
 
   $ black .
 
-7. [Optional] If you changed something related to docs, make sure it compiles properly
+7. If you changed something related to docs, **make sure it compiles properly**::
 
     $ cd docs
     $ make html
 
-    Now you can go to `spidermon/docs/build` and open `index.html`
+   Now you can go to `spidermon/docs/build` and open `index.html`.
 
 8. Commit your changes and push your branch to GitHub::
 
