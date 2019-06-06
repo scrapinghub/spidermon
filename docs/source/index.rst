@@ -31,7 +31,7 @@ Contents
    getting-started
    monitors
    item-validation
+   stats-collection
    settings
    actions
    changelog
-
