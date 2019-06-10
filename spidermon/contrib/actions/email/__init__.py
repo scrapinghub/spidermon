@@ -22,7 +22,7 @@ class SendEmail(ActionWithTemplates):
     body_text = None
     body_text_template = None
     body_html = None
-    # Default value for template added
+    # Default value for template
     body_html_template = 'reports/email/monitors/result.jinja'
     fake = False
 
