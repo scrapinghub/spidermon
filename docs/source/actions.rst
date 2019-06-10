@@ -102,6 +102,12 @@ Default: ``None``
 SPIDERMON_BODY_HTML_TEMPLATE
 ----------------------------
 
+String containing the location of the template for the spidermon email report.
+
+Default: ``reports/email/monitors/result.jinja``
+
+Link to the Default `Template`_.
+
 .. _SPIDERMON_BODY_TEXT:
 
 SPIDERMON_BODY_TEXT
@@ -279,6 +285,7 @@ SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX
 .. _`Slack`: https://slack.com/
 .. _`Slack credentials`: https://api.slack.com/docs/token-types
 .. _`Slack token`: https://api.slack.com/docs/token-types
+.. _`Template`: https://github.com/scrapinghub/spidermon/blob/master/spidermon/contrib/actions/reports/templates/reports/email/monitors/result.jinja
 
 .. _actions-job-tags:
 
