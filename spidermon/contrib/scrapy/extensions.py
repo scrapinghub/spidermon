@@ -1,15 +1,15 @@
 from __future__ import absolute_import
 
 from scrapy import signals
-from scrapy.utils.misc import load_object
 from scrapy.exceptions import NotConfigured
+from scrapy.utils.misc import load_object
 from twisted.internet.task import LoopingCall
 
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
-from spidermon.utils.hubstorage import hs
 from spidermon.python import factory
 from spidermon.python.monitors import ExpressionsMonitor
+from spidermon.utils.hubstorage import hs
 
 
 class Spidermon(object):
@@ -45,9 +45,13 @@ class Spidermon(object):
             for s in spider_closed_expression_suites or []
         ]
 
-        self.engine_stopped_suites = [self.load_suite(s) for s in engine_stopped_suites or []]
-        self.engine_stopped_suites += [self.load_expression_suite(s, expressions_monitor_class)
-                                       for s in engine_stopped_expression_suites or []]
+        self.engine_stopped_suites = [
+            self.load_suite(s) for s in engine_stopped_suites or []
+        ]
+        self.engine_stopped_suites += [
+            self.load_expression_suite(s, expressions_monitor_class)
+            for s in engine_stopped_expression_suites or []
+        ]
 
         self.periodic_suites = periodic_suites or {}
         self.periodic_tasks = {}
@@ -135,6 +139,9 @@ class Spidermon(object):
     def _generate_data_for_spider(self, spider):
         return {
             "stats": self.crawler.stats.get_stats(spider),
+            "stats_history": spider.stats_history
+            if hasattr(spider, "stats_history")
+            else [],
             "crawler": self.crawler,
             "spider": spider,
             "job": hs.job if hs.available else None,

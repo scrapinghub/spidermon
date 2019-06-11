@@ -1,6 +1,12 @@
 from setuptools import setup, find_packages
 
-test_requirements = ["pytest>=2.7.0", "pytest-cov", "pytest-mock", "scrapy"]
+test_requirements = [
+    "pytest>=2.7.0",
+    "pytest-cov",
+    "pytest-mock",
+    "scrapy",
+    'Twisted<=19.2.0;python_version=="3.4"',
+]
 
 setup(
     name="spidermon",
@@ -22,7 +28,7 @@ setup(
         "monitoring": [
             "scrapy",
             "Jinja2",
-            "slackclient",
+            "slackclient>=1.3.0,<2.0.0",
             "boto",
             "premailer",
             "sentry-sdk",
