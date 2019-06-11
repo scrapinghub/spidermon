@@ -87,6 +87,8 @@ class FinishReasonMonitor(BaseScrapyMonitor):
 @monitors.name("Unwanted HTTP codes monitor")
 class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
     """Check for maximum number of unwanted HTTP codes.
+    You can configure it using ``SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT`` setting
+    or ``SPIDERMON_UNWANTED_HTTP_CODES`` setting
 
     This monitor fails if during the spider execution, we receive
     more than the number of ``SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT``
