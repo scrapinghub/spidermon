@@ -90,28 +90,32 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
     You can configure it using ``SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT`` setting
     or ``SPIDERMON_UNWANTED_HTTP_CODES`` setting
 
-    Usage # 1
+    This monitor fails if during the spider execution, we receive
+    more than the number of ``SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT``
+    setting for at least one of the HTTP Status Codes in the list defined in
+    ``SPIDERMON_UNWANTED_HTTP_CODES`` setting.
 
-    You can configure a setting ``int`` of maximum unwanted HTTP codes with
-    ``SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT`` the default value is::
+    Default values are:
+
+    .. highlight:: python
+    .. code-block:: python
 
         SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = 10
+        SPIDERMON_UNWANTED_HTTP_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
 
-    Usage # 2
+    ``SPIDERMON_UNWANTED_HTTP_CODES`` can also be a dictionary with the HTTP Status Code
+    as key and the maximum number of accepted responses with that code.
 
-    You can configure a setting ``dict`` or ``list`` of unwanted HTTP codes with
-    ``SPIDERMON_UNWANTED_HTTP_CODES`` the default value is::
+    With the following setting, the monitor will fail if more than 100 responses are
+    404 errors or at least one 500 error:
 
-        1.1 - In case of Dictionary:
+    .. highlight:: python
+    .. code-block:: python
 
         SPIDERMON_UNWANTED_HTTP_CODES = {
-            code: 10
-            for code in [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
+            400: 100,
+            500: 0,
         }
-
-        1.2 - In case of List:
-
-        SPIDERMON_UNWANTED_HTTP_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
 
     """
     DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT = 10
