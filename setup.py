@@ -10,7 +10,7 @@ test_requirements = [
 
 setup(
     name="spidermon",
-    version="1.9.0",
+    version="1.10.0",
     url="https://github.com/scrapinghub/spidermon",
     author="Scrapinghub",
     author_email="info@scrapinghub.com",
@@ -21,7 +21,7 @@ setup(
     package_data={"spidermon": ["VERSION"]},
     zip_safe=False,
     include_package_data=True,
-    install_requires=["jsonschema[format]", "python-slugify", "six>=1.9.0"],
+    install_requires=["jsonschema[format]", "python-slugify", "six>=1.10.0"],
     tests_require=test_requirements,
     extras_require={
         # Specific monitors and tools to support notifications and reports
