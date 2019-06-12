@@ -1,5 +1,6 @@
 from spidermon import monitors, MonitorSuite, Monitor
 from spidermon.exceptions import NotConfigured
+from spidermon.utils.settings import getdictorlist
 from ..monitors.mixins.spider import SpiderMonitorMixin
 
 SPIDERMON_MIN_ITEMS = "SPIDERMON_MIN_ITEMS"
@@ -118,21 +119,27 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
         }
 
     """
+
     DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT = 10
     DEFAULT_UNWANTED_HTTP_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
 
     @monitors.name("Should not hit the limit of unwanted http status")
     def test_check_unwanted_http_codes(self):
-        unwanted_http_codes = self.getdictorlist(
-            SPIDERMON_UNWANTED_HTTP_CODES, self.DEFAULT_UNWANTED_HTTP_CODES
+        unwanted_http_codes = getdictorlist(
+            self.crawler,
+            SPIDERMON_UNWANTED_HTTP_CODES,
+            self.DEFAULT_UNWANTED_HTTP_CODES,
         )
 
         errors_max_count = self.crawler.settings.getint(
-            SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT, self.DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT
+            SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT,
+            self.DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT,
         )
 
         if not isinstance(unwanted_http_codes, dict):
-            unwanted_http_codes = {code: errors_max_count for code in unwanted_http_codes}
+            unwanted_http_codes = {
+                code: errors_max_count for code in unwanted_http_codes
+            }
 
         for code, max_errors in unwanted_http_codes.items():
             code = int(code)
@@ -144,22 +151,6 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
                 "This exceed the limit of {}".format(count, code, max_errors)
             )
             self.assertTrue(count <= max_errors, msg=msg)
-
-    def getdictorlist(self, name, default=None):
-        import json
-        import six
-        import copy
-        from collections import OrderedDict
-
-        value = self.crawler.settings.get(name, default)
-        if value is None:
-            return {}
-        if isinstance(value, six.string_types):
-            try:
-                return json.loads(value, object_pairs_hook=OrderedDict)
-            except ValueError:
-                return value.split(',')
-        return copy.deepcopy(value)
 
 
 class SpiderCloseMonitorSuite(MonitorSuite):
