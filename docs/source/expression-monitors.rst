@@ -56,7 +56,7 @@ How to create an expression monitor
 ==================================
 
 First of all you should have :ref:`enabled spidermon <enabling-spidermon>`.
-Then you need to choose *when* you want to run your expression monitors
+Then you need to choose *when* you want to run your expression monitors.
 
 You can use :ref:`SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS` to run the monitor
 when the spider open, or :ref:`SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS` if you
