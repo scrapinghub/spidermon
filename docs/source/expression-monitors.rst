@@ -60,7 +60,7 @@ Then you need to choose *when* you want to run your expression monitors.
 
 You can use :ref:`SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS` to run a monitor
 when a spider opens, or :ref:`SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS` if you
-want to run when the spider is closed.
+want to run a monitor when a spider is closed.
 
 There's also the :ref:`SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS` to run the monitors
 once the engine has stopped.
