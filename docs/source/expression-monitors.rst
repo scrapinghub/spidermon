@@ -104,7 +104,7 @@ finished with ``finished``::
 
 .. _expression-monitor-schema:
 
-Expression Monitor Schema
+Expression monitor schema
 =========================
 
 Each `Expression Monitor` should follow this schema::
