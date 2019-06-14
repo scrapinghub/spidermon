@@ -62,7 +62,7 @@ You can use :ref:`SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS` to run a monitor
 when a spider opens, or :ref:`SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS` if you
 want to run a monitor when a spider is closed.
 
-There's also the :ref:`SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS` to run the monitors
+There's also the :ref:`SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS` setting to run a monitor
 once the engine has stopped.
 
 Here's an example of how to declare 2 ``ExpressionMonitors``.
