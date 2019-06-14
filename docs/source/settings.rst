@@ -37,7 +37,7 @@ Default: ``spidermon.python.monitors.ExpressionMonitor``
 A fully qualified path for a Python Class that should inherit from 
 ``spidermon.python.monitors.ExpressionMonitor``.
 
-This class will be used to generate on-the-fly monitors for the folowing settings:
+This class will be used to generate :ref:`expression monitors <expression-monitors>`.
 
     * :ref:`SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS`
     * :ref:`SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS`
