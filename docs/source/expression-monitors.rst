@@ -52,7 +52,7 @@ You have the following objects available to be used in your *expression*:
 
 .. _how-to-create-expression-monitor:
 
-How to create a Expression Monitor
+How to create an expression monitor
 ==================================
 
 First of all you should have :ref:`enabled spidermon <enabling-spidermon>`.
