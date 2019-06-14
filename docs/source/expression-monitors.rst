@@ -107,7 +107,7 @@ finished with ``finished``::
 Expression monitor schema
 =========================
 
-Each `Expression Monitor` should follow this schema::
+Each `expression monitor` should follow this schema::
 
     {
        "type": "object",
