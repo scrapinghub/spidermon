@@ -22,7 +22,7 @@ in a dictionary in your settings like::
         },
     ]
 
-The definition of each monitor should follow the :ref:`expression-monitor-schema`
+The definition of each monitor should follow the :ref:`expression-monitor-schema`.
 
 There are 3 settings related to the expression
 monitors, they are:
