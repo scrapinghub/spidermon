@@ -42,6 +42,25 @@ def find_monitors():
         }
     }]
 
+def include_settings(settings_list):
+    # find and open settings file
+    module = import_module(get_project_settings().get('BOT_NAME'))
+    settings_file = join(abspath(dirname(module.__file__)), 'settings.py')
+    with open(settings_file, 'r') as file:
+        read_data = file.read()
+
+        # check if spidermon was already enabled
+        if 'SPIDERMON_ENABLED' in read_data:
+            return False
+
+    with open(settings_file, 'a') as file:
+        # include them in the end of file
+        for setting in settings_list:
+            file.write(setting)
+
+    return True
+
+
 def render_monitors(monitors_file, monitors_list, monitors_imports):
     with open(monitors_file, 'r') as file:
         raw = file.read()
