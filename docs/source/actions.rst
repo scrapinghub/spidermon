@@ -102,7 +102,7 @@ Default: ``None``
 SPIDERMON_BODY_HTML_TEMPLATE
 ----------------------------
 
-String containing the location of the template for the spidermon email report.
+String containing the location of the `Jinja2`_ template for the spidermon email report.
 
 Default: ``reports/email/monitors/result.jinja``
 
@@ -164,7 +164,7 @@ SPIDERMON_EMAIL_SUBJECT_TEMPLATE
 --------------------------------
 
 .. _Amazon Simple Email Service: https://aws.amazon.com/pt/ses/
-.. _Jinja2: http://jinja.pocoo.org/
+
 
 .. _actions-slack:
 
@@ -558,3 +558,4 @@ the `run_action` method.
             # (...)
 
 .. _`slackclient`: https://pypi.org/project/slackclient/
+.. _Jinja2: http://jinja.pocoo.org/
