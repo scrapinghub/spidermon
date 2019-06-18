@@ -15,7 +15,6 @@ def get_crawler(settings_dict=None):
 
 @pytest.mark.skipif(sys.version_info < (3, 4), reason="requires python3.4 or higher")
 def test_spider_opened_connect_signal(mocker):
-
     spider_opened_method = mocker.patch.object(Spidermon, "spider_opened")
 
     crawler = get_crawler(
@@ -46,3 +45,21 @@ def test_spider_closed_connect_signal(mocker):
     )
 
     assert spider_closed_method.called, "spider_closed not called"
+
+
+@pytest.mark.skipif(sys.version_info < (3, 4), reason="requires python3.4 or higher")
+def test_engine_stopped_connect_signal(mocker):
+    engine_stopped = mocker.patch.object(Spidermon, "engine_stopped")
+
+    crawler = get_crawler(
+        settings_dict={
+            "SPIDERMON_ENABLED": True,
+            "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
+        }
+    )
+    spider = Spider.from_crawler(crawler, "example.com")
+    crawler.signals.send_catch_log(
+        signal=signals.engine_stopped, spider=spider, reason=None
+    )
+
+    assert engine_stopped.called, "engine_stopped not called"
