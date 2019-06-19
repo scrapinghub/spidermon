@@ -4,7 +4,7 @@ import os
 import datetime
 import pprint as pretty_print
 
-from jinja2 import Environment, FileSystemLoader, Template
+from jinja2 import Environment, FileSystemLoader
 
 DEFAULT_TEMPLATE_FOLDERS = ["templates"]
 
