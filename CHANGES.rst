@@ -2,6 +2,7 @@ Release notes
 =============
 
 1.10.0 (2019-06-12)
+-------------------
 
 - Added new StatsCollector that access stats data from previous spider executions.
 - Added new setting to define the max number of unwanted HTTP status codes allowed in built-in monitor.
@@ -12,6 +13,7 @@ Release notes
 - Other small documentation improvements.
 
 1.9.0 (2019-03-11)
+------------------
 
 - Add set of built-in basic monitors with the most common test methods to allow
   start monitoring spiders more straightforward.
