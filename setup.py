@@ -4,6 +4,7 @@ test_requirements = [
     "pytest>=2.7.0",
     "pytest-cov",
     "pytest-mock",
+    "jinja2",
     "scrapy",
     'Twisted<=19.2.0;python_version=="3.4"',
 ]
