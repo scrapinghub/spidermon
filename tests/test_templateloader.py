@@ -10,7 +10,7 @@ def create_file(path, content):
 
 def test_get_template_with_absolute_path_updates_templateloader_paths(tmpdir):
     template_loader = TemplateLoader()
-    test_template = os.path.join(tmpdir, "absolute_path_template.jinja")
+    test_template = os.path.join(str(tmpdir), "absolute_path_template.jinja")
     create_file(test_template, "test content")
 
     assert tmpdir not in template_loader.paths
