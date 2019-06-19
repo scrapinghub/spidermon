@@ -1,11 +1,13 @@
 from spidermon import monitors, MonitorSuite, Monitor
 from spidermon.exceptions import NotConfigured
+from spidermon.utils.settings import getdictorlist
 from ..monitors.mixins.spider import SpiderMonitorMixin
 
 SPIDERMON_MIN_ITEMS = "SPIDERMON_MIN_ITEMS"
 SPIDERMON_MAX_ERRORS = "SPIDERMON_MAX_ERRORS"
 SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
+SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT"
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -86,25 +88,60 @@ class FinishReasonMonitor(BaseScrapyMonitor):
 @monitors.name("Unwanted HTTP codes monitor")
 class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
     """Check for maximum number of unwanted HTTP codes.
+    You can configure it using ``SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT`` setting
+    or ``SPIDERMON_UNWANTED_HTTP_CODES`` setting
 
-    You can configure a ``dict`` of unwanted HTTP codes with
-    ``SPIDERMON_UNWANTED_HTTP_CODES`` the default value is::
+    This monitor fails if during the spider execution, we receive
+    more than the number of ``SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT``
+    setting for at least one of the HTTP Status Codes in the list defined in
+    ``SPIDERMON_UNWANTED_HTTP_CODES`` setting.
 
-        DEFAULT_ERROR_CODES = {
-            code: 10
-            for code in [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]}
+    Default values are:
+
+    .. highlight:: python
+    .. code-block:: python
+
+        SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = 10
+        SPIDERMON_UNWANTED_HTTP_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
+
+    ``SPIDERMON_UNWANTED_HTTP_CODES`` can also be a dictionary with the HTTP Status Code
+    as key and the maximum number of accepted responses with that code.
+
+    With the following setting, the monitor will fail if more than 100 responses are
+    404 errors or at least one 500 error:
+
+    .. highlight:: python
+    .. code-block:: python
+
+        SPIDERMON_UNWANTED_HTTP_CODES = {
+            400: 100,
+            500: 0,
+        }
+
     """
 
-    DEFAULT_ERROR_CODES = {
-        code: 10 for code in [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
-    }
+    DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT = 10
+    DEFAULT_UNWANTED_HTTP_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
 
     @monitors.name("Should not hit the limit of unwanted http status")
     def test_check_unwanted_http_codes(self):
-        error_codes = self.crawler.settings.getdict(
-            SPIDERMON_UNWANTED_HTTP_CODES, self.DEFAULT_ERROR_CODES
+        unwanted_http_codes = getdictorlist(
+            self.crawler,
+            SPIDERMON_UNWANTED_HTTP_CODES,
+            self.DEFAULT_UNWANTED_HTTP_CODES,
         )
-        for code, max_errors in error_codes.items():
+
+        errors_max_count = self.crawler.settings.getint(
+            SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT,
+            self.DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT,
+        )
+
+        if not isinstance(unwanted_http_codes, dict):
+            unwanted_http_codes = {
+                code: errors_max_count for code in unwanted_http_codes
+            }
+
+        for code, max_errors in unwanted_http_codes.items():
             code = int(code)
             count = self.stats.get(
                 "downloader/response_status_count/{}".format(code), 0
