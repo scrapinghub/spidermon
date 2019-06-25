@@ -72,9 +72,8 @@ class TemplateLoader(object):
 
     def get_template(self, name):
         if os.path.isabs(name):
-            self.paths.append(os.path.dirname(name))
+            self.add_path(os.path.dirname(name))
             name = os.path.basename(name)
-            self.reload_env()
 
         return self.env.get_template(name)
 
