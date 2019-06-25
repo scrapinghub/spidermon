@@ -14,5 +14,5 @@ def test_get_template_with_absolute_path_updates_templateloader_paths(tmpdir):
     create_file(test_template, "test content")
 
     assert tmpdir not in template_loader.paths
-    template_loader.get_template(test_template)
-    assert tmpdir in template_loader.paths
+    template = template_loader.get_template(test_template)
+    assert template.render() == "test content"
