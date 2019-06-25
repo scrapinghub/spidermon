@@ -79,13 +79,11 @@ class TemplateLoader(object):
         self.env = get_environment(self.paths)
 
     def get_template(self, name):
-        template = None
-        try:
+        if os.path.isabs(name):  # If provided an absolute path to a template
+            environment = get_environment(os.path.dirname(name))
+            template = environment.get_template(os.path.basename(name))
+        else:
             template = self.env.get_template(name)
-        except jinja2.exceptions.TemplateNotFound:
-            if os.path.isabs(name):  # If provided an absolute path to a template
-                environment = get_environment(os.path.dirname(name))
-                template = environment.get_template(os.path.basename(name))
         return template
 
 
