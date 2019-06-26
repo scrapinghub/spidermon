@@ -4,6 +4,4 @@ from spidermon.contrib.validation import messages
 
 
 class CerberusMessageTranslator(MessageTranslator):
-    messages = {
-
-    }
+    messages = {}
