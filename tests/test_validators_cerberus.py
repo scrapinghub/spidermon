@@ -2,63 +2,107 @@ from __future__ import absolute_import
 from unittest import TestCase
 
 from spidermon.contrib.validation import CerberusValidator
-from spidermon.contrib.validation import messages
+# from spidermon.contrib.validation import messages
 
-class TestCerberusValidator(TestCase):
-    def test_schema(self):
+class TestCerberusValidator(type):
+    def __new__(cls):
+        def test_data(data_test):
+            def function(self):
+                validator = CerberusValidator(self.schema or data_test.schema)
+                assert validator.validate(data_test.data) == (
+                    data_test.valid,
+                    # data_test.expected_errors,
+                )
+                return function
+
+        cls = super(SchemaTestCaseMetaclass).__new__(cls)
+        for dt in getattr(cls, "data_tests", []):
+            function_name = "test_%s" % slugify(dt.name, separator="_").lower()
+            setattr(cls, function_name, _test_function(dt))
+        return cls
+
+
+class SchemaTest(TestCerberusValidator, TestCase):
+    schema = {}
+    data_tests = []
+
+    # def test_schema(self):
     # What if the schema provided is not valid?
     # Return a message that dict is not valid, and stop.
-        pass
+        # pass
 
-    def test_datadict(self):
+    # def test_datadict(self):
     # What if the data provided is not valid (not a valid dict for example)?
-        self.assertIsInstance(getattr(DataTest(), data, []), dict, msg="Not a valid dict, please format the data properly in the form of a dict")
+        # self.assertIsInstance(getattr(DataTest(), data, []), dict, msg="Not a valid dict, please format the data properly in the form of a dict")
         # But what to do next.
+        # pass
 
-    def test_data():
-         # Assert Validate method to check with Cerberus
-        pass
 
 class DataTest(object):
     def __init__(self, name, data, valid, schema=None):
-    # def __init__(self, name, data, schema=None, valid, errors=None):
+    # def __init__(self, name, data, schema=None, valid, expected_errors=None):
         self.name = name
         self.data = data
         self.valid = valid
         self.schema = schema
-        # self.errors = errors
+        # self.expected_errors = expected_errors
 
-class Testing_center(TestCerberusValidator):
+class Simple(SchemaTest):
     # error messages to be taken from translater
     schema={
         'number': {'type': 'integer'},
         'name': {'type': 'string'}
     },
 
-    DataTest(
-        name="Simple Case",
-        schema=schema,
-        valid=True,
-        data={"name": "foo","number": 5},
-    )
-    DataTest(
-        name="Simple case, invalid integer",
-        schema=schema,
-        valid=True,
-        data={"name": "foo","number": "goo"},
-        errors={"number":[messages.INVALID_INT]}
-    )
-    DataTest(
-        name="Simple case, invalid String",
-        schema=schema,
-        valid=True,
-        data={"name": 1,"number": 2},
-        errors={"name":[messages.INVALID_STRING]}
-    )
-    DataTest(
-        name="Simple case, unexpected field",
-        schema=schema,
-        valid=True,
-        data={"name": "foo","number": 6, "price":30},
-        errors={"price":[messages.UNEXPECTED_FIELD]}
-    )
+    data_tests =[
+        DataTest(
+            name="Simple test Case",
+            schema=schema,
+            valid=True,
+            data={"name": "foo","number": 5},
+            # expected_errors={}
+        ),
+        DataTest(
+            name="Simple case, invalid integer",
+            schema=schema,
+            valid=True,
+            data={"name": "foo","number": "goo"},
+            # expected_errors={"number":[messages.INVALID_INT]}
+        ),
+        DataTest(
+            name="Simple case, invalid String",
+            schema=schema,
+            valid=True,
+            data={"name": 1,"number": 2},
+            # expected_errors={"name":[messages.INVALID_STRING]}
+        ),
+        DataTest(
+            name="Simple case, unexpected field",
+            schema=schema,
+            valid=True,
+            data={"name": "foo","number": 6, "price":30},
+            # expected_errors={"price":[messages.UNEXPECTED_FIELD]}
+        )
+    ]
+
+class Required(SchemaTest):
+    schema = {"foo": {'required': True, 'type': 'string'}, 'bar': {'type': 'integer'}}
+    schema_default = {"foo": {}}
+    data_tests=[
+        DataTest(
+            name="Invalid case",
+            schema=schema,
+            data={"bar": 1},
+            valid=False,
+            # expected_errors={"foo": [messages.MISSING_REQUIRED_FIELD]},
+        ),
+        DataTest(
+            name="Valid case",
+            schema=schema,
+            data={"foo":"toy"},
+            valid=True,
+        ),
+        DataTest(
+            name="not required by default", schema=schema_default, data={}, valid=True
+        )
+    ]
