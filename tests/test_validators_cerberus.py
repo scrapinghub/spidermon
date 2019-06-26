@@ -4,32 +4,41 @@ from unittest import TestCase
 from spidermon.contrib.validation import CerberusValidator
 # from spidermon.contrib.validation import messages
 
-class TestCerberusValidator(type):
-    def __new__(cls):
-        def test_data(data_test):
-            def function(self):
-                validator = CerberusValidator(self.schema or data_test.schema)
+from slugify import slugify
+import six
+
+
+class SchemaTestCaseMetaclass(type):
+    def __new__(mcs, name, bases, attrs):
+        def _test_function(data_test):
+            def _function(self):
+                validator = CerberusValidator(data_test.schema or self.schema)
                 assert validator.validate(data_test.data) == (
                     data_test.valid,
                     # data_test.expected_errors,
                 )
-                return function
 
-        cls = super(SchemaTestCaseMetaclass).__new__(cls)
+            return _function
+
+        cls = super(SchemaTestCaseMetaclass, mcs).__new__(mcs, name, bases, attrs)
         for dt in getattr(cls, "data_tests", []):
             function_name = "test_%s" % slugify(dt.name, separator="_").lower()
             setattr(cls, function_name, _test_function(dt))
         return cls
 
 
-class SchemaTest(TestCerberusValidator, TestCase):
+class SchemaTest(six.with_metaclass(SchemaTestCaseMetaclass, TestCase)):
     schema = {}
     data_tests = []
+
 
     # def test_schema(self):
     # What if the schema provided is not valid?
     # Return a message that dict is not valid, and stop.
         # pass
+
+    def schema_exists():
+        pass
 
     # def test_datadict(self):
     # What if the data provided is not valid (not a valid dict for example)?
