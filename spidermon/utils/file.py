@@ -7,7 +7,7 @@ from scrapy.utils.project import get_project_settings
 
 import spidermon
 
-def create_file(template):
+def copy_template_to_project(template):
     template_file = join(spidermon.__path__[0], 'templates', template)
     module = import_module(get_project_settings().get('BOT_NAME'))
     module_dir = abspath(dirname(module.__file__))

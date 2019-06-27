@@ -4,7 +4,7 @@ import spidermon
 from scrapy.utils.project import inside_project
 from spidermon.commands.prompts import monitor_prompts
 from spidermon.utils.commands import build_monitors_strings, find_monitors
-from spidermon.utils.file import create_file, render_file
+from spidermon.utils.file import copy_template_to_project, render_file
 
 @click.command('setup', help="Setup the monitors from the Scrapy Monitor Suite.")
 def setup():
@@ -28,7 +28,7 @@ def setup():
     )
 
     # create and build file with monitors
-    filename = create_file('monitor_suite.py.tmpl')
+    filename = copy_template_to_project('monitor_suite.py.tmpl')
     render_file(
         filename,
         monitors_list=monitors_list,
