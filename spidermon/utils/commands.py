@@ -30,16 +30,15 @@ def include_settings(settings_list):
     # find and open settings file
     module = import_module(get_project_settings().get('BOT_NAME'))
     settings_file = join(abspath(dirname(module.__file__)), 'settings.py')
-    with open(settings_file, 'r') as file:
-        read_data = file.read()
+    with open(settings_file, 'r') as f:
+        read_data = f.read()
 
         # check if spidermon was already enabled
-        if 'SPIDERMON_ENABLED' in read_data:
-            return False
-
-    with open(settings_file, 'a') as file:
-        # include them in the end of file
         for setting in settings_list:
-            file.write(setting)
+            if setting in read_data:
+                return False
+
+    with open(settings_file, 'a') as f:
+        f.writelines('\n'.join(settings_list))
 
     return True
