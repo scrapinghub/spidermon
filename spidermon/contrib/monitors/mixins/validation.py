@@ -91,6 +91,12 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         return self._validation
 
     def check_missing_required_fields(self, field_names=None, allowed_count=0):
+        """
+        If ``field_names`` is not None, calls ``check_missing_required_field`` for each field and raises the first
+        error.
+        Otherwise, checks that the total number of "missing_required_field" errors is less or equal than
+        ``allowed_count``.
+        """
         if not field_names:
             missing_count = self.validation.errors["missing_required_field"].count
             self._check_missing_required_count(missing_count, allowed_count)
@@ -99,6 +105,10 @@ class ValidationMonitorMixin(StatsMonitorMixin):
                 self.check_missing_required_field(field_name, allowed_count)
 
     def check_missing_required_field(self, field_name, allowed_count=0):
+        """
+        Checks that the number of "missing_required_field" errors for the ``field_name`` field is less or equal than
+        ``allowed_count``.
+        """
         missing_count = (
             self.validation.fields[field_name].errors["missing_required_field"].count
         )
@@ -120,6 +130,12 @@ class ValidationMonitorMixin(StatsMonitorMixin):
     def check_missing_required_fields_percent(
         self, field_names=None, allowed_percent=0
     ):
+        """
+        If ``field_names`` is not None, calls ``check_missing_required_field_percent`` for each field and raises the
+        first error.
+        Otherwise, checks that the total number of "missing_required_field" errors divided by the number
+        of items is less or equal than ``allowed_count``.
+        """
         if not field_names:
             missing_percent = self.validation.errors["missing_required_field"].percent
             self._check_missing_required_percent(missing_percent, allowed_percent)
@@ -128,6 +144,10 @@ class ValidationMonitorMixin(StatsMonitorMixin):
                 self.check_missing_required_field_percent(field_name, allowed_percent)
 
     def check_missing_required_field_percent(self, field_name, allowed_percent=0):
+        """
+        Checks that the number of "missing_required_field" errors for the ``field_name`` field divided by the number
+        of items is less or equal than ``allowed_percent``.
+        """
         missing_percent = (
             self.validation.fields[field_name].errors["missing_required_field"].percent
         )
@@ -146,6 +166,11 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         )
 
     def check_fields_errors(self, field_names=None, errors=None, allowed_count=0):
+        """
+        If ``field_names`` is not None, calls ``check_field_errors`` for each field and raises the first
+        error.
+        Otherwise, checks that the total number of errors is less or equal than ``allowed_count``.
+        """
         if not field_names:
             errors_count = self.validation.errors.count
             self._check_field_errors(errors_count, allowed_count)
@@ -154,6 +179,9 @@ class ValidationMonitorMixin(StatsMonitorMixin):
                 self.check_field_errors(field_name, errors, allowed_count)
 
     def check_field_errors(self, field_name, errors=None, allowed_count=0):
+        """
+        Checks that the number of errors for the ``field_name`` field is less or equal than ``allowed_count``.
+        """
         if errors:
             errors_count = sum(
                 [self.validation.fields[field_name].errors[e].count for e in errors]
@@ -179,6 +207,11 @@ class ValidationMonitorMixin(StatsMonitorMixin):
     def check_fields_errors_percent(
         self, field_names=None, errors=None, allowed_percent=0
     ):
+        """
+        If ``field_names`` is not None, calls ``check_field_errors_percent`` for each field and raises the first error.
+        Otherwise, checks that the total number of errors divided by the number of items is less or equal than
+        ``allowed_count``.
+        """
         if not field_names:
             errors_percent = self.validation.errors.percent
             self._check_field_errors_percent(errors_percent, allowed_percent)
@@ -187,6 +220,10 @@ class ValidationMonitorMixin(StatsMonitorMixin):
                 self.check_field_errors_percent(field_name, errors, allowed_percent)
 
     def check_field_errors_percent(self, field_name, errors=None, allowed_percent=0):
+        """
+        Checks that the number of errors for the ``field_name`` field divided by the number of items is less or equal
+        than ``allowed_percent``.
+        """
         if errors:
             errors_percent = sum(
                 [self.validation.fields[field_name].errors[e].percent for e in errors]
