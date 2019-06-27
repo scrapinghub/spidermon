@@ -4,4 +4,6 @@ from spidermon.contrib.validation import messages
 
 
 class CerberusMessageTranslator(MessageTranslator):
-    messages = {}
+    messages = {
+        r"must be of integer type": messages.INVALID_INT,
+    }
