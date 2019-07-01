@@ -1,6 +1,11 @@
 Release notes
 =============
 
+1.10.1 (2019-07-01)
+-------------------
+
+- Allowed to add absolute location for custom templates
+
 1.10.0 (2019-06-12)
 -------------------
 
