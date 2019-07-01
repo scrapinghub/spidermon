@@ -8,7 +8,7 @@ from os.path import abspath, dirname, join
 import spidermon
 from scrapy.utils.project import inside_project, get_project_settings
 from spidermon.commands.prompts import monitor_prompts
-from spidermon.utils.commands import check_settings, include_settings
+from spidermon.utils.commands import is_spidermon_enabled, include_settings
 
 @click.command('enable', help="Enable Spidermon on your Scrapy project.")
 def enable():
