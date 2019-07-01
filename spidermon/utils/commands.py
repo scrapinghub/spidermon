@@ -18,16 +18,18 @@ def build_monitors_strings(monitors):
 
     return '[' + ','.join(monitors_list) + ']', '\n'.join(imports)
 
-def find_monitors():
-    return [{
-        'path': 'spidermon.contrib.scrapy.monitors',
-        'monitors': {
-            'ItemCountMonitor': 'Item Count Monitor',
-            'ErrorCountMonitor': 'Error Count Monitor',
-            'FinishReasonMonitor': 'Finish Reason Monitor',
-            'UnwantedHTTPCodesMonitor': 'Unwanted HTTP Code Monitor',
-        }
-    }]
+def get_settings_path():
+    module = import_module(get_project_settings().get('BOT_NAME'))
+    return join(abspath(dirname(module.__file__)), 'settings.py')
+
+def is_setting_setup(setting):
+    with open(get_settings_path(), 'r') as f:
+        read_data = f.read()
+
+    if setting in read_data:
+        return True
+
+    return False
 
 def is_spidermon_enabled(settings_path):
     with open(settings_path, 'r') as f:
@@ -38,6 +40,11 @@ def is_spidermon_enabled(settings_path):
             return False
 
     return True
+
+def include_setting(settings):
+    with open(get_settings_path(), 'a') as f:
+        f.write('\n'.join(settings))
+        f.write('\n')
 
 def include_settings(settings_path):
     with open(settings_path, 'a') as f:
