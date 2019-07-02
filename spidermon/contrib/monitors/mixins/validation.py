@@ -84,6 +84,10 @@ class ValidationInfo(object):
 
 
 class ValidationMonitorMixin(StatsMonitorMixin):
+    def __init__(self, new_behavior=False):
+        super(ValidationMonitorMixin, self).__init__()
+        self.new_behavior = new_behavior  # how to handle empty field lists
+
     @property
     def validation(self):
         if not hasattr(self, "_validation"):
@@ -94,8 +98,25 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         """
         Checks that the number of "missing_required_field" errors for the ``field_names`` fields is less or equal than
         ``allowed_count`` and raises an error with all problematic fields.
-        If ``field_names`` is None, checks all fields.
+        If ``field_names`` is None and ``new_behavior`` is True, checks all fields.
+        If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of
+        "missing_required_field" errors is less or equal than ``allowed_count``.
         """
+        if not self.new_behavior and not field_names:
+            # TODO: deprecate this
+            missing_count = self.validation.errors["missing_required_field"].count
+            self.assertLessEqual(
+                missing_count,
+                allowed_count,
+                msg="{count} required field{plural} are missing!{threshold_info}".format(
+                    count=missing_count,
+                    plural="" if missing_count == 1 else "s",
+                    threshold_info=(" (maximum allowed %d)" % allowed_count)
+                    if allowed_count > 0
+                    else "",
+                ),
+            )
+            return
         if not field_names:
             field_names = self.validation.fields
         msgs = []
@@ -136,8 +157,24 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         """
         Checks that the number of "missing_required_field" errors for the ``field_names`` fields divided by the number
         of items is less or equal than ``allowed_percent`` and raises an error with all problematic fields.
-        If ``field_names`` is None, checks all fields.
+        If ``field_names`` is None and ``self.new_behavior`` is True, checks all fields.
+        If ``field_names`` is None and ``self.new_behavior`` is False, checks that the total number of
+        "missing_required_field" errors is less or equal than ``allowed_count``.
         """
+        if not self.new_behavior and not field_names:
+            # TODO: deprecate this
+            missing_percent = self.validation.errors["missing_required_field"].percent
+            self.assertLessEqual(
+                missing_percent,
+                allowed_percent,
+                msg="{percent}% of required fields are missing!{threshold_info}".format(
+                    percent=missing_percent * 100,
+                    threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
+                    if allowed_percent > 0
+                    else "",
+                ),
+            )
+            return
         if not field_names:
             field_names = self.validation.fields
         msgs = []
@@ -178,8 +215,26 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         """
         Checks that the number of errors for the ``field_names`` fields is less or equal than ``allowed_count`` and
         raises an error with all problematic fields.
-        If ``field_names`` is None, checks all fields.
+        If ``field_names`` is None and ``new_behavior`` is True, checks all fields.
+        If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of errors is less or
+        equal than ``allowed_count``.
         """
+        if not self.new_behavior and not field_names:
+            # TODO: deprecate this
+            errors_count = self.validation.errors.count
+            self.assertLessEqual(
+                errors_count,
+                allowed_count,
+                msg="{count} field{count_plural} {verb} validation errors!{threshold_info}".format(
+                    count=errors_count,
+                    count_plural="" if errors_count == 1 else "s",
+                    verb="has" if errors_count == 1 else "have",
+                    threshold_info=(" (maximum allowed %d)" % allowed_count)
+                    if allowed_count > 0
+                    else "",
+                ),
+            )
+            return
         if not field_names:
             field_names = self.validation.fields
         msgs = []
@@ -225,8 +280,24 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         """
         Checks that the number of errors for the ``field_names`` fields divided by the number of items is less or equal
         than ``allowed_percent`` and raises an error with all problematic fields.
-        If ``field_names`` is None, checks all fields.
+        If ``field_names`` is None and ``new_behavior`` is True, checks all fields.
+        If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of errors divided by the
+        number of items is less or equal than ``allowed_count``
         """
+        if not self.new_behavior and not field_names:
+            # TODO: deprecate this
+            errors_percent = self.validation.errors.percent
+            self.assertLessEqual(
+                errors_percent,
+                allowed_percent,
+                msg="{percent}% of fields have validation errors!{threshold_info}".format(
+                    percent=errors_percent * 100,
+                    threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
+                    if allowed_percent > 0
+                    else "",
+                ),
+            )
+            return
         if not field_names:
             field_names = self.validation.fields
         msgs = []
