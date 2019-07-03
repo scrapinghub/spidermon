@@ -94,6 +94,9 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             self._validation = ValidationInfo(self.stats)
         return self._validation
 
+    def _get_all_fields(self):
+        return sorted(self.validation.fields)
+
     def check_missing_required_fields(self, field_names=None, allowed_count=0):
         """
         Checks that the number of "missing_required_field" errors for the ``field_names`` fields is less or equal than
@@ -118,7 +121,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             )
             return
         if not field_names:
-            field_names = self.validation.fields
+            field_names = self._get_all_fields()
         msgs = []
         for field_name in field_names:
             missing_count = self.validation.fields[field_name].errors["missing_required_field"].count
@@ -176,7 +179,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             )
             return
         if not field_names:
-            field_names = self.validation.fields
+            field_names = self._get_all_fields()
         msgs = []
         for field_name in field_names:
             missing_percent = (
@@ -236,7 +239,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             )
             return
         if not field_names:
-            field_names = self.validation.fields
+            field_names = self._get_all_fields()
         msgs = []
         for field_name in field_names:
             errors_count = self._get_errors_count(errors, field_name)
@@ -299,7 +302,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             )
             return
         if not field_names:
-            field_names = self.validation.fields
+            field_names = self._get_all_fields()
         msgs = []
         for field_name in field_names:
             errors_percent = self._get_errors_percent(errors, field_name)
