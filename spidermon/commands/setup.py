@@ -1,7 +1,7 @@
 import click
 
-from scrapy.utils.project import inside_project
 from spidermon.commands.prompts import monitor_prompts
+from spidermon.decorators.commands import is_inside_project
 from spidermon.utils.commands import (
     build_monitors_strings,
     include_setting,
@@ -12,11 +12,8 @@ from spidermon.utils.monitors import find_monitors
 
 
 @click.command("setup", help="Setup the monitors from the Scrapy Monitor Suite.")
+@is_inside_project
 def setup():
-    if not inside_project():
-        click.echo(monitor_prompts["project_error"])
-        return
-
     monitors = {}
     settings = []
     for module in find_monitors():
