@@ -41,14 +41,8 @@ def is_setting_setup(setting):
 
 
 def is_spidermon_enabled():
-    with open(get_settings_path(), "r") as f:
-        read_data = f.read()
-
-    for setting in MONITOR_SETTINGS:
-        if setting in read_data:
-            return True
-
-    return False
+    settings = get_project_settings()
+    return settings["SPIDERMON_ENABLED"]
 
 
 def include_setting(settings):
