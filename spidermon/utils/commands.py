@@ -9,25 +9,29 @@ MONITOR_SETTINGS = [
     "SPIDERMON_SPIDER_CLOSE_MONITORS = ('tutorial.monitors.SpiderCloseMonitorSuite',)",
 ]
 
+
 def build_monitors_strings(monitors):
     monitors_list = []
     imports = []
     for monitor in monitors:
         monitors_list.append(monitor)
-        imports.append('from {} import {}'.format(monitors[monitor], monitor))
+        imports.append("from {} import {}".format(monitors[monitor], monitor))
 
-    return '[' + ','.join(monitors_list) + ']', '\n'.join(imports)
+    return "[" + ",".join(monitors_list) + "]", "\n".join(imports)
+
 
 def enable_spidermon():
-    with open(get_settings_path(), 'a') as f:
-        f.write('\n'.join(MONITOR_SETTINGS))
+    with open(get_settings_path(), "a") as f:
+        f.write("\n".join(MONITOR_SETTINGS))
+
 
 def get_settings_path():
-    module = import_module(get_project_settings().get('BOT_NAME'))
-    return join(abspath(dirname(module.__file__)), 'settings.py')
+    module = import_module(get_project_settings().get("BOT_NAME"))
+    return join(abspath(dirname(module.__file__)), "settings.py")
+
 
 def is_setting_setup(setting):
-    with open(get_settings_path(), 'r') as f:
+    with open(get_settings_path(), "r") as f:
         read_data = f.read()
 
     if setting in read_data:
@@ -35,8 +39,9 @@ def is_setting_setup(setting):
 
     return False
 
+
 def is_spidermon_enabled():
-    with open(get_settings_path(), 'r') as f:
+    with open(get_settings_path(), "r") as f:
         read_data = f.read()
 
     for setting in MONITOR_SETTINGS:
@@ -45,7 +50,8 @@ def is_spidermon_enabled():
 
     return False
 
+
 def include_setting(settings):
-    with open(get_settings_path(), 'a') as f:
-        f.write('\n'.join(settings))
-        f.write('\n')
+    with open(get_settings_path(), "a") as f:
+        f.write("\n".join(settings))
+        f.write("\n")
