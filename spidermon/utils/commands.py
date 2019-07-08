@@ -34,10 +34,7 @@ def is_setting_setup(setting):
     with open(get_settings_path(), "r") as f:
         read_data = f.read()
 
-    if setting in read_data:
-        return True
-
-    return False
+    return setting in read_data
 
 
 def is_spidermon_enabled():
