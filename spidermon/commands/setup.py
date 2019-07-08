@@ -17,7 +17,8 @@ def setup():
     monitors = {}
     settings = []
     for module in find_monitors():
-        monitors, settings = handle_monitors(module)
+        monitors.update(get_monitors(module))
+        settings = [*settings, *get_settings(module, monitors)]
 
     monitors_list, imports = build_monitors_strings(monitors)
     filename = copy_template_to_project("monitor_suite.py.tmpl")
@@ -28,42 +29,43 @@ def setup():
     click.echo(monitor_prompts["response"])
 
 
-def handle_monitors(module):
+def get_monitors(module):
     monitors = {}
-    settings = []
     for monitor in module["monitors"]:
         msg = monitor_prompts["enable"].format(module["monitors"][monitor]["name"])
         if click.confirm(msg):
             monitors[monitor] = module["path"]
-            setting = handle_settings(module["monitors"][monitor])
-            if setting:
-                settings.append(setting)
 
-    return monitors, settings
+    return monitors
 
 
-def handle_settings(monitor):
-    setting = monitor["setting"]
-    name = monitor["name"]
+def get_settings(module, monitors):
+    settings = []
+    module_monitors = module["monitors"]
+    for monitor in monitors:
+        setting = module_monitors[monitor]["setting"]
+        name = module_monitors[monitor]["name"]
 
-    if is_setting_setup(setting):
-        click.echo(monitor_prompts["setting_already_setup"].format(name))
-        return
+        if is_setting_setup(setting):
+            click.echo(monitor_prompts["setting_already_setup"].format(name))
+            return
 
-    setting_string = monitor["setting_string"]
-    categories = monitor["categories"]
-    description = monitor["description"]
-    inputs = []
+        setting_string = module_monitors[monitor]["setting_string"]
+        categories = module_monitors[monitor]["categories"]
+        description = module_monitors[monitor]["description"]
+        inputs = []
 
-    for category in categories:
-        input = click.prompt(monitor_prompts[category].format(description))
-        if category == "list":
-            input = input.split(" ")
-        inputs.append(input)
+        for category in categories:
+            input = click.prompt(monitor_prompts[category].format(description))
+            if category == "list":
+                input = input.split(" ")
+            inputs.append(input)
 
-    if len(inputs) == 2:
-        input = {code: int(inputs[0]) for code in inputs[1]}
-    else:
-        input = inputs[0]
+        if len(inputs) == 2:
+            input = {code: int(inputs[0]) for code in inputs[1]}
+        else:
+            input = inputs[0]
 
-    return setting_string.format(input)
+        settings.append(setting_string.format(input))
+
+    return settings
