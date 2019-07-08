@@ -39,7 +39,7 @@ def is_setting_setup(setting):
 
 def is_spidermon_enabled():
     settings = get_project_settings()
-    return settings["SPIDERMON_ENABLED"]
+    return bool(settings["SPIDERMON_ENABLED"]) & bool(settings["EXTENSIONS"])
 
 
 def include_setting(settings):
