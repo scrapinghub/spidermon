@@ -51,13 +51,13 @@ def handle_settings(monitor):
         return
 
     setting_string = monitor["setting_string"]
-    types = monitor["types"]
+    categories = monitor["categories"]
     description = monitor["description"]
     inputs = []
 
-    for type in types:
-        input = click.prompt(monitor_prompts[type].format(description))
-        if type == "list":
+    for category in categories:
+        input = click.prompt(monitor_prompts[category].format(description))
+        if category == "list":
             input = input.split(" ")
         inputs.append(input)
 
