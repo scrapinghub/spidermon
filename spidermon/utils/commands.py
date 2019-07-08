@@ -23,6 +23,7 @@ def build_monitors_strings(monitors):
 def enable_spidermon():
     with open(get_settings_path(), "a") as f:
         f.write("\n".join(MONITOR_SETTINGS))
+        f.write("\n")
 
 
 def get_settings_path():
