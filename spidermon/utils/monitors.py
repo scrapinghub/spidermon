@@ -1,4 +1,4 @@
-def find_monitors():
+def find_monitor_modules():
     return [
         {
             "path": "spidermon.contrib.scrapy.monitors",

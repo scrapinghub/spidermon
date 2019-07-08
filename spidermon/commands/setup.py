@@ -8,7 +8,7 @@ from spidermon.utils.commands import (
     is_setting_setup,
 )
 from spidermon.utils.file import copy_template_to_project, render_file
-from spidermon.utils.monitors import find_monitors
+from spidermon.utils.monitors import find_monitor_modules
 
 
 @click.command("setup", help="Setup the monitors from the Scrapy Monitor Suite.")
@@ -16,7 +16,7 @@ from spidermon.utils.monitors import find_monitors
 def setup():
     monitors = {}
     settings = []
-    for module in find_monitors():
+    for module in find_monitor_modules():
         monitors.update(get_monitors(module))
         settings = [*settings, *get_settings(module, monitors)]
 
