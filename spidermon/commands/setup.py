@@ -18,7 +18,7 @@ def setup():
     settings = []
     for module in find_monitor_modules():
         monitors.update(get_monitors(module))
-        settings = [*settings, *get_settings(module, monitors)]
+        settings += get_settings(module, monitors)
 
     monitors_list, imports = build_monitors_strings(monitors)
     filename = copy_template_to_project("monitor_suite.py.tmpl")
