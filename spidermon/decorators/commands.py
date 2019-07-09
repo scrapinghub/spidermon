@@ -10,7 +10,6 @@ def is_inside_project(command):
     def wrapper_is_inside_project(*args, **kwargs):
         if not inside_project():
             click.echo(monitor_prompts["project_error"])
-            return
         else:
             command(*args, **kwargs)
 
