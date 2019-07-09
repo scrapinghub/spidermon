@@ -4,7 +4,7 @@ from spidermon.commands.prompts import monitor_prompts
 from spidermon.decorators.commands import is_inside_project
 from spidermon.utils.commands import (
     build_monitors_strings,
-    include_setting,
+    update_settings,
     is_setting_setup,
 )
 from spidermon.utils.file import copy_template_to_project, render_file
@@ -23,7 +23,7 @@ def setup():
     monitors_list, imports = build_monitors_strings(monitors)
     filename = copy_template_to_project("monitor_suite.py.tmpl")
 
-    include_setting(settings)
+    update_settings(settings)
     render_file(filename, monitors_list=monitors_list, imports=imports)
 
     click.echo(monitor_prompts["response"])

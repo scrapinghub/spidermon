@@ -32,9 +32,7 @@ def enable_spidermon():
     formatted_settings = "\n".join(MONITOR_SETTINGS).format(
         str(extensions), project_name
     )
-    with open(get_settings_path(), "a") as f:
-        f.write(formatted_settings)
-        f.write("\n")
+    update_settings(formatted_settings)
 
 
 def get_settings_path():
@@ -54,7 +52,7 @@ def is_spidermon_enabled():
     return settings["SPIDERMON_ENABLED"]
 
 
-def include_setting(settings):
+def update_settings(settings):
     with open(get_settings_path(), "a") as f:
         f.write("\n".join(settings))
         f.write("\n")
