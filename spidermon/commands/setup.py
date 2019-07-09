@@ -53,19 +53,19 @@ def get_settings(module, monitors):
         setting_string = module_monitors[monitor]["setting_string"]
         categories = module_monitors[monitor]["categories"]
         description = module_monitors[monitor]["description"]
-        inputs = []
+        entries = []
 
         for category in categories:
-            input = click.prompt(monitor_prompts[category].format(description))
+            entry = click.prompt(monitor_prompts[category].format(description))
             if category == "list":
-                input = input.split(" ")
-            inputs.append(input)
+                entry = entry.split(" ")
+            entries.append(entry)
 
-        if len(inputs) == 2:
-            input = {code: int(inputs[0]) for code in inputs[1]}
+        if len(entries) == 2:
+            entry = {code: int(entries[0]) for code in entries[1]}
         else:
-            input = inputs[0]
+            entry = entries[0]
 
-        settings.append(setting_string.format(input))
+        settings.append(setting_string.format(entry))
 
     return settings
