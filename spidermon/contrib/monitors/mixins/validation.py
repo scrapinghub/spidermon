@@ -84,9 +84,9 @@ class ValidationInfo(object):
 
 
 class ValidationMonitorMixin(StatsMonitorMixin):
-    def __init__(self, new_behavior=False):
+    def __init__(self, correct_field_list_handling=False):
         super(ValidationMonitorMixin, self).__init__()
-        self.new_behavior = new_behavior  # how to handle empty field lists
+        self.correct_field_list_handling = correct_field_list_handling
 
     @property
     def validation(self):
@@ -105,7 +105,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of
         "missing_required_field" errors is less or equal than ``allowed_count``.
         """
-        if not self.new_behavior and not field_names:
+        if not self.correct_field_list_handling and not field_names:
             # TODO: deprecate this
             missing_count = self.validation.errors["missing_required_field"].count
             self.assertLessEqual(
@@ -164,7 +164,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         If ``field_names`` is None and ``self.new_behavior`` is False, checks that the total number of
         "missing_required_field" errors is less or equal than ``allowed_count``.
         """
-        if not self.new_behavior and not field_names:
+        if not self.correct_field_list_handling and not field_names:
             # TODO: deprecate this
             missing_percent = self.validation.errors["missing_required_field"].percent
             self.assertLessEqual(
@@ -222,7 +222,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of errors is less or
         equal than ``allowed_count``.
         """
-        if not self.new_behavior and not field_names:
+        if not self.correct_field_list_handling and not field_names:
             # TODO: deprecate this
             errors_count = self.validation.errors.count
             self.assertLessEqual(
@@ -243,8 +243,9 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         msgs = []
         for field_name in field_names:
             errors_count = self._get_errors_count(errors, field_name)
-            msg = self._get_msg_for_field_errors(field_name, errors_count, allowed_count)
-            msgs.append(msg)
+            if errors_count > allowed_count:
+                msg = self._get_msg_for_field_errors(field_name, errors_count, allowed_count)
+                msgs.append(msg)
         if msgs:
             msgs.insert(0, 'There are field errors:')
             self.fail('\n'.join(msgs))
@@ -287,7 +288,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of errors divided by the
         number of items is less or equal than ``allowed_count``
         """
-        if not self.new_behavior and not field_names:
+        if not self.correct_field_list_handling and not field_names:
             # TODO: deprecate this
             errors_percent = self.validation.errors.percent
             self.assertLessEqual(
@@ -306,8 +307,9 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         msgs = []
         for field_name in field_names:
             errors_percent = self._get_errors_percent(errors, field_name)
-            msg = self._get_msg_for_field_errors_percent(field_name, errors_percent, allowed_percent)
-            msgs.append(msg)
+            if errors_percent > allowed_percent:
+                msg = self._get_msg_for_field_errors_percent(field_name, errors_percent, allowed_percent)
+                msgs.append(msg)
         if msgs:
             msgs.insert(0, 'There are field errors:')
             self.fail('\n'.join(msgs))
