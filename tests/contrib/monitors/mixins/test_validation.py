@@ -222,7 +222,6 @@ There are field errors:
 
 
 def test_check_fields_errors_percent_no_fields_old(old_monitor):
-    monitor.correct_field_list_handling = False
     msg = "150.0% of fields have validation errors!"
     with pytest.raises(AssertionError, match=msg):
         old_monitor.check_fields_errors_percent()
