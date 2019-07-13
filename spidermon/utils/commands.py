@@ -54,5 +54,9 @@ def is_spidermon_enabled():
 
 def update_settings(settings):
     with open(get_settings_path(), "a") as f:
-        f.write("\n".join(settings))
+        f.write("\n")
+        if type(settings) == list:
+            f.write("\n".join(settings))
+        else:
+            f.write(settings)
         f.write("\n")

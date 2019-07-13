@@ -34,7 +34,8 @@ def setup():
     monitors_list, imports = build_monitors_strings(monitors)
     filename = copy_template_to_project("monitor_suite.py.tmpl")
 
-    update_settings(settings)
+    if settings:
+        update_settings(settings)
     render_file(filename, monitors_list=monitors_list, imports=imports)
 
     click.echo(monitor_prompts["response"])
