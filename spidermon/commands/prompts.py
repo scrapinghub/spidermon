@@ -10,4 +10,5 @@ monitor_prompts = {
     "limit_least": "What is the fewest amount of {} expected?",
     "limit_most": "What is the greatest amount of {} expected?",
     "list": "Which {} do you want to track?",
+    "dict": "What is the greatest amount of {} expected?",
 }
