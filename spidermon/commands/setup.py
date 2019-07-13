@@ -4,16 +4,27 @@ from spidermon.commands.prompts import monitor_prompts
 from spidermon.decorators.commands import is_inside_project
 from spidermon.utils.commands import (
     build_monitors_strings,
-    update_settings,
+    enable_spidermon,
     is_setting_setup,
+    is_spidermon_enabled,
+    update_settings,
 )
 from spidermon.utils.file import copy_template_to_project, render_file
 from spidermon.utils.monitors import find_monitor_modules
 
 
-@click.command("setup", help="Setup the monitors from the Scrapy Monitor Suite.")
+@click.command(
+    "setup",
+    help="Enable Spidermon and setup the monitors from the Scrapy Monitor Suite.",
+)
 @is_inside_project
 def setup():
+    if is_spidermon_enabled():
+        click.echo(monitor_prompts["already_enabled"])
+    else:
+        enable_spidermon()
+        click.echo(monitor_prompts["enabled"])
+
     monitors = {}
     settings = []
     for module in find_monitor_modules():

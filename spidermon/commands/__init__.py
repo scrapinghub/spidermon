@@ -1,5 +1,4 @@
 from click import group
-from .enable import enable
 from .setup import setup
 from .version import version
 
@@ -9,6 +8,5 @@ def cli():
     ...
 
 
-cli.add_command(enable)
 cli.add_command(setup)
 cli.add_command(version)
