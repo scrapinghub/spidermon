@@ -17,17 +17,17 @@ from spidermon.contrib.validation import messages
         pytest.param(
             "empty values not allowed",
             messages.EMPTY_NOT_ALLOWED,
-            id="Message of Empty Value False",
+            id="Message of Empty Value",
         ),
         pytest.param(
             "Unknown field",
             messages.UNKNOWN_FIELD,
-            id="Message of Unknown field when present",
+            id="Message of Unknown field is present",
         ),
         pytest.param(
             "null value not allowed",
             messages.NULL_NOT_ALLOWED,
-            id="Message when NULL value present",
+            id="Message when NULL value is present",
         ),
         pytest.param(
             "value does not match regex '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$'",
@@ -45,14 +45,14 @@ def test_cerberus_translator_valid_messages(error, message):
     "error,message",
     [
         pytest.param(
-            "value does not match regex",
+            "value does not match regex '^[a-z]*$'",
             messages.MISSING_DEPENDENT_FIELD,
-            id="Invalid message of Regex",
+            id="Invalid message for REGEX NOT MATCHED error",
         ),
         pytest.param(
             "Unknown field",
             messages.UNEXPECTED_FIELD,
-            id="Invalid error of REQUIRED FIELD",
+            id="Invalid error of UNEXPECTED FIELD",
         ),
     ],
 )
@@ -79,13 +79,14 @@ def test_cerberus_translator_invalid_messages(error, message):
             {},
             id="Binary, multiple types - Valid case",
         ),
-        pytest.param(
-            {"foo": {"type": ["set", "float"]}},
-            {"foo": {1.23, 4.001, 0.023}},
-            True,
-            {},
-            id="Set, float",
-        ),
+        # This wouldn't work out, help needed here  --> Output (message = {0: ['must be of string type']) causing typeError
+        # pytest.param(
+        #     {'quotes': {'type': ['string', 'list'], 'schema': {'type': 'string'}}},
+        #     {'quotes': [1, 'Heureka!']},
+        #     False,
+        #     {"foo": [messages.INVALID_STRING]},
+        #     id="Multiple Types - Invalid Case",
+        # ),
         pytest.param(
             {
                 "foo": {
@@ -100,7 +101,7 @@ def test_cerberus_translator_invalid_messages(error, message):
             {"foo": {"address": "my address", "city": "my town"}, "1": ""},
             False,
             {"1": [messages.EMPTY_NOT_ALLOWED]},
-            id="Empty",
+            id="Empty values - Invalid Case",
         ),
     ],
 )
