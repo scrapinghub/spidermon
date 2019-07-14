@@ -2,33 +2,107 @@ from __future__ import absolute_import
 import pytest
 
 from spidermon.contrib.validation import CerberusValidator
+from spidermon.contrib.validation import CerberusMessageTranslator
 from spidermon.contrib.validation import messages
+
+
+@pytest.mark.parametrize(
+    "error,message",
+    [
+        pytest.param(
+            "required field",
+            messages.MISSING_REQUIRED_FIELD,
+            id="Message of REQUIRED Field",
+        ),
+        pytest.param(
+            "empty values not allowed",
+            messages.EMPTY_NOT_ALLOWED,
+            id="Message of Empty Value False",
+        ),
+        pytest.param(
+            "Unknown field",
+            messages.UNKNOWN_FIELD,
+            id="Message of Unknown field when present",
+        ),
+        pytest.param(
+            "null value not allowed",
+            messages.NULL_NOT_ALLOWED,
+            id="Message when NULL value present",
+        ),
+        pytest.param(
+            "value does not match regex '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$'",
+            messages.REGEX_NOT_MATCHED,
+            id="Message of when REGEX NOT MATCHED",
+        ),
+    ],
+)
+def test_cerberus_translator_valid_messages(error, message):
+    translator = CerberusMessageTranslator()
+    assert translator.translate_message(error) == (message)
+
+
+@pytest.mark.parametrize(
+    "error,message",
+    [
+        pytest.param(
+            "value does not match regex",
+            messages.MISSING_DEPENDENT_FIELD,
+            id="Invalid message of Regex",
+        ),
+        pytest.param(
+            "Unknown field",
+            messages.UNEXPECTED_FIELD,
+            id="Invalid error of REQUIRED FIELD",
+        ),
+    ],
+)
+def test_cerberus_translator_invalid_messages(error, message):
+    translator = CerberusMessageTranslator()
+    with pytest.raises(AssertionError):
+        assert translator.translate_message(error) == (message)
+
 
 @pytest.mark.parametrize(
     "schema,data,valid,expected_errors",
     [
         pytest.param(
-            {"foo": {"required": True, "type": "string"}, "bar": {"type": "integer"}},
-            {"bar": 1},
+            {"foo": {"nullable": False, "type": "string"}, "bar": {"type": "integer"}},
+            {"foo": None},
             False,
-            {"foo": [messages.MISSING_REQUIRED_FIELD]},
-            id="REQUIRED - Invalid case",
+            {"foo": [messages.NULL_NOT_ALLOWED]},
+            id="Nullable - Invalid case",
         ),
         pytest.param(
-            {"foo": {"required": True, "type": "string"}, "bar": {"type": "integer"}},
-            {"foo": "toy"},
+            {"foo": {"required": True, "type": ["binary", "list"]}},
+            {"foo": [101, 1111111]},
             True,
             {},
-            id="REQUIRED - Valid case"
+            id="Binary, multiple types - Valid case",
         ),
         pytest.param(
-            {"foo": {}},
-            {},
+            {"foo": {"type": ["set", "float"]}},
+            {"foo": {1.23, 4.001, 0.023}},
             True,
             {},
-            id="NOT REQUIRED - by default"
-        )
-    ]
+            id="Set, float",
+        ),
+        pytest.param(
+            {
+                "foo": {
+                    "type": "dict",
+                    "schema": {
+                        "address": {"type": "string"},
+                        "city": {"type": "string", "required": True},
+                    },
+                },
+                "1": {"empty": False, "type": "string"},
+            },
+            {"foo": {"address": "my address", "city": "my town"}, "1": ""},
+            False,
+            {"1": [messages.EMPTY_NOT_ALLOWED]},
+            id="Empty",
+        ),
+    ],
 )
 def test_required_rule(schema, data, valid, expected_errors):
     validator = CerberusValidator(schema)
