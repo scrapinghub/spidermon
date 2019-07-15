@@ -35,6 +35,8 @@ returned in the previous spider executions.
 .. code-block:: python
 
     # myproject/monitors.py
+    from spidermon import Monitor, MonitorSuite, monitors
+
 
     @monitors.name("History Validation")
     class HistoryMonitor(Monitor):
@@ -61,6 +63,9 @@ returned in the previous spider executions.
                   minimum_threshold
               ),
           )
+
+    class SpiderCloseMonitorSuite(MonitorSuite):
+        monitors = [HistoryMonitor]
 
 .. note::
     If you are running your spider in `Scrapy Cloud`_ you need to enable the
