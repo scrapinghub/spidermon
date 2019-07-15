@@ -45,6 +45,9 @@ returned in the previous spider executions.
       def test_expected_number_of_items_extracted(self):
           spider = self.data["spider"]
           total_previous_jobs = len(spider.stats_history)
+          if total_previous_jobs == 0:
+              return
+
           previous_item_extracted_mean = (
               sum(
                   previous_job["item_scraped_count"]
