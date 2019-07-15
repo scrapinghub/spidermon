@@ -79,14 +79,6 @@ def test_cerberus_translator_invalid_messages(error, message):
             {},
             id="Binary, multiple types - Valid case",
         ),
-        # This wouldn't work out, help needed here  --> Output (message = {0: ['must be of string type']) causing typeError
-        # pytest.param(
-        #     {'quotes': {'type': ['string', 'list'], 'schema': {'type': 'string'}}},
-        #     {'quotes': [1, 'Heureka!']},
-        #     False,
-        #     {"foo": [messages.INVALID_STRING]},
-        #     id="Multiple Types - Invalid Case",
-        # ),
         pytest.param(
             {
                 "foo": {
