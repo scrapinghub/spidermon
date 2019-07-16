@@ -38,7 +38,7 @@ from spidermon.contrib.validation import messages
 )
 def test_cerberus_translator_valid_messages(error, message):
     translator = CerberusMessageTranslator()
-    assert translator.translate_message(error) == (message)
+    assert translator.translate_message(error) == message
 
 
 @pytest.mark.parametrize(
