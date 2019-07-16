@@ -9,14 +9,23 @@ from spidermon.utils.commands import (
 
 import pytest
 import spidermon
+import unittest
+
+
+MODULE_MONITOR = {"TestMonitor": "path.to.monitor"}
+
+EXPECTED_IMPORT_STRING = "from path.to.monitor import TestMonitor"
+EXPECTED_MONITOR_STRING = "[TestMonitor]"
 
 
 def test_should_return_imports_string():
-    ...
+    monitor_string, import_string = build_monitors_strings(MODULE_MONITOR)
+    assert import_string == EXPECTED_IMPORT_STRING
 
 
 def test_should_return_monitors_string():
-    ...
+    monitor_string, import_string = build_monitors_strings(MODULE_MONITOR)
+    assert monitor_string == EXPECTED_MONITOR_STRING
 
 
 def test_should_include_spidermon_on_settings():
