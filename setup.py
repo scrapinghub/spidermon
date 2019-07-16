@@ -34,7 +34,7 @@ setup(
             "sentry-sdk",
         ],
         # Data validation
-        "validation": ["schematics"],
+        "validation": ["schematics", "cerberus"],
         # Tools to run the tests
         "tests": test_requirements,
         "pep8": ["black"],
