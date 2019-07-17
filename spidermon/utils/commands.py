@@ -7,12 +7,12 @@ MONITOR_SETTINGS = [
     "SPIDERMON_ENABLED = True",
     "SPIDERMON_SPIDER_CLOSE_MONITORS = ('{}.monitors.SpiderCloseMonitorSuite',)",
 ]
-EXTENSIONS_STRING = (
+EXTENSIONS_STRING = [
     "EXTENSIONS = {{'spidermon.contrib.scrapy.extensions.Spidermon': 500}}"
-)
-EXTENSIONS_UPDATE_STRING = (
+]
+EXTENSIONS_UPDATE_STRING = [
     "EXTENSIONS.update({{'spidermon.contrib.scrapy.extensions.Spidermon': 500}})"
-)
+]
 
 
 def build_monitors_strings(monitors):
@@ -26,14 +26,20 @@ def build_monitors_strings(monitors):
 
 
 def enable_spidermon():
+    project_name = get_project_settings().get("BOT_NAME")
+    formatted_settings = "\n"
+
     extensions = dict(get_project_settings().get("EXTENSIONS"))
     if extensions:
-        MONITOR_SETTINGS.append(EXTENSIONS_UPDATE_STRING)
+        formatted_settings = formatted_settings.join(
+            MONITOR_SETTINGS + EXTENSIONS_UPDATE_STRING
+        )
     else:
-        MONITOR_SETTINGS.append(EXTENSIONS_STRING)
+        formatted_settings = formatted_settings.join(
+            MONITOR_SETTINGS + EXTENSIONS_STRING
+        )
 
-    project_name = get_project_settings().get("BOT_NAME")
-    formatted_settings = "\n".join(MONITOR_SETTINGS).format(project_name)
+    formatted_settings = formatted_settings.format(project_name)
     update_settings(formatted_settings)
 
 
