@@ -1,7 +1,29 @@
 Release notes
 =============
 
+1.10.2 (2019-07-01)
+-------------------
+
+- Version 1.10.1 with CHANGELOG updated
+
+1.10.1 (2019-07-01)
+-------------------
+
+- Allowed to add absolute location for custom templates
+
+1.10.0 (2019-06-12)
+-------------------
+
+- Added new StatsCollector that access stats data from previous spider executions.
+- Added new setting to define the max number of unwanted HTTP status codes allowed in built-in monitor.
+- Improved validation error messages with JSON Schema when additional fields are found.
+- Made possible to retrieve JSON schema files from external locations.
+- Included documentation of periodic monitor suites.
+- Fixed bug caused by new slackclient release.
+- Other small documentation improvements.
+
 1.9.0 (2019-03-11)
+------------------
 
 - Add set of built-in basic monitors with the most common test methods to allow
   start monitoring spiders more straightforward.

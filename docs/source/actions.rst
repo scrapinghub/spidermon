@@ -8,7 +8,7 @@ By default, when a monitor suite finishes, the pass/fail information is included
 in the spider logs, which would be enough during development but useless when
 you are monitoring several spiders.
 
-Spidermon allows you to define actions that are ran after the monitors finishes.
+Spidermon allows you to define actions that are ran after the monitors finish.
 You can define your own actions or use one of the existing built-in actions.
 
 .. _actions-email:
@@ -102,6 +102,10 @@ Default: ``None``
 SPIDERMON_BODY_HTML_TEMPLATE
 ----------------------------
 
+String containing the location of the `Jinja2`_ template for the Spidermon email report.
+
+Default :download:`reports/email/monitors/result.jinja <../../spidermon/contrib/actions/reports/templates/reports/email/monitors/result.jinja>`.
+
 .. _SPIDERMON_BODY_TEXT:
 
 SPIDERMON_BODY_TEXT
@@ -158,7 +162,7 @@ SPIDERMON_EMAIL_SUBJECT_TEMPLATE
 --------------------------------
 
 .. _Amazon Simple Email Service: https://aws.amazon.com/pt/ses/
-.. _Jinja2: http://jinja.pocoo.org/
+
 
 .. _actions-slack:
 
@@ -467,7 +471,7 @@ Sentry action
 ============
 
 This action allows you to send custom messages to `Sentry`_ when your
-monitor suites finishes their execution. To use this action
+monitor suites finish their execution. To use this action
 you need to provide the `Sentry DSN`_ in your `settings.py`
 file as follows:
 
@@ -551,3 +555,4 @@ the `run_action` method.
             # (...)
 
 .. _`slackclient`: https://pypi.org/project/slackclient/
+.. _Jinja2: http://jinja.pocoo.org/
