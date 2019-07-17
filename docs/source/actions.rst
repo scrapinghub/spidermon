@@ -70,8 +70,8 @@ AWS Secret Key.
 
 Default: ``None``
 
-SPIDERMON_AWS_REGION
-------------------------
+SPIDERMON_AWS_REGION_NAME
+-------------------------
 
 AWS Region.
 
