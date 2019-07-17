@@ -6,6 +6,7 @@ test_requirements = [
     "pytest-mock",
     "jinja2",
     "scrapy",
+    "slackclient>=1.3.0,<2.0.0",
     'Twisted<=19.2.0;python_version=="3.4"',
 ]
 
