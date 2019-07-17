@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-import boto
+from boto import ses
 
 from spidermon.exceptions import NotConfigured
 
@@ -9,11 +9,15 @@ from . import SendEmail
 class SendSESEmail(SendEmail):
     aws_access_key = None
     aws_secret_key = None
+    aws_region = "us-east-1"
 
-    def __init__(self, aws_access_key=None, aws_secret_key=None, *args, **kwargs):
+    def __init__(
+        self, aws_access_key=None, aws_secret_key=None, aws_region=None, *args, **kwargs
+    ):
         super(SendSESEmail, self).__init__(*args, **kwargs)
         self.aws_access_key = aws_access_key or self.aws_access_key
         self.aws_secret_key = aws_secret_key or self.aws_secret_key
+        self.aws_region = aws_region or self.aws_region
         if not self.fake and not self.aws_access_key:
             raise NotConfigured("You must provide the AWS Access Key.")
         if not self.fake and not self.aws_secret_key:
@@ -26,10 +30,15 @@ class SendSESEmail(SendEmail):
             {
                 "aws_access_key": crawler.settings.get("SPIDERMON_AWS_ACCESS_KEY"),
                 "aws_secret_key": crawler.settings.get("SPIDERMON_AWS_SECRET_KEY"),
+                "aws_region": crawler.settings.get("SPIDERMON_AWS_REGION"),
             }
         )
         return kwargs
 
     def send_message(self, message):
-        session = boto.connect_ses(self.aws_access_key, self.aws_secret_key)
+        session = ses.connect_to_region(
+            self.aws_region,
+            aws_access_key_id=self.aws_access_key,
+            aws_secret_access_key=self.aws_secret_key,
+        )
         session.send_raw_email(raw_message=message.as_string())

@@ -70,6 +70,13 @@ AWS Secret Key.
 
 Default: ``None``
 
+SPIDERMON_AWS_REGION
+------------------------
+
+AWS Region.
+
+Default: ``us-east-1``
+
 .. _SPIDERMON_EMAIL_SENDER:
 
 SPIDERMON_EMAIL_SENDER
