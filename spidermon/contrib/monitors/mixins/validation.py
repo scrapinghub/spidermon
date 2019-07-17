@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+import warnings
+
 from spidermon.contrib.stats.counters import (
     PercentCounter,
     DictPercentCounter,
@@ -97,6 +99,11 @@ class ValidationMonitorMixin(StatsMonitorMixin):
     def _get_all_fields(self):
         return sorted(self.validation.fields)
 
+    @staticmethod
+    def _warn_list_handling():
+        warnings.warn('ValidationMonitorMixin behavior with is deprecated, please switch to per-field thresholds and set the '
+                      '"correct_field_list_handling" class attribute', DeprecationWarning)
+
     def check_missing_required_fields(self, field_names=None, allowed_count=0):
         """
         Checks that the number of "missing_required_field" errors for the ``field_names`` fields is less or equal than
@@ -106,7 +113,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         "missing_required_field" errors is less or equal than ``allowed_count``.
         """
         if not self.correct_field_list_handling and not field_names:
-            # TODO: deprecate this
+            self._warn_list_handling()
             missing_count = self.validation.errors["missing_required_field"].count
             self.assertLessEqual(
                 missing_count,
@@ -165,7 +172,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         "missing_required_field" errors is less or equal than ``allowed_count``.
         """
         if not self.correct_field_list_handling and not field_names:
-            # TODO: deprecate this
+            self._warn_list_handling()
             missing_percent = self.validation.errors["missing_required_field"].percent
             self.assertLessEqual(
                 missing_percent,
@@ -223,7 +230,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         equal than ``allowed_count``.
         """
         if not self.correct_field_list_handling and not field_names:
-            # TODO: deprecate this
+            self._warn_list_handling()
             errors_count = self.validation.errors.count
             self.assertLessEqual(
                 errors_count,
@@ -289,7 +296,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         number of items is less or equal than ``allowed_count``
         """
         if not self.correct_field_list_handling and not field_names:
-            # TODO: deprecate this
+            self._warn_list_handling()
             errors_percent = self.validation.errors.percent
             self.assertLessEqual(
                 errors_percent,
