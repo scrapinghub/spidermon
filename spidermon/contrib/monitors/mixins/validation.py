@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+import warnings
+
 from spidermon.contrib.stats.counters import (
     PercentCounter,
     DictPercentCounter,
@@ -84,125 +86,266 @@ class ValidationInfo(object):
 
 
 class ValidationMonitorMixin(StatsMonitorMixin):
+    def __init__(self, correct_field_list_handling=False):
+        super(ValidationMonitorMixin, self).__init__()
+        self.correct_field_list_handling = correct_field_list_handling
+
     @property
     def validation(self):
         if not hasattr(self, "_validation"):
             self._validation = ValidationInfo(self.stats)
         return self._validation
 
+    def _get_all_fields(self):
+        return sorted(self.validation.fields)
+
+    @staticmethod
+    def _warn_list_handling():
+        warnings.warn('ValidationMonitorMixin behavior with is deprecated, please switch to per-field thresholds and set the '
+                      '"correct_field_list_handling" class attribute', DeprecationWarning)
+
     def check_missing_required_fields(self, field_names=None, allowed_count=0):
-        if not field_names:
+        """
+        Checks that the number of "missing_required_field" errors for the ``field_names`` fields is less or equal than
+        ``allowed_count`` and raises an error with all problematic fields.
+        If ``field_names`` is None and ``new_behavior`` is True, checks all fields.
+        If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of
+        "missing_required_field" errors is less or equal than ``allowed_count``.
+        """
+        if not self.correct_field_list_handling and not field_names:
+            self._warn_list_handling()
             missing_count = self.validation.errors["missing_required_field"].count
-            self._check_missing_required_count(missing_count, allowed_count)
-        else:
-            for field_name in field_names:
-                self.check_missing_required_field(field_name, allowed_count)
+            self.assertLessEqual(
+                missing_count,
+                allowed_count,
+                msg="{count} required field{plural} are missing!{threshold_info}".format(
+                    count=missing_count,
+                    plural="" if missing_count == 1 else "s",
+                    threshold_info=(" (maximum allowed %d)" % allowed_count)
+                    if allowed_count > 0
+                    else "",
+                ),
+            )
+            return
+        if not field_names:
+            field_names = self._get_all_fields()
+        msgs = []
+        for field_name in field_names:
+            missing_count = self.validation.fields[field_name].errors["missing_required_field"].count
+            if missing_count > allowed_count:
+                msg = self._get_msg_for_missing_required_count(field_name, missing_count, allowed_count)
+                msgs.append(msg)
+        if msgs:
+            msgs.insert(0, 'Required fields are missing:')
+            self.fail('\n'.join(msgs))
 
     def check_missing_required_field(self, field_name, allowed_count=0):
+        """
+        Checks that the number of "missing_required_field" errors for the ``field_name`` field is less or equal than
+        ``allowed_count``.
+        """
         missing_count = (
             self.validation.fields[field_name].errors["missing_required_field"].count
         )
-        self._check_missing_required_count(missing_count, allowed_count)
+        msg = self._get_msg_for_missing_required_count(field_name, missing_count, allowed_count)
+        self.assertLessEqual(missing_count, allowed_count, msg)
 
-    def _check_missing_required_count(self, missing_count, allowed_count):
-        self.assertLessEqual(
-            missing_count,
-            allowed_count,
-            msg="{count} required field{plural} are missing!{threshold_info}".format(
-                count=missing_count,
-                plural="" if missing_count == 1 else "s",
-                threshold_info=(" (maximum allowed %d)" % allowed_count)
-                if allowed_count > 0
-                else "",
-            ),
+    @staticmethod
+    def _get_msg_for_missing_required_count(field_name, missing_count, allowed_count):
+        msg = "Required field {field} is missing in {count} items!{threshold_info}".format(
+            count=missing_count,
+            field=field_name,
+            threshold_info=(" (maximum allowed %d)" % allowed_count)
+            if allowed_count > 0
+            else "",
         )
+        return msg
 
     def check_missing_required_fields_percent(
         self, field_names=None, allowed_percent=0
     ):
-        if not field_names:
+        """
+        Checks that the number of "missing_required_field" errors for the ``field_names`` fields divided by the number
+        of items is less or equal than ``allowed_percent`` and raises an error with all problematic fields.
+        If ``field_names`` is None and ``self.new_behavior`` is True, checks all fields.
+        If ``field_names`` is None and ``self.new_behavior`` is False, checks that the total number of
+        "missing_required_field" errors is less or equal than ``allowed_count``.
+        """
+        if not self.correct_field_list_handling and not field_names:
+            self._warn_list_handling()
             missing_percent = self.validation.errors["missing_required_field"].percent
-            self._check_missing_required_percent(missing_percent, allowed_percent)
-        else:
-            for field_name in field_names:
-                self.check_missing_required_field_percent(field_name, allowed_percent)
+            self.assertLessEqual(
+                missing_percent,
+                allowed_percent,
+                msg="{percent}% of required fields are missing!{threshold_info}".format(
+                    percent=missing_percent * 100,
+                    threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
+                    if allowed_percent > 0
+                    else "",
+                ),
+            )
+            return
+        if not field_names:
+            field_names = self._get_all_fields()
+        msgs = []
+        for field_name in field_names:
+            missing_percent = (
+                self.validation.fields[field_name].errors["missing_required_field"].percent
+            )
+            if missing_percent > allowed_percent:
+                msg = self._get_msg_for_missing_required_percent(field_name, missing_percent, allowed_percent)
+                msgs.append(msg)
+        if msgs:
+            msgs.insert(0, 'Required fields are missing:')
+            self.fail('\n'.join(msgs))
 
     def check_missing_required_field_percent(self, field_name, allowed_percent=0):
+        """
+        Checks that the number of "missing_required_field" errors for the ``field_name`` field divided by the number
+        of items is less or equal than ``allowed_percent``.
+        """
         missing_percent = (
             self.validation.fields[field_name].errors["missing_required_field"].percent
         )
-        self._check_missing_required_percent(missing_percent, allowed_percent)
+        msg = self._get_msg_for_missing_required_percent(field_name, missing_percent, allowed_percent)
+        self.assertLessEqual(missing_percent, allowed_percent, msg)
 
-    def _check_missing_required_percent(self, missing_percent, allowed_percent=0):
-        self.assertLessEqual(
-            missing_percent,
-            allowed_percent,
-            msg="{percent}% of required fields are missing!{threshold_info}".format(
-                percent=missing_percent * 100,
-                threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
-                if allowed_percent > 0
-                else "",
-            ),
+    @staticmethod
+    def _get_msg_for_missing_required_percent(field_name, missing_percent, allowed_percent):
+        msg = "{percent}% of required field {field} are missing!{threshold_info}".format(
+            percent=missing_percent * 100,
+            field=field_name,
+            threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
+            if allowed_percent > 0
+            else "",
         )
+        return msg
 
     def check_fields_errors(self, field_names=None, errors=None, allowed_count=0):
-        if not field_names:
+        """
+        Checks that the number of errors for the ``field_names`` fields is less or equal than ``allowed_count`` and
+        raises an error with all problematic fields.
+        If ``field_names`` is None and ``new_behavior`` is True, checks all fields.
+        If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of errors is less or
+        equal than ``allowed_count``.
+        """
+        if not self.correct_field_list_handling and not field_names:
+            self._warn_list_handling()
             errors_count = self.validation.errors.count
-            self._check_field_errors(errors_count, allowed_count)
-        else:
-            for field_name in field_names:
-                self.check_field_errors(field_name, errors, allowed_count)
+            self.assertLessEqual(
+                errors_count,
+                allowed_count,
+                msg="{count} field{count_plural} {verb} validation errors!{threshold_info}".format(
+                    count=errors_count,
+                    count_plural="" if errors_count == 1 else "s",
+                    verb="has" if errors_count == 1 else "have",
+                    threshold_info=(" (maximum allowed %d)" % allowed_count)
+                    if allowed_count > 0
+                    else "",
+                ),
+            )
+            return
+        if not field_names:
+            field_names = self._get_all_fields()
+        msgs = []
+        for field_name in field_names:
+            errors_count = self._get_errors_count(errors, field_name)
+            if errors_count > allowed_count:
+                msg = self._get_msg_for_field_errors(field_name, errors_count, allowed_count)
+                msgs.append(msg)
+        if msgs:
+            msgs.insert(0, 'There are field errors:')
+            self.fail('\n'.join(msgs))
 
     def check_field_errors(self, field_name, errors=None, allowed_count=0):
+        """
+        Checks that the number of errors for the ``field_name`` field is less or equal than ``allowed_count``.
+        """
+        errors_count = self._get_errors_count(errors, field_name)
+        msg = self._get_msg_for_field_errors(field_name, errors_count, allowed_count)
+        self.assertLessEqual(errors_count, allowed_count, msg)
+
+    def _get_errors_count(self, errors, field_name):
         if errors:
             errors_count = sum(
                 [self.validation.fields[field_name].errors[e].count for e in errors]
             )
         else:
             errors_count = self.validation.fields[field_name].errors.count
-        self._check_field_errors(errors_count, allowed_count)
+        return errors_count
 
-    def _check_field_errors(self, errors_count, allowed_count):
-        self.assertLessEqual(
-            errors_count,
-            allowed_count,
-            msg="{count} field{count_plural} {verb} validation errors!{threshold_info}".format(
-                count=errors_count,
-                count_plural="" if errors_count == 1 else "s",
-                verb="has" if errors_count == 1 else "have",
-                threshold_info=(" (maximum allowed %d)" % allowed_count)
-                if allowed_count > 0
-                else "",
-            ),
+    @staticmethod
+    def _get_msg_for_field_errors(field_name, errors_count, allowed_count):
+        msg = "Field {field} has {count} validation errors!{threshold_info}".format(
+            count=errors_count,
+            field=field_name,
+            threshold_info=(" (maximum allowed %d)" % allowed_count)
+            if allowed_count > 0
+            else "",
         )
+        return msg
 
     def check_fields_errors_percent(
         self, field_names=None, errors=None, allowed_percent=0
     ):
-        if not field_names:
+        """
+        Checks that the number of errors for the ``field_names`` fields divided by the number of items is less or equal
+        than ``allowed_percent`` and raises an error with all problematic fields.
+        If ``field_names`` is None and ``new_behavior`` is True, checks all fields.
+        If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of errors divided by the
+        number of items is less or equal than ``allowed_count``
+        """
+        if not self.correct_field_list_handling and not field_names:
+            self._warn_list_handling()
             errors_percent = self.validation.errors.percent
-            self._check_field_errors_percent(errors_percent, allowed_percent)
-        else:
-            for field_name in field_names:
-                self.check_field_errors_percent(field_name, errors, allowed_percent)
+            self.assertLessEqual(
+                errors_percent,
+                allowed_percent,
+                msg="{percent}% of fields have validation errors!{threshold_info}".format(
+                    percent=errors_percent * 100,
+                    threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
+                    if allowed_percent > 0
+                    else "",
+                ),
+            )
+            return
+        if not field_names:
+            field_names = self._get_all_fields()
+        msgs = []
+        for field_name in field_names:
+            errors_percent = self._get_errors_percent(errors, field_name)
+            if errors_percent > allowed_percent:
+                msg = self._get_msg_for_field_errors_percent(field_name, errors_percent, allowed_percent)
+                msgs.append(msg)
+        if msgs:
+            msgs.insert(0, 'There are field errors:')
+            self.fail('\n'.join(msgs))
 
     def check_field_errors_percent(self, field_name, errors=None, allowed_percent=0):
+        """
+        Checks that the number of errors for the ``field_name`` field divided by the number of items is less or equal
+        than ``allowed_percent``.
+        """
+        errors_percent = self._get_errors_percent(errors, field_name)
+        msg = self._get_msg_for_field_errors_percent(field_name, errors_percent, allowed_percent)
+        self.assertLessEqual(errors_percent, allowed_percent, msg)
+
+    def _get_errors_percent(self, errors, field_name):
         if errors:
             errors_percent = sum(
                 [self.validation.fields[field_name].errors[e].percent for e in errors]
             )
         else:
             errors_percent = self.validation.fields[field_name].errors.percent
-        self._check_field_errors_percent(errors_percent, allowed_percent)
+        return errors_percent
 
-    def _check_field_errors_percent(self, errors_percent, allowed_percent):
-        self.assertLessEqual(
-            errors_percent,
-            allowed_percent,
-            msg="{percent}% of fields have validation errors!{threshold_info}".format(
-                percent=errors_percent * 100,
-                threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
-                if allowed_percent > 0
-                else "",
-            ),
+    @staticmethod
+    def _get_msg_for_field_errors_percent(field_name, errors_percent, allowed_percent):
+        msg = "{percent}% of field {field} have validation errors!{threshold_info}".format(
+            percent=errors_percent * 100,
+            field=field_name,
+            threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
+            if allowed_percent > 0
+            else "",
         )
+        return msg
