@@ -2,6 +2,7 @@ import click
 
 from spidermon.commands.prompts import monitor_prompts
 from spidermon.decorators.commands import is_inside_project
+from spidermon.utils import monitors as monitors_manager
 from spidermon.utils.commands import (
     build_monitors_strings,
     enable_spidermon,
@@ -9,8 +10,7 @@ from spidermon.utils.commands import (
     is_spidermon_enabled,
     update_settings,
 )
-from spidermon.utils.file import copy_template_to_project, render_file
-from spidermon.utils.monitors import find_monitor_modules
+from spidermon.utils import file
 
 
 @click.command(
@@ -27,16 +27,16 @@ def setup():
 
     monitors = {}
     settings = []
-    for module in find_monitor_modules():
+    for module in monitors_manager.find_monitor_modules():
         monitors.update(get_monitors(module))
         settings += get_settings(module, monitors)
 
     monitors_list, imports = build_monitors_strings(monitors)
-    filename = copy_template_to_project("monitor_suite.py.tmpl")
+    filename = file.copy_template_to_project("monitor_suite.py.tmpl")
 
     if settings:
         update_settings(settings)
-    render_file(filename, monitors_list=monitors_list, imports=imports)
+    file.render_file(filename, monitors_list=monitors_list, imports=imports)
 
     click.echo(monitor_prompts["response"])
 

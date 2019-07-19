@@ -1,10 +1,10 @@
-from spidermon.utils import commands
-
 from importlib import import_module
 from os.path import abspath, dirname, join
 from pytest_mock import mocker
+
 from scrapy.utils import project
 from scrapy.settings import Settings
+from spidermon.utils import commands
 
 import pytest
 import spidermon
