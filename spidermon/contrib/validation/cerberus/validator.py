@@ -3,6 +3,7 @@ from __future__ import absolute_import
 try:
     from collections.abc import Mapping
 except ImportError:
+    # Backward compatiblity
     from collections import Mapping
 
 from cerberus.validator import (

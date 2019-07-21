@@ -3,14 +3,23 @@ import six
 import json
 from io import BytesIO
 from collections import defaultdict
+try:
+    from collections.abc import Mapping
 
+except ImportError:
+    # Backward compatiblity
+    from collections import Mapping
 from scrapy.exceptions import DropItem, NotConfigured
 from scrapy.utils.misc import load_object
 from scrapy.exporters import JsonLinesItemExporter
 from scrapy import Field, Item
 from scrapy.utils.python import to_native_str
 
-from spidermon.contrib.validation import SchematicsValidator, JSONSchemaValidator
+from spidermon.contrib.validation import (
+    SchematicsValidator,
+    JSONSchemaValidator,
+    CerberusValidator,
+)
 from spidermon.contrib.validation.jsonschema.tools import get_schema_from
 from schematics.models import Model
 
@@ -56,6 +65,7 @@ class ItemValidationPipeline(object):
         for loader, name in [
             (cls._load_jsonschema_validator, "SPIDERMON_VALIDATION_SCHEMAS"),
             (cls._load_schematics_validator, "SPIDERMON_VALIDATION_MODELS"),
+            (cls._load_cerberus_validator, "SPIDERMON_VALIDATION_CERBERUS"),
         ]:
             res = crawler.settings.get(name)
             if not res:
@@ -94,7 +104,16 @@ class ItemValidationPipeline(object):
                 "- an object path to a JSON string.\n"
                 "- a path to a JSON file."
             )
+
         return JSONSchemaValidator(schema)
+
+    @classmethod
+    def _load_cerberus_validator(cls, schema):
+        if isinstance(schema, six.string_types):
+            schema = get_schema_from(schema)
+        if not isinstance(schema, Mapping):
+            raise NotConfigured("Invalid schema, must be defined as Mapping type")
+        return CerberusValidator(schema)
 
     @classmethod
     def _load_schematics_validator(cls, model_path):
@@ -106,6 +125,7 @@ class ItemValidationPipeline(object):
         return SchematicsValidator(model_class)
 
     def process_item(self, item, _):
+        import pdb; pdb.set_trace()
         validators = self.find_validators(item)
         if not validators:
             # No validators match this specific item type
