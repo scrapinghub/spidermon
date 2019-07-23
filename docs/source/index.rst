@@ -29,6 +29,7 @@ Contents
 
    installation
    getting-started
+   using-the-cli
    monitors
    item-validation
    stats-collection
