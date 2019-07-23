@@ -28,7 +28,7 @@ def build_monitors_strings(monitors):
 def enable_spidermon():
     project_name = get_project_settings().get("BOT_NAME")
 
-    extensions = dict(get_project_settings().get("EXTENSIONS"))
+    extensions = get_project_settings().getdict("EXTENSIONS")
     if extensions:
         formatted_settings = "\n".join(MONITOR_SETTINGS + [EXTENSIONS_UPDATE_STRING])
     else:
@@ -44,10 +44,7 @@ def get_settings_path():
 
 
 def is_setting_setup(setting):
-    with open(get_settings_path(), "r") as f:
-        read_data = f.read()
-
-    return setting in read_data
+    return setting in get_project_settings().attributes
 
 
 def is_spidermon_enabled():

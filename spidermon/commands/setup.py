@@ -51,6 +51,18 @@ def get_monitors(module):
     return monitors
 
 
+def get_setting(setting_string, setting_type, description):
+    user_input = click.prompt(monitor_prompts[setting_type].format(description))
+    if setting_type == "list":
+        user_input = user_input.split(" ")
+    if setting_type == "dict":
+        items = click.prompt(monitor_prompts["list"].format(description))
+        items = items.split(" ")
+        user_input = {item: int(user_input) for item in items}
+
+    return setting_string.format(user_input)
+
+
 def get_settings(module, monitors):
     settings = []
     module_monitors = module["monitors"]
@@ -60,20 +72,12 @@ def get_settings(module, monitors):
 
         if is_setting_setup(setting):
             click.echo(monitor_prompts["setting_already_setup"].format(name))
-            return
+            pass
 
         setting_string = module_monitors[monitor]["setting_string"]
         setting_type = module_monitors[monitor]["setting_type"]
         description = module_monitors[monitor]["description"]
 
-        user_input = click.prompt(monitor_prompts[setting_type].format(description))
-        if setting_type == "list":
-            user_input = user_input.split(" ")
-        if setting_type == "dict":
-            items = click.prompt(monitor_prompts["list"].format(description))
-            items = items.split(" ")
-            user_input = {item: int(user_input) for item in items}
-
-        settings.append(setting_string.format(user_input))
+        settings.append(get_setting(setting_string, setting_type, description))
 
     return settings
