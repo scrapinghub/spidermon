@@ -125,7 +125,6 @@ class ItemValidationPipeline(object):
         return SchematicsValidator(model_class)
 
     def process_item(self, item, _):
-        import pdb; pdb.set_trace()
         validators = self.find_validators(item)
         if not validators:
             # No validators match this specific item type
