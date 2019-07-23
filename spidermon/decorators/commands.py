@@ -8,9 +8,9 @@ from spidermon.commands.prompts import monitor_prompts
 def is_inside_project(command):
     @wraps(command)
     def wrapper_is_inside_project(*args, **kwargs):
-        if not inside_project():
-            click.echo(monitor_prompts["project_error"])
-        else:
+        if inside_project():
             command(*args, **kwargs)
+        else:
+            click.echo(monitor_prompts["project_error"])
 
     return wrapper_is_inside_project
