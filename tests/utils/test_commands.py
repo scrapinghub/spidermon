@@ -39,7 +39,7 @@ EXPECTED_PROJECT_SETTINGS_WITH_EXTENSION = "\n".join(
 
 
 @pytest.fixture
-def mocker(mocker):
+def mocker_commands(mocker):
     mocker.patch.object(commands, "get_project_settings")
     mocker.patch.object(commands, "update_settings")
     return mocker
@@ -55,13 +55,13 @@ def test_should_return_monitors_string():
     assert monitor_string == EXPECTED_MONITOR_STRING
 
 
-def test_should_include_spidermon_on_settings(mocker):
+def test_should_include_spidermon_on_settings(mocker_commands):
     commands.get_project_settings.return_value = PROJECT_SETTINGS
     commands.enable_spidermon()
     commands.update_settings.assert_called_with(EXPECTED_PROJECT_SETTINGS)
 
 
-def test_should_update_with_spidermon_extension(mocker):
+def test_should_update_with_spidermon_extension(mocker_commands):
     commands.get_project_settings.return_value = PROJECT_SETTINGS_WITH_EXTENSION
     commands.enable_spidermon()
     commands.update_settings.assert_called_with(
@@ -69,10 +69,8 @@ def test_should_update_with_spidermon_extension(mocker):
     )
 
 
-def test_should_return_correct_spidermon_status(mocker):
+def test_should_return_correct_spidermon_status(mocker_commands):
     commands.get_project_settings.return_value = PROJECT_SETTINGS
-
-    assert commands.is_spidermon_enabled() == None
 
     PROJECT_SETTINGS["SPIDERMON_ENABLED"] = False
     assert commands.is_spidermon_enabled() == False
