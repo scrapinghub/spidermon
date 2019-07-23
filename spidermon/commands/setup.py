@@ -10,7 +10,7 @@ from spidermon.utils.commands import (
     is_spidermon_enabled,
     update_settings,
 )
-from spidermon.utils import file
+from spidermon.utils import file_utils
 
 
 @click.command(
@@ -32,11 +32,11 @@ def setup():
         settings += get_settings(module, monitors)
 
     monitors_list, imports = build_monitors_strings(monitors)
-    filename = file.copy_template_to_project("monitor_suite.py.tmpl")
+    filename = file_utils.copy_template_to_project("monitor_suite.py.tmpl")
 
     if settings:
         update_settings(settings)
-    file.render_file(filename, monitors_list=monitors_list, imports=imports)
+    file_utils.render_file(filename, monitors_list=monitors_list, imports=imports)
 
     click.echo(monitor_prompts["response"])
 

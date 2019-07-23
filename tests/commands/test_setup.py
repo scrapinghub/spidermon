@@ -5,7 +5,7 @@ from spidermon.commands import cli
 from spidermon.commands.prompts import monitor_prompts
 from spidermon.commands.setup import get_setting, get_settings
 from spidermon.decorators import commands as decorator_commands
-from spidermon.utils import commands, file, monitors
+from spidermon.utils import commands, file_utils, monitors
 from unittest.mock import MagicMock
 
 import click
@@ -52,8 +52,8 @@ def mocker_commands(mocker):
     mocker.patch.object(commands, "is_setting_setup")
     mocker.patch.object(commands, "update_settings")
     mocker.patch.object(decorator_commands, "inside_project")
-    mocker.patch.object(file, "copy_template_to_project")
-    mocker.patch.object(file, "render_file")
+    mocker.patch.object(file_utils, "copy_template_to_project")
+    mocker.patch.object(file_utils, "render_file")
     mocker.patch.object(monitors, "find_monitor_modules")
 
     commands.get_project_settings.return_value = PROJECT_SETTINGS
