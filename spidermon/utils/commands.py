@@ -48,8 +48,9 @@ def is_setting_setup(setting):
 
 
 def is_spidermon_enabled():
-    settings = get_project_settings()
-    return settings["SPIDERMON_ENABLED"]
+    if is_setting_setup("SPIDERMON_ENABLED"):
+        return get_project_settings()["SPIDERMON_ENABLED"]
+    return False
 
 
 def update_settings(settings):

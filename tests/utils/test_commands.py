@@ -72,6 +72,8 @@ def test_should_update_with_spidermon_extension(mocker_commands):
 def test_should_return_correct_spidermon_status(mocker_commands):
     commands.get_project_settings.return_value = PROJECT_SETTINGS
 
+    assert commands.is_spidermon_enabled() == False
+
     PROJECT_SETTINGS["SPIDERMON_ENABLED"] = False
     assert commands.is_spidermon_enabled() == False
 
