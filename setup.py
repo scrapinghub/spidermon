@@ -5,6 +5,8 @@ test_requirements = [
     "pytest-cov",
     "pytest-mock",
     "jinja2",
+    "lxml;python_version!='3.4'",
+    "lxml<=4.3.5;python_version=='3.4'",
     "scrapy",
     "slackclient>=1.3.0,<2.0.0",
     'Twisted<=19.2.0;python_version=="3.4"',
