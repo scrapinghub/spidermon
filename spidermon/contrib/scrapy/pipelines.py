@@ -24,7 +24,7 @@ from spidermon.contrib.validation.jsonschema.tools import get_schema_from
 from schematics.models import Model
 
 from .stats import ValidationStatsManager
-
+# import ipdb
 
 DEFAULT_ERRORS_FIELD = "_validation"
 DEFAULT_ADD_ERRORS_TO_ITEM = False
@@ -40,7 +40,7 @@ class ItemValidationPipeline(object):
         add_errors_to_items=DEFAULT_ADD_ERRORS_TO_ITEM,
         errors_field=None,
     ):
-        self.drop_items_with_errors = drop_items_with_errors
+        self.drop_items_with_errors = drop_items_with_errors or DEFAULT_DROP_ITEMS_WITH_ERRORS
         self.add_errors_to_items = add_errors_to_items or DEFAULT_ADD_ERRORS_TO_ITEM
         self.errors_field = errors_field or DEFAULT_ERRORS_FIELD
         self.validators = validators
@@ -113,6 +113,7 @@ class ItemValidationPipeline(object):
             schema = get_schema_from(schema)
         if not isinstance(schema, Mapping):
             raise NotConfigured("Invalid schema, must be defined as Mapping type")
+
         return CerberusValidator(schema)
 
     @classmethod
