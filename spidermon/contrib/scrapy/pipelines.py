@@ -5,7 +5,6 @@ from io import BytesIO
 from collections import defaultdict
 try:
     from collections.abc import Mapping
-
 except ImportError:
     # Backward compatiblity
     from collections import Mapping
@@ -24,7 +23,6 @@ from spidermon.contrib.validation.jsonschema.tools import get_schema_from
 from schematics.models import Model
 
 from .stats import ValidationStatsManager
-# import ipdb
 
 DEFAULT_ERRORS_FIELD = "_validation"
 DEFAULT_ADD_ERRORS_TO_ITEM = False
