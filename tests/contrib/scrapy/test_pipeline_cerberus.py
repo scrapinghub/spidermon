@@ -1,9 +1,7 @@
 from __future__ import absolute_import
-from slugify import slugify
+from functools import partial
 from scrapy.utils.test import get_crawler
 from scrapy import Item
-from functools import partial
-import sys
 
 import pytest
 from spidermon.contrib.scrapy.pipelines import ItemValidationPipeline
@@ -17,10 +15,12 @@ STATS_TYPES = "spidermon/validation/validators/{}/{}"
 
 SETTING_CERBERUS = "SPIDERMON_VALIDATION_CERBERUS"
 
+
 def assert_type_in_stats(validator_type, obj):
     return "'{}' in {{stats}}".format(
         STATS_TYPES.format(obj.__name__.lower(), validator_type)
     )
+
 
 ASSERT_TYPE_IN_STATS = partial(assert_type_in_stats, "cerberus")
 
@@ -50,6 +50,6 @@ def test_get_crawler_only(item, settings, cases):
     crawler = get_crawler(settings_dict=settings)
     pipe = ItemValidationPipeline.from_crawler(crawler)
     pipe.process_item(item, None)
-    kwargs = {"stats":"pipe.stats.stats.get_stats()"}
+    kwargs = {"stats": "pipe.stats.stats.get_stats()"}
     for case in cases if type(cases) in [list, tuple] else [cases]:
         assert eval(case.format(**kwargs))

@@ -1,8 +1,9 @@
 from __future__ import absolute_import
-import six
-import json
-from io import BytesIO
 from collections import defaultdict
+from io import BytesIO
+import json
+import six
+
 try:
     from collections.abc import Mapping
 except ImportError:
@@ -14,13 +15,13 @@ from scrapy.exporters import JsonLinesItemExporter
 from scrapy import Field, Item
 from scrapy.utils.python import to_native_str
 
+from schematics.models import Model
 from spidermon.contrib.validation import (
     SchematicsValidator,
     JSONSchemaValidator,
     CerberusValidator,
 )
 from spidermon.contrib.validation.jsonschema.tools import get_schema_from
-from schematics.models import Model
 
 from .stats import ValidationStatsManager
 
@@ -38,7 +39,9 @@ class ItemValidationPipeline(object):
         add_errors_to_items=DEFAULT_ADD_ERRORS_TO_ITEM,
         errors_field=None,
     ):
-        self.drop_items_with_errors = drop_items_with_errors or DEFAULT_DROP_ITEMS_WITH_ERRORS
+        self.drop_items_with_errors = (
+            drop_items_with_errors or DEFAULT_DROP_ITEMS_WITH_ERRORS
+        )
         self.add_errors_to_items = add_errors_to_items or DEFAULT_ADD_ERRORS_TO_ITEM
         self.errors_field = errors_field or DEFAULT_ERRORS_FIELD
         self.validators = validators
