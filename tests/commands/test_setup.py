@@ -6,7 +6,6 @@ from spidermon.commands.prompts import monitor_prompts
 from spidermon.commands.setup import get_setting, get_settings
 from spidermon.decorators import commands as decorator_commands
 from spidermon.utils import commands, file_utils, monitors
-from unittest.mock import MagicMock
 
 import click
 import pytest

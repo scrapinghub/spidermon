@@ -3,7 +3,6 @@ from spidermon.decorators import commands
 
 from io import StringIO
 from pytest_mock import mocker
-from unittest.mock import patch, Mock
 
 import click
 import pytest
@@ -20,7 +19,7 @@ def mocker(mocker):
 def test_should_call_decorated_function_with_arguments(mocker):
     commands.inside_project.return_value = True
 
-    mock = Mock()
+    mock = mocker.Mock()
     decorated = commands.is_inside_project(mock)
     decorated("argument")
 
@@ -30,7 +29,7 @@ def test_should_call_decorated_function_with_arguments(mocker):
 def test_should_call_decorated_function_with_multiple_arguments(mocker):
     commands.inside_project.return_value = True
 
-    mock = Mock()
+    mock = mocker.Mock()
     decorated = commands.is_inside_project(mock)
     decorated("argument", "another argument")
 
@@ -40,7 +39,7 @@ def test_should_call_decorated_function_with_multiple_arguments(mocker):
 def test_should_call_decorated_function_when_inside_scrapy_project(mocker):
     commands.inside_project.return_value = True
 
-    mock = Mock()
+    mock = mocker.Mock()
     decorated = commands.is_inside_project(mock)
     decorated()
 
@@ -50,7 +49,7 @@ def test_should_call_decorated_function_when_inside_scrapy_project(mocker):
 def test_should_notify_when_not_inside_scrapy_project(mocker):
     commands.inside_project.return_value = False
 
-    mock = Mock()
+    mock = mocker.Mock()
     decorated = commands.is_inside_project(mock)
     decorated()
 
