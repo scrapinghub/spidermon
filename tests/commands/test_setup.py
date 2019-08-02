@@ -91,6 +91,7 @@ def test_should_notify_success_on_spidermon_enabled(mocker_commands, runner):
 
 def test_should_notify_that_spidermon_was_already_enabled(mocker_commands, runner):
     commands.get_project_settings.return_value = PROJECT_SETTINGS_WITH_SPIDERMON
+    commands.is_setting_setup.return_value = True
 
     result = runner.invoke(cli, ["setup"])
     assert result.exit_code == 0

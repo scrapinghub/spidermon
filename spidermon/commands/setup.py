@@ -28,8 +28,9 @@ def setup():
     monitors = {}
     settings = []
     for module in monitors_manager.find_monitor_modules():
-        monitors.update(get_monitors(module))
-        settings += get_settings(module, monitors)
+        new_monitors, new_settings = get_monitors_with_settings(module)
+        monitors.update(new_monitors)
+        settings += new_settings
 
     monitors_list, imports = build_monitors_strings(monitors)
     filename = file_utils.copy_template_to_project("monitor_suite.py.tmpl")
@@ -41,14 +42,16 @@ def setup():
     click.echo(monitor_prompts["response"])
 
 
-def get_monitors(module):
+def get_monitors_with_settings(module):
     monitors = {}
+    settings = []
     for monitor in module["monitors"]:
         msg = monitor_prompts["enable"].format(module["monitors"][monitor]["name"])
-        if click.confirm(msg):
+        if click.confirm("\n" + msg):
             monitors[monitor] = module["path"]
+            settings += get_settings(module, module["monitors"][monitor])
 
-    return monitors
+    return monitors, settings
 
 
 def get_setting(setting_string, setting_type, description):
@@ -63,21 +66,19 @@ def get_setting(setting_string, setting_type, description):
     return setting_string.format(user_input)
 
 
-def get_settings(module, monitors):
+def get_settings(module, monitor):
     settings = []
-    module_monitors = module["monitors"]
-    for monitor in monitors:
-        setting = module_monitors[monitor]["setting"]
-        name = module_monitors[monitor]["name"]
+    setting = monitor["setting"]
+    name = monitor["name"]
 
-        if is_setting_setup(setting):
-            click.echo(monitor_prompts["setting_already_setup"].format(name))
-            pass
+    if is_setting_setup(setting):
+        click.echo(monitor_prompts["setting_already_setup"].format(name))
+        pass
 
-        setting_string = module_monitors[monitor]["setting_string"]
-        setting_type = module_monitors[monitor]["setting_type"]
-        description = module_monitors[monitor]["description"]
+    setting_string = monitor["setting_string"]
+    setting_type = monitor["setting_type"]
+    description = monitor["description"]
 
-        settings.append(get_setting(setting_string, setting_type, description))
+    settings.append(get_setting(setting_string, setting_type, description))
 
     return settings
