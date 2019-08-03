@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-
+import six
 try:
     from collections.abc import Mapping
 except ImportError:
@@ -12,8 +12,8 @@ from cerberus.validator import (
     SchemaError,
 )
 from spidermon.contrib.validation.validator import Validator
+from spidermon.contrib.validation.utils import get_schema_from
 from .translator import CerberusMessageTranslator
-
 
 class CerberusValidator(Validator):
     default_translator = CerberusMessageTranslator()
@@ -23,6 +23,8 @@ class CerberusValidator(Validator):
         super(CerberusValidator, self).__init__(
             translator=translator, use_default_translator=use_default_translator
         )
+        if isinstance(schema, six.string_types):
+            schema = get_schema_from(schema)
         if isinstance(schema, Mapping):
             self._schema = schema
         else:
