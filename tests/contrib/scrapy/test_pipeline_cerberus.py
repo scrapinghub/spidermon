@@ -52,9 +52,8 @@ def test_get_crawler_only(item, settings, cases):
     pipe.process_item(item, None)
     kwargs = {"stats": "pipe.stats.stats.get_stats()"}
     for case in cases:
-        pass
-        # FIXX THISS
-        # lambda x: case.format(**x)
+        casechecker = lambda x : eval(x.format(**kwargs))
+        assert casechecker(case)
 
 
 def test_cerberus_from_pipeline(mocker):
