@@ -73,7 +73,7 @@ def get_settings(module, monitor):
 
     if is_setting_setup(setting):
         click.echo(monitor_prompts["setting_already_setup"].format(name))
-        pass
+        return settings
 
     setting_string = monitor["setting_string"]
     setting_type = monitor["setting_type"]
