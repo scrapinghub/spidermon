@@ -14,11 +14,9 @@ import unittest
 EXPECTED_IMPORT_STRING = "from path.to.monitor import TestMonitor"
 EXPECTED_MONITOR_STRING = "[TestMonitor]"
 MODULE_MONITOR = {"TestMonitor": "path.to.monitor"}
-PROJECT_SETTINGS = Settings()
-PROJECT_SETTINGS.setdict({"BOT_NAME": "test_bot"})
-PROJECT_SETTINGS_WITH_EXTENSION = Settings()
-PROJECT_SETTINGS_WITH_EXTENSION.setdict(
-    {"BOT_NAME": "test_bot", "EXTENSIONS": {"test_extension": 500}}
+PROJECT_SETTINGS = Settings(values={"BOT_NAME": "test_bot"})
+PROJECT_SETTINGS_WITH_EXTENSION = Settings(
+    values={"BOT_NAME": "test_bot", "EXTENSIONS": {"test_extension": 500}}
 )
 EXPECTED_PROJECT_SETTINGS = "\n".join(
     [

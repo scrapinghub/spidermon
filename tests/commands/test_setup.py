@@ -34,14 +34,13 @@ MODULE_MONITOR_LIST = [
         },
     }
 ]
-PROJECT_SETTINGS = Settings()
-PROJECT_SETTINGS.setdict({"BOT_NAME": "test_bot"})
-PROJECT_SETTINGS_WITH_SPIDERMON = Settings()
-PROJECT_SETTINGS_WITH_SPIDERMON.setdict(
-    {"BOT_NAME": "test_bot", "SPIDERMON_ENABLED": True}
+PROJECT_SETTINGS = Settings(values={"BOT_NAME": "test_bot"})
+PROJECT_SETTINGS_WITH_SPIDERMON = Settings(
+    values={"BOT_NAME": "test_bot", "SPIDERMON_ENABLED": True}
 )
-PROJECT_SETTINGS_WITH_SETTING = Settings()
-PROJECT_SETTINGS_WITH_SETTING.setdict({"BOT_NAME": "test_bot", "TEST_SETTING": 1})
+PROJECT_SETTINGS_WITH_SETTING = Settings(
+    values={"BOT_NAME": "test_bot", "TEST_SETTING": 1}
+)
 
 
 @pytest.fixture
