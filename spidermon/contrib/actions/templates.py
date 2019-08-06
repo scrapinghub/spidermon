@@ -2,8 +2,9 @@ from __future__ import absolute_import
 import os
 import inspect
 
+from jinja2 import Template
 from spidermon.core.actions import ActionOptionsMetaclass, Action
-from spidermon.templates import template_loader, Template
+from spidermon.templates import template_loader
 import six
 
 
