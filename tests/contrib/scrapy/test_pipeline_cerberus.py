@@ -32,9 +32,9 @@ def assert_in_cerberus_stats(obj):
             TestItem({"url": "example.com"}),
             {SETTING_CERBERUS: [cerberus_test_schema]},
             [
-                "'{}' not in {{stats}}".format(STATS_ITEM_ERRORS),
-                "{{stats}}['{}'] is 1".format(STATS_AMOUNTS),
-                assert_in_cerberus_stats(Item),
+                "{}".format(STATS_ITEM_ERRORS)
+                # "{{stats}}['{}'] is 1".format(STATS_AMOUNTS),
+                # assert_in_cerberus_stats(Item),
             ],
             id="processing usual items without errors",
         ),
@@ -50,26 +50,6 @@ def test_get_crawler_only(item, settings, cases):
     crawler = get_crawler(settings_dict=settings)
     pipe = ItemValidationPipeline.from_crawler(crawler)
     pipe.process_item(item, None)
-    kwargs = {"stats": "pipe.stats.stats.get_stats()"}
     for case in cases:
-        casechecker = lambda x : eval(x.format(**kwargs))
+        casechecker = lambda x : x in pipe.stats.stats.get_stats()
         assert casechecker(case)
-
-
-def test_cerberus_from_pipeline(mocker):
-    # mocked_get_contents = mocker.patch(
-    #     "spidermon.contrib.validation.utils.get_schema_from",
-    #     return_value=cerberus_error_test_schema,
-    # )
-    settings = {SETTING_CERBERUS: [cerberus_error_test_schema]}
-    #     TestItem: {ScrapingHub"}
-    # }
-    test_item = {"url":"asd", "title":"wdad"}
-    crawler = get_crawler(settings_dict=settings)
-    pipe = ItemValidationPipeline.from_crawler(crawler)
-    pipe.process_item(test_item, None)
-    kwargs = {"stats": "pipe.stats.stats.get_stats()"}
-    stats = pipe.stats.stats.get_stats()
-    assert "spidermon/validation/items/errors" in stats
-    assert "spidermon/validation/fields/errors/invalid_number" in stats
-    assert stats.get("spidermon/validation/validators/testitem/cerberus", True)

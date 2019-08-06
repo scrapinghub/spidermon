@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-import six
 try:
     from collections.abc import Mapping
 except ImportError:

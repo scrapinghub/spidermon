@@ -1,12 +1,11 @@
 from __future__ import absolute_import
 import re
 import logging
-
 import json
-from scrapy.utils.misc import load_object
 import six
 from six.moves.urllib.parse import urlparse
 from six.moves.urllib.request import urlopen
+from scrapy.utils.misc import load_object
 
 logger = logging.getLogger(__name__)
 
