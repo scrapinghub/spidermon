@@ -8,7 +8,7 @@ Release notes
 - Added option to set AWS Region Name on SES E-Mail action
 - Added default value for 'SPIDERMON_BODY_HTML_TEMPLATE' setting
 - Fixed bug in logging of Slack messages when fake setting is enabled
-- Enforce lxml 4.3.5 or lower for Python 3.4
+- Enforced lxml 4.3.5 or lower for Python 3.4
 - Improved stats history documentation
 
 1.10.2 (2019-07-01)
