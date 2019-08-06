@@ -6,7 +6,6 @@ from spidermon.commands.prompts import monitor_prompts
 
 
 def is_inside_project(command):
-    @wraps(command)
     def wrapper_is_inside_project(*args, **kwargs):
         if inside_project():
             command(*args, **kwargs)
