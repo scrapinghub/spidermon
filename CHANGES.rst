@@ -6,7 +6,7 @@ Release notes
 
 - Allowed per-field checking in ValidationMonitorMixin
 - Added option to set AWS Region Name on SES E-Mail action
-- Added default Value for 'SPIDERMON_BODY_HTML_TEMPLATE' setting
+- Added default value for 'SPIDERMON_BODY_HTML_TEMPLATE' setting
 - Fixed bug in logging of Slack messages when fake setting is enabled
 - Enforce lxml 4.3.5 or lower for Python 3.4
 - Improved stats history documentation
