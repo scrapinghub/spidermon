@@ -22,7 +22,7 @@ class CerberusValidator(Validator):
         super(CerberusValidator, self).__init__(
             translator=translator, use_default_translator=use_default_translator
         )
-        schema = get_schema_from(schema)
+        # schema = get_schema_from(schema)
         if isinstance(schema, Mapping):
             self._schema = schema
         else:
