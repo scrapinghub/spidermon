@@ -34,8 +34,6 @@ cerberus_test_schema = {
     "title": {"type": "string"},
 }
 
-cerberus_error_test_schema = {"url": {"type": "string"}, "title": {"type": "number"}}
-
 cerberus_tree_schema = {
     "quotes": {
         "type": "dict",
