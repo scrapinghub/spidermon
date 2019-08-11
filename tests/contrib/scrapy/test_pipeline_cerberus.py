@@ -31,9 +31,70 @@ def assert_in_cerberus_stats(obj):
             [assert_in_cerberus_stats(Item)],
             id="processing usual items without errors",
         ),
+        # DataTest(
+        #     name="validator is {} type, loads from path to a python dict".format(
+        #         Item.__name__
+        #     ),
+        #     item=TestItem(),
+        #     settings={SETTING_CERBERUS: ["tests.fixtures.validators.test_schema"]},
+        #     cases=[
+        #         assert_type_in_stats(Item),
+        #         "'{}' in {{stats}}".format(STATS_ITEM_ERRORS),
+        #     ],
+        # ),
+        # DataTest(
+        #     name="validator is {} type, loads from a python dict".format(
+        #         TestItem.__name__
+        #     ),
+        #     item=TestItem(),
+        #     settings={SETTING_CERBERUS: {TestItem: test_schema}},
+        #     cases=[
+        #         assert_type_in_stats(TestItem),
+        #         "'{}' in {{stats}}".format(STATS_ITEM_ERRORS),
+        #     ],
+        # ),
+        # DataTest(
+        #     name="validator is {} type, loads from path to a python dict".format(
+        #         TestItem.__name__
+        #     ),
+        #     item=TestItem(),
+        #     settings={
+        #         SETTING_CERBERUS: {TestItem: "tests.fixtures.validators.test_schema"}
+        #     },
+        #     cases=[
+        #         assert_type_in_stats(TestItem),
+        #         "'{}' in {{stats}}".format(STATS_ITEM_ERRORS),
+        #     ],
+        # ),
+        # DataTest(
+        #     name="validator is {} type, loads from object path to a JSON string".format(
+        #         TestItem.__name__
+        #     ),
+        #     item=TestItem(),
+        #     settings={
+        #         SETTING_CERBERUS: {
+        #             TestItem: "tests.fixtures.validators.test_schema_string"
+        #         }
+        #     },
+        #     cases=[
+        #         assert_type_in_stats(TestItem),
+        #         "'{}' in {{stats}}".format(STATS_ITEM_ERRORS),
+        #     ],
+        # ),
+        # DataTest(
+        #     name="validator is {} type, validators are in a list repr".format(
+        #         TestItem.__name__
+        #     ),
+        #     item=TestItem(),
+        #     settings={SETTING_CERBERUS: {TestItem: [test_schema]}},
+        #     cases=[
+        #         assert_type_in_stats(TestItem),
+        #         "'{}' in {{stats}}".format(STATS_ITEM_ERRORS),
+        #     ],
+        # ),
         pytest.param(
             TreeItem(),
-            {SETTING_CERBERUS: [cerberus_tree_schema]},
+            {SETTING_CERBERUS: [cerberus_test_schema]},
             ["{}".format(STATS_MISSINGS)],
             id="missing required fields",
         ),
@@ -56,7 +117,16 @@ def test_stats_in_pipeline(item, settings, cases):
             {SETTING_CERBERUS: [cerberus_test_schema]},
             ["{}".format(STATS_ITEM_ERRORS)],
             id="processing usual items without errors",
-        )
+        ),
+        pytest.param(
+            TreeItem({
+                "quotes": {"author": "Vipul Gupta", "quote": "Life is vanilla"},
+                "child": "https://example.com",
+            }),
+            {SETTING_CERBERUS: [cerberus_tree_schema]},
+            ["{}".format(STATS_ITEM_ERRORS)],
+            id="processing nested items without errors",
+        ),
     ],
 )
 def test_stats_not_in_pipeline(item, settings, cases):

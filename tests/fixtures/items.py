@@ -4,7 +4,7 @@ from scrapy import Item, Field
 
 class TreeItem(Item):
     child = Field()
-
+    quotes = Field()
 
 class TestItem(Item):
 

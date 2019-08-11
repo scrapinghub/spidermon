@@ -29,8 +29,20 @@ test_schema = {
 
 test_schema_string = json.dumps(test_schema)
 
-cerberus_test_schema = {"url": {"type": "string"}, "title": {"type": "string"}}
+cerberus_test_schema = {
+    "url": {"type": "string", "required": True},
+    "title": {"type": "string"},
+}
 
 cerberus_error_test_schema = {"url": {"type": "string"}, "title": {"type": "number"}}
 
-cerberus_tree_schema = {"child": {"type": "list", "required": True}}
+cerberus_tree_schema = {
+    "quotes": {
+        "type": "dict",
+        "schema": {
+            "quote": {"type": "string"},
+            "author": {"type": "string", "required": True},
+        },
+    },
+    "child": {"empty": False, "type": "string"},
+}
