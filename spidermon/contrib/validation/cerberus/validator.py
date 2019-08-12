@@ -12,7 +12,6 @@ from cerberus.validator import (
     SchemaError,
 )
 from spidermon.contrib.validation.validator import Validator
-from spidermon.contrib.validation.utils import get_schema_from
 from .translator import CerberusMessageTranslator
 
 

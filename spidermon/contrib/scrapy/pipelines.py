@@ -3,12 +3,6 @@ from collections import defaultdict
 from io import BytesIO
 import json
 import six
-
-try:
-    from collections.abc import Mapping
-except ImportError:
-    # Backward compatiblity
-    from collections import Mapping
 from scrapy.exceptions import DropItem, NotConfigured
 from scrapy.utils.misc import load_object
 from scrapy.exporters import JsonLinesItemExporter
@@ -22,7 +16,6 @@ from spidermon.contrib.validation import (
     CerberusValidator,
 )
 from spidermon.contrib.validation.utils import get_schema_from
-
 from .stats import ValidationStatsManager
 
 DEFAULT_ERRORS_FIELD = "_validation"
