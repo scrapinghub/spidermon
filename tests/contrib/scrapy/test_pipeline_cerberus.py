@@ -66,7 +66,7 @@ def assert_in_cerberus_stats(obj):
         pytest.param(
             TestItem(),
             {SETTING_CERBERUS: [cerberus_test_schema]},
-            [STATS_MISSINGS],
+            ["spidermon/validation/fields/errors/missing_required_field"],
             id="Missing required fields",
         ),
     ],
