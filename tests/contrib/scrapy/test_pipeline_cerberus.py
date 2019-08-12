@@ -12,7 +12,6 @@ from tests.fixtures.validators import (
     test_cerberus_schema_string
 )
 
-STATS_AMOUNTS = "spidermon/validation/validators"
 STATS_ITEM_ERRORS = "spidermon/validation/items/errors"
 STATS_MISSINGS = "spidermon/validation/fields/errors/missing_required_field"
 STATS_TYPES = "spidermon/validation/validators/{}/{}"
@@ -93,7 +92,7 @@ def test_stats_in_pipeline(item, settings, cases):
         pytest.param(
             TreeItem(
                 {
-                    "quotes": {"author": "Vipul Gupta" "quote": "Life is vanilla"},
+                    "quotes": {"author": "Vipul Gupta", "quote": "Life is vanilla"},
                     "child": "https://example.com",
                 }
             ),
@@ -112,24 +111,14 @@ def test_stats_not_in_pipeline(item, settings, cases):
         assert casechecker(case)
 
 
-@pytest.mark.parametrize(
-    "item,settings,cases",
-    [
-        pytest.param(
-            TestItem({"url": "example.com"}),
-            {SETTING_CERBERUS: [cerberus_test_schema]},
-            [STATS_AMOUNTS],
-            id="processing amount for simple items",
-        )
-    ],
-)
-def test_stats_amounts_in_pipeline(item, settings, cases):
+def test_stats_amounts_in_pipeline():
+    item = TestItem({"title": "ScrapingHub"})
+    settings = {SETTING_CERBERUS: [cerberus_test_schema]}
     crawler = get_crawler(settings_dict=settings)
     pipe = ItemValidationPipeline.from_crawler(crawler)
     pipe.process_item(item, None)
-    for case in cases:
-        casechecker = lambda x: pipe.stats.stats.get_stats()[x] is 1
-        assert casechecker(case)
+    assert pipe.stats.stats.get_stats()["spidermon/validation/validators"] is 1
+    assert pipe.stats.stats.get_stats()["spidermon/validation/fields/errors/missing_required_field"] is 1
 
 
 @pytest.mark.skipif(
