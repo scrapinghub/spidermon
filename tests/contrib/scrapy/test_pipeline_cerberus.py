@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from scrapy.utils.test import get_crawler
 from scrapy import Item
-
+import sys
 import pytest
 from spidermon.contrib.scrapy.pipelines import ItemValidationPipeline
 from tests.fixtures.items import TestItem, TreeItem
@@ -39,7 +39,7 @@ def assert_in_cerberus_stats(obj):
             TestItem(),
             {SETTING_CERBERUS: {TestItem: [cerberus_test_schema]}},
             [assert_in_cerberus_stats(TestItem), STATS_ITEM_ERRORS],
-            name="validator is {} type, validators are in a list repr".format(
+            id="validator is {} type, validators are in a list repr".format(
                 TestItem.__name__
             ),
         ),
@@ -107,3 +107,11 @@ def test_stats_amounts_in_pipeline(item, settings, cases):
     for case in cases:
         casechecker = lambda x: pipe.stats.stats.get_stats()[x] is 1
         assert casechecker(case)
+
+
+
+# @pytest.mark.skipif(
+#     sys.version_info < (3, 4), reason="mock requires python3.4 or higher"
+# )
+# def test_pipelines_mocked(mocker):
+#     mocker_cerberus_validator = mocker.patch("")
