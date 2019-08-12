@@ -32,7 +32,9 @@ test_schema_string = json.dumps(test_schema)
 cerberus_test_schema = {
     "url": {"type": "string", "required": True},
     "title": {"type": "string"},
-}
+    }
+
+test_cerberus_schema_string = json.dumps(cerberus_test_schema)
 
 cerberus_tree_schema = {
     "quotes": {
