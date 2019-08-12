@@ -70,10 +70,12 @@ def test_stats_in_pipeline(item, settings, cases):
             id="processing usual items without errors",
         ),
         pytest.param(
-            TreeItem({
-                "quotes": {"author": "Vipul Gupta", "quote": "Life is vanilla"},
-                "child": "https://example.com",
-            }),
+            TreeItem(
+                {
+                    "quotes": {"author": "Vipul Gupta", "quote": "Life is vanilla"},
+                    "child": "https://example.com",
+                }
+            ),
             {SETTING_CERBERUS: [cerberus_tree_schema]},
             [STATS_ITEM_ERRORS],
             id="processing nested items without errors",
@@ -107,7 +109,6 @@ def test_stats_amounts_in_pipeline(item, settings, cases):
     for case in cases:
         casechecker = lambda x: pipe.stats.stats.get_stats()[x] is 1
         assert casechecker(case)
-
 
 
 # @pytest.mark.skipif(

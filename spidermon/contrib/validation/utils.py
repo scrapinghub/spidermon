@@ -37,6 +37,7 @@ def is_valid_url(url):
 def is_valid_email(email):
     return not EMAIL_REGEX.match(email) is None
 
+
 def get_schema_from(source):
     if is_schema_url(source):
         schema = get_contents(source)

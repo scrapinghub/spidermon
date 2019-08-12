@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+
 try:
     from collections.abc import Mapping
 except ImportError:
@@ -14,6 +15,7 @@ from spidermon.contrib.validation.validator import Validator
 from spidermon.contrib.validation.utils import get_schema_from
 from .translator import CerberusMessageTranslator
 
+
 class CerberusValidator(Validator):
     default_translator = CerberusMessageTranslator()
     name = "Cerberus"
@@ -22,7 +24,6 @@ class CerberusValidator(Validator):
         super(CerberusValidator, self).__init__(
             translator=translator, use_default_translator=use_default_translator
         )
-        # schema = get_schema_from(schema)
         if isinstance(schema, Mapping):
             self._schema = schema
         else:

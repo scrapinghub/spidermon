@@ -108,6 +108,9 @@ class ItemValidationPipeline(object):
 
     @classmethod
     def _load_cerberus_validator(cls, schema):
+        if isinstance(schema, six.string_types):
+            schema = get_schema_from(schema)
+
         return CerberusValidator(schema)
 
     @classmethod

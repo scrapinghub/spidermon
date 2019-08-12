@@ -12,7 +12,7 @@ from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_EXPECTED_FINISH_REASONS,
     SPIDERMON_MAX_ERRORS,
     SPIDERMON_UNWANTED_HTTP_CODES,
-    SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT
+    SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT,
 )
 from spidermon import MonitorSuite
 from spidermon.exceptions import NotConfigured
@@ -168,10 +168,12 @@ def test_unwanted_httpcodes_should_fail(make_data):
     )
 
     # Scenario # 3
-    data = make_data({
-        SPIDERMON_UNWANTED_HTTP_CODES: [500],
-        SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT: 15,
-    })
+    data = make_data(
+        {
+            SPIDERMON_UNWANTED_HTTP_CODES: [500],
+            SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT: 15,
+        }
+    )
 
     runner = data.pop("runner")
     suite = new_suite([UnwantedHTTPCodesMonitor])
@@ -232,10 +234,12 @@ def test_unwanted_httpcodes_should_pass(make_data):
     assert runner.result.monitor_results[0].error is None
 
     # Scenario # 3
-    data = make_data({
-        SPIDERMON_UNWANTED_HTTP_CODES: [500],
-        SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT: 15,
-    })
+    data = make_data(
+        {
+            SPIDERMON_UNWANTED_HTTP_CODES: [500],
+            SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT: 15,
+        }
+    )
 
     runner = data.pop("runner")
     suite = new_suite([UnwantedHTTPCodesMonitor])
