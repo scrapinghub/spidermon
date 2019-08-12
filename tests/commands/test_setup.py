@@ -3,7 +3,7 @@ from pytest_mock import mocker
 from scrapy.settings import Settings
 from spidermon.commands import cli
 from spidermon.commands.prompts import monitor_prompts
-from spidermon.commands.setup import get_setting, get_settings
+from spidermon.commands.setup import get_settings, get_user_input
 from spidermon.decorators import commands as decorator_commands
 from spidermon.utils import commands, file_utils, monitors
 
@@ -25,7 +25,7 @@ MODULE_MONITOR_LIST = [
         "path": "path.to.monitor",
         "monitors": {
             "TestMonitor": {
-                "name": "Test Monitor",
+                "name": "Test",
                 "setting": "TEST_SETTING",
                 "setting_string": SETTING_STRING,
                 "description": SETTING_DESCRIPTION,
@@ -34,6 +34,13 @@ MODULE_MONITOR_LIST = [
         },
     }
 ]
+TEST_MONITOR = {
+    "name": "Test",
+    "setting": "TEST_SETTING",
+    "setting_string": SETTING_STRING,
+    "description": SETTING_DESCRIPTION,
+    "setting_type": SETTING_TYPE_LIMIT_LEAST,
+}
 PROJECT_SETTINGS = Settings(values={"BOT_NAME": "test_bot"})
 PROJECT_SETTINGS_WITH_SPIDERMON = Settings(
     values={"BOT_NAME": "test_bot", "SPIDERMON_ENABLED": True}
@@ -68,9 +75,7 @@ def mocker_commands(mocker):
 def mocker_click(mocker):
     mocker.patch.object(click, "prompt")
     mocker.patch.object(click, "echo")
-    mocker.patch.object(commands, "is_setting_setup")
-
-    commands.is_setting_setup.return_value = True
+    mocker.patch.object(click, "confirm")
 
     return mocker
 
@@ -105,80 +110,151 @@ def test_should_notify_that_spidermon_was_already_enabled(mocker_commands, runne
 
 def test_should_ask_monitors_to_enable(mocker_commands, runner):
     result = runner.invoke(cli, ["setup"])
-    expected_output = monitor_prompts["enable"].format(
-        MODULE_MONITOR_LIST[0]["monitors"]["TestMonitor"]["name"]
-    )
+    expected_output = monitor_prompts["enable"].format("Test")
     assert result.exit_code == 0
     assert expected_output in result.output
 
 
-def test_should_get_settings(mocker_click, runner):
-    expected_output = monitor_prompts["limit_least"].format(
-        MODULE_MONITOR_LIST[0]["monitors"]["TestMonitor"]["description"]
-    )
-
-    get_setting(SETTING_STRING, SETTING_TYPE_LIMIT_LEAST, SETTING_DESCRIPTION)
-
-    click.prompt.assert_called_with(expected_output)
-
-
-def test_should_ask_setting_from_monitors_to_enable_when_limit_least(
-    mocker_click, runner
-):
-    expected_output = monitor_prompts["limit_least"].format(
-        MODULE_MONITOR_LIST[0]["monitors"]["TestMonitor"]["description"]
-    )
-
-    get_setting(SETTING_STRING, SETTING_TYPE_LIMIT_LEAST, SETTING_DESCRIPTION)
-
-    click.prompt.assert_called_with(expected_output)
-
-
-def test_should_ask_setting_from_monitors_to_enable_when_limit_most(
-    mocker_click, runner
-):
-    expected_output = monitor_prompts["limit_most"].format(
-        MODULE_MONITOR_LIST[0]["monitors"]["TestMonitor"]["description"]
-    )
-
-    get_setting(SETTING_STRING, SETTING_TYPE_LIMIT_MOST, SETTING_DESCRIPTION)
-
-    click.prompt.assert_called_with(expected_output)
-
-
-def test_should_ask_setting_from_monitors_to_enable_when_list(mocker_click, runner):
-    expected_output = monitor_prompts["list"].format(
-        MODULE_MONITOR_LIST[0]["monitors"]["TestMonitor"]["description"]
-    )
-
-    get_setting(SETTING_STRING, SETTING_TYPE_LIST, SETTING_DESCRIPTION)
-
-    click.prompt.assert_called_with(expected_output)
-
-
-def test_should_ask_setting_from_monitors_to_enable_when_dict(mocker_click, runner):
-    expected_output_dict = monitor_prompts["dict"].format(SETTING_DESCRIPTION)
-    expected_output_list = monitor_prompts["list"].format(SETTING_DESCRIPTION)
-
-    get_setting(SETTING_STRING, SETTING_TYPE_DICT, SETTING_DESCRIPTION)
-
-    click.prompt.assert_any_call(expected_output_dict)
-    click.prompt.assert_any_call(expected_output_list)
-    assert click.prompt.call_count == 2
-
-
-def test_should_notify_when_setting_already_setup(
-    mocker_click, mocker_commands, runner
+def test_should_notify_when_monitor_setting_already_exists(
+    mocker_click, mocker_commands
 ):
     commands.get_project_settings.return_value = PROJECT_SETTINGS_WITH_SETTING
+    expected_output = monitor_prompts["setting_already_setup"].format("Test")
 
-    expected_output = monitor_prompts["setting_already_setup"].format(
-        MODULE_MONITOR_LIST[0]["monitors"]["TestMonitor"]["name"]
-    )
+    result = get_settings(TEST_MONITOR)
 
-    result = get_settings(
-        MODULE_MONITOR_LIST[0], MODULE_MONITOR_LIST[0]["monitors"]["TestMonitor"]
-    )
-
-    assert result == []
+    assert not result
     click.echo.assert_called_with(expected_output)
+
+
+def test_should_return_list_of_settings(mocker_click, mocker_commands):
+    click.prompt.return_value = "10"
+    click.confirm.return_value = False
+    expected_setting_string = SETTING_STRING.format(10)
+    assert get_settings(TEST_MONITOR) == [expected_setting_string]
+
+
+@pytest.mark.parametrize("input", ["-10", "foo, bar"])
+def test_should_return_empty_list_of_settings_for_invalid_input(
+    mocker_click, mocker_commands, input
+):
+    click.prompt.return_value = input
+    click.confirm.return_value = False
+    assert get_settings(TEST_MONITOR) == []
+
+
+@pytest.mark.parametrize(
+    "input, setting_type, description",
+    [
+        ("10", SETTING_TYPE_LIMIT_MOST, SETTING_DESCRIPTION),
+        ("20", SETTING_TYPE_LIMIT_LEAST, SETTING_DESCRIPTION),
+        ("foo, bar, baz", SETTING_TYPE_LIST, SETTING_DESCRIPTION),
+    ],
+)
+def test_should_ask_setting_value(mocker_click, input, setting_type, description):
+    click.prompt.return_value = input
+    click.confirm.return_value = False
+    get_user_input(setting_type, description)
+    click.prompt.assert_called_with(monitor_prompts[setting_type].format(description))
+
+
+def test_should_ask_twice_for_dict(mocker_click):
+    click.prompt.return_value = "10"
+    get_user_input(SETTING_TYPE_DICT, SETTING_DESCRIPTION)
+    calls = [
+        mocker_click.call(
+            monitor_prompts[SETTING_TYPE_DICT].format(SETTING_DESCRIPTION)
+        ),
+        mocker_click.call(
+            monitor_prompts[SETTING_TYPE_LIST].format(SETTING_DESCRIPTION)
+        ),
+    ]
+    click.prompt.assert_has_calls(calls)
+
+
+@pytest.mark.parametrize(
+    "setting_type, description, user_input",
+    [
+        (SETTING_TYPE_LIMIT_LEAST, SETTING_DESCRIPTION, "-10"),
+        (SETTING_TYPE_LIMIT_MOST, SETTING_DESCRIPTION, "-20"),
+        (SETTING_TYPE_LIST, SETTING_DESCRIPTION, ""),
+        (SETTING_TYPE_DICT, SETTING_DESCRIPTION, "-30"),
+    ],
+)
+def test_should_return_empty_list_when_stop_retrying(
+    mocker_click, setting_type, description, user_input
+):
+    click.confirm.return_value = False
+    click.prompt.return_value = user_input
+    assert get_user_input(setting_type, description) == []
+
+
+@pytest.mark.parametrize(
+    "setting_type, description, user_input",
+    [
+        (SETTING_TYPE_LIMIT_LEAST, SETTING_DESCRIPTION, "-10"),
+        (SETTING_TYPE_LIMIT_MOST, SETTING_DESCRIPTION, "-20"),
+        (SETTING_TYPE_LIST, SETTING_DESCRIPTION, ""),
+        (SETTING_TYPE_DICT, SETTING_DESCRIPTION, "-30"),
+    ],
+)
+def test_should_notify_when_invalid_input(
+    mocker_click, setting_type, description, user_input
+):
+    click.confirm.return_value = False
+    click.prompt.return_value = user_input
+    get_user_input(setting_type, description)
+    click.confirm.assert_called_with(monitor_prompts["setting_error"])
+
+
+@pytest.mark.parametrize(
+    "setting_type, description, user_input",
+    [
+        (SETTING_TYPE_LIMIT_LEAST, SETTING_DESCRIPTION, "-10"),
+        (SETTING_TYPE_LIMIT_MOST, SETTING_DESCRIPTION, "-20"),
+        (SETTING_TYPE_LIST, SETTING_DESCRIPTION, ""),
+        (SETTING_TYPE_DICT, SETTING_DESCRIPTION, "-30"),
+    ],
+)
+def test_should_retry_if_user_allows(
+    mocker_click, setting_type, description, user_input
+):
+    click.confirm.side_effect = [True, True, False]
+    click.prompt.return_value = user_input
+    get_user_input(setting_type, description)
+    assert click.confirm.call_count == 3
+
+
+@pytest.mark.parametrize(
+    "setting_type, description, user_input",
+    [
+        (SETTING_TYPE_LIMIT_LEAST, SETTING_DESCRIPTION, "-10"),
+        (SETTING_TYPE_LIMIT_MOST, SETTING_DESCRIPTION, "-20"),
+        (SETTING_TYPE_LIST, SETTING_DESCRIPTION, ""),
+        (SETTING_TYPE_DICT, SETTING_DESCRIPTION, "-30"),
+    ],
+)
+def test_should_not_retry_if_user_denies(
+    mocker_click, setting_type, description, user_input
+):
+    click.confirm.return_value = False
+    click.prompt.return_value = user_input
+    get_user_input(setting_type, description)
+    click.confirm.assert_called_once()
+
+
+@pytest.mark.parametrize(
+    "value, keys, setting_type, description",
+    [
+        (10, "", "dict", SETTING_DESCRIPTION),
+        (-20, "foo, bar, baz", "dict", SETTING_DESCRIPTION),
+    ],
+)
+def test_should_validate_all_dict_inputs(
+    mocker_click, value, keys, setting_type, description
+):
+    click.prompt.side_effect = [keys, value]
+    click.confirm.return_value = False
+    result = get_user_input(setting_type, description)
+    click.confirm.assert_called_once()
+    assert not result

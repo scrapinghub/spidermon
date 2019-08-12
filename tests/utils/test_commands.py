@@ -77,3 +77,76 @@ def test_should_return_correct_spidermon_status(mocker_commands):
 
     PROJECT_SETTINGS["SPIDERMON_ENABLED"] = True
     assert commands.is_spidermon_enabled() == True
+
+
+def test_should_return_valid_integer():
+    assert commands.parse_int("10") == 10
+
+
+def test_should_raise_exception_when_user_input_is_not_a_number():
+    with pytest.raises(ValueError):
+        commands.parse_int("not_a_number")
+
+
+def test_should_return_list_of_items():
+    assert commands.parse_list("foo, bar, baz") == ["foo", "bar", "baz"]
+
+
+def test_should_return_dict_with_keys_and_value():
+    assert commands.parse_dict("foo, bar, baz", 10) == {"foo": 10, "bar": 10, "baz": 10}
+
+
+def test_should_raise_exception_when_user_input_is_not_a_number_for_dict():
+    with pytest.raises(ValueError):
+        commands.parse_dict("foo, bar", "not_a_number")
+
+
+@pytest.mark.parametrize(
+    "value, setting_type",
+    [
+        (-3, "limit_most"),
+        (-4, "limit_least"),
+        ("not_a_number", "limit_most"),
+        ("43421{}", "limit_least"),
+        (-6, "dict"),
+        ("", "list"),
+    ],
+)
+def test_should_not_validate_invalid_user_inputs(value, setting_type):
+    assert not commands.is_valid(value, setting_type)
+
+
+@pytest.mark.parametrize(
+    "value, setting_type",
+    [(1, "limit_most"), (2, "limit_least"), (5, "dict"), ("foo, bar, baz", "list")],
+)
+def test_should_should_validate_valid_user_inputs(value, setting_type):
+    assert commands.is_valid(value, setting_type)
+
+
+@pytest.mark.parametrize(
+    "user_input, setting_type, expected_parse",
+    [
+        (["10"], "limit_least", 10),
+        (["20"], "limit_most", 20),
+        (["foo, bar, baz"], "list", ["foo", "bar", "baz"]),
+        (["30", "foo, bar, baz"], "dict", {"foo": 30, "bar": 30, "baz": 30}),
+    ],
+)
+def test_should_parse_correctly_based_on_setting_type(
+    user_input, setting_type, expected_parse
+):
+    assert commands.parse_user_input(user_input, setting_type) == expected_parse
+
+
+@pytest.mark.parametrize(
+    "user_input, setting_type",
+    [
+        (["not_a_number"], "limit_least"),
+        (["not_a_number"], "limit_most"),
+        (["not_a_number", "foo, bar, baz"], "dict"),
+    ],
+)
+def test_should_raise_exception_when_parsing_invalid_integer(user_input, setting_type):
+    with pytest.raises(ValueError):
+        commands.parse_user_input(user_input, setting_type)

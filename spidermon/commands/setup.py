@@ -6,8 +6,13 @@ from spidermon.utils import monitors as monitors_manager
 from spidermon.utils.commands import (
     build_monitors_strings,
     enable_spidermon,
+    parse_int,
+    parse_list,
+    parse_dict,
     is_setting_setup,
     is_spidermon_enabled,
+    is_valid,
+    parse_user_input,
     update_settings,
 )
 from spidermon.utils import file_utils
@@ -49,24 +54,12 @@ def get_monitors_with_settings(module):
         msg = monitor_prompts["enable"].format(module["monitors"][monitor]["name"])
         if click.confirm("\n" + msg):
             monitors[monitor] = module["path"]
-            settings += get_settings(module, module["monitors"][monitor])
+            settings += get_settings(module["monitors"][monitor])
 
     return monitors, settings
 
 
-def get_setting(setting_string, setting_type, description):
-    user_input = click.prompt(monitor_prompts[setting_type].format(description))
-    if setting_type == "list":
-        user_input = user_input.split(" ")
-    if setting_type == "dict":
-        items = click.prompt(monitor_prompts["list"].format(description))
-        items = items.split(" ")
-        user_input = {item: int(user_input) for item in items}
-
-    return setting_string.format(user_input)
-
-
-def get_settings(module, monitor):
+def get_settings(monitor):
     settings = []
     setting = monitor["setting"]
     name = monitor["name"]
@@ -79,6 +72,25 @@ def get_settings(module, monitor):
     setting_type = monitor["setting_type"]
     description = monitor["description"]
 
-    settings.append(get_setting(setting_string, setting_type, description))
+    user_input = get_user_input(setting_type, description)
+    if user_input:
+        setting = setting_string.format(user_input)
+        settings.append(setting)
 
     return settings
+
+
+def get_user_input(setting_type, description):
+    while True:
+        user_input = []
+        setting_types = []
+        user_input += [click.prompt(monitor_prompts[setting_type].format(description))]
+        setting_types += [setting_type]
+        if setting_type == "dict":
+            user_input += [click.prompt(monitor_prompts["list"].format(description))]
+            setting_types += ["list"]
+
+        if all(is_valid(a, b) for (a, b) in zip(user_input, setting_types)):
+            return parse_user_input(user_input, setting_type)
+        elif not click.confirm(monitor_prompts["setting_error"]):
+            return []

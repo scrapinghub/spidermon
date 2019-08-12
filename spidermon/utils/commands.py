@@ -43,6 +43,20 @@ def get_settings_path():
     return join(abspath(dirname(module.__file__)), "settings.py")
 
 
+def parse_dict(keys, value):
+    keys = parse_list(keys)
+    return {key: parse_int(value) for key in keys}
+
+
+def parse_int(entry):
+    return int(entry)
+
+
+def parse_list(entry):
+    items = entry.split(",")
+    return [i.strip() for i in items]
+
+
 def is_setting_setup(setting):
     return setting in get_project_settings().attributes
 
@@ -51,6 +65,23 @@ def is_spidermon_enabled():
     if is_setting_setup("SPIDERMON_ENABLED"):
         return get_project_settings()["SPIDERMON_ENABLED"]
     return False
+
+
+def is_valid(user_input, setting_type):
+    if setting_type == "list":
+        return bool(user_input)
+    try:
+        return int(user_input) > 0
+    except:
+        return False
+
+
+def parse_user_input(user_input, setting_type):
+    if setting_type == "list":
+        return parse_list(user_input[0])
+    elif setting_type == "dict":
+        return parse_dict(user_input[1], user_input[0])
+    return parse_int(user_input[0])
 
 
 def update_settings(settings):

@@ -9,6 +9,7 @@ monitor_prompts = {
     + "Proceed to the settings.py file to further configuration.",
     "limit_least": "What is the fewest amount of {} expected?",
     "limit_most": "What is the greatest amount of {} expected?",
-    "list": "Which {} do you want to track?",
+    "list": "Which {} do you want to track? (separated by comma)",
     "dict": "What is the greatest amount of {} expected?",
+    "setting_error": "Invalid input value! Do you want to input a new value?",
 }
