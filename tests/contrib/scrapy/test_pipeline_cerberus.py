@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from scrapy.utils.test import get_crawler
 from scrapy import Item
+import os
 
 import pytest
 from spidermon.contrib.scrapy.pipelines import ItemValidationPipeline
@@ -35,6 +36,37 @@ def assert_in_cerberus_stats(obj):
                 TestItem.__name__
             ),
         ),
+        pytest.param(
+            TestItem(),
+            {SETTING_CERBERUS: [f'{os.getcwd()}/contrib/scrapy/schema.json']},
+            [assert_in_cerberus_stats(Item), "{}".format(STATS_ITEM_ERRORS)],
+            id="validator is {} type, loads from path to schema".format(Item.__name__),
+        ),
+        # pytest.param(
+        #     TestItem(),
+        #     {SETTING_CERBERUS: {
+        #             TestItem: "tests.fixtures.validators.cerberus_test_schema"
+        #     }},
+        #     [assert_in_cerberus_stats(TestItem), "{}".format(STATS_ITEM_ERRORS)],
+        #     id="validator is {} type, loads from path to a python dict".format(
+        #         TestItem.__name__
+        #     ),
+        # ),
+
+
+        # pytest.param(
+        #     TestItem(),
+        #     {
+        #         SETTING_CERBERUS: {
+        #             TestItem: "tests.fixtures.validators.cerberus_test_schema"
+        #         }
+        #     },
+        #     [assert_in_cerberus_stats(TestItem), "{}".format(STATS_ITEM_ERRORS)],
+        #     id="validator is {} type, loads from path to a python dict".format(
+        #         TestItem.__name__
+        #     ),
+        # ),
+
         pytest.param(
             TestItem(),
             {SETTING_CERBERUS: {TestItem: [cerberus_test_schema]}},

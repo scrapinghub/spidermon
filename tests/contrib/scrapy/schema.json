@@ -1,0 +1,4 @@
+{
+    "url": {"type": "string", "required": true},
+    "title": {"type": "string"}
+}

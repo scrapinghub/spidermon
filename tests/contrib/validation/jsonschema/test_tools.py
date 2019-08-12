@@ -1,11 +1,11 @@
 import pytest
 import spidermon.contrib.validation.utils as schema_tools
-from six.moves.urllib.error import HTTPError
 
 
 def test_get_schema_from_url_fails(caplog, mocker):
     mocker.patch(
-        "spidermon.contrib.validation.utils.get_contents", return_value={'"schema":'}
+        "spidermon.contrib.validation.utils.get_contents",
+        return_value={'"schema":'},
     )
     schema_tools.get_schema_from("https://something.org/schema.json")
     assert (
@@ -14,8 +14,7 @@ def test_get_schema_from_url_fails(caplog, mocker):
     )
 
 
-def test_get_schema_from_file_fails(caplog, mocker):
-    path = "tests/fixtures/bad_schema.json"
+def test_get_schema_from_file_fails(caplog):
     schema_tools.get_schema_from("tests/fixtures/bad_schema.json")
     assert (
         "Could not parse schema in 'tests/fixtures/bad_schema.json'"
@@ -42,7 +41,9 @@ def test_get_contents_fails(mocker, caplog):
     cm.__enter__.return_value = cm
     cm.read.side_effect = ValueError("'ValueError' object has no attribute 'decode'")
     mocked_urlopen = mocker.patch(
-        "spidermon.contrib.validation.utils.urlopen", return_value=cm, autospec=True
+        "spidermon.contrib.validation.utils.urlopen",
+        return_value=cm,
+        autospec=True,
     )
     schema_tools.get_contents("https://example.com/schema.json")
     assert caplog.record_tuples == [
