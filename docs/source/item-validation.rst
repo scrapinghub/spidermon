@@ -146,7 +146,7 @@ that need to be validated.
 
     # settings.py
 
-    SPIDERMON_VALIDATION_MODELS: [
+    SPIDERMON_VALIDATION_MODELS = [
         'myproject.validators.DummyItemModel'
     ]
 
@@ -157,7 +157,11 @@ as a `dict`:
 
     # settings.py
 
-    SPIDERMON_VALIDATION_MODELS: {
+    from myproject.items import DummyItem, OtherItem
+
+    ...
+
+    SPIDERMON_VALIDATION_MODELS = {
         DummyItem: 'myproject.validators.DummyItemModel',
         OtherItem: 'myproject.validators.OtherItemModel',
     }
@@ -187,6 +191,10 @@ as a `dict`:
 .. code-block:: python
 
     # settings.py
+
+    from myproject.items import DummyItem, OtherItem
+    
+    ...
 
     SPIDERMON_VALIDATION_SCHEMAS: {
         DummyItem: '/path/to/dummyitem_schema.json',
