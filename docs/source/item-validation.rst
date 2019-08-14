@@ -179,7 +179,7 @@ A `list` containing the location of the item schema. Could be a local path or a 
 
     # settings.py
 
-    SPIDERMON_VALIDATION_SCHEMAS: [
+    SPIDERMON_VALIDATION_SCHEMAS = [
         '/path/to/schema.json',
         's3://bucket/schema.json',
         'https://example.com/schema.json',
@@ -196,7 +196,7 @@ as a `dict`:
 
     ...
 
-    SPIDERMON_VALIDATION_SCHEMAS: {
+    SPIDERMON_VALIDATION_SCHEMAS = {
         DummyItem: '/path/to/dummyitem_schema.json',
         OtherItem: '/path/to/otheritem_schema.json',
     }
