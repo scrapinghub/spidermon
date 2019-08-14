@@ -1,9 +1,9 @@
 from __future__ import absolute_import
+import sys
+import os
+import pytest
 from scrapy.utils.test import get_crawler
 from scrapy import Item
-import os
-import sys
-import pytest
 from spidermon.contrib.scrapy.pipelines import ItemValidationPipeline
 from tests.fixtures.items import TestItem, TreeItem
 from tests.fixtures.validators import (
@@ -13,7 +13,6 @@ from tests.fixtures.validators import (
 )
 
 STATS_ITEM_ERRORS = "spidermon/validation/items/errors"
-STATS_MISSINGS = "spidermon/validation/fields/errors/missing_required_field"
 STATS_TYPES = "spidermon/validation/validators/{}/{}"
 SETTING_CERBERUS = "SPIDERMON_VALIDATION_CERBERUS"
 
