@@ -147,7 +147,7 @@ that need to be validated.
     # settings.py
 
     SPIDERMON_VALIDATION_MODELS = [
-        'myproject.validators.DummyItemModel'
+        'tutorial.validators.DummyItemModel'
     ]
 
 If you are working on a spider that produces multiple items types, you can define it
@@ -157,13 +157,13 @@ as a `dict`:
 
     # settings.py
 
-    from myproject.items import DummyItem, OtherItem
+    from tutorial.items import DummyItem, OtherItem
 
     ...
 
     SPIDERMON_VALIDATION_MODELS = {
-        DummyItem: 'myproject.validators.DummyItemModel',
-        OtherItem: 'myproject.validators.OtherItemModel',
+        DummyItem: 'tutorial.validators.DummyItemModel',
+        OtherItem: 'tutorial.validators.OtherItemModel',
     }
 
 .. _SPIDERMON_VALIDATION_SCHEMAS:
@@ -192,8 +192,8 @@ as a `dict`:
 
     # settings.py
 
-    from myproject.items import DummyItem, OtherItem
-    
+    from tutorial.items import DummyItem, OtherItem
+
     ...
 
     SPIDERMON_VALIDATION_SCHEMAS: {

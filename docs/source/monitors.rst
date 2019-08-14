@@ -165,7 +165,7 @@ First we define a new action that will close the spider when executed:
 
 .. code-block:: python
 
-    # myproject/actions.py
+    # tutorial/actions.py
     from spidermon.core.actions import Action
 
     class CloseSpiderAction(Action):
@@ -180,8 +180,8 @@ and then take an action if it fails:
 
 .. code-block:: python
 
-    # myproject/monitors.py
-    from myproject.actions import CloseSpiderAction
+    # tutorial/monitors.py
+    from tutorial.actions import CloseSpiderAction
 
     @monitors.name('Periodic job stats monitor')
     class PeriodicJobStatsMonitor(Monitor, StatsMonitorMixin):
@@ -202,10 +202,10 @@ The last step is to configure the suite to be executed every 60 seconds:
 
 .. code-block:: python
 
-    # myproject/settings.py
+    # tutorial/settings.py
 
     SPIDERMON_PERIODIC_MONITORS = {
-        'myproject.monitors.PeriodicMonitorSuite': 60,  # time in seconds
+        'tutorial.monitors.PeriodicMonitorSuite': 60,  # time in seconds
     }
 
 What to monitor?
