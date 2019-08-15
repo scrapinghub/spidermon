@@ -2,14 +2,15 @@ from __future__ import absolute_import
 import sys
 import os
 import pytest
-from scrapy.utils.test import get_crawler
+
 from scrapy import Item
+from scrapy.utils.test import get_crawler
 from spidermon.contrib.scrapy.pipelines import ItemValidationPipeline
 from tests.fixtures.items import TestItem, TreeItem
 from tests.fixtures.validators import (
     cerberus_tree_schema,
     cerberus_test_schema,
-    test_cerberus_schema_string
+    test_cerberus_schema_string,
 )
 
 STATS_ITEM_ERRORS = "spidermon/validation/items/errors"
@@ -40,15 +41,17 @@ def assert_in_cerberus_stats(obj):
         ),
         pytest.param(
             TestItem(),
-            {SETTING_CERBERUS: [f'{os.getcwd()}/contrib/scrapy/schema.json']},
+            {SETTING_CERBERUS: [f"{os.getcwd()}/contrib/scrapy/schema.json"]},
             [assert_in_cerberus_stats(Item), "{}".format(STATS_ITEM_ERRORS)],
             id="validator is {} type, loads from path to schema".format(Item.__name__),
         ),
         pytest.param(
             TestItem(),
-            {SETTING_CERBERUS: {
-                TestItem: "tests.fixtures.validators.cerberus_test_schema"
-            }},
+            {
+                SETTING_CERBERUS: {
+                    TestItem: "tests.fixtures.validators.cerberus_test_schema"
+                }
+            },
             [assert_in_cerberus_stats(TestItem), "{}".format(STATS_ITEM_ERRORS)],
             id="validator is {} type, loads from path to a python dict".format(
                 TestItem.__name__
@@ -117,7 +120,11 @@ def test_stats_amounts_in_pipeline():
     pipe = ItemValidationPipeline.from_crawler(crawler)
     pipe.process_item(item, None)
     assert pipe.stats.stats.get_stats()["spidermon/validation/validators"] is 1
-    assert pipe.stats.stats.get_stats()["spidermon/validation/fields/errors/missing_required_field"] is 1
+    assert (
+        pipe.stats.stats.get_stats()[
+            "spidermon/validation/fields/errors/missing_required_field"
+        ] is 1
+    )
 
 
 @pytest.mark.skipif(
@@ -135,4 +142,6 @@ def test_validation_from_url(mocker):
     pipe.process_item(test_item, None)
 
     assert "spidermon/validation/items/errors" in pipe.stats.stats.get_stats()
-    assert pipe.stats.stats.get_stats().get("spidermon/validation/validators/testitem/cerberus", True)
+    assert pipe.stats.stats.get_stats().get(
+        "spidermon/validation/validators/testitem/cerberus", True
+    )
