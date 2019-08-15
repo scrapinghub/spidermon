@@ -101,11 +101,8 @@ class ValidationMonitorMixin(StatsMonitorMixin):
 
     @staticmethod
     def _warn_list_handling():
-        warnings.warn(
-            "ValidationMonitorMixin behavior with is deprecated, please switch to per-field thresholds and set the "
-            '"correct_field_list_handling" class attribute',
-            DeprecationWarning,
-        )
+        warnings.warn('ValidationMonitorMixin behavior with is deprecated, please switch to per-field thresholds and set the '
+                      '"correct_field_list_handling" class attribute', DeprecationWarning)
 
     def check_missing_required_fields(self, field_names=None, allowed_count=0):
         """
@@ -134,19 +131,13 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             field_names = self._get_all_fields()
         msgs = []
         for field_name in field_names:
-            missing_count = (
-                self.validation.fields[field_name]
-                .errors["missing_required_field"]
-                .count
-            )
+            missing_count = self.validation.fields[field_name].errors["missing_required_field"].count
             if missing_count > allowed_count:
-                msg = self._get_msg_for_missing_required_count(
-                    field_name, missing_count, allowed_count
-                )
+                msg = self._get_msg_for_missing_required_count(field_name, missing_count, allowed_count)
                 msgs.append(msg)
         if msgs:
-            msgs.insert(0, "Required fields are missing:")
-            self.fail("\n".join(msgs))
+            msgs.insert(0, 'Required fields are missing:')
+            self.fail('\n'.join(msgs))
 
     def check_missing_required_field(self, field_name, allowed_count=0):
         """
@@ -156,9 +147,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         missing_count = (
             self.validation.fields[field_name].errors["missing_required_field"].count
         )
-        msg = self._get_msg_for_missing_required_count(
-            field_name, missing_count, allowed_count
-        )
+        msg = self._get_msg_for_missing_required_count(field_name, missing_count, allowed_count)
         self.assertLessEqual(missing_count, allowed_count, msg)
 
     @staticmethod
@@ -190,9 +179,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
                 allowed_percent,
                 msg="{percent}% of required fields are missing!{threshold_info}".format(
                     percent=missing_percent * 100,
-                    threshold_info=(
-                        " (maximum allowed %.0f%%)" % (allowed_percent * 100)
-                    )
+                    threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
                     if allowed_percent > 0
                     else "",
                 ),
@@ -203,18 +190,14 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         msgs = []
         for field_name in field_names:
             missing_percent = (
-                self.validation.fields[field_name]
-                .errors["missing_required_field"]
-                .percent
+                self.validation.fields[field_name].errors["missing_required_field"].percent
             )
             if missing_percent > allowed_percent:
-                msg = self._get_msg_for_missing_required_percent(
-                    field_name, missing_percent, allowed_percent
-                )
+                msg = self._get_msg_for_missing_required_percent(field_name, missing_percent, allowed_percent)
                 msgs.append(msg)
         if msgs:
-            msgs.insert(0, "Required fields are missing:")
-            self.fail("\n".join(msgs))
+            msgs.insert(0, 'Required fields are missing:')
+            self.fail('\n'.join(msgs))
 
     def check_missing_required_field_percent(self, field_name, allowed_percent=0):
         """
@@ -224,15 +207,11 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         missing_percent = (
             self.validation.fields[field_name].errors["missing_required_field"].percent
         )
-        msg = self._get_msg_for_missing_required_percent(
-            field_name, missing_percent, allowed_percent
-        )
+        msg = self._get_msg_for_missing_required_percent(field_name, missing_percent, allowed_percent)
         self.assertLessEqual(missing_percent, allowed_percent, msg)
 
     @staticmethod
-    def _get_msg_for_missing_required_percent(
-        field_name, missing_percent, allowed_percent
-    ):
+    def _get_msg_for_missing_required_percent(field_name, missing_percent, allowed_percent):
         msg = "{percent}% of required field {field} are missing!{threshold_info}".format(
             percent=missing_percent * 100,
             field=field_name,
@@ -272,13 +251,11 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         for field_name in field_names:
             errors_count = self._get_errors_count(errors, field_name)
             if errors_count > allowed_count:
-                msg = self._get_msg_for_field_errors(
-                    field_name, errors_count, allowed_count
-                )
+                msg = self._get_msg_for_field_errors(field_name, errors_count, allowed_count)
                 msgs.append(msg)
         if msgs:
-            msgs.insert(0, "There are field errors:")
-            self.fail("\n".join(msgs))
+            msgs.insert(0, 'There are field errors:')
+            self.fail('\n'.join(msgs))
 
     def check_field_errors(self, field_name, errors=None, allowed_count=0):
         """
@@ -326,9 +303,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
                 allowed_percent,
                 msg="{percent}% of fields have validation errors!{threshold_info}".format(
                     percent=errors_percent * 100,
-                    threshold_info=(
-                        " (maximum allowed %.0f%%)" % (allowed_percent * 100)
-                    )
+                    threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
                     if allowed_percent > 0
                     else "",
                 ),
@@ -340,13 +315,11 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         for field_name in field_names:
             errors_percent = self._get_errors_percent(errors, field_name)
             if errors_percent > allowed_percent:
-                msg = self._get_msg_for_field_errors_percent(
-                    field_name, errors_percent, allowed_percent
-                )
+                msg = self._get_msg_for_field_errors_percent(field_name, errors_percent, allowed_percent)
                 msgs.append(msg)
         if msgs:
-            msgs.insert(0, "There are field errors:")
-            self.fail("\n".join(msgs))
+            msgs.insert(0, 'There are field errors:')
+            self.fail('\n'.join(msgs))
 
     def check_field_errors_percent(self, field_name, errors=None, allowed_percent=0):
         """
@@ -354,9 +327,7 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         than ``allowed_percent``.
         """
         errors_percent = self._get_errors_percent(errors, field_name)
-        msg = self._get_msg_for_field_errors_percent(
-            field_name, errors_percent, allowed_percent
-        )
+        msg = self._get_msg_for_field_errors_percent(field_name, errors_percent, allowed_percent)
         self.assertLessEqual(errors_percent, allowed_percent, msg)
 
     def _get_errors_percent(self, errors, field_name):
