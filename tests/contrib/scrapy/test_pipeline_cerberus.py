@@ -145,3 +145,23 @@ def test_validation_from_url(mocker):
     assert pipe.stats.stats.get_stats().get(
         "spidermon/validation/validators/testitem/cerberus", True
     )
+
+
+# @pytest.mark.skipif(
+#     sys.version_info < (3, 4), reason="mock requires python3.4 or higher"
+# )
+# def test_cerberus_validator(mocker):
+#     mocked_get_contents = mocker.patch(
+#         "spidermon.contrib.scrapy.pipelines.",
+#         return_value="(True,{})",
+#     )
+#     settings = {SETTING_CERBERUS: cerberus_test_schema}
+#     test_item = TestItem({"url": "https://github.com"})
+#     crawler = get_crawler(settings_dict=settings)
+#     pipe = ItemValidationPipeline.from_crawler(crawler)
+#     pipe.process_item(test_item, None)
+
+#     # assert "spidermon/validation/items/errors" in pipe.stats.stats.get_stats()
+#     assert pipe.stats.stats.get_stats().get(
+#         "spidermon/validation/validators/testitem/cerberus", True
+#     )
