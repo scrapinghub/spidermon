@@ -1,8 +1,8 @@
 from __future__ import absolute_import
 import sys
 import os
+from unittest import mock
 import pytest
-
 from scrapy import Item
 from scrapy.utils.test import get_crawler
 from spidermon.contrib.scrapy.pipelines import ItemValidationPipeline
@@ -123,7 +123,8 @@ def test_stats_amounts_in_pipeline():
     assert (
         pipe.stats.stats.get_stats()[
             "spidermon/validation/fields/errors/missing_required_field"
-        ] is 1
+        ]
+        is 1
     )
 
 
@@ -147,21 +148,53 @@ def test_validation_from_url(mocker):
     )
 
 
-# @pytest.mark.skipif(
-#     sys.version_info < (3, 4), reason="mock requires python3.4 or higher"
-# )
-# def test_cerberus_validator(mocker):
-#     mocked_get_contents = mocker.patch(
-#         "spidermon.contrib.scrapy.pipelines.",
-#         return_value="(True,{})",
-#     )
-#     settings = {SETTING_CERBERUS: cerberus_test_schema}
-#     test_item = TestItem({"url": "https://github.com"})
-#     crawler = get_crawler(settings_dict=settings)
-#     pipe = ItemValidationPipeline.from_crawler(crawler)
-#     pipe.process_item(test_item, None)
+@pytest.mark.skipif(
+    sys.version_info < (3, 4), reason="mock requires python3.4 or higher"
+)
+def test_pipelines_with_cerberus_mocked_true_case(mocker):
+    mock_cerberus = mock.patch("spidermon.contrib.scrapy.pipelines.CerberusValidator")
 
-#     # assert "spidermon/validation/items/errors" in pipe.stats.stats.get_stats()
-#     assert pipe.stats.stats.get_stats().get(
-#         "spidermon/validation/validators/testitem/cerberus", True
-#     )
+    class Cerberus(object):
+        def validate(self):
+            return (False, {})
+
+    mock_cerberus.return_value = Cerberus()
+    settings = {SETTING_CERBERUS: [cerberus_test_schema]}
+    test_item = TestItem({"url": "https://github.com"})
+    crawler = get_crawler(settings_dict=settings)
+    pipe = ItemValidationPipeline.from_crawler(crawler)
+    pipe.process_item(test_item, None)
+
+    assert STATS_ITEM_ERRORS not in pipe.stats.stats.get_stats()
+    assert pipe.stats.stats.get_stats().get(
+        "spidermon/validation/validators/testitem/cerberus", True
+    )
+
+
+@pytest.mark.skipif(
+    sys.version_info < (3, 4), reason="mock requires python3.4 or higher"
+)
+def test_pipelines_with_cerberus_mocked_false_case(mocker):
+    mock_cerberus = mock.patch("spidermon.contrib.scrapy.pipelines.CerberusValidator")
+
+    class Cerberus(object):
+        def validate(self):
+            return (False, {"url": ["Missing required field"]})
+
+    mock_cerberus.return_value = Cerberus()
+    settings = {SETTING_CERBERUS: [cerberus_test_schema]}
+    test_item = TestItem({"title": "GitHub"})
+    crawler = get_crawler(settings_dict=settings)
+    pipe = ItemValidationPipeline.from_crawler(crawler)
+    pipe.process_item(test_item, None)
+
+    assert STATS_ITEM_ERRORS in pipe.stats.stats.get_stats()
+    assert pipe.stats.stats.get_stats().get(
+        "spidermon/validation/validators/testitem/cerberus", True
+    )
+    assert (
+        pipe.stats.stats.get_stats()[
+            "spidermon/validation/fields/errors/missing_required_field"
+        ]
+        is 1
+    )
