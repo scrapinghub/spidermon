@@ -123,8 +123,7 @@ def test_stats_amounts_in_pipeline():
     assert (
         pipe.stats.stats.get_stats()[
             "spidermon/validation/fields/errors/missing_required_field"
-        ]
-        is 1
+        ] is 1
     )
 
 
