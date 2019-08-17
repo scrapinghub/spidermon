@@ -8,7 +8,7 @@ By default, when a monitor suite finishes, the pass/fail information is included
 in the spider logs, which would be enough during development but useless when
 you are monitoring several spiders.
 
-Spidermon allows you to define actions that are ran after the monitors finishes.
+Spidermon allows you to define actions that are ran after the monitors finish.
 You can define your own actions or use one of the existing built-in actions.
 
 .. _actions-email:
@@ -70,6 +70,13 @@ AWS Secret Key.
 
 Default: ``None``
 
+SPIDERMON_AWS_REGION_NAME
+-------------------------
+
+AWS Region.
+
+Default: ``us-east-1``
+
 .. _SPIDERMON_EMAIL_SENDER:
 
 SPIDERMON_EMAIL_SENDER
@@ -101,6 +108,10 @@ Default: ``None``
 
 SPIDERMON_BODY_HTML_TEMPLATE
 ----------------------------
+
+String containing the location of the `Jinja2`_ template for the Spidermon email report.
+
+Default :download:`reports/email/monitors/result.jinja <../../spidermon/contrib/actions/reports/templates/reports/email/monitors/result.jinja>`.
 
 .. _SPIDERMON_BODY_TEXT:
 
@@ -158,19 +169,28 @@ SPIDERMON_EMAIL_SUBJECT_TEMPLATE
 --------------------------------
 
 .. _Amazon Simple Email Service: https://aws.amazon.com/pt/ses/
-.. _Jinja2: http://jinja.pocoo.org/
+
 
 .. _actions-slack:
 
 Slack action
 ============
 
+
 This action allows you to send custom messages to a `Slack`_ channel (or user)
 using a bot when your monitor suites finishes their execution.
 
-`Follow these steps`_ for creating a bot in your workplace and configuring it for
-Spidermon. The credentials from the Slack bot will be needed in your `settings.py`
-file are as follows:
+To use this action you need to:
+
+#.  Install `slackclient`_ 1.3 or higher, but lower than 2.0:
+
+    .. code-block:: shell
+
+        $ pip install "slackclient>=1.3,<2.0"
+
+    .. warning:: This action **does not** work with `slackclient`_ 2.0 or later.
+
+#.  Provide the `Slack credentials`_ in your ``settings.py`` file as follows:
 
 .. code-block:: python
 
@@ -185,6 +205,7 @@ A notification will look like the following one:
    :scale: 50 %
    :alt: Slack Notification
 
+`Follow these steps`_ for creating a bot in your workplace and configuring it for Spidermon.
 The following settings are the minimum needed to make this action works:
 
 .. _SPIDERMON_SLACK_RECIPIENTS:
@@ -463,7 +484,7 @@ Sentry action
 =============
 
 This action allows you to send custom messages to `Sentry`_ when your
-monitor suites finishes their execution. To use this action
+monitor suites finish their execution. To use this action
 you need to provide the `Sentry DSN`_ in your `settings.py`
 file as follows:
 
@@ -545,3 +566,6 @@ the `run_action` method.
         def run_action(self):
             # Include here the logic of your action
             # (...)
+
+.. _`slackclient`: https://pypi.org/project/slackclient/
+.. _Jinja2: http://jinja.pocoo.org/

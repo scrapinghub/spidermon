@@ -328,6 +328,9 @@ a failure when we have a item validation error:
 .. code-block:: python
 
     # monitors.py
+
+    from spidermon.contrib.monitors.mixins import StatsMonitorMixin
+
     # (...other monitors...)
 
     @monitors.name('Item validation')
