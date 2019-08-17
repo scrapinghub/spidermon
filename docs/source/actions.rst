@@ -206,6 +206,7 @@ A notification will look like the following one:
    :alt: Slack Notification
 
 `Follow these steps`_ for creating a bot in your workplace and configuring it for Spidermon.
+
 The following settings are the minimum needed to make this action works:
 
 .. _SPIDERMON_SLACK_RECIPIENTS:
@@ -481,7 +482,7 @@ SPIDERMON_REPORT_S3_REGION_ENDPOINT
 .. _actions-sentry-action:
 
 Sentry action
-=============
+============
 
 This action allows you to send custom messages to `Sentry`_ when your
 monitor suites finish their execution. To use this action
