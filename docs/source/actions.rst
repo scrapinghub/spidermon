@@ -178,7 +178,7 @@ Slack action
 
 
 This action allows you to send custom messages to a `Slack`_ channel (or user)
-using a bot when your monitor suites finishes their execution.
+using a bot when your monitor suites finish their execution.
 
 To use this action you need to:
 
@@ -205,7 +205,7 @@ A notification will look like the following one:
    :scale: 50 %
    :alt: Slack Notification
 
-`Follow these steps`_ for creating a bot in your workplace and configuring it for Spidermon.
+Follow this :ref:`steps`.
 
 The following settings are the minimum needed to make this action works:
 
@@ -296,7 +296,7 @@ SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX
 -------------------------------------
 
 .. _`Slack`: https://slack.com/
-.. _`Follow these steps`: :ref:`slack_bot_guide`
+.. _`Follow these steps`: :ref:`_slack_bot_guide`
 
 .. _actions-job-tags:
 
