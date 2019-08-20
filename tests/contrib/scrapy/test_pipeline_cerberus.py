@@ -195,5 +195,5 @@ def test_pipelines_with_cerberus_mocked_false_case(mocker):
         pipe.stats.stats.get_stats()[
             "spidermon/validation/fields/errors/missing_required_field"
         ]
-        is 1
+        == 1
     )
