@@ -475,7 +475,7 @@ SPIDERMON_REPORT_S3_REGION_ENDPOINT
 .. _actions-sentry-action:
 
 Sentry action
-============
+=============
 
 This action allows you to send custom messages to `Sentry`_ when your
 monitor suites finish their execution. To use this action
@@ -533,7 +533,7 @@ It could be set to any level provided by `Sentry Log Level`_
 .. _SPIDERMON_SENTRY_FAKE:
 
 SPIDERMON_SENTRY_FAKE
---------------------
+---------------------
 
 Default: ``False``
 

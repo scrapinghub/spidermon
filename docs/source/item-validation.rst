@@ -18,7 +18,7 @@ the first step is to enable the built-in item pipeline in your project settings:
     }
 
 After that, you need to choose which validation library will be used. Spidermon
-accepts schemas defined using schematics_ or `JSON Schema`_.
+accepts schemas defined using schematics_, `JSON Schema`_ or cerberus_.
 
 With schematics
 ---------------
@@ -86,6 +86,34 @@ an example of a schema for the quotes item from the :doc:`tutorial </getting-sta
       "author_url"
     ]
   }
+
+With Cerberus
+-------------
+
+`Cerberus`_ is a powerful yet simple and lightweight data validation
+tool, designed to be ​extensible​, allowing for custom validation​ and has ​no
+dependencies. You can define what the field contains, what is required, the type of
+each field, as well as dependencies and regex.
+
+.. warning::
+
+   You need to install `cerberus`_ to use this feature.
+
+This `usage`_ and `validation-rules`_ guide explain the main keywords and how to make a
+schema. Here we have an example of a schema for the quotes item from the
+:doc:`tutorial </getting-started>`.
+
+.. code-block:: json
+
+    {
+        "quote": {"type": "string", "required": true},
+        "author": {"type": "string", "required": true},
+        "author_url": {"type": "string"},
+        "tags": {"type": "list"}
+    }
+
+To use Cerberus validation, you would need to add
+:ref:`SPIDERMON_VALIDATION_CERBERUS` setting to your `settings.py`
 
 Settings
 --------
@@ -193,6 +221,36 @@ as a `dict`:
         OtherItem: '/path/to/otheritem_schema.json',
     }
 
+.. _SPIDERMON_VALIDATION_CERBERUS:
+
+SPIDERMON_VALIDATION_CERBERUS
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Default: ``None``
+
+A `list` containing the local path of the item schema.
+
+.. code-block:: python
+
+    # settings.py
+
+    SPIDERMON_VALIDATION_CERBERUS = [
+        '/path/to/schema.json',
+        'http://example.com/mycerberusschema',
+        {"Field": {"type": "number", "required":True}}
+    ]
+
+If you are working on a spider that produces multiple items types, you can define paths to schema for each item as `dict` as shown below:
+
+    # settings.py
+
+    from quotes.items import DummyItem, OtherItem
+
+    SPIDERMON_VALIDATION_CERBERUS = {
+        DummyItem: '/path/to/dummyitem_schema.json',
+        OtherItem: '/path/to/otheritem_schema.json',
+    }
+
 Validation in Monitors
 ----------------------
 
@@ -238,3 +296,6 @@ Some examples:
 .. _`guide`: http://json-schema.org/learn/getting-started-step-by-step.html
 .. _`schematics models`: https://schematics.readthedocs.io/en/latest/usage/models.html
 .. _`jsonschema`: https://pypi.org/project/jsonschema/
+.. _`cerberus`: https://pypi.org/project/Cerberus/
+.. _`usage`: http://docs.python-cerberus.org/en/latest/usage.html
+.. _`validation-rules`: http://docs.python-cerberus.org/en/latest/validation-rules.html
