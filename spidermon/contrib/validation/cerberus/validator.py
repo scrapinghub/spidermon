@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 
-try:
-    from collections.abc import Mapping
-except ImportError:
-    # Backward compatiblity
+import six
+if six.PY2:
     from collections import Mapping
+else:
+    from collections.abc import Mapping
 
 from cerberus.validator import (
     Validator as cerberus_validator,
