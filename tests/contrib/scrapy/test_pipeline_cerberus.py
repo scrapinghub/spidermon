@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 import sys
 import os
-from unittest import mock
 import pytest
 from scrapy import Item
 from scrapy.utils.test import get_crawler
