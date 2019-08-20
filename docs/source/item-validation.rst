@@ -159,8 +159,6 @@ as a `dict`:
 
     from tutorial.items import DummyItem, OtherItem
 
-    ...
-
     SPIDERMON_VALIDATION_MODELS = {
         DummyItem: 'tutorial.validators.DummyItemModel',
         OtherItem: 'tutorial.validators.OtherItemModel',
@@ -193,8 +191,6 @@ as a `dict`:
     # settings.py
 
     from tutorial.items import DummyItem, OtherItem
-
-    ...
 
     SPIDERMON_VALIDATION_SCHEMAS = {
         DummyItem: '/path/to/dummyitem_schema.json',
