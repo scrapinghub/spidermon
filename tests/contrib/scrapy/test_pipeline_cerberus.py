@@ -22,7 +22,7 @@ def assert_in_cerberus_stats(obj):
 
 
 def the_stats(pipe):
-    return pipe.stats.stats.get_stats(pipe)
+    return pipe.stats.stats.get_stats()
 
 
 @pytest.mark.parametrize(
@@ -81,9 +81,7 @@ def test_stats_in_pipeline(item, settings, cases):
     pipe = ItemValidationPipeline.from_crawler(crawler)
     pipe.process_item(item, None)
     for case in cases:
-        casechecker = lambda x: x in the_stats(pipe)
-        assert casechecker(case)
-
+        assert case in the_stats(pipe)
 
 @pytest.mark.parametrize(
     "item,settings,cases",
