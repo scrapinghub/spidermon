@@ -1,21 +1,23 @@
 from __future__ import absolute_import
+
 import ast
 import json
 import logging
-from slackclient import SlackClient
 
-logger = logging.getLogger(__name__)
+import six
+from slackclient import SlackClient
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
-import six
+
+logger = logging.getLogger(__name__)
 
 
 class SlackMessageManager:
     sender_token = None
     sender_name = None
 
-    def __init__(self, sender_token=None, sender_name=None):
+    def __init__(self, sender_token=None, sender_name=None, fake=False):
         sender_token = sender_token or self.sender_token
         if not sender_token:
             raise NotConfigured("You must provide a slack token.")
@@ -24,6 +26,7 @@ class SlackMessageManager:
         if not self.sender_name:
             raise NotConfigured("You must provide a slack sender name.")
 
+        self.fake = fake
         self._client = SlackClient(sender_token)
         self._users = None
 
@@ -36,6 +39,12 @@ class SlackMessageManager:
     def send_message(
         self, to, text, parse=None, link_names=1, attachments=None, use_mention=False
     ):
+        if self.fake:
+            logger.info(text)
+            if attachments:
+                logger.info(attachments)
+            return
+
         if isinstance(to, list):
             return [
                 self.send_message(
@@ -154,14 +163,14 @@ class SendSlackMessage(ActionWithTemplates):
         fake=None,
     ):
         super(SendSlackMessage, self).__init__()
+
         self.fake = fake or self.fake
-        if not self.fake:
-            self.manager = SlackMessageManager(
-                sender_token=sender_token or self.sender_token,
-                sender_name=sender_name or self.sender_name,
-            )
-        else:
-            self.manager = None
+        self.manager = SlackMessageManager(
+            sender_token=sender_token or self.sender_token,
+            sender_name=sender_name or self.sender_name,
+            fake=self.fake,
+        )
+
         self.recipients = recipients or self.recipients
         self.message = message or self.message
         self.message_template = message_template or self.message_template
@@ -198,15 +207,11 @@ class SendSlackMessage(ActionWithTemplates):
         }
 
     def run_action(self):
-        message = self.get_message()
-        attachments = self.get_attachments()
-        if self.fake:
-            logger.info(message.as_string())
-            logger.info(attachments.as_string())
-        else:
-            self.manager.send_message(
-                to=self.recipients, text=message, attachments=attachments
-            )
+        self.manager.send_message(
+            to=self.recipients,
+            text=self.get_message(),
+            attachments=self.get_attachments(),
+        )
 
     def get_message(self):
         if self.include_message:

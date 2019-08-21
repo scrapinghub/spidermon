@@ -70,6 +70,13 @@ AWS Secret Key.
 
 Default: ``None``
 
+SPIDERMON_AWS_REGION_NAME
+-------------------------
+
+AWS Region.
+
+Default: ``us-east-1``
+
 .. _SPIDERMON_EMAIL_SENDER:
 
 SPIDERMON_EMAIL_SENDER
@@ -101,6 +108,10 @@ Default: ``None``
 
 SPIDERMON_BODY_HTML_TEMPLATE
 ----------------------------
+
+String containing the location of the `Jinja2`_ template for the Spidermon email report.
+
+Default :download:`reports/email/monitors/result.jinja <../../spidermon/contrib/actions/reports/templates/reports/email/monitors/result.jinja>`.
 
 .. _SPIDERMON_BODY_TEXT:
 
@@ -158,7 +169,7 @@ SPIDERMON_EMAIL_SUBJECT_TEMPLATE
 --------------------------------
 
 .. _Amazon Simple Email Service: https://aws.amazon.com/pt/ses/
-.. _Jinja2: http://jinja.pocoo.org/
+
 
 .. _actions-slack:
 
@@ -551,3 +562,4 @@ the `run_action` method.
             # (...)
 
 .. _`slackclient`: https://pypi.org/project/slackclient/
+.. _Jinja2: http://jinja.pocoo.org/

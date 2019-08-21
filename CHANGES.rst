@@ -1,7 +1,28 @@
 Release notes
 =============
 
+1.11.0 (2019-08-02)
+-------------------
+
+- Allowed per-field checking in ValidationMonitorMixin
+- Added option to set AWS Region Name on SES E-Mail action
+- Added default value for 'SPIDERMON_BODY_HTML_TEMPLATE' setting
+- Fixed bug in logging of Slack messages when fake setting is enabled
+- Enforced lxml 4.3.5 or lower for Python 3.4
+- Improved stats history documentation
+
+1.10.2 (2019-07-01)
+-------------------
+
+- Version 1.10.1 with CHANGELOG updated
+
+1.10.1 (2019-07-01)
+-------------------
+
+- Allowed to add absolute location for custom templates
+
 1.10.0 (2019-06-12)
+-------------------
 
 - Added new StatsCollector that access stats data from previous spider executions.
 - Added new setting to define the max number of unwanted HTTP status codes allowed in built-in monitor.
@@ -12,6 +33,7 @@ Release notes
 - Other small documentation improvements.
 
 1.9.0 (2019-03-11)
+------------------
 
 - Add set of built-in basic monitors with the most common test methods to allow
   start monitoring spiders more straightforward.
