@@ -20,6 +20,9 @@ SETTING_CERBERUS = "SPIDERMON_VALIDATION_CERBERUS"
 def assert_in_cerberus_stats(obj):
     return "{}".format(STATS_TYPES.format(obj.__name__.lower(), "cerberus"))
 
+def the_stats(pipe):
+    return pipe.stats.stats.get_stats(pipe)
+
 
 @pytest.mark.parametrize(
     "item,settings,cases",
@@ -77,7 +80,7 @@ def test_stats_in_pipeline(item, settings, cases):
     pipe = ItemValidationPipeline.from_crawler(crawler)
     pipe.process_item(item, None)
     for case in cases:
-        casechecker = lambda x: x in pipe.stats.stats.get_stats()
+        casechecker = lambda x: x in the_stats(pipe)
         assert casechecker(case)
 
 
@@ -108,7 +111,7 @@ def test_stats_not_in_pipeline(item, settings, cases):
     pipe = ItemValidationPipeline.from_crawler(crawler)
     pipe.process_item(item, None)
     for case in cases:
-        casechecker = lambda x: x not in pipe.stats.stats.get_stats()
+        casechecker = lambda x: x not in the_stats(pipe)
         assert casechecker(case)
 
 
@@ -118,12 +121,12 @@ def test_stats_amounts_in_pipeline():
     crawler = get_crawler(settings_dict=settings)
     pipe = ItemValidationPipeline.from_crawler(crawler)
     pipe.process_item(item, None)
-    assert pipe.stats.stats.get_stats()["spidermon/validation/validators"] is 1
+    assert the_stats(pipe)["spidermon/validation/validators"] == 1
     assert (
-        pipe.stats.stats.get_stats()[
+        the_stats(pipe)[
             "spidermon/validation/fields/errors/missing_required_field"
         ]
-        is 1
+        == 1
     )
 
 
@@ -141,7 +144,7 @@ def test_validation_from_url(mocker):
     pipe = ItemValidationPipeline.from_crawler(crawler)
     pipe.process_item(test_item, None)
 
-    assert "spidermon/validation/items/errors" in pipe.stats.stats.get_stats()
-    assert pipe.stats.stats.get_stats().get(
+    assert "spidermon/validation/items/errors" in the_stats(pipe)
+    assert the_stats(pipe).get(
         "spidermon/validation/validators/testitem/cerberus", False
     )
