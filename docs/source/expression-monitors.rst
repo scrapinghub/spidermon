@@ -4,11 +4,9 @@
 Expression Monitors
 ====================
 
-Expressions monitors are Monitors created on-the-fly when the Spidermon extension 
-initializes.
-
-Expression monitors can create tests based on simple expressions defined
-in a dictionary in your settings like::
+Expressions Monitors are :ref:`monitors<monitors>` created on-the-fly when Spidermon extension
+initializes. They can create tests based on simple expressions defined in a dictionary in
+your settings like::
 
     SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS = [
         {
@@ -24,15 +22,14 @@ in a dictionary in your settings like::
 
 The definition of each monitor should follow the :ref:`expression-monitor-schema`.
 
-There are 3 settings related to the expression
-monitors, they are:
+Use the following settings to configure expression monitors:
 
     * :ref:`SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS`
     * :ref:`SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS`
     * :ref:`SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS`
 
 You have the following objects available to be used in your *expression*:
-    
+
     * stats
     * crawler
     * spider
@@ -42,21 +39,20 @@ You have the following objects available to be used in your *expression*:
 
 .. note::
 
-    Notice that not the full-set of the Python Language features are available 
+    Notice that not the full-set of the Python Language features are available
     to the expressions, only the ones that makes sense for a simple expressions
     that should evaluate to ``True`` or ``False``.
 
     To have a more deep understand about which features of the language are available
-    please refer to ``spidermon.python.intrepeter.Interpreter``.
+    please refer to ``spidermon.python.interpreter.Interpreter``.
 
 
 .. _how-to-create-expression-monitor:
 
 How to create an expression monitor
-==================================
+===================================
 
-First of all you should have :ref:`enabled spidermon <enabling-spidermon>`.
-Then you need to choose *when* you want to run your expression monitors.
+First you need to choose *when* you want to run your expression monitors.
 
 You can use :ref:`SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS` to run a monitor
 when a spider opens, or :ref:`SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS` if you
@@ -65,10 +61,10 @@ want to run a monitor when a spider is closed.
 There's also the :ref:`SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS` setting to run a monitor
 once the engine has stopped.
 
-Here's an example of how to declare 2 ``ExpressionMonitors``.
+Here's an example of how to declare two ``ExpressionMonitors``.
 
-The 1st monitor with 2 tests, one for checking the spider name and other test to
-check if the crawler is there. The 2nd monitor will check if the spider 
+The first monitor with two tests, one for checking the spider name and other test to
+check if the crawler is there. The 2nd monitor will check if the spider
 finished with ``finished``::
 
     [
@@ -129,5 +125,5 @@ Each `expression monitor` should follow this schema::
            },
        },
        "required": ["name", "tests"],
-    }
+     }
 

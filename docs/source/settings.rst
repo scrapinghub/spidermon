@@ -34,22 +34,18 @@ SPIDERMON_EXPRESSIONS_MONITOR_CLASS
 
 Default: ``spidermon.python.monitors.ExpressionMonitor``
 
-A fully qualified path for a Python Class that should inherit from 
-``spidermon.python.monitors.ExpressionMonitor``.
+A subclass of ``spidermon.python.monitors.ExpressionMonitor``.
 
-This class will be used to generate :ref:`expression monitors <expression-monitors>`.
+This class will be used to generate :ref:`expression monitors<topics-expression-monitors>`.
 
     * :ref:`SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS`
     * :ref:`SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS`
     * :ref:`SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS`
 
-Please refer to :ref:`expression-monitors` to better understand what is
-a Expression Monitor.
-
 .. note::
-    Your probably wont change this setting unless you have an advanced use case and
+    You probably will not change this setting unless you have an advanced use case and
     needs to change how the context data is build or how the on-the-fly ``MonitorSuite``
-    are generated. Otherwise the default should be enough
+    are generated. Otherwise the default should be enough.
 
 .. _SPIDERMON_PERIODIC_MONITORS:
 
@@ -85,11 +81,7 @@ SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS
 
 Default: ``[]``
 
-List of dictionaries, each dictionary stands for a MonitorSuite with one
-or more tests to be executed when the spider is closed.
-
-Please refer to :ref:`expression-monitors` to better understand what is
-a Expression Monitor.
+List of dictionaries describing :ref:`expression monitors<topics-expression-monitors>` to run when a spider is closed.
 
 .. _SPIDERMON_SPIDER_OPEN_MONITORS:
 
@@ -107,11 +99,7 @@ SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS
 
 Default: ``[]``
 
-List of dictionaries, each dictionary stands for a ``MonitorSuite`` with one
-or more tests to be executed when the spider is opened.
-
-Please refer to :ref:`expression-monitors` to better understand what is
-a Expression Monitor.
+List of dictionaries describing :ref:`expression monitors<topics-expression-monitors>` to run when a spider is opened.
 
 .. _SPIDERMON_ENGINE_STOP_MONITORS:
 
@@ -127,8 +115,4 @@ SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS
 -----------------------------------------
 Default: ``[]``
 
-List of dictionaries, each dictionary stands for a ``MonitorSuite`` with one
-or more tests to be executed when the engine is stopped.
-
-Please refer to :ref:`expression-monitors` to better understand what is
-a Expression Monitor.
+List of dictionaries describing :ref:`expression monitors<topics-expression-monitors>` to run when the engine is stopped.
