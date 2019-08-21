@@ -114,6 +114,7 @@ def test_stats_not_in_pipeline(item, settings, cases):
     for case in cases:
         assert case not in the_stats(pipe)
 
+
 def test_stats_amounts_in_pipeline():
     item = TestItem({"title": "ScrapingHub"})
     settings = {SETTING_CERBERUS: [cerberus_test_schema]}
