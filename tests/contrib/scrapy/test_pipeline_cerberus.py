@@ -83,6 +83,7 @@ def test_stats_in_pipeline(item, settings, cases):
     for case in cases:
         assert case in the_stats(pipe)
 
+
 @pytest.mark.parametrize(
     "item,settings,cases",
     [
