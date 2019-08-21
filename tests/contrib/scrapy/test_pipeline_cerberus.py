@@ -20,6 +20,7 @@ SETTING_CERBERUS = "SPIDERMON_VALIDATION_CERBERUS"
 def assert_in_cerberus_stats(obj):
     return "{}".format(STATS_TYPES.format(obj.__name__.lower(), "cerberus"))
 
+
 def the_stats(pipe):
     return pipe.stats.stats.get_stats(pipe)
 
@@ -111,9 +112,7 @@ def test_stats_not_in_pipeline(item, settings, cases):
     pipe = ItemValidationPipeline.from_crawler(crawler)
     pipe.process_item(item, None)
     for case in cases:
-        casechecker = lambda x: x not in the_stats(pipe)
-        assert casechecker(case)
-
+        assert case not in the_stats(pipe)
 
 def test_stats_amounts_in_pipeline():
     item = TestItem({"title": "ScrapingHub"})
@@ -123,9 +122,7 @@ def test_stats_amounts_in_pipeline():
     pipe.process_item(item, None)
     assert the_stats(pipe)["spidermon/validation/validators"] == 1
     assert (
-        the_stats(pipe)[
-            "spidermon/validation/fields/errors/missing_required_field"
-        ]
+        the_stats(pipe)["spidermon/validation/fields/errors/missing_required_field"]
         == 1
     )
 
