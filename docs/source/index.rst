@@ -32,6 +32,7 @@ Contents
    monitors
    item-validation
    stats-collection
+   expression-monitors
    settings
    actions
    changelog
