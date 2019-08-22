@@ -55,6 +55,8 @@ And our spider code:
                 )
             )
 
+.. _enabling-spidermon:
+
 Enabling Spidermon
 ------------------
 
