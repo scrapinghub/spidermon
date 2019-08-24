@@ -44,7 +44,7 @@ def the_stats(pipe):
         ),
         pytest.param(
             TestItem(),
-            {SETTING_CERBERUS: [f"{os.getcwd()}/contrib/scrapy/schema.json"]},
+            {SETTING_CERBERUS: ["tests/contrib/scrapy/schema.json"]},
             [assert_in_cerberus_stats(Item), "{}".format(STATS_ITEM_ERRORS)],
             id="validator is {} type, loads from path to schema".format(Item.__name__),
         ),
