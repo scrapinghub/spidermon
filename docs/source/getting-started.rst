@@ -207,8 +207,8 @@ a Slack channel using a bot when a monitor fails.
             SendSlackMessageSpiderFinished,
         ]
 
-After enabling the action, you need to provide the `Slack credentials`_ in your `settings.py`
-file as follows:
+After enabling the action, you need to provide the `Slack
+credentials`_. You can access the required credentials by following these :ref:`steps`. Later, fill the same in your `settings.py` as follows:
 
 .. code-block:: python
 
