@@ -297,7 +297,7 @@ SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX
 
 .. _`Slack`: https://slack.com/
 .. _`Follow these steps`: :ref:`_slack_bot_guide`
-
+.. _`Slack credentials`: https://api.slack.com/docs/token-types
 .. _actions-job-tags:
 
 Job tags action
