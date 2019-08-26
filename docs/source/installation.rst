@@ -18,7 +18,7 @@ So the recommended way to install the library is by adding both:
     pip install "spidermon[monitoring,validation]"
 
 
-.. _`six`: https://pypi.org/project/six/
 .. _`jsonschema`: https://pypi.org/project/jsonschema/
 .. _`python-slugify`: https://pypi.org/project/python-slugify/
 .. _`schematics`: https://pypi.org/project/schematics/
+.. _`six`: https://pypi.org/project/six/

@@ -383,9 +383,9 @@ The resulted item will look like this:
          'tags': ['truth']
     }
 
+.. _`cerberus`: https://docs.python-cerberus.org/en/latest/index.html
 .. _`JSON Schema`: https://json-schema.org/
 .. _`schematics`: https://schematics.readthedocs.io/en/latest/
-.. _`cerberus`: https://docs.python-cerberus.org/en/latest/index.html
 .. _`Scrapy`: https://scrapy.org/
 .. _`Scrapy items`: https://docs.scrapy.org/en/latest/topics/items.html
 .. _`Scrapy Tutorial`: https://doc.scrapy.org/en/latest/intro/tutorial.html

@@ -290,12 +290,12 @@ Some examples:
     # checks that no errors is present in any fields
     self.check_field_errors_percent()
 
+.. _`cerberus`: https://pypi.org/project/Cerberus/
+.. _`guide`: http://json-schema.org/learn/getting-started-step-by-step.html
+.. _`jsonschema`: https://pypi.org/project/jsonschema/
+.. _`JSON Schema`: https://json-schema.org/
 .. _`schematics`: https://schematics.readthedocs.io/en/latest/
 .. _`schematics documentation`: https://schematics.readthedocs.io/en/latest/
-.. _`JSON Schema`: https://json-schema.org/
-.. _`guide`: http://json-schema.org/learn/getting-started-step-by-step.html
 .. _`schematics models`: https://schematics.readthedocs.io/en/latest/usage/models.html
-.. _`jsonschema`: https://pypi.org/project/jsonschema/
-.. _`cerberus`: https://pypi.org/project/Cerberus/
 .. _`usage`: http://docs.python-cerberus.org/en/latest/usage.html
 .. _`validation-rules`: http://docs.python-cerberus.org/en/latest/validation-rules.html
