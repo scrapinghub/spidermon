@@ -112,8 +112,8 @@ schema. Here we have an example of a schema for the quotes item from the
         "tags": {"type": "list"}
     }
 
-To use Cerberus validation, you would need to add
-:ref:`SPIDERMON_VALIDATION_CERBERUS` setting to your `settings.py`
+To use Cerberus validation, you would need to add the
+:ref:`SPIDERMON_VALIDATION_CERBERUS` setting to your `Scrapy settings`_.
 
 Settings
 --------
@@ -297,5 +297,6 @@ Some examples:
 .. _`schematics`: https://schematics.readthedocs.io/en/latest/
 .. _`schematics documentation`: https://schematics.readthedocs.io/en/latest/
 .. _`schematics models`: https://schematics.readthedocs.io/en/latest/usage/models.html
+.. _`Scrapy settings` : https://docs.scrapy.org/en/latest/topics/settings.html
 .. _`usage`: http://docs.python-cerberus.org/en/latest/usage.html
 .. _`validation-rules`: http://docs.python-cerberus.org/en/latest/validation-rules.html
