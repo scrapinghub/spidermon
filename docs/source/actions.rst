@@ -205,7 +205,7 @@ A notification will look like the following one:
    :scale: 50 %
    :alt: Slack Notification
 
-Follow this :ref:`steps`.
+Follow these steps to :ref:`configuring-slack-bot`
 
 The following settings are the minimum needed to make this action works:
 
@@ -221,7 +221,7 @@ List of recipients of the message. It could be a channel or an user.
 SPIDERMON_SLACK_SENDER_NAME
 ---------------------------
 
-Username of bot.
+Username of your bot.
 
 .. _SPIDERMON_SLACK_SENDER_TOKEN:
 
@@ -296,9 +296,7 @@ SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX
 -------------------------------------
 
 .. _`Slack`: https://slack.com/
-.. _`Follow these steps`: :ref:`_slack_bot_guide`
 .. _`Slack credentials`: https://api.slack.com/docs/token-types
-.. _actions-job-tags:
 
 Job tags action
 ===============

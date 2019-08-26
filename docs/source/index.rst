@@ -33,5 +33,6 @@ Contents
    item-validation
    stats-collection
    settings
+   configuring-slack-for-spidermon
    actions
    changelog
