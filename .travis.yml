@@ -12,8 +12,8 @@ python:
   - 3.7
 install:
   - pip install tox-travis
-script: tox
-after_success:
+script: 
+  - tox
   - if [[ "$TRAVIS_PYTHON_VERSION" == 3.7 ]]; then
     tox -e pep8;
     fi
