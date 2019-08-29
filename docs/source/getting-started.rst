@@ -208,7 +208,7 @@ a Slack channel using a bot when a monitor fails.
         ]
 
 After enabling the action, you need to provide the `Slack
-credentials`_. You can access the required credentials by following these :ref:`steps`. Later, fill the same in your `settings.py` as follows:
+credentials`_. You can access the required credentials by following these steps to :ref:`configuring-slack-bot`. Later, fill the credentials in your `settings.py` as follows:
 
 .. code-block:: python
 
