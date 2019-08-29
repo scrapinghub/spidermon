@@ -90,14 +90,14 @@ an example of a schema for the quotes item from the :doc:`tutorial </getting-sta
 With Cerberus
 -------------
 
-`Cerberus`_ is a powerful yet simple and lightweight data validation
+Cerberus_ is a powerful yet simple and lightweight data validation
 tool, designed to be ​extensible​, allowing for custom validation​ and has ​no
 dependencies. You can define what the field contains, what is required, the type of
 each field, as well as dependencies and regex.
 
 .. warning::
 
-   You need to install `cerberus`_ to use this feature.
+   You need to install cerberus_ to use this feature.
 
 This `usage`_ and `validation-rules`_ guide explain the main keywords and how to make a
 schema. Here we have an example of a schema for the quotes item from the
@@ -112,7 +112,7 @@ schema. Here we have an example of a schema for the quotes item from the
         "tags": {"type": "list"}
     }
 
-To use Cerberus validation, you would need to add the
+To use cerberus validation, you would need to add the
 :ref:`SPIDERMON_VALIDATION_CERBERUS` setting to your `Scrapy settings`_.
 
 Settings
@@ -228,7 +228,7 @@ SPIDERMON_VALIDATION_CERBERUS
 
 Default: ``None``
 
-A `list` containing the local path of the item schema.
+A `list` containing the location of the item schema. Could be a local path, URL or the schema itself.
 
 .. code-block:: python
 
@@ -241,6 +241,8 @@ A `list` containing the local path of the item schema.
     ]
 
 If you are working on a spider that produces multiple items types, you can define paths to schema for each item as `dict` as shown below:
+
+.. code-block:: python
 
     # settings.py
 

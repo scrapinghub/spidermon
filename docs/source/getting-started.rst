@@ -231,7 +231,7 @@ Item validation
 
 Item validators allows you to match your returned items with predetermined structure
 ensuring that all fields contains data in the expected format. Spidermon allows
-you to choose from schematics_,`JSON Schema`_ or `cerberus`_ to define structure and
+you to choose from schematics_,`JSON Schema`_ or cerberus_ to define structure and
 validation tool needed for your item.
 
 In this tutorial, we will use a schematics_ model to make sure that all required
