@@ -228,7 +228,7 @@ SPIDERMON_VALIDATION_CERBERUS
 
 Default: ``None``
 
-A `list` containing the location of the item schema. Could be a local path, URL or the schema itself.
+A `list` containing the location of the item schema. Could be a local path to a `.json` file, URL or the schema itself.
 
 .. code-block:: python
 

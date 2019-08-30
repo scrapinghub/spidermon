@@ -39,6 +39,7 @@ setup(
         ],
         # Data validation
         "validation": ["schematics"],
+        "cerberus": ["cerberus"],
         # Tools to run the tests
         "tests": test_requirements,
         "pep8": ["black"],
