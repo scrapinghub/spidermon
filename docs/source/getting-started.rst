@@ -231,7 +231,7 @@ Item validation
 
 Item validators allows you to match your returned items with predetermined structure
 ensuring that all fields contains data in the expected format. Spidermon allows
-you to choose from schematics_,`JSON Schema`_ or cerberus_  as the validation tool to
+you to choose from schematics_,`JSON Schema`_ or Cerberus_  as the validation tool to
 define the validation rules for your items.
 
 In this tutorial, we will use a schematics_ model to make sure that all required
@@ -385,7 +385,7 @@ The resulted item will look like this:
          'tags': ['truth']
     }
 
-.. _`cerberus`: https://docs.python-cerberus.org/en/latest/index.html
+.. _`Cerberus`: https://docs.python-cerberus.org/en/latest/index.html
 .. _`JSON Schema`: https://json-schema.org/
 .. _`schematics`: https://schematics.readthedocs.io/en/latest/
 .. _`Scrapy`: https://scrapy.org/

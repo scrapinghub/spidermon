@@ -18,7 +18,7 @@ the first step is to enable the built-in item pipeline in your project settings:
     }
 
 After that, you need to choose which validation library will be used. Spidermon
-accepts schemas defined using schematics_, `JSON Schema`_ or cerberus_.
+accepts schemas defined using schematics_, `JSON Schema`_ or Cerberus_.
 
 With schematics
 ---------------
@@ -97,7 +97,7 @@ each field, as well as dependencies and regex.
 
 .. warning::
 
-   You need to install cerberus_ to use this feature.
+   You need to install Cerberus_ to use this feature.
 
 This `usage`_ and `validation-rules`_ guide explain the main keywords and how to make a
 schema. Here we have an example of a schema for the quotes item from the
@@ -112,7 +112,7 @@ schema. Here we have an example of a schema for the quotes item from the
         "tags": {"type": "list"}
     }
 
-To use cerberus validation, you would need to add the
+To use Cerberus validation, you would need to add the
 :ref:`SPIDERMON_VALIDATION_CERBERUS` setting to your `Scrapy settings`_.
 
 Settings
@@ -292,7 +292,7 @@ Some examples:
     # checks that no errors is present in any fields
     self.check_field_errors_percent()
 
-.. _`cerberus`: https://pypi.org/project/Cerberus/
+.. _`Cerberus`: https://pypi.org/project/Cerberus/
 .. _`guide`: http://json-schema.org/learn/getting-started-step-by-step.html
 .. _`jsonschema`: https://pypi.org/project/jsonschema/
 .. _`JSON Schema`: https://json-schema.org/
