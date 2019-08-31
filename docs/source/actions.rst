@@ -205,7 +205,7 @@ A notification will look like the following one:
    :scale: 50 %
    :alt: Slack Notification
 
-Follow these steps to :ref:`configuring-slack-bot`
+Follow :ref:`these steps <configuring-slack-bot>` to configure your Slack bot.
 
 The following settings are the minimum needed to make this action works:
 

@@ -19,7 +19,7 @@ Steps
 
 1. `Create Slack bot <https://get.slack.help/hc/en-us/articles/115005265703-Create-a-bot-for-your-workspace>`_.
 
-2. Once bot is created, you can find Bot User OAuth Access Token in its settings. This `Bot User OAuth Access Token` is what we use for `SPIDERMON_SLACK_SENDER_TOKEN`.
+2. Once your bot is created, you can find Bot User OAuth Access Token in its settings. This `Bot User OAuth Access Token` is what we use for ``SPIDERMON_SLACK_SENDER_TOKEN``.
 
 3. Lastly, add your Slack credentials to your Scrapy project's settings.
 
