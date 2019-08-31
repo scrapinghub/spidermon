@@ -59,7 +59,7 @@ def get_schema_from(source):
                 )
     else:
         schema = load_object(source)
-        if isinstance(schema, six.string_types):
+        if isinstance(schema, string_types):
             return json.loads(schema)
         return schema
 

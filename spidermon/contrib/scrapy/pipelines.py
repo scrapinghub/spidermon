@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from collections import defaultdict
 from io import BytesIO
 import json
-import six
+from six import string_types
 from scrapy.exceptions import DropItem, NotConfigured
 from scrapy.utils.misc import load_object
 from scrapy.exporters import JsonLinesItemExporter
@@ -86,7 +86,7 @@ class ItemValidationPipeline(object):
 
     @classmethod
     def _load_jsonschema_validator(cls, schema):
-        if isinstance(schema, six.string_types):
+        if isinstance(schema, string_types):
             schema = get_schema_from(schema)
         if not isinstance(schema, dict):
             raise NotConfigured(
@@ -101,7 +101,7 @@ class ItemValidationPipeline(object):
 
     @classmethod
     def _load_cerberus_validator(cls, schema):
-        if isinstance(schema, six.string_types):
+        if isinstance(schema, string_types):
             schema = get_schema_from(schema)
 
         return CerberusValidator(schema)
