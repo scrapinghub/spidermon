@@ -55,6 +55,8 @@ And our spider code:
                 )
             )
 
+.. _enabling-spidermon:
+
 Enabling Spidermon
 ------------------
 
@@ -372,7 +374,7 @@ match the schema:
 
 The resulted item will look like this:
 
-.. code-block:: json
+.. code-block:: js
 
     {
         '_validation': defaultdict(
