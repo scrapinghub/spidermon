@@ -17,7 +17,7 @@ Steps
 .. note:
     You need to be the `owner/admin <https://get.slack.help/hc/en-us/articles/201314026-Understanding-roles-permissions-inside-Slack>`_ of the `Slack workspace <https://get.slack.help/hc/en-us/articles/206845317-Create-a-Slack-workspace>`_ for which you are trying to create a bot.
 
-1. `Create Slack bot <https://get.slack.help/hc/en-us/articles/115005265703-Create-a-bot-for-your-workspace>`_.
+1. `Create a Slack bot <https://get.slack.help/hc/en-us/articles/115005265703-Create-a-bot-for-your-workspace>`_.
 
 2. Once your bot is created, you can find Bot User OAuth Access Token in its settings. This `Bot User OAuth Access Token` is what we use for ``SPIDERMON_SLACK_SENDER_TOKEN``.
 
