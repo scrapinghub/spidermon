@@ -1,10 +1,20 @@
 from setuptools import setup, find_packages
 
-test_requirements = ["pytest>=2.7.0", "pytest-cov", "pytest-mock", "scrapy"]
+test_requirements = [
+    "pytest>=2.7.0",
+    "pytest-cov",
+    "pytest-mock",
+    "jinja2",
+    "lxml;python_version!='3.4'",
+    "lxml<=4.3.5;python_version=='3.4'",
+    "scrapy",
+    "slackclient>=1.3.0,<2.0.0",
+    'Twisted<=19.2.0;python_version=="3.4"',
+]
 
 setup(
     name="spidermon",
-    version="1.9.0",
+    version="1.11.0",
     url="https://github.com/scrapinghub/spidermon",
     author="Scrapinghub",
     author_email="info@scrapinghub.com",
@@ -15,14 +25,14 @@ setup(
     package_data={"spidermon": ["VERSION"]},
     zip_safe=False,
     include_package_data=True,
-    install_requires=["jsonschema[format]", "python-slugify", "six>=1.9.0"],
+    install_requires=["jsonschema[format]", "python-slugify", "six>=1.11.0"],
     tests_require=test_requirements,
     extras_require={
         # Specific monitors and tools to support notifications and reports
         "monitoring": [
             "scrapy",
             "Jinja2",
-            "slackclient",
+            "slackclient>=1.3.0,<2.0.0",
             "boto",
             "premailer",
             "sentry-sdk",

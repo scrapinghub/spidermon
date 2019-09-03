@@ -55,6 +55,8 @@ And our spider code:
                 )
             )
 
+.. _enabling-spidermon:
+
 Enabling Spidermon
 ------------------
 
@@ -328,6 +330,9 @@ a failure when we have a item validation error:
 .. code-block:: python
 
     # monitors.py
+
+    from spidermon.contrib.monitors.mixins import StatsMonitorMixin
+
     # (...other monitors...)
 
     @monitors.name('Item validation')
@@ -369,7 +374,7 @@ match the schema:
 
 The resulted item will look like this:
 
-.. code-block:: json
+.. code-block:: js
 
     {
         '_validation': defaultdict(
