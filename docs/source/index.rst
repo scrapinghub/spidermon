@@ -34,5 +34,6 @@ Contents
    stats-collection
    expression-monitors
    settings
+   configuring-slack-for-spidermon
    actions
    changelog
