@@ -27,9 +27,7 @@ def test_log_text_and_attachment_when_fake_set(logger_info):
     manager = SlackMessageManager(
         sender_token="anything", sender_name="@someone", fake=True
     )
-    manager.send_message(
-        to=[], text=text_to_be_logged, attachments=attach_to_be_logged
-    )
+    manager.send_message(to=[], text=text_to_be_logged, attachments=attach_to_be_logged)
 
     assert logger_info.call_count == 2
     assert text_to_be_logged in logger_info.call_args_list[0][0]

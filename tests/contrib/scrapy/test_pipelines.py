@@ -217,7 +217,8 @@ class PipelineJSONSchemaValidator(PipelineTest):
 )
 def test_validator_from_url(mocker):
     mocked_get_contents = mocker.patch(
-        "spidermon.contrib.validation.jsonschema.tools.get_contents", return_value=test_schema_string
+        "spidermon.contrib.validation.jsonschema.tools.get_contents",
+        return_value=test_schema_string,
     )
     settings = {SETTING_SCHEMAS: {TestItem: "https://fixtures.com/testschema.json"}}
     test_item = TestItem()
