@@ -99,10 +99,11 @@ class CreateS3Report(CreateReport):
     @classmethod
     def from_crawler_kwargs(cls, crawler):
         kwargs = super(CreateS3Report, cls).from_crawler_kwargs(crawler)
+        (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(crawler.settings)
         kwargs.update(
             {
-                "aws_access_key": crawler.settings.get("SPIDERMON_AWS_ACCESS_KEY"),
-                "aws_secret_key": crawler.settings.get("SPIDERMON_AWS_SECRET_KEY"),
+                "aws_access_key": aws_access_key_id,
+                "aws_secret_key": aws_secret_access_key,
                 "s3_bucket": crawler.settings.get("SPIDERMON_REPORT_S3_BUCKET"),
                 "s3_filename": crawler.settings.get("SPIDERMON_REPORT_S3_FILENAME"),
                 "s3_region_endpoint": crawler.settings.get(
