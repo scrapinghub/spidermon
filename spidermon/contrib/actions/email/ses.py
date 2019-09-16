@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from boto import ses
 
 from spidermon.exceptions import NotConfigured
+from spidermon.utils.settings import get_aws_credentials
 
 from . import SendEmail
 
@@ -31,10 +32,11 @@ class SendSESEmail(SendEmail):
     @classmethod
     def from_crawler_kwargs(cls, crawler):
         kwargs = super(SendSESEmail, cls).from_crawler_kwargs(crawler)
+        (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(crawler.settings)
         kwargs.update(
             {
-                "aws_access_key": crawler.settings.get("SPIDERMON_AWS_ACCESS_KEY"),
-                "aws_secret_key": crawler.settings.get("SPIDERMON_AWS_SECRET_KEY"),
+                "aws_access_key": aws_access_key_id,
+                "aws_secret_key": aws_secret_access_key,
                 "aws_region_name": crawler.settings.get("SPIDERMON_AWS_REGION_NAME"),
             }
         )
