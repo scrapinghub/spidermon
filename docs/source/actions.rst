@@ -61,14 +61,40 @@ Default: ``None``
 
 AWS Access Key.
 
+.. warning::
+
+    This setting has been deprecated in preference of ``SPIDERMON_AWS_ACCESS_KEY_ID``.
+
 .. _SPIDERMON_AWS_SECRET_KEY:
 
 SPIDERMON_AWS_SECRET_KEY
 ------------------------
 
+Default: ``None``
+
 AWS Secret Key.
 
+.. warning::
+
+    This setting has been deprecated in preference of ``SPIDERMON_AWS_SECRET_ACCESS_KEY``.
+
+.. SPIDERMON_AWS_ACCESS_KEY_ID:
+
+SPIDERMON_AWS_ACCESS_KEY_ID
+---------------------------
+
 Default: ``None``
+
+AWS Access Key. If not set, it defaults to `AWS_ACCESS_KEY_ID`_.
+
+.. SPIDERMON_AWS_SECRET_ACCESS_KEY:
+
+SPIDERMON_AWS_SECRET_ACCESS_KEY
+-------------------------------
+
+Default: ``None``
+
+AWS Secret Key. If not set, it defaults to `AWS_SECRET_ACCESS_KEY`_.
 
 SPIDERMON_AWS_REGION_NAME
 -------------------------
@@ -638,3 +664,5 @@ the `run_action` method.
 
 .. _`slackclient`: https://pypi.org/project/slackclient/
 .. _Jinja2: http://jinja.pocoo.org/
+.. _`AWS_ACCESS_KEY_ID`: https://docs.scrapy.org/en/latest/topics/settings.html#std:setting-AWS_ACCESS_KEY_ID
+.. _`AWS_SECRET_ACCESS_KEY`: https://docs.scrapy.org/en/latest/topics/settings.html#aws-secret-access-key
