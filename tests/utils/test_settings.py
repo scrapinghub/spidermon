@@ -12,7 +12,8 @@ def test_spidermon_aws_credentials_not_set():
     assert aws_secret_access_key is None
 
 
-def test_spidermon_aws_credentials():
+def test_spidermon_aws_credentials(mocker):
+    warn_mock = mocker.patch('spidermon.utils.settings.warnings.warn')
     settings = Settings(
         {
             "SPIDERMON_AWS_ACCESS_KEY": "aws_access_key",
@@ -24,6 +25,7 @@ def test_spidermon_aws_credentials():
 
     assert aws_access_key_id == "aws_access_key"
     assert aws_secret_access_key == "aws_secret_key"
+    warn_mock.assert_called_with(mocker.ANY, DeprecationWarning)
 
 
 def test_spidermon_aws_credentials_scrapy_like():
@@ -70,7 +72,8 @@ def test_spidermon_aws_credentials_are_preferred_over_scrapy_ones():
     assert aws_secret_access_key == "spidermon_aws_secret_access_key"
 
 
-def test_spidermon_old_aws_credentials_are_preferred_over_new_ones():
+def test_spidermon_old_aws_credentials_are_preferred_over_new_ones(mocker):
+    mocker.patch('spidermon.utils.settings.warnings.warn')  # avoid the warning in the tests
     settings = Settings(
         {
             "SPIDERMON_AWS_ACCESS_KEY": "old_aws_access_key",
