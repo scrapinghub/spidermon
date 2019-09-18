@@ -228,7 +228,9 @@ SPIDERMON_VALIDATION_CERBERUS
 
 Default: ``None``
 
-A `list` containing the location of the item schema. Could be a local path to a `.json` file, URL or the schema itself.
+A `list` containing the location of the item schema. Could be a local path
+to a `.json` file, URL or the schema itself. In the event of defining 2 or
+more schemas then items need to pass all defined schemas.
 
 .. code-block:: python
 
@@ -240,7 +242,7 @@ A `list` containing the location of the item schema. Could be a local path to a 
         {"Field": {"type": "number", "required":True}}
     ]
 
-If you are working on a spider that produces multiple items types, you can define paths to schema for each item as `dict` as shown below:
+If you like to enforce a specific schema based on item type, you can define paths to schema for each item as `dict` as shown below:
 
 .. code-block:: python
 
