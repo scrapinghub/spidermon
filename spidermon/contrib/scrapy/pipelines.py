@@ -20,6 +20,7 @@ from .stats import ValidationStatsManager
 DEFAULT_ERRORS_FIELD = "_validation"
 DEFAULT_ADD_ERRORS_TO_ITEM = False
 DEFAULT_DROP_ITEMS_WITH_ERRORS = False
+DEFAULT_SPIDERMON_CLOSESPIDER_BY_STATS = {}
 
 
 class ItemValidationPipeline(object):
@@ -29,6 +30,7 @@ class ItemValidationPipeline(object):
         stats,
         drop_items_with_errors=DEFAULT_DROP_ITEMS_WITH_ERRORS,
         add_errors_to_items=DEFAULT_ADD_ERRORS_TO_ITEM,
+        close_spider_by_stats=DEFAULT_SPIDERMON_CLOSESPIDER_BY_STATS,
         errors_field=None,
     ):
         self.drop_items_with_errors = drop_items_with_errors
@@ -36,6 +38,7 @@ class ItemValidationPipeline(object):
         self.errors_field = errors_field or DEFAULT_ERRORS_FIELD
         self.validators = validators
         self.stats = ValidationStatsManager(stats)
+        self.close_spider_by_stats = close_spider_by_stats or DEFAULT_SPIDERMON_CLOSESPIDER_BY_STATS
         for _type, vals in validators.items():
             [self.stats.add_validator(_type, val.name) for val in vals]
 
@@ -122,6 +125,8 @@ class ItemValidationPipeline(object):
                     self._add_errors_to_item(item, errors)
                 if self.drop_items_with_errors:
                     self._drop_item(item, errors)
+                if self.close_spider_by_stats:
+                    self._close_spider_by_stats(self.stats, self.close_spider_by_stats)
         return item
 
     def find_validators(self, item):
@@ -168,3 +173,11 @@ class ItemValidationPipeline(object):
             for message in messages:
                 self.stats.add_field_error(field_name, message)
         self.stats.add_item_with_errors()
+
+    def _close_spider_by_stats(self, stats, error_values):
+        from scrapy.exceptions import CloseSpider
+        for key, value in error_values:
+            stat = stats.get(key, 0)
+            max_errors_allowed = value
+            if stat > max_errors_allowed:
+                raise CloseSpider(reason='Errors are greater then the expected no of errors')
