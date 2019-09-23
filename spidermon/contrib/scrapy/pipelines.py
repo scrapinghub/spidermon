@@ -83,6 +83,7 @@ class ItemValidationPipeline(object):
                 "SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS"
             ),
             errors_field=crawler.settings.get("SPIDERMON_VALIDATION_ERRORS_FIELD"),
+            close_spider_by_stats=crawler.settings.get('SPIDERMON_CLOSESPIDER_BY_STATS'),
         )
 
     @classmethod
