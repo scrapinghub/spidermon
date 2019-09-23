@@ -20,7 +20,7 @@ from .stats import ValidationStatsManager
 DEFAULT_ERRORS_FIELD = "_validation"
 DEFAULT_ADD_ERRORS_TO_ITEM = False
 DEFAULT_DROP_ITEMS_WITH_ERRORS = False
-DEFAULT_SPIDERMON_CLOSESPIDER_BY_STATS = {}
+DEFAULT_CLOSESPIDER_BY_STATS = {}
 
 
 class ItemValidationPipeline(object):
@@ -30,7 +30,7 @@ class ItemValidationPipeline(object):
         stats,
         drop_items_with_errors=DEFAULT_DROP_ITEMS_WITH_ERRORS,
         add_errors_to_items=DEFAULT_ADD_ERRORS_TO_ITEM,
-        close_spider_by_stats=DEFAULT_SPIDERMON_CLOSESPIDER_BY_STATS,
+        close_spider_by_stats=DEFAULT_CLOSESPIDER_BY_STATS,
         errors_field=None,
     ):
         self.drop_items_with_errors = drop_items_with_errors
@@ -38,7 +38,7 @@ class ItemValidationPipeline(object):
         self.errors_field = errors_field or DEFAULT_ERRORS_FIELD
         self.validators = validators
         self.stats = ValidationStatsManager(stats)
-        self.close_spider_by_stats = close_spider_by_stats or DEFAULT_SPIDERMON_CLOSESPIDER_BY_STATS
+        self.close_spider_by_stats = close_spider_by_stats or DEFAULT_CLOSESPIDER_BY_STATS
         for _type, vals in validators.items():
             [self.stats.add_validator(_type, val.name) for val in vals]
 
@@ -73,7 +73,7 @@ class ItemValidationPipeline(object):
         if not validators:
             raise NotConfigured("No validators were found")
 
-        return cls(
+        pipeline = cls(
             validators=validators,
             stats=crawler.stats,
             drop_items_with_errors=crawler.settings.getbool(
@@ -85,6 +85,12 @@ class ItemValidationPipeline(object):
             errors_field=crawler.settings.get("SPIDERMON_VALIDATION_ERRORS_FIELD"),
             close_spider_by_stats=crawler.settings.get('SPIDERMON_CLOSESPIDER_BY_STATS'),
         )
+        pipeline._set_crawler(crawler)
+        return pipeline
+
+    @classmethod
+    def _set_crawler(self, crawler):
+        self.crawler = crawler
 
     @classmethod
     def _load_jsonschema_validator(cls, schema):
@@ -109,7 +115,7 @@ class ItemValidationPipeline(object):
             )
         return SchematicsValidator(model_class)
 
-    def process_item(self, item, _):
+    def process_item(self, item, spider):
         validators = self.find_validators(item)
         if not validators:
             # No validators match this specific item type
@@ -127,7 +133,8 @@ class ItemValidationPipeline(object):
                 if self.drop_items_with_errors:
                     self._drop_item(item, errors)
                 if self.close_spider_by_stats:
-                    self._close_spider_by_stats(self.stats, self.close_spider_by_stats)
+                    stats_dict = self.close_spider_by_stats
+                    self._close_spider_by_stats (spider, stats_dict)
         return item
 
     def find_validators(self, item):
@@ -175,10 +182,16 @@ class ItemValidationPipeline(object):
                 self.stats.add_field_error(field_name, message)
         self.stats.add_item_with_errors()
 
-    def _close_spider_by_stats(self, stats, error_values):
-        from scrapy.exceptions import CloseSpider
-        for key, value in error_values:
-            stat = stats.get(key, 0)
-            max_errors_allowed = value
-            if stat > max_errors_allowed:
-                raise CloseSpider(reason='Errors are greater then the expected no of errors')
+    def _close_spider_by_stats(self, spider, stats_dict):
+        """
+        This method evaluate each stat value and if no of errors are greater then
+        max_errors_allowed. Spider will be closed gracefully.
+        """
+        for stat_name, max_errors_allowed in stats_dict.iteritems():
+            stat_current_value = self.stats.stats.get_value(stat_name, 0)
+
+            if stat_current_value > max_errors_allowed:
+                self.crawler.engine.close_spider(
+                    spider,
+                    'Spidermon: No of errors are greater then the expected no of errors'
+                )
