@@ -193,5 +193,7 @@ class ItemValidationPipeline(object):
             if stat_current_value > max_errors_allowed:
                 self.crawler.engine.close_spider(
                     spider,
-                    'Spidermon: No of errors are greater then the expected no of errors'
+                    'Spidermon: No of errors are greater then the expected no of errors {} > {}'.format(
+                        stat_current_value, max_errors_allowed
+                    )
                 )
