@@ -145,6 +145,7 @@ Of course, there is! We really want to make it easy for you to monitor your spid
 
 .. automodule:: spidermon.contrib.scrapy.monitors
     :members: SpiderCloseMonitorSuite
+    :noindex:
 
 Periodic Monitors
 -----------------
