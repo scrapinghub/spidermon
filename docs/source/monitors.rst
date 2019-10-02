@@ -32,8 +32,10 @@ number of items were extracted and fails if it is less than the expected thresho
                 msg='Extracted less than {} items'.format(minimum_threshold)
             )
 
-A `Monitor` instance has the following properties that can be used to help you
-implement your monitors:
+.. class:: Monitor(name=name, data=None, parent=None)
+
+A `Monitor` instance defines a monitor that includes your monitoring logic and
+has the following properties that can be used to help you implement your monitors:
 
 ``data.stats`` dict-like object containing the stats of the spider execution
 
@@ -89,8 +91,7 @@ Here is an example of how to configure a new monitor suite in your project:
 
   ``name`` suite name
 
-  ``monitors`` list of :class:`~spidermon.core.monitors.Monitor` that will be executed
-  if this suite is enabled.
+  ``monitors`` list of :class:`Monitor` that will be executed if this suite is enabled.
 
   ``monitors_finished_actions`` list of action classes that will be executed when
   all monitors finished their execution.
