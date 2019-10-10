@@ -1,6 +1,6 @@
 # monitors.py
 from spidermon import Monitor, MonitorSuite, monitors
-from spidermon.contrib.actions.slack.notifiers import SendSlackMessageSpiderFinished
+from spidermon.contrib.actions.telegram.notifiers import SendTelegramMessageSpiderFinished
 from spidermon.contrib.monitors.mixins import StatsMonitorMixin
 
 from tutorial.actions import CloseSpiderAction
@@ -27,7 +27,7 @@ class ItemValidationMonitor(Monitor, StatsMonitorMixin):
         )
         self.assertEqual(
             validation_errors,
-            0,
+            1,
             msg="Found validation errors in {} fields".format(validation_errors),
         )
 
@@ -53,4 +53,4 @@ class PeriodicMonitorSuite(MonitorSuite):
 class SpiderCloseMonitorSuite(MonitorSuite):
     monitors = [ItemCountMonitor, ItemValidationMonitor, PeriodicJobStatsMonitor]
 
-    monitors_failed_actions = [SendSlackMessageSpiderFinished]
+    monitors_failed_actions = [SendTelegramMessageSpiderFinished]
