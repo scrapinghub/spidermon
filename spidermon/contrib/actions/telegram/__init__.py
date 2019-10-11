@@ -26,7 +26,6 @@ class SimplyTelegramClient:
             chat_id=recipient,
             text=message
         )
-        import pdb; pdb.set_trace()
         r = requests.get(api_url).json()
         if r.get("ok") is False:
             self.logger.error(r)

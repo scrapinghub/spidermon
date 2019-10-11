@@ -1,2 +1,2 @@
 {% import 'telegram/spider/notifier/macros.jinja' as renderer with context %}
-:clock3: `{{ renderer.render_spider_name() }}` *spider started!*{{ renderer.render_job_url() }}
+{{ "🕒" }} "`{{ renderer.render_spider_name() }}`" *spider started!* {{ renderer.render_job_url() }}
