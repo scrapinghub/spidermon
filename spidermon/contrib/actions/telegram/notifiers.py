@@ -23,9 +23,7 @@ class SendTelegramMessageSpiderFinished(SendTelegramMessage):
         **kwargs
     ):
         super(SendTelegramMessageSpiderFinished, self).__init__(*args, **kwargs)
-        self.include_ok_messages = (
-            include_ok_messages or self.include_ok_messages
-        )
+        self.include_ok_messages = include_ok_messages or self.include_ok_messages
         self.include_error_messages = (
             include_error_messages or self.include_error_messages
         )
@@ -34,7 +32,9 @@ class SendTelegramMessageSpiderFinished(SendTelegramMessage):
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
-        kwargs = super(SendTelegramMessageSpiderFinished, cls).from_crawler_kwargs(crawler)
+        kwargs = super(SendTelegramMessageSpiderFinished, cls).from_crawler_kwargs(
+            crawler
+        )
         kwargs.update(
             {
                 "include_ok_messages": crawler.settings.get(

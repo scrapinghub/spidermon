@@ -22,9 +22,7 @@ class SimplyTelegramClient:
 
     def send_message(self, message, recipient):
         api_url = self.send_message_api.format(
-            token=self.token,
-            chat_id=recipient,
-            text=message
+            token=self.token, chat_id=recipient, text=message
         )
         r = requests.get(api_url).json()
         if r.get("ok") is False:
@@ -74,8 +72,7 @@ class SendTelegramMessage(ActionWithTemplates):
 
         self.fake = fake or self.fake
         self.manager = TelegramMessageManager(
-            sender_token=sender_token or self.sender_token,
-            fake=self.fake,
+            sender_token=sender_token or self.sender_token, fake=self.fake
         )
 
         self.recipients = recipients or self.recipients
@@ -103,10 +100,7 @@ class SendTelegramMessage(ActionWithTemplates):
         }
 
     def run_action(self):
-        self.manager.send_message(
-            to=self.recipients,
-            text=self.get_message(),
-        )
+        self.manager.send_message(to=self.recipients, text=self.get_message())
 
     def get_message(self):
         if self.include_message:
