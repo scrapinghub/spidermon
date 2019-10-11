@@ -11,8 +11,9 @@ EXTENSIONS = {"spidermon.contrib.scrapy.extensions.Spidermon": 500}
 
 SPIDERMON_SPIDER_CLOSE_MONITORS = ("tutorial.monitors.SpiderCloseMonitorSuite",)
 
-SPIDERMON_TELEGRAM_SENDER_TOKEN = ""
-SPIDERMON_TELEGRAM_RECIPIENTS = [""]
+SPIDERMON_SLACK_SENDER_TOKEN = "your_sender_token"
+SPIDERMON_SLACK_SENDER_NAME = "your_sender_name"
+SPIDERMON_SLACK_RECIPIENTS = ["@yourself", "#yourprojectchannel"]
 
 ITEM_PIPELINES = {"spidermon.contrib.scrapy.pipelines.ItemValidationPipeline": 800}
 SPIDERMON_VALIDATION_MODELS = ("tutorial.validators.QuoteItem",)
