@@ -32,7 +32,7 @@ number of items were extracted and fails if it is less than the expected thresho
                 msg='Extracted less than {} items'.format(minimum_threshold)
             )
 
-.. class:: Monitor(name=name, data=None, parent=None)
+.. autoclass:: Monitor(name=name, data=None, parent=None)
 
 A `Monitor` instance defines a monitor that includes your monitoring logic and
 has the following properties that can be used to help you implement your monitors:
