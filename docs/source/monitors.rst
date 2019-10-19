@@ -32,7 +32,6 @@ number of items were extracted and fails if it is less than the expected thresho
                 msg='Extracted less than {} items'.format(minimum_threshold)
             )
 
-.. autoclass:: Monitor(name=name, data=None, parent=None)
 
 A `Monitor` instance defines a monitor that includes your monitoring logic and
 has the following properties that can be used to help you implement your monitors:
@@ -91,7 +90,7 @@ Here is an example of how to configure a new monitor suite in your project:
 
   ``name`` suite name
 
-  ``monitors`` list of :class:`Monitor` that will be executed if this suite is enabled.
+  ``monitors`` list of :class:``spidermon.core.monitors.Monitor`` that will be executed if this suite is enabled.
 
   ``monitors_finished_actions`` list of action classes that will be executed when
   all monitors finished their execution.
@@ -234,3 +233,5 @@ These are some of the usual metrics used in the monitors:
 - the amount of items that don't contain a specific field or a set of fields
 
 - the amount of items with validation errors (missing required fields, incorrect format, values that don't match a specific regular expression, strings that are too long/short, numeric values that are too high/low, etc.)
+
+.. autoclass:: Monitor(name=name, data=None, parent=None)
