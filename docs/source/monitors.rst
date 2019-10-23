@@ -32,7 +32,6 @@ number of items were extracted and fails if it is less than the expected thresho
                 msg='Extracted less than {} items'.format(minimum_threshold)
             )
 
-
 A `Monitor` instance defines a monitor that includes your monitoring logic and
 has the following properties that can be used to help you implement your monitors:
 
@@ -44,6 +43,8 @@ has the following properties that can be used to help you implement your monitor
 
 .. _`Crawler`: https://doc.scrapy.org/en/latest/topics/api.html#scrapy.crawler.Crawler
 .. _`Spider`: https://doc.scrapy.org/en/latest/topics/spiders.html?highlight=scrapy.Spider#scrapy.spiders.Spider
+
+.. autoclass:: spidermon.core.monitors.Monitor
 
 Monitor Suites
 --------------
@@ -90,7 +91,7 @@ Here is an example of how to configure a new monitor suite in your project:
 
   ``name`` suite name
 
-  ``monitors`` list of :class:``spidermon.core.monitors.Monitor`` that will be executed if this suite is enabled.
+  ``monitors`` list of :class:`spidermon.core.monitors.Monitor` that will be executed if this suite is enabled.
 
   ``monitors_finished_actions`` list of action classes that will be executed when
   all monitors finished their execution.
@@ -208,8 +209,6 @@ The last step is to configure the suite to be executed every 60 seconds:
     SPIDERMON_PERIODIC_MONITORS = {
         'myproject.monitors.PeriodicMonitorSuite': 60,  # time in seconds
     }
-
-.. autoclass:: Monitor
 
 What to monitor?
 ----------------
