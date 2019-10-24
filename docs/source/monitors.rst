@@ -32,8 +32,9 @@ number of items were extracted and fails if it is less than the expected thresho
                 msg='Extracted less than {} items'.format(minimum_threshold)
             )
 
-A `Monitor` instance defines a monitor that includes your monitoring logic and
-has the following properties that can be used to help you implement your monitors:
+A :class:`~spidermon.core.monitors.Monitor` instance defines a monitor that includes
+your monitoring logic and has the following properties that can be used to help you
+implement your monitors:
 
 ``data.stats`` dict-like object containing the stats of the spider execution
 
