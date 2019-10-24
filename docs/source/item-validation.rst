@@ -229,17 +229,20 @@ SPIDERMON_VALIDATION_CERBERUS
 Default: ``None``
 
 A `list` containing the location of the item schema. Could be a local path
-to a `.json` file, URL or the schema itself. In the event of defining 2 or
-more schemas then items need to pass all defined schemas.
+to a `.json` file, import string of the object, URL or the schema itself. In the
+event of defining 2 or more schemas then items need to pass all defined schemas.
 
 .. code-block:: python
 
     # settings.py
 
+    from schemas import MY_SCHEMAS
+
     SPIDERMON_VALIDATION_CERBERUS = [
         '/path/to/schema.json',
         'http://example.com/mycerberusschema',
-        {"Field": {"type": "number", "required":True}}
+        {"Field": {"type": "number", "required":True}},
+        MY_SCHEMAS
     ]
 
 If you like to enforce a specific schema based on item type, you can define paths to schema for each item as `dict` as shown below:
