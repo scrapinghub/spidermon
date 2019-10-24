@@ -91,7 +91,7 @@ Here is an example of how to configure a new monitor suite in your project:
 
   ``name`` suite name
 
-  ``monitors`` list of :class:`spidermon.core.monitors.Monitor` that will be executed if this suite is enabled.
+  ``monitors`` list of :class:`~spidermon.core.monitors.Monitor` that will be executed if this suite is enabled.
 
   ``monitors_finished_actions`` list of action classes that will be executed when
   all monitors finished their execution.
