@@ -12,11 +12,7 @@ class SendTelegramMessageSpiderFinished(SendTelegramMessage):
     include_error_messages = True
 
     def __init__(
-        self,
-        include_ok_messages=None,
-        include_error_messages=None,
-        *args,
-        **kwargs
+        self, include_ok_messages=None, include_error_messages=None, *args, **kwargs
     ):
         super(SendTelegramMessageSpiderFinished, self).__init__(*args, **kwargs)
         self.include_ok_messages = include_ok_messages or self.include_ok_messages

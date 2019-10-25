@@ -78,7 +78,9 @@ class SendTelegramMessage(ActionWithTemplates):
         self.recipients = recipients or self.recipients
         self.message = message or self.message
         self.message_template = message_template or self.message_template
-        self.include_message = include_message if include_message is not None else self.include_message
+        self.include_message = (
+            include_message if include_message is not None else self.include_message
+        )
         if not self.fake and not self.recipients:
             raise NotConfigured(
                 "You must provide at least one recipient for the message."
@@ -94,8 +96,7 @@ class SendTelegramMessage(ActionWithTemplates):
                 "SPIDERMON_TELEGRAM_MESSAGE_TEMPLATE"
             ),
             "include_message": crawler.settings.getbool(
-                "SPIDERMON_TELEGRAM_INCLUDE_MESSAGE",
-                True
+                "SPIDERMON_TELEGRAM_INCLUDE_MESSAGE", True
             ),
             "fake": crawler.settings.getbool("SPIDERMON_TELEGRAM_FAKE"),
         }
