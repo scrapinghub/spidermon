@@ -94,19 +94,18 @@ class SendTelegramMessage(ActionWithTemplates):
                 "SPIDERMON_TELEGRAM_MESSAGE_TEMPLATE"
             ),
             "include_message": crawler.settings.getbool(
-                "SPIDERMON_TELEGRAM_INCLUDE_MESSAGE"
+                "SPIDERMON_TELEGRAM_INCLUDE_MESSAGE",
+                True
             ),
             "fake": crawler.settings.getbool("SPIDERMON_TELEGRAM_FAKE"),
         }
 
     def run_action(self):
-        self.manager.send_message(to=self.recipients, text=self.get_message())
+        if self.include_message:
+            self.manager.send_message(to=self.recipients, text=self.get_message())
 
     def get_message(self):
-        if self.include_message:
-            if self.message:
-                return self.render_text_template(self.message)
-            else:
-                return self.render_template(self.message_template)
+        if self.message:
+            return self.render_text_template(self.message)
         else:
-            return None
+            return self.render_template(self.message_template)
