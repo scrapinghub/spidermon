@@ -299,15 +299,13 @@ SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX
 .. _`Slack credentials`: https://api.slack.com/docs/token-types
 
 Telegram action
-============
+===============
 
 
 This action allows you to send custom messages to a `Telegram`_ channel, group or user
 using a bot when your monitor suites finish their execution.
 
-To use this action you need to:
-
-#.  Provide the `Telegram bot token`_ in your ``settings.py`` file as follows:
+To use this action you need to provide the `Telegram bot token`_ in your ``settings.py`` file as follows:
 
 .. code-block:: python
 
@@ -323,17 +321,17 @@ A notification will look like the following:
 
 Follow :ref:`these steps <configuring-telegram-bot>` to configure your Telegram bot.
 
-The following settings are the minimum needed to make this action works:
+The following settings are the minimum needed to make this action work:
 
 .. _SPIDERMON_TELEGRAM_RECIPIENTS:
 
 SPIDERMON_TELEGRAM_RECIPIENTS
---------------------------
+-----------------------------
 
-List of recipients of the message. It could be an user id, group id or channel name.
+List of recipients of the message. It could be a user id, group id or channel name.
 
 SPIDERMON_TELEGRAM_SENDER_TOKEN
-----------------------------
+-------------------------------
 
 `Bot Authorization Token` of your bot.
 
@@ -346,7 +344,7 @@ Other settings available:
 .. _SPIDERMON_TELEGRAM_FAKE:
 
 SPIDERMON_TELEGRAM_FAKE
---------------------
+-----------------------
 
 Default: ``False``
 
@@ -355,30 +353,28 @@ If set `True`, the Telegram message content will be in the logs but nothing will
 .. _SPIDERMON_TELEGRAM_INCLUDE_MESSAGE:
 
 SPIDERMON_TELEGRAM_INCLUDE_MESSAGE
--------------------------------
+----------------------------------
+
+Default: ``True``
+
+If set `False`, no message will be sent.
 
 .. _SPIDERMON_TELEGRAM_MESSAGE:
 
 SPIDERMON_TELEGRAM_MESSAGE
------------------------
+--------------------------
+
+The message to be sent, it supports Jinja2 template formatting.
 
 .. _SPIDERMON_TELEGRAM_MESSAGE_TEMPLATE:
 
 SPIDERMON_TELEGRAM_MESSAGE_TEMPLATE
---------------------------------
+-----------------------------------
 
-.. _SPIDERMON_TELEGRAM_NOTIFIER_INCLUDE_REPORT_LINK:
-
-SPIDERMON_TELEGRAM_NOTIFIER_INCLUDE_REPORT_LINK
---------------------------------------------
-
-.. _SPIDERMON_TELEGRAM_NOTIFIER_REPORT_INDEX:
-
-SPIDERMON_TELEGRAM_NOTIFIER_REPORT_INDEX
--------------------------------------
+Path to a Jinja2 template file to format messages sent by the Telegram Action.
 
 .. _`Telegram`: https://telegram.org/
-.. _`Telegram bot documentation`: https://core.telegram.org/bots
+.. _`Telegram bot token`: https://core.telegram.org/bots
 
 
 Job tags action
