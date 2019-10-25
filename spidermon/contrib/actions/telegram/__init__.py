@@ -18,7 +18,6 @@ class SimplyTelegramClient:
 
     def __init__(self, token):
         self.token = token
-        self.logger = logging.getLogger(self.__class__.__name__)
 
     def send_message(self, message, recipient):
         api_url = self.send_message_api.format(
@@ -26,7 +25,7 @@ class SimplyTelegramClient:
         )
         r = requests.get(api_url).json()
         if r.get("ok") is False:
-            self.logger.error(r)
+            logger.error("Failed to send message. Telegram api error: %s", r.text)
 
 
 class TelegramMessageManager:
