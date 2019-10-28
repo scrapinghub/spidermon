@@ -4,18 +4,12 @@ from scrapy.utils.test import get_crawler
 from spidermon.contrib.actions.email import SendEmail
 
 
-class SendEmailTest(SendEmail):
-    """A helper class to override the base class behavior of formatting templates.
-    This way no setup is required for a simple test."""
-
-    def get_subject(self):
-        return self.subject
-
-    def get_body_text(self):
-        return self.body_text
-
-    def get_body_html(self):
-        return self.body_html
+@pytest.fixture
+def mock_render_template(mocker):
+    '''Mock functions that render templates to return the raw value'''
+    mocker.patch.object(SendEmail, 'get_subject', lambda s: s.subject)
+    mocker.patch.object(SendEmail, 'get_body_text', lambda s: s.body_text)
+    mocker.patch.object(SendEmail, 'get_body_html', lambda s: s.body_html)
 
 
 @pytest.mark.parametrize(
@@ -40,7 +34,7 @@ class SendEmailTest(SendEmail):
         ),
     ],
 )
-def test_email_message_to(settings_to, expected_to):
+def test_email_message_to(mock_render_template, settings_to, expected_to):
     crawler = get_crawler(
         settings_dict={
             "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
@@ -51,7 +45,7 @@ def test_email_message_to(settings_to, expected_to):
             "SPIDERMON_BODY_TEXT": "some text",
         }
     )
-    send_email = SendEmailTest.from_crawler(crawler)
+    send_email = SendEmail.from_crawler(crawler)
 
     message = send_email.get_message()
 
@@ -80,7 +74,7 @@ def test_email_message_to(settings_to, expected_to):
         ),
     ],
 )
-def test_email_message_cc(settings_cc, expected_cc):
+def test_email_message_cc(mock_render_template, settings_cc, expected_cc):
     crawler = get_crawler(
         settings_dict={
             "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
@@ -92,7 +86,7 @@ def test_email_message_cc(settings_cc, expected_cc):
             "SPIDERMON_BODY_TEXT": "some text",
         }
     )
-    send_email = SendEmailTest.from_crawler(crawler)
+    send_email = SendEmail.from_crawler(crawler)
 
     message = send_email.get_message()
 
@@ -121,7 +115,7 @@ def test_email_message_cc(settings_cc, expected_cc):
         ),
     ],
 )
-def test_email_message_bcc(settings_bcc, expected_bcc):
+def test_email_message_bcc(mock_render_template, settings_bcc, expected_bcc):
     crawler = get_crawler(
         settings_dict={
             "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
@@ -133,7 +127,7 @@ def test_email_message_bcc(settings_bcc, expected_bcc):
             "SPIDERMON_BODY_TEXT": "some text",
         }
     )
-    send_email = SendEmailTest.from_crawler(crawler)
+    send_email = SendEmail.from_crawler(crawler)
 
     message = send_email.get_message()
 
