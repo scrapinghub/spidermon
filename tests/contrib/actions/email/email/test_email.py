@@ -6,10 +6,10 @@ from spidermon.contrib.actions.email import SendEmail
 
 @pytest.fixture
 def mock_render_template(mocker):
-    '''Mock functions that render templates to return the raw value'''
-    mocker.patch.object(SendEmail, 'get_subject', lambda s: s.subject)
-    mocker.patch.object(SendEmail, 'get_body_text', lambda s: s.body_text)
-    mocker.patch.object(SendEmail, 'get_body_html', lambda s: s.body_html)
+    """Mock functions that render templates to return the raw value"""
+    mocker.patch.object(SendEmail, "get_subject", lambda s: s.subject)
+    mocker.patch.object(SendEmail, "get_body_text", lambda s: s.body_text)
+    mocker.patch.object(SendEmail, "get_body_html", lambda s: s.body_html)
 
 
 @pytest.mark.parametrize(
