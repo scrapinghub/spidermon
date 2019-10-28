@@ -18,28 +18,28 @@ class SendEmailTest(SendEmail):
         return self.body_html
 
 
-@pytest.mark.parametrize("settings_to, expected_to", [
-    (
-        "to.someone@somewhere.com",
-        "to.someone@somewhere.com"
-    ),
-    (
-        ("to.someone@somewhere.com", "to.someone.2@somewhere.com"),
-        "to.someone@somewhere.com, to.someone.2@somewhere.com"
-    ),
-    (
-        " to.someone@somewhere.com, to.someone.2@somewhere.com ",
-        "to.someone@somewhere.com, to.someone.2@somewhere.com"
-    ),
-    (
-        "to.someone@somewhere.com,to.someone.2@somewhere.com",
-        "to.someone@somewhere.com, to.someone.2@somewhere.com"
-    ),
-    (
-        ["to.someone@somewhere.com", "to.someone.2@somewhere.com"],
-        "to.someone@somewhere.com, to.someone.2@somewhere.com"
-    )
-])
+@pytest.mark.parametrize(
+    "settings_to, expected_to",
+    [
+        ("to.someone@somewhere.com", "to.someone@somewhere.com"),
+        (
+            ("to.someone@somewhere.com", "to.someone.2@somewhere.com"),
+            "to.someone@somewhere.com, to.someone.2@somewhere.com",
+        ),
+        (
+            " to.someone@somewhere.com, to.someone.2@somewhere.com ",
+            "to.someone@somewhere.com, to.someone.2@somewhere.com",
+        ),
+        (
+            "to.someone@somewhere.com,to.someone.2@somewhere.com",
+            "to.someone@somewhere.com, to.someone.2@somewhere.com",
+        ),
+        (
+            ["to.someone@somewhere.com", "to.someone.2@somewhere.com"],
+            "to.someone@somewhere.com, to.someone.2@somewhere.com",
+        ),
+    ],
+)
 def test_email_message_to(settings_to, expected_to):
     crawler = get_crawler(
         settings_dict={
@@ -58,28 +58,28 @@ def test_email_message_to(settings_to, expected_to):
     assert message["To"] == expected_to
 
 
-@pytest.mark.parametrize("settings_cc, expected_cc", [
-    (
-        "cc.someone@somewhere.com",
-        "cc.someone@somewhere.com"
-    ),
-    (
-        ("cc.someone@somewhere.com", "cc.someone.2@somewhere.com"),
-        "cc.someone@somewhere.com, cc.someone.2@somewhere.com"
-    ),
-    (
-        " cc.someone@somewhere.com, cc.someone.2@somewhere.com ",
-        "cc.someone@somewhere.com, cc.someone.2@somewhere.com"
-    ),
-    (
-        "cc.someone@somewhere.com,cc.someone.2@somewhere.com",
-        "cc.someone@somewhere.com, cc.someone.2@somewhere.com"
-    ),
-    (
-        ["cc.someone@somewhere.com", "cc.someone.2@somewhere.com"],
-        "cc.someone@somewhere.com, cc.someone.2@somewhere.com"
-    )
-])
+@pytest.mark.parametrize(
+    "settings_cc, expected_cc",
+    [
+        ("cc.someone@somewhere.com", "cc.someone@somewhere.com"),
+        (
+            ("cc.someone@somewhere.com", "cc.someone.2@somewhere.com"),
+            "cc.someone@somewhere.com, cc.someone.2@somewhere.com",
+        ),
+        (
+            " cc.someone@somewhere.com, cc.someone.2@somewhere.com ",
+            "cc.someone@somewhere.com, cc.someone.2@somewhere.com",
+        ),
+        (
+            "cc.someone@somewhere.com,cc.someone.2@somewhere.com",
+            "cc.someone@somewhere.com, cc.someone.2@somewhere.com",
+        ),
+        (
+            ["cc.someone@somewhere.com", "cc.someone.2@somewhere.com"],
+            "cc.someone@somewhere.com, cc.someone.2@somewhere.com",
+        ),
+    ],
+)
 def test_email_message_cc(settings_cc, expected_cc):
     crawler = get_crawler(
         settings_dict={
@@ -99,28 +99,28 @@ def test_email_message_cc(settings_cc, expected_cc):
     assert message["Cc"] == expected_cc
 
 
-@pytest.mark.parametrize("settings_bcc, expected_bcc", [
-    (
-        "bcc.someone@somewhere.com",
-        "bcc.someone@somewhere.com"
-    ),
-    (
-        ("bcc.someone@somewhere.com", "bcc.someone.2@somewhere.com"),
-        "bcc.someone@somewhere.com, bcc.someone.2@somewhere.com"
-    ),
-    (
-        " bcc.someone@somewhere.com, bcc.someone.2@somewhere.com ",
-        "bcc.someone@somewhere.com, bcc.someone.2@somewhere.com"
-    ),
-    (
-        "bcc.someone@somewhere.com,bcc.someone.2@somewhere.com",
-        "bcc.someone@somewhere.com, bcc.someone.2@somewhere.com"
-    ),
-    (
-        ["bcc.someone@somewhere.com", "bcc.someone.2@somewhere.com"],
-        "bcc.someone@somewhere.com, bcc.someone.2@somewhere.com"
-    )
-])
+@pytest.mark.parametrize(
+    "settings_bcc, expected_bcc",
+    [
+        ("bcc.someone@somewhere.com", "bcc.someone@somewhere.com"),
+        (
+            ("bcc.someone@somewhere.com", "bcc.someone.2@somewhere.com"),
+            "bcc.someone@somewhere.com, bcc.someone.2@somewhere.com",
+        ),
+        (
+            " bcc.someone@somewhere.com, bcc.someone.2@somewhere.com ",
+            "bcc.someone@somewhere.com, bcc.someone.2@somewhere.com",
+        ),
+        (
+            "bcc.someone@somewhere.com,bcc.someone.2@somewhere.com",
+            "bcc.someone@somewhere.com, bcc.someone.2@somewhere.com",
+        ),
+        (
+            ["bcc.someone@somewhere.com", "bcc.someone.2@somewhere.com"],
+            "bcc.someone@somewhere.com, bcc.someone.2@somewhere.com",
+        ),
+    ],
+)
 def test_email_message_bcc(settings_bcc, expected_bcc):
     crawler = get_crawler(
         settings_dict={
