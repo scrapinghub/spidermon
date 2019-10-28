@@ -74,9 +74,9 @@ class SendEmail(ActionWithTemplates):
             "subject_template": crawler.settings.get(
                 "SPIDERMON_EMAIL_SUBJECT_TEMPLATE"
             ),
-            "to": crawler.settings.getlist("SPIDERMON_EMAIL_TO"),
-            "cc": crawler.settings.getlist("SPIDERMON_EMAIL_CC"),
-            "bcc": crawler.settings.getlist("SPIDERMON_EMAIL_BCC"),
+            "to": cls.getlist(crawler.settings, "SPIDERMON_EMAIL_TO"),
+            "cc": cls.getlist(crawler.settings, "SPIDERMON_EMAIL_CC"),
+            "bcc": cls.getlist(crawler.settings, "SPIDERMON_EMAIL_BCC"),
             "reply_to": crawler.settings.get("SPIDERMON_EMAIL_REPLY_TO"),
             "body_text": crawler.settings.get("SPIDERMON_BODY_TEXT"),
             "body_text_template": crawler.settings.get("SPIDERMON_BODY_TEXT_TEMPLATE"),
@@ -85,6 +85,10 @@ class SendEmail(ActionWithTemplates):
             "fake": crawler.settings.getbool("SPIDERMON_EMAIL_FAKE"),
             "context": crawler.settings.getdict("SPIDERMON_EMAIL_CONTEXT"),
         }
+
+    @staticmethod
+    def getlist(settings, entry):
+        return [v.strip() for v in settings.getlist(entry)]
 
     def run_action(self):
         message = self.get_message()
