@@ -62,7 +62,7 @@ def test_init_with_valid_params():
 @patch("spidermon.contrib.actions.email.logger")
 def test_run_action_with_fake_present(logger, email):
     email.run_action()
-    email.get_message.assert_called_once()
+    email.get_message.assert_called_once_with()
     logger.info.assert_called_once_with(email.get_message().as_string())
     email.send_message.assert_not_called()
 
@@ -71,7 +71,7 @@ def test_run_action_with_fake_present(logger, email):
 def test_run_action_without_fake_present(logger, email):
     email.fake = False
     email.run_action()
-    email.get_message.assert_called_once()
+    email.get_message.assert_called_once_with()
     logger.info.assert_not_called()
     email.send_message.assert_called_once_with(email.get_message())
 
@@ -157,9 +157,9 @@ def test_get_message_without_body_html_cc_bcc_reply_to(MIMEText):
     email.get_body_text = MagicMock(return_value=BODY_TEXT)
     email.get_body_html = MagicMock(return_value="")
     message = email.get_message()
-    email.get_subject.assert_called_once()
-    email.get_body_text.assert_called_once()
-    email.get_body_html.assert_called_once()
+    email.get_subject.assert_called_once_with()
+    email.get_body_text.assert_called_once_with()
+    email.get_body_html.assert_called_once_with()
 
     assert message["Subject"] == SUBJECT
     assert message["From"] == SENDER
@@ -184,9 +184,9 @@ def test_get_message_with_body_html_cc_bcc_reply_to(MIMEText):
     email.get_body_text = MagicMock(return_value=BODY_TEXT)
     email.get_body_html = MagicMock(return_value=BODY_HTML)
     message = email.get_message()
-    email.get_subject.assert_called_once()
-    email.get_body_text.assert_called_once()
-    email.get_body_html.assert_called_once()
+    email.get_subject.assert_called_once_with()
+    email.get_body_text.assert_called_once_with()
+    email.get_body_html.assert_called_once_with()
 
     assert message["Subject"] == SUBJECT
     assert message["From"] == SENDER
