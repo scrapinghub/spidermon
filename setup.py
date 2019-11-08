@@ -5,11 +5,10 @@ test_requirements = [
     "pytest-cov",
     "pytest-mock",
     "jinja2",
-    "lxml;python_version!='3.4'",
-    "lxml<=4.3.5;python_version=='3.4'",
+    "lxml",
     "scrapy",
     "slackclient>=1.3.0,<2.0.0",
-    'Twisted<=19.2.0;python_version=="3.4"',
+    "twisted>=19.7.0",
 ]
 
 setup(
@@ -53,7 +52,6 @@ setup(
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
