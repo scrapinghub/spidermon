@@ -41,7 +41,7 @@ class JobTagsActionTests(TestCase):
         job_tags.process_tags = MagicMock()
         job_tags.run_action()
         job_tags.process_tags.assert_called_once_with(metadata)
-        job_tags.data.job.metadata.save.assert_called_once()
+        job_tags.data.job.metadata.save.assert_called_once_with()
 
 
 def test_add_job_tags_properties():
