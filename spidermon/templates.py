@@ -1,10 +1,12 @@
 from __future__ import absolute_import
+
+import datetime
 import inspect
 import os
-import datetime
 import pprint as pretty_print
 
-from jinja2 import Environment, FileSystemLoader, Template
+import jinja2
+from jinja2 import Environment, FileSystemLoader
 
 DEFAULT_TEMPLATE_FOLDERS = ["templates"]
 
@@ -36,6 +38,18 @@ FILTERS = {
 GLOBALS = {"datetime": datetime, "str": str}
 
 
+def get_environment(paths):
+    loader = FileSystemLoader(paths)
+    environment = Environment(loader=loader, lstrip_blocks=True, trim_blocks=True)
+    for filter_name, filter in FILTERS.items():
+        environment.filters[filter_name] = filter
+
+    for global_name, global_value in GLOBALS.items():
+        environment.globals[global_name] = global_value
+
+    return environment
+
+
 class TemplateLoader(object):
     def __init__(self):
         self.paths = []
@@ -62,16 +76,15 @@ class TemplateLoader(object):
             self.add_path(folder)
 
     def reload_env(self):
-        loader = FileSystemLoader(self.paths)
-        self.env = Environment(loader=loader, lstrip_blocks=True, trim_blocks=True)
-        for filter_name, filter in FILTERS.items():
-            self.env.filters[filter_name] = filter
-
-        for global_name, global_value in GLOBALS.items():
-            self.env.globals[global_name] = global_value
+        self.env = get_environment(self.paths)
 
     def get_template(self, name):
-        return self.env.get_template(name)
+        if os.path.isabs(name):  # If provided an absolute path to a template
+            environment = get_environment(os.path.dirname(name))
+            template = environment.get_template(os.path.basename(name))
+        else:
+            template = self.env.get_template(name)
+        return template
 
 
 template_loader = TemplateLoader()

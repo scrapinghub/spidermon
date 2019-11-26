@@ -2,8 +2,9 @@ from __future__ import absolute_import
 import os
 import inspect
 
+from jinja2 import Template
 from spidermon.core.actions import ActionOptionsMetaclass, Action
-from spidermon.templates import template_loader, Template
+from spidermon.templates import template_loader
 import six
 
 
@@ -35,10 +36,25 @@ class ActionWithTemplates(six.with_metaclass(ActionWithTemplatesMetaclass, Actio
         return template_loader.get_template(name)
 
     def render_text_template(self, template):
+        """Render a Jinja2 template given in *template* as a string.
+
+        For example::
+
+            action.render_text_template('{{ monitors_failed }} monitors failed!')
+        """
         template = Template(template)
         return template.render(self.get_template_context())
 
     def render_template(self, template):
+        """Render the Jinja2 template file named *template*.
+
+        It uses :data:`spidermon.templates.template_loader` to resolve
+        *template* to an actual template file.
+
+        For example::
+
+            action.render_template('mytemplate.html')
+        """
         template = self.get_template(template)
         return template.render(self.get_template_context())
 

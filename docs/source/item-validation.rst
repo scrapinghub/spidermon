@@ -102,7 +102,7 @@ Default: ``False``
 When set to ``True``, this adds a field called `_validation` to the item that contains any validation errors.
 You can change the name of the field by assigning a name to :ref:`SPIDERMON_VALIDATION_ERRORS_FIELD`:
 
-.. code-block:: python
+.. code-block:: js
 
     {
         '_validation': defaultdict(<class 'list'>, {'author_url': ['Invalid URL']}),
@@ -147,7 +147,7 @@ that need to be validated.
     # settings.py
 
     SPIDERMON_VALIDATION_MODELS: [
-        'myproject.spiders.validators.DummyItemModel'
+        'myproject.validators.DummyItemModel'
     ]
 
 If you are working on a spider that produces multiple items types, you can define it
@@ -158,8 +158,8 @@ as a `dict`:
     # settings.py
 
     SPIDERMON_VALIDATION_MODELS: {
-        DummyItem: 'myproject.spiders.validators.DummyItemModel',
-        OtherItem: 'myproject.spiders.validators.OtherItemModel',
+        DummyItem: 'myproject.validators.DummyItemModel',
+        OtherItem: 'myproject.validators.OtherItemModel',
     }
 
 .. _SPIDERMON_VALIDATION_SCHEMAS:
@@ -192,6 +192,45 @@ as a `dict`:
         DummyItem: '/path/to/dummyitem_schema.json',
         OtherItem: '/path/to/otheritem_schema.json',
     }
+
+Validation in Monitors
+----------------------
+
+You can build a monitor that checks the validation problems and raises errors if there are too many.
+You can base it on ``spidermon.contrib.monitors.mixins.ValidationMonitorMixin`` which provides methods
+that can be useful for this. There are 2 groups of methods, for checking all validation errors and
+specifically for checking ``missing_required_field`` errors. All of these methods rely on the job stats,
+reading ``spidermon/validation/fields/errors/*`` entries.
+
+* ``check_missing_required_fields``, ``check_missing_required_field`` - check that number of
+  ``missing_required_field`` errors is less than the specified threshold.
+* ``check_missing_required_fields_percent``, ``check_missing_required_field_percent`` -  check that
+  percent of ``missing_required_field`` errors is less than the specified threshold.
+* ``check_fields_errors``, ``check_field_errors`` - check that the number of specified (or all) errors
+  is less than the specified threshold.
+* ``check_fields_errors_percent``, ``check_field_errors_percent`` - check that the percent of specified
+  (or all) errors is less than the specified threshold.
+
+All ``*_field`` method take a name of one field, while all ``*_fields`` method take a list of field names.
+
+.. warning:: The default behavior for ``*_fields`` methods when no field names is passed is to combine
+ error counts for all fields instead of checking each field separately. This is usually not very useful
+ and inconsistent with the behavior when a list of fields is passed, so you should set the
+ ``correct_field_list_handling`` monitor attribute to get the correct behavior. This will be the default
+ in some later version.
+
+Some examples:
+
+.. code-block:: python
+
+    # checks that each of field2 and field3 is missing in no more than 10 items
+    self.check_missing_required_fields(field_names=['field2', 'field3'], allowed_count=10)
+
+    # checks that field2 has errors in no more than 15% of items
+    self.check_field_errors_percent(field_name='field2', allowed_percent=15)
+
+    # checks that no errors is present in any fields
+    self.check_field_errors_percent()
 
 .. _`schematics`: https://schematics.readthedocs.io/en/latest/
 .. _`schematics documentation`: https://schematics.readthedocs.io/en/latest/

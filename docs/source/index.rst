@@ -31,8 +31,10 @@ Contents
    getting-started
    monitors
    item-validation
+   stats-collection
+   expression-monitors
    settings
+   configuring-slack-for-spidermon
    actions
    mixins
    changelog
-

@@ -55,6 +55,8 @@ And our spider code:
                 )
             )
 
+.. _enabling-spidermon:
+
 Enabling Spidermon
 ------------------
 
@@ -207,8 +209,8 @@ a Slack channel using a bot when a monitor fails.
             SendSlackMessageSpiderFinished,
         ]
 
-After enabling the action, you need to provide the `Slack credentials`_ in your `settings.py`
-file as follows:
+After enabling the action, you need to provide the `Slack
+credentials`_. You can access the required credentials by following these steps to :ref:`configuring-slack-bot`. Later, fill the credentials in your `settings.py` as follows:
 
 .. code-block:: python
 
@@ -328,6 +330,9 @@ a failure when we have a item validation error:
 .. code-block:: python
 
     # monitors.py
+
+    from spidermon.contrib.monitors.mixins import StatsMonitorMixin
+
     # (...other monitors...)
 
     @monitors.name('Item validation')
@@ -369,7 +374,7 @@ match the schema:
 
 The resulted item will look like this:
 
-.. code-block:: json
+.. code-block:: js
 
     {
         '_validation': defaultdict(
