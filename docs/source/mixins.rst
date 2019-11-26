@@ -4,24 +4,25 @@
 Mixins
 ======
 
-What's a Mixin in Python?
--------------------------
+What is a Mixin?
+----------------
 
-A mixin is a special kind of multiple inheritance. There are two main situations where mixins are used:
+A mixin is a class that implements one or more features that you can apply to
+any class through multiple inheritance. For more information, see `What is a
+mixin, and why are they useful?`_
 
-* You want to provide a lot of optional features for a class.
-* You want to use one particular feature in a lot of different classes.
+.. _What is a mixin, and why are they useful?: https://stackoverflow.com/q/533631
 
-That's a little definition, but if you want more info you can see that `StackOverFlow post`_, or this `blog`_
+Spidermon offers the following built-in mixins:
 
-.. _`StackOverFLow post`: https://stackoverflow.com/questions/533631/what-is-a-mixin-and-why-are-they-useful
-.. _`blog`: https://easyaspython.com/mixins-for-fun-and-profit-cb9962760556
-
-With Spidermon can use four mixins: `StatsMonitorMixin`_, `ValidationMonitorMixin`_, `SpiderMonitorMixin`_, `JobMonitorMixin`_ mixins
+- `JobMonitorMixin`_
+- `SpiderMonitorMixin`_
+- `StatsMonitorMixin`_
+- `ValidationMonitorMixin`_.
 
 .. _`StatsMonitorMixin`:
 
-StatsMonitorMixin 
+StatsMonitorMixin
 -----------------
 
 `StatsMonitorMixin code`_
@@ -29,7 +30,7 @@ StatsMonitorMixin
 .. _`StatsMonitorMixin code`: https://github.com/scrapinghub/spidermon/blob/master/spidermon/contrib/monitors/mixins/stats.py
 
 
-We have an example in the next example: 
+We have an example in the next example:
 
 .. code-block:: python
 
@@ -94,7 +95,7 @@ SpiderMonitorMixin
 
 This class use `StatsMonitorMixin`_ and `JobMonitorMixin`_ . `SpiderMonitorMixin` add the `crawler`, `spider` and `responses` property for be use like the examples above.
 
-This mixin create an `_response` property that is an object for `ResponsesInfo` class. This class has the stats for the response, you can get the number of all codes for requests, 
+This mixin create an `_response` property that is an object for `ResponsesInfo` class. This class has the stats for the response, you can get the number of all codes for requests,
 informational, successfuls, redirections, bad requests, internal server errors, others and errors.
 
 .. _`ValidationMonitorMixin`:
@@ -106,4 +107,4 @@ ValidationMonitorMixin
 
 .. _`ValidationMonitorMixin code`: https://github.com/scrapinghub/spidermon/blob/master/spidermon/contrib/monitors/mixins/validation.py
 
-This class use `StatsMonitorMixin`_ and add the `_validation` property. 
+This class use `StatsMonitorMixin`_ and add the `_validation` property.
