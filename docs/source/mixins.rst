@@ -28,20 +28,12 @@ Spidermon built-in mixins
 JobMonitorMixin
 ~~~~~~~~~~~~~~~
 
-`JobMonitorMixin code`_
-
-.. _`JobMonitorMixin code`: https://github.com/scrapinghub/spidermon/blob/master/spidermon/contrib/monitors/mixins/job.py
-
 This is similar to `StatsMonitorMixin`_. If the object don't have the property `data.job`, it will raise an exception
 
 .. _`SpiderMonitorMixin`:
 
 SpiderMonitorMixin
 ~~~~~~~~~~~~~~~~~~
-
-`SpiderMonitorMixin code`_
-
-.. _`SpiderMonitorMixin code`: https://github.com/scrapinghub/spidermon/blob/master/spidermon/contrib/monitors/mixins/spider.py
 
 This class use `StatsMonitorMixin`_ and `JobMonitorMixin`_ . `SpiderMonitorMixin` add the `crawler`, `spider` and `responses` property for be use like the examples above.
 
@@ -52,11 +44,6 @@ informational, successfuls, redirections, bad requests, internal server errors, 
 
 StatsMonitorMixin
 ~~~~~~~~~~~~~~~~~
-
-`StatsMonitorMixin code`_
-
-.. _`StatsMonitorMixin code`: https://github.com/scrapinghub/spidermon/blob/master/spidermon/contrib/monitors/mixins/stats.py
-
 
 We have an example in the next example:
 
@@ -104,9 +91,5 @@ So, why use mixin? Mixin is used to provide optional features for a class, for t
 
 ValidationMonitorMixin
 ~~~~~~~~~~~~~~~~~~~~~~
-
-`ValidationMonitorMixin code`_
-
-.. _`ValidationMonitorMixin code`: https://github.com/scrapinghub/spidermon/blob/master/spidermon/contrib/monitors/mixins/validation.py
 
 This class use `StatsMonitorMixin`_ and add the `_validation` property.
