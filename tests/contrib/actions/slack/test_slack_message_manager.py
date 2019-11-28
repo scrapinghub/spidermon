@@ -55,8 +55,8 @@ def test_api_call_with_error_should_log_error_msg(mocker, logger_error):
 
 def test_load_recipients_list_from_crawler_settings():
     settings = {
-        'SPIDERMON_SLACK_RECIPIENTS': 'foo,bar',
+        "SPIDERMON_SLACK_RECIPIENTS": "foo,bar",
     }
     crawler = get_crawler(settings)
     kwargs = SendSlackMessage.from_crawler_kwargs(crawler)
-    assert kwargs['recipients'] == ['foo', 'bar']
+    assert kwargs["recipients"] == ["foo", "bar"]
