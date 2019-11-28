@@ -58,5 +58,5 @@ def test_load_recipients_list_from_crawler_settings():
         'SPIDERMON_SLACK_RECIPIENTS': 'foo,bar',
     }
     crawler = get_crawler(settings)
-    sender = SendSlackMessage.from_crawler_kwargs(crawler)
-    assert sender['recipients'] == ['foo', 'bar']
+    kwargs = SendSlackMessage.from_crawler_kwargs(crawler)
+    assert kwargs['recipients'] == ['foo', 'bar']
