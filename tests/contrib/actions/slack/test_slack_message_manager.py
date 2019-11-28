@@ -9,7 +9,7 @@ from spidermon.contrib.actions.slack import (
 )
 
 
-def get_crawler(settings: dict = None):
+def get_crawler(settings=None):
     runner = CrawlerRunner(settings)
     return runner.create_crawler(Spider)
 
