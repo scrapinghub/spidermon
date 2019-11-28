@@ -1,5 +1,17 @@
 import pytest
-from spidermon.contrib.actions.slack import SlackMessageManager
+
+from scrapy.crawler import CrawlerRunner
+from scrapy.spiders import Spider
+
+from spidermon.contrib.actions.slack import (
+    SlackMessageManager,
+    SendSlackMessage,
+)
+
+
+def get_crawler(settings: dict = None):
+    runner = CrawlerRunner(settings)
+    return runner.create_crawler(Spider)
 
 
 @pytest.fixture
@@ -39,3 +51,12 @@ def test_api_call_with_error_should_log_error_msg(mocker, logger_error):
 
     assert logger_error.call_count == 1
     assert error_msg in logger_error.call_args_list[0][0]
+
+
+def test_load_recipients_list_from_crawler_settings():
+    settings = {
+        'SPIDERMON_SLACK_RECIPIENTS': 'foo,bar',
+    }
+    crawler = get_crawler(settings)
+    sender = SendSlackMessage.from_crawler_kwargs(crawler)
+    assert sender['recipients'] == ['foo', 'bar']
