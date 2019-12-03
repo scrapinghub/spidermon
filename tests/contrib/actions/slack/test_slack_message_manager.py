@@ -47,9 +47,10 @@ def test_api_call_with_error_should_log_error_msg(mocker, logger_error):
     assert error_msg in logger_error.call_args_list[0][0]
 
 
-def test_load_recipients_list_from_crawler_settings():
+@pytest.mark.parametrize("recipients", ["foo,bar", ["foo", "bar"]])
+def test_load_recipients_list_from_crawler_settings(recipients):
     settings = {
-        "SPIDERMON_SLACK_RECIPIENTS": "foo,bar",
+        "SPIDERMON_SLACK_RECIPIENTS": recipients,
     }
     crawler = get_crawler(settings_dict=settings)
     kwargs = SendSlackMessage.from_crawler_kwargs(crawler)
