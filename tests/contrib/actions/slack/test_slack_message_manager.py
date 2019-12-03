@@ -1,17 +1,11 @@
 import pytest
 
-from scrapy.crawler import CrawlerRunner
-from scrapy.spiders import Spider
+from scrapy.utils.test import get_crawler
 
 from spidermon.contrib.actions.slack import (
     SlackMessageManager,
     SendSlackMessage,
 )
-
-
-def get_crawler(settings=None):
-    runner = CrawlerRunner(settings)
-    return runner.create_crawler(Spider)
 
 
 @pytest.fixture
@@ -57,6 +51,6 @@ def test_load_recipients_list_from_crawler_settings():
     settings = {
         "SPIDERMON_SLACK_RECIPIENTS": "foo,bar",
     }
-    crawler = get_crawler(settings)
+    crawler = get_crawler(settings_dict=settings)
     kwargs = SendSlackMessage.from_crawler_kwargs(crawler)
     assert kwargs["recipients"] == ["foo", "bar"]
