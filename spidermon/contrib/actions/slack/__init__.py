@@ -94,6 +94,12 @@ class SlackMessageManager:
 
     def _api_call(self, method, **kwargs):
         response = self._client.api_call(method, **kwargs)
+
+        has_errors = not response.get("ok")
+        if has_errors:
+            error_msg = response.get("error", {}).get("msg", "Slack API error")
+            logger.error(error_msg)
+
         if isinstance(response, six.string_types):  # slackclient < v1.0
             response = json.loads(response)
         return response
