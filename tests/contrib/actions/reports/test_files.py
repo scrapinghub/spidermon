@@ -29,7 +29,9 @@ def test_init_with_valid_params():
 
 
 def test_after_render_report(mocker):
-    _open = mocker.patch("spidermon.contrib.actions.reports.files.open", new_callable=mocker.mock_open())
+    _open = mocker.patch(
+        "spidermon.contrib.actions.reports.files.open", new_callable=mocker.mock_open()
+    )
     report = CreateFileReport(template=TEMPLATE, filename=FILENAME)
     report.render_template = mocker.MagicMock(return_value="render_template")
     report.render_text_template = mocker.MagicMock(return_value="rendered_filename")
