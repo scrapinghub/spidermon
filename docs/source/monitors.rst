@@ -32,7 +32,8 @@ number of items were extracted and fails if it is less than the expected thresho
                 msg='Extracted less than {} items'.format(minimum_threshold)
             )
 
-A `Monitor` instance has the following properties that can be used to help you
+A :class:`~spidermon.core.monitors.Monitor` instance defines a monitor that includes
+your monitoring logic and has the following properties that can be used to help you
 implement your monitors:
 
 ``data.stats`` dict-like object containing the stats of the spider execution
@@ -43,6 +44,8 @@ implement your monitors:
 
 .. _`Crawler`: https://doc.scrapy.org/en/latest/topics/api.html#scrapy.crawler.Crawler
 .. _`Spider`: https://doc.scrapy.org/en/latest/topics/spiders.html?highlight=scrapy.Spider#scrapy.spiders.Spider
+
+.. autoclass:: spidermon.core.monitors.Monitor
 
 Monitor Suites
 --------------
@@ -89,8 +92,7 @@ Here is an example of how to configure a new monitor suite in your project:
 
   ``name`` suite name
 
-  ``monitors`` list of :class:`~spidermon.core.monitors.Monitor` that will be executed
-  if this suite is enabled.
+  ``monitors`` list of :class:`~spidermon.core.monitors.Monitor` that will be executed if this suite is enabled.
 
   ``monitors_finished_actions`` list of action classes that will be executed when
   all monitors finished their execution.
@@ -136,7 +138,7 @@ The Basic Monitors
 Spidermon has some batteries included :)
 
 .. automodule:: spidermon.contrib.scrapy.monitors
-    :members: FinishReasonMonitor, ItemCountMonitor, ErrorCountMonitor, UnwantedHTTPCodesMonitor,
+    :members: FinishReasonMonitor, ItemCountMonitor, ErrorCountMonitor, UnwantedHTTPCodesMonitor
 
 Is there a **Basic Scrapy Suite** ready to use?
 ------------------------------------------------
@@ -145,6 +147,7 @@ Of course, there is! We really want to make it easy for you to monitor your spid
 
 .. automodule:: spidermon.contrib.scrapy.monitors
     :members: SpiderCloseMonitorSuite
+    :noindex:
 
 Periodic Monitors
 -----------------
