@@ -1,7 +1,3 @@
-try:
-    from unittest.mock import MagicMock, patch, call
-except ImportError:
-    from mock import MagicMock, patch, call
 import pytest
 
 from spidermon.contrib.actions.email import SendEmail
@@ -16,7 +12,7 @@ BODY_HTML = "Body HTML"
 
 
 @pytest.fixture
-def email():
+def email(mocker):
     email = SendEmail(
         sender=SENDER,
         to=RECIPIENT,
@@ -25,12 +21,12 @@ def email():
         body_text=BODY_TEXT,
         body_html=BODY_HTML,
     )
-    email.send_message = MagicMock()
-    mocked_message = MagicMock()
-    mocked_message.as_string = MagicMock()
-    email.get_message = MagicMock(return_value=mocked_message)
-    email.render_text_template = MagicMock()
-    email.render_template = MagicMock()
+    email.send_message = mocker.MagicMock()
+    mocked_message = mocker.MagicMock()
+    mocked_message.as_string = mocker.MagicMock()
+    email.get_message = mocker.MagicMock(return_value=mocked_message)
+    email.render_text_template = mocker.MagicMock()
+    email.render_template = mocker.MagicMock()
     return email
 
 
@@ -59,16 +55,16 @@ def test_init_with_valid_params():
     SendEmail(sender=SENDER, to=RECIPIENT, fake=False, subject=SUBJECT)
 
 
-@patch("spidermon.contrib.actions.email.logger")
-def test_run_action_with_fake_present(logger, email):
+def test_run_action_with_fake_present(mocker, email):
+    logger = mocker.patch("spidermon.contrib.actions.email.logger")
     email.run_action()
     email.get_message.assert_called_once_with()
     logger.info.assert_called_once_with(email.get_message().as_string())
     email.send_message.assert_not_called()
 
 
-@patch("spidermon.contrib.actions.email.logger")
-def test_run_action_without_fake_present(logger, email):
+def test_run_action_without_fake_present(mocker, email):
+    logger = mocker.patch("spidermon.contrib.actions.email.logger")
     email.fake = False
     email.run_action()
     email.get_message.assert_called_once_with()
@@ -114,22 +110,22 @@ def test_get_body_text_without_body_present(email):
     assert body_text == ""
 
 
-@patch("spidermon.contrib.actions.email.transform")
-def test_get_body_html_with_body_html_present(transform, email):
+def test_get_body_html_with_body_html_present(mocker, email):
+    transform = mocker.patch("spidermon.contrib.actions.email.transform")
     email.get_body_html()
     transform.assert_called_once_with(email.render_text_template(email.body_html))
 
 
-@patch("spidermon.contrib.actions.email.transform")
-def test_get_body_html_with_body_html_template_present(transform, email):
+def test_get_body_html_with_body_html_template_present(mocker, email):
+    transform = mocker.patch("spidermon.contrib.actions.email.transform")
     email.body_html = None
     email.body_html_template = "Body HTML Template"
     email.get_body_html()
     transform.assert_called_once_with(email.render_template(email.body_html_template))
 
 
-@patch("spidermon.contrib.actions.email.transform")
-def test_get_body_html_without_body_html_present(transform, email):
+def test_get_body_html_without_body_html_present(mocker, email):
+    transform = mocker.patch("spidermon.contrib.actions.email.transform")
     email.body_html = None
     email.body_html_template = None
     body_html = email.get_body_html()
@@ -150,12 +146,12 @@ def test_format_recipients(recipients, expected_return):
     assert email._format_recipients(recipients) == expected_return
 
 
-@patch("spidermon.contrib.actions.email.MIMEText")
-def test_get_message_without_body_html_cc_bcc_reply_to(MIMEText):
+def test_get_message_without_body_html_cc_bcc_reply_to(mocker):
+    MIMEText = mocker.patch("spidermon.contrib.actions.email.MIMEText")
     email = SendEmail(sender=SENDER, to=RECIPIENT, subject=SUBJECT)
-    email.get_subject = MagicMock(return_value=SUBJECT)
-    email.get_body_text = MagicMock(return_value=BODY_TEXT)
-    email.get_body_html = MagicMock(return_value="")
+    email.get_subject = mocker.MagicMock(return_value=SUBJECT)
+    email.get_body_text = mocker.MagicMock(return_value=BODY_TEXT)
+    email.get_body_html = mocker.MagicMock(return_value="")
     message = email.get_message()
     email.get_subject.assert_called_once_with()
     email.get_body_text.assert_called_once_with()
@@ -170,8 +166,8 @@ def test_get_message_without_body_html_cc_bcc_reply_to(MIMEText):
     MIMEText.assert_called_once_with(BODY_TEXT, "plain")
 
 
-@patch("spidermon.contrib.actions.email.MIMEText")
-def test_get_message_with_body_html_cc_bcc_reply_to(MIMEText):
+def test_get_message_with_body_html_cc_bcc_reply_to(mocker):
+    MIMEText = mocker.patch("spidermon.contrib.actions.email.MIMEText")
     email = SendEmail(
         sender=SENDER,
         to=RECIPIENT,
@@ -180,9 +176,9 @@ def test_get_message_with_body_html_cc_bcc_reply_to(MIMEText):
         bcc=SENDER,
         reply_to=SENDER,
     )
-    email.get_subject = MagicMock(return_value=SUBJECT)
-    email.get_body_text = MagicMock(return_value=BODY_TEXT)
-    email.get_body_html = MagicMock(return_value=BODY_HTML)
+    email.get_subject = mocker.MagicMock(return_value=SUBJECT)
+    email.get_body_text = mocker.MagicMock(return_value=BODY_TEXT)
+    email.get_body_html = mocker.MagicMock(return_value=BODY_HTML)
     message = email.get_message()
     email.get_subject.assert_called_once_with()
     email.get_body_text.assert_called_once_with()
@@ -194,4 +190,6 @@ def test_get_message_with_body_html_cc_bcc_reply_to(MIMEText):
     assert message["Cc"] == SENDER
     assert message["Bcc"] == SENDER
     assert message["reply-to"] == SENDER
-    MIMEText.assert_has_calls([call(BODY_TEXT, "plain"), call(BODY_HTML, "html")])
+    MIMEText.assert_has_calls(
+        [mocker.call(BODY_TEXT, "plain"), mocker.call(BODY_HTML, "html")]
+    )
