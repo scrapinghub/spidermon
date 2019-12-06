@@ -41,6 +41,7 @@ def email(mocker):
             "You must provide at least one recipient for the message.",
         ),
         (SENDER, RECIPIENT, None, None, "You must provide a subject for the message."),
+        (SENDER, None, None, None, "You must provide at least one recipient for the message."),
     ],
 )
 def test_init_with_invalid_params(sender, recipient, fake, subject, exception_message):
