@@ -6,7 +6,6 @@ language: python
 dist: xenial
 python:
   - 2.7
-  - 3.4
   - 3.5
   - 3.6
   - 3.7
@@ -15,6 +14,7 @@ install:
 script:
   - tox
   - if [[ "$TRAVIS_PYTHON_VERSION" == 3.7 ]]; then
+    tox -e docs;
     tox -e pep8;
     fi
 deploy:
