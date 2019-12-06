@@ -1,8 +1,11 @@
 import pytest
 
+from scrapy import Spider
+from scrapy.utils.test import get_crawler
 from spidermon.exceptions import NotConfigured
 from spidermon.contrib.actions.telegram import (
     TelegramMessageManager,
+    SendTelegramMessage,
     SimplyTelegramClient,
 )
 
@@ -48,7 +51,15 @@ def test_fail_if_no_token():
         TelegramMessageManager(sender_token=None, fake=False)
 
 
-@pytest.mark.parametrize("recipients,call_count", [("1234", 1), (["1234", "4321"], 2)])
+def test_fail_if_no_recipients():
+    with pytest.raises(NotConfigured):
+        SendTelegramMessage(sender_token="token")
+
+    with pytest.raises(NotConfigured):
+        SendTelegramMessage(sender_token="token", fake=True)
+
+
+@pytest.mark.parametrize("recipients,call_count", [(["1234"], 1), (["1234", "4321"], 2)])
 def test_send_message(client_send_message, recipients, call_count):
     manager = TelegramMessageManager(sender_token="anything", fake=False)
     manager.send_message(to=recipients, text="message")

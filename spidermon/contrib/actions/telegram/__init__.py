@@ -43,11 +43,8 @@ class TelegramMessageManager:
         if self.fake:
             logger.info(text)
             return
-        if isinstance(to, list):
-            for recipient in to:
-                self._client.send_message(text, recipient)
-        else:
-            self._client.send_message(text, to)
+        for recipient in to:
+            self._client.send_message(text, recipient)
 
 
 class SendTelegramMessage(ActionWithTemplates):
@@ -75,7 +72,7 @@ class SendTelegramMessage(ActionWithTemplates):
         self.recipients = recipients or self.recipients
         self.message = message or self.message
         self.message_template = message_template or self.message_template
-        if not self.fake and not self.recipients:
+        if not self.recipients:
             raise NotConfigured(
                 "You must provide at least one recipient for the message."
             )
@@ -84,7 +81,7 @@ class SendTelegramMessage(ActionWithTemplates):
     def from_crawler_kwargs(cls, crawler):
         return {
             "sender_token": crawler.settings.get("SPIDERMON_TELEGRAM_SENDER_TOKEN"),
-            "recipients": crawler.settings.get("SPIDERMON_TELEGRAM_RECIPIENTS"),
+            "recipients": crawler.settings.getlist("SPIDERMON_TELEGRAM_RECIPIENTS"),
             "message": crawler.settings.get("SPIDERMON_TELEGRAM_MESSAGE"),
             "message_template": crawler.settings.get(
                 "SPIDERMON_TELEGRAM_MESSAGE_TEMPLATE"
