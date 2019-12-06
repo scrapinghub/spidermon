@@ -230,7 +230,7 @@ If a monitor fails, the recipients provided will receive a message in Slack:
    :alt: Slack Notification
 
 Telegram notifications
--------------------
+----------------------
 
 Here we will configure a built-in Spidermon action that sends a pre-defined message to
 a Telegram use, group or channel using a bot when a monitor fails.
@@ -251,8 +251,9 @@ a Telegram use, group or channel using a bot when a monitor fails.
             SendTelegramMessageSpiderFinished,
         ]
 
-After enabling the action, you need to provide the `Telegram
-token`_ and `Recipients`_. You can learn more about how to create and configure a bot by following the steps on :ref:`configuring-telegram-bot`. Later, fill the required information in your `settings.py` as follows:
+After enabling the action, you need to provide the `Telegram bot token`_ and `Recipients`. You can
+learn more about how to create and configure a bot by following the steps on :ref:`configuring-telegram-bot`.
+Later, fill the required information in your `settings.py` as follows:
 
 .. code-block:: python
 
@@ -434,3 +435,4 @@ The resulted item will look like this:
 .. _`Scrapy Tutorial`: https://doc.scrapy.org/en/latest/intro/tutorial.html
 .. _`Scrapy project`: https://doc.scrapy.org/en/latest/intro/tutorial.html?#creating-a-project
 .. _`Slack credentials`: https://api.slack.com/docs/token-types
+.. _`Telegram bot token`: https://core.telegram.org/bots
