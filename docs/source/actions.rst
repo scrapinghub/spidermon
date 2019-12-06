@@ -350,15 +350,6 @@ Default: ``False``
 
 If set `True`, the Telegram message content will be in the logs but nothing will be sent.
 
-.. _SPIDERMON_TELEGRAM_INCLUDE_MESSAGE:
-
-SPIDERMON_TELEGRAM_INCLUDE_MESSAGE
-----------------------------------
-
-Default: ``True``
-
-If set `False`, no message will be sent.
-
 .. _SPIDERMON_TELEGRAM_MESSAGE:
 
 SPIDERMON_TELEGRAM_MESSAGE
