@@ -59,7 +59,9 @@ def test_fail_if_no_recipients():
         SendTelegramMessage(sender_token="token", fake=True)
 
 
-@pytest.mark.parametrize("recipients,call_count", [(["1234"], 1), (["1234", "4321"], 2)])
+@pytest.mark.parametrize(
+    "recipients,call_count", [(["1234"], 1), (["1234", "4321"], 2)]
+)
 def test_send_message(client_send_message, recipients, call_count):
     manager = TelegramMessageManager(sender_token="anything", fake=False)
     manager.send_message(to=recipients, text="message")
