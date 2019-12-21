@@ -93,6 +93,30 @@ Available monitor mixins
 
         ``errors`` percentages about 4xx + 5xx status codes
 
+.. class:: spidermon.contrib.stats.counters.PercentCounter
+
+    Utility class for computing percentage from a total value.
+
+    ``count`` the current value used for computing the percentage
+
+    ``percent`` percentage of ``count`` from the total value
+
+    .. method:: inc_value(value)
+
+      increase the ``count`` by a given value
+
+.. class:: spidermon.contrib.stats.counters.DictPercentCounter
+
+    Dictionary wrapper initiated with a total and in which values are
+    ``PercentCounter`` instances with that total
+
+    ``count`` - sum of all values, this represents the total percentage of
+    requests from given total
+
+    .. method:: add_value(value)
+
+      create or add to an existing key a value
+
 
 Monitor Suites
 --------------
