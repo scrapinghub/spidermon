@@ -10,12 +10,15 @@ python:
   - 3.6
   - 3.7
 install:
-  - pip install tox-travis
+  - pip install tox-travis codecov
 script:
   - tox
   - if [[ "$TRAVIS_PYTHON_VERSION" == 3.7 ]]; then
+    tox -e docs;
     tox -e pep8;
     fi
+after_success:
+  - codecov
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel

@@ -94,6 +94,12 @@ class SlackMessageManager:
 
     def _api_call(self, method, **kwargs):
         response = self._client.api_call(method, **kwargs)
+
+        has_errors = not response.get("ok")
+        if has_errors:
+            error_msg = response.get("error", {}).get("msg", "Slack API error")
+            logger.error(error_msg)
+
         if isinstance(response, six.string_types):  # slackclient < v1.0
             response = json.loads(response)
         return response
@@ -188,7 +194,7 @@ class SendSlackMessage(ActionWithTemplates):
         return {
             "sender_token": crawler.settings.get("SPIDERMON_SLACK_SENDER_TOKEN"),
             "sender_name": crawler.settings.get("SPIDERMON_SLACK_SENDER_NAME"),
-            "recipients": crawler.settings.get("SPIDERMON_SLACK_RECIPIENTS"),
+            "recipients": crawler.settings.getlist("SPIDERMON_SLACK_RECIPIENTS"),
             "message": crawler.settings.get("SPIDERMON_SLACK_MESSAGE"),
             "message_template": crawler.settings.get(
                 "SPIDERMON_SLACK_MESSAGE_TEMPLATE"
