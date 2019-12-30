@@ -99,7 +99,9 @@ class CreateS3Report(CreateReport):
     @classmethod
     def from_crawler_kwargs(cls, crawler):
         kwargs = super(CreateS3Report, cls).from_crawler_kwargs(crawler)
-        (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(crawler.settings)
+        (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(
+            crawler.settings
+        )
         kwargs.update(
             {
                 "aws_access_key": aws_access_key_id,

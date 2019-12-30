@@ -13,7 +13,7 @@ def test_spidermon_aws_credentials_not_set():
 
 
 def test_spidermon_aws_credentials(mocker):
-    warn_mock = mocker.patch('spidermon.utils.settings.warnings.warn')
+    warn_mock = mocker.patch("spidermon.utils.settings.warnings.warn")
     settings = Settings(
         {
             "SPIDERMON_AWS_ACCESS_KEY": "aws_access_key",
@@ -73,7 +73,9 @@ def test_spidermon_aws_credentials_are_preferred_over_scrapy_ones():
 
 
 def test_spidermon_old_aws_credentials_are_preferred_over_new_ones(mocker):
-    mocker.patch('spidermon.utils.settings.warnings.warn')  # avoid the warning in the tests
+    mocker.patch(
+        "spidermon.utils.settings.warnings.warn"
+    )  # avoid the warning in the tests
     settings = Settings(
         {
             "SPIDERMON_AWS_ACCESS_KEY": "old_aws_access_key",
