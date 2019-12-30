@@ -194,7 +194,7 @@ class SendSlackMessage(ActionWithTemplates):
         return {
             "sender_token": crawler.settings.get("SPIDERMON_SLACK_SENDER_TOKEN"),
             "sender_name": crawler.settings.get("SPIDERMON_SLACK_SENDER_NAME"),
-            "recipients": crawler.settings.get("SPIDERMON_SLACK_RECIPIENTS"),
+            "recipients": crawler.settings.getlist("SPIDERMON_SLACK_RECIPIENTS"),
             "message": crawler.settings.get("SPIDERMON_SLACK_MESSAGE"),
             "message_template": crawler.settings.get(
                 "SPIDERMON_SLACK_MESSAGE_TEMPLATE"

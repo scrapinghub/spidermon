@@ -6,8 +6,9 @@ Spidermon
     :target: https://travis-ci.org/scrapinghub/spidermon
     :alt: travis build status master branch
 
-.. image:: https://img.shields.io/codecov/c/github/scrapinghub/spidermon.svg?style=flat
-    :alt: Codecov
+.. image:: https://img.shields.io/codecov/c/github/scrapinghub/spidermon.svg
+    :target: http://codecov.io/github/scrapinghub/spidermon?branch=master
+    :alt: Coverage report
 
 .. image:: https://img.shields.io/pypi/v/spidermon.svg
     :target: https://pypi.python.org/pypi/spidermon
