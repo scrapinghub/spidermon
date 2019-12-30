@@ -47,6 +47,77 @@ implement your monitors:
 
 .. autoclass:: spidermon.core.monitors.Monitor
 
+Available monitor mixins
+------------------------
+
+.. class:: spidermon.contrib.mixins.StatsMonitorMixin
+
+    ``stats`` property from attribute from ``data``
+
+.. class:: spidermon.contrib.mixins.JobMonitorMixin
+
+    ``job`` property from attribute from ``data``
+
+.. class:: spidermon.contrib.mixins.SpiderMonitorMixin
+
+    Wraps ``StatsMonitorMixin`` and ``JobMonitorMixin`` and provides more
+    information about ``responses``.
+
+    ``responses`` an instance of ``ResponsesInfo``, provides information about
+    status codes
+
+.. class:: spidermon.contrib.monitors.spider.ResponsesInfo
+
+    Utility class used for accessing information about status codes compared
+    to the total number of responses.
+
+    ``count`` the total number of responses, equivalent to
+    ``downloader/response_count``` from stats
+
+    The following attributes are instances of
+    ``spidermon.contrib.stats.counters.DictPercentCounter``:
+
+        ``all`` percentages about all status codes
+
+        ``informational`` percentages about 1xx codes
+
+        ``succesful`` percentages about 2xx codes
+
+        ``redirections`` percentages about 3xx codes
+
+        ``bad_requests`` percentages about 4xx codes
+
+        ``internal_server_errors`` percentages about 5xx codes
+
+        ``others`` percentages about other codes
+
+        ``errors`` percentages about 4xx + 5xx status codes
+
+.. class:: spidermon.contrib.stats.counters.PercentCounter
+
+    Utility class for computing percentage from a total value.
+
+    ``count`` the current value used for computing the percentage
+
+    ``percent`` percentage of ``count`` from the total value
+
+    .. method:: inc_value(value)
+
+      increase the ``count`` by a given value
+
+.. class:: spidermon.contrib.stats.counters.DictPercentCounter
+
+    Dictionary wrapper initiated with a total and in which values are
+    ``PercentCounter`` instances with that total
+
+    ``count`` - sum of all values, this represents the total percentage of
+    requests from given total
+
+    .. method:: add_value(value)
+
+      create or add to an existing key a value
+
+
 Monitor Suites
 --------------
 
