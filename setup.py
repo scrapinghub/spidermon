@@ -6,6 +6,7 @@ test_requirements = [
     "pytest-mock",
     "jinja2",
     "lxml",
+    "premailer",
     "scrapy",
     "slackclient>=1.3.0,<2.0.0",
     "twisted>=19.7.0",
