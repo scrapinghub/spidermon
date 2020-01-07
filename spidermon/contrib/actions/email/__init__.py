@@ -74,9 +74,9 @@ class SendEmail(ActionWithTemplates):
             "subject_template": crawler.settings.get(
                 "SPIDERMON_EMAIL_SUBJECT_TEMPLATE"
             ),
-            "to": crawler.settings.get("SPIDERMON_EMAIL_TO"),
-            "cc": crawler.settings.get("SPIDERMON_EMAIL_CC"),
-            "bcc": crawler.settings.get("SPIDERMON_EMAIL_BCC"),
+            "to": cls.getlist(crawler.settings, "SPIDERMON_EMAIL_TO"),
+            "cc": cls.getlist(crawler.settings, "SPIDERMON_EMAIL_CC"),
+            "bcc": cls.getlist(crawler.settings, "SPIDERMON_EMAIL_BCC"),
             "reply_to": crawler.settings.get("SPIDERMON_EMAIL_REPLY_TO"),
             "body_text": crawler.settings.get("SPIDERMON_BODY_TEXT"),
             "body_text_template": crawler.settings.get("SPIDERMON_BODY_TEXT_TEMPLATE"),
@@ -85,6 +85,10 @@ class SendEmail(ActionWithTemplates):
             "fake": crawler.settings.getbool("SPIDERMON_EMAIL_FAKE"),
             "context": crawler.settings.getdict("SPIDERMON_EMAIL_CONTEXT"),
         }
+
+    @staticmethod
+    def getlist(settings, entry):
+        return [v.strip() for v in settings.getlist(entry)]
 
     def run_action(self):
         message = self.get_message()
@@ -127,11 +131,11 @@ class SendEmail(ActionWithTemplates):
 
         message["Subject"] = subject
         message["From"] = self.sender
-        message["To"] = self._format_recipients(self.to)
+        message["To"] = ", ".join(self.to)
         if self.cc:
-            message["Cc"] = self._format_recipients(self.cc)
+            message["Cc"] = ", ".join(self.cc)
         if self.bcc:
-            message["Bcc"] = self._format_recipients(self.bcc)
+            message["Bcc"] = ", ".join(self.bcc)
         if self.reply_to:
             message["reply-to"] = self.reply_to
 
@@ -143,9 +147,3 @@ class SendEmail(ActionWithTemplates):
 
     def send_message(self, message):
         raise NotImplementedError
-
-    def _format_recipients(self, recipients):
-        if isinstance(recipients, (list, tuple)):
-            return ", ".join(recipients)
-        else:
-            return recipients
