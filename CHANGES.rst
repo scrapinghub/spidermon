@@ -1,6 +1,23 @@
 Release notes
 =============
 
+1.12.0 (2020-01-09)
+-------------------
+
+- Dropped python 3.4 support
+- Added action to send monitor reports to Telegram
+- Added fallback to scrapy AWS settings
+- Logged errors from Slack API calls
+- Allowed to define SPIDERMON_SLACK_RECIPIENTS setting as a comma-separated string with the desired recipients
+- Read SES settings with getlist
+- Added documentation of Expression Monitors
+- Improved Slack action documentation
+- Fixed sphinx warnings when building docs
+- Fixed warnings in docs build
+- Validate docs build in CI
+- Applied and enforced black formatting on spidermon source code
+- Configured test coverage reporting in project
+
 1.11.0 (2019-08-02)
 -------------------
 
