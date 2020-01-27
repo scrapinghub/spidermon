@@ -71,11 +71,12 @@ class PipelineTest(six.with_metaclass(PipelineTestCaseMetaclass, TestCase)):
 
 
 class DataTest(object):
-    def __init__(self, name, item, cases, settings=dict()):
+    def __init__(self, name, item, cases, settings=dict(), spidermon_enabled=True):
         self.name = name
         self.item = item
         self.cases = cases
         self.settings = settings
+        self.settings["SPIDERMON_ENABLED"] = spidermon_enabled
 
 
 def assert_type_in_stats(validator_type, obj):
@@ -220,7 +221,10 @@ def test_validator_from_url(mocker):
         "spidermon.contrib.validation.jsonschema.tools.get_contents",
         return_value=test_schema_string,
     )
-    settings = {SETTING_SCHEMAS: {TestItem: "https://fixtures.com/testschema.json"}}
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        SETTING_SCHEMAS: {TestItem: "https://fixtures.com/testschema.json"},
+    }
     test_item = TestItem()
     crawler = get_crawler(settings_dict=settings)
     pipe = ItemValidationPipeline.from_crawler(crawler)
