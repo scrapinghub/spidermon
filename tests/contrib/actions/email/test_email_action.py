@@ -101,16 +101,3 @@ def test_get_body_text_without_body_present(email):
     email.body_text = None
     email.body_text_template = None
     assert email.get_body_text() == ""
-
-
-@pytest.mark.parametrize(
-    "recipients, expected_return",
-    [
-        (RECIPIENT, RECIPIENT),
-        ([RECIPIENT, RECIPIENT], "{}, {}".format(RECIPIENT, RECIPIENT)),
-        ((RECIPIENT, RECIPIENT), "{}, {}".format(RECIPIENT, RECIPIENT)),
-    ],
-)
-def test_format_recipients(recipients, expected_return):
-    email = SendEmail(sender=SENDER, to=RECIPIENT, subject=SUBJECT)
-    assert email._format_recipients(recipients) == expected_return
