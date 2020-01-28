@@ -1,7 +1,3 @@
-try:
-    from unittest.mock import MagicMock, patch, mock_open
-except ImportError:
-    from mock import MagicMock, patch, mock_open
 import pytest
 
 from spidermon.contrib.actions.reports.s3 import S3Uploader, CreateS3Report
@@ -21,8 +17,10 @@ CONTENT = "content"
 METHOD_NAME = "method_name"
 
 
-@patch("spidermon.contrib.actions.reports.s3.S3Connection", return_value={})
-def test_init(S3Connection):
+def test_init(mocker):
+    S3Connection = mocker.patch(
+        "spidermon.contrib.actions.reports.s3.S3Connection", return_value={}
+    )
     uploader = S3Uploader(AWS_KEY, AWS_SECRET)
     assert uploader.connection == {}
     S3Connection.assert_called_once_with(
@@ -30,10 +28,12 @@ def test_init(S3Connection):
     )
 
 
-@patch("spidermon.contrib.actions.reports.s3.open", new_callable=mock_open())
-def test_upload_from_file(_open):
+def test_upload_from_file(mocker):
+    _open = mocker.patch(
+        "spidermon.contrib.actions.reports.s3.open", new_callable=mocker.mock_open()
+    )
     uploader = S3Uploader(AWS_KEY, AWS_SECRET)
-    uploader._upload_with_method = MagicMock()
+    uploader._upload_with_method = mocker.MagicMock()
     uploader.upload_from_file(SOURCE_FILENAME, S3_BUCKET, S3_FILENAME)
     _open.assert_called_once_with(SOURCE_FILENAME, "r")
     uploader._upload_with_method.assert_called_once_with(
@@ -46,9 +46,9 @@ def test_upload_from_file(_open):
     )
 
 
-def test_upload_from_content():
+def test_upload_from_content(mocker):
     uploader = S3Uploader(AWS_KEY, AWS_SECRET)
-    uploader._upload_with_method = MagicMock()
+    uploader._upload_with_method = mocker.MagicMock()
     uploader.upload_from_content(CONTENT, S3_BUCKET, S3_FILENAME)
     uploader._upload_with_method.assert_called_once_with(
         bucket=S3_BUCKET,
@@ -61,12 +61,12 @@ def test_upload_from_content():
 
 
 @pytest.mark.parametrize("make_public", [(True), (False)])
-@patch("spidermon.contrib.actions.reports.s3.Key")
-def test_upload_with_method(Key, make_public):
-    key = MagicMock()
-    key.method_name = MagicMock()
+def test_upload_with_method(mocker, make_public):
+    Key = mocker.patch("spidermon.contrib.actions.reports.s3.Key")
+    key = mocker.MagicMock()
+    key.method_name = mocker.MagicMock()
     uploader = S3Uploader(AWS_KEY, AWS_SECRET)
-    uploader.connection = MagicMock()
+    uploader.connection = mocker.MagicMock()
     uploader.connection.get_bucket.return_value = S3_BUCKET
     Key.return_value = key
     uploader._upload_with_method(
@@ -128,7 +128,7 @@ def test_create_s3_report_init_with_valid_data():
 
 
 @pytest.fixture
-def s3_report():
+def s3_report(mocker):
     report = CreateS3Report(
         template=TEMPLATE,
         aws_access_key=AWS_KEY,
@@ -138,14 +138,14 @@ def s3_report():
         make_public=MAKE_PUBLIC,
     )
     report.report = REPORT
-    report.data = MagicMock()
+    report.data = mocker.MagicMock()
     return report
 
 
-@patch("spidermon.contrib.actions.reports.s3.S3Uploader")
-def test_s3_report_after_render_report(s3, s3_report):
-    s3_report.get_s3_filename = MagicMock(return_value=S3_FILENAME)
-    s3.upload_from_content = MagicMock()
+def test_s3_report_after_render_report(mocker, s3_report):
+    s3 = mocker.patch("spidermon.contrib.actions.reports.s3.S3Uploader")
+    s3_report.get_s3_filename = mocker.MagicMock(return_value=S3_FILENAME)
+    s3.upload_from_content = mocker.MagicMock()
     s3_report.after_render_report()
     s3().upload_from_content.assert_called_once_with(
         content=REPORT,
@@ -156,46 +156,46 @@ def test_s3_report_after_render_report(s3, s3_report):
     )
 
 
-def test_get_s3_filename(s3_report):
-    s3_report.get_url_secret = MagicMock(return_value="secret")
-    s3_report.render_text_template = MagicMock(return_value="text template")
+def test_get_s3_filename(mocker, s3_report):
+    s3_report.get_url_secret = mocker.MagicMock(return_value="secret")
+    s3_report.render_text_template = mocker.MagicMock(return_value="text template")
     s3_filename = s3_report.get_s3_filename()
     assert s3_filename == "reports/secret/text template"
 
 
-def test_get_s3_report_url(s3_report):
+def test_get_s3_report_url(mocker, s3_report):
     s3_report.s3_region_endpoint = "s3-region-endpoint"
-    s3_report.get_s3_filename = MagicMock(return_value="s3-filename.pdf")
+    s3_report.get_s3_filename = mocker.MagicMock(return_value="s3-filename.pdf")
     get_s3_report_url = s3_report.get_s3_report_url()
     assert get_s3_report_url == "https://s3-region-endpoint/{}/s3-filename.pdf".format(
         S3_BUCKET
     )
 
 
-@patch("spidermon.contrib.actions.reports.s3.URL_SECRET_KEY")
-@patch("spidermon.contrib.actions.reports.s3.hashlib")
-def test_get_url_secret_without_data_job(hashlib, URL_SECRET_KEY, s3_report):
+def test_get_url_secret_without_data_job(mocker, s3_report):
+    hashlib = mocker.patch("spidermon.contrib.actions.reports.s3.hashlib")
+    URL_SECRET_KEY = mocker.patch("spidermon.contrib.actions.reports.s3.URL_SECRET_KEY")
     s3_report.data.job = ""
-    hashlib.md5 = MagicMock()
+    hashlib.md5 = mocker.MagicMock()
     secret = s3_report.get_url_secret()
     hashlib.md5.assert_called_once_with(URL_SECRET_KEY.encode())
     hashlib.md5().hexdigest.assert_called_once_with()
 
 
-@patch("spidermon.contrib.actions.reports.s3.URL_SECRET_KEY")
-@patch("spidermon.contrib.actions.reports.s3.hashlib")
-def test_get_url_secret_with_data_job(hashlib, URL_SECRET_KEY, s3_report):
-    s3_report.data.job = MagicMock()
+def test_get_url_secret_with_data_job(mocker, s3_report):
+    hashlib = mocker.patch("spidermon.contrib.actions.reports.s3.hashlib")
+    URL_SECRET_KEY = mocker.patch("spidermon.contrib.actions.reports.s3.URL_SECRET_KEY")
+    s3_report.data.job = mocker.MagicMock()
     s3_report.data.job.key = "1234/5/6"
     URL_SECRET_KEY += "6"
-    hashlib.md5 = MagicMock()
+    hashlib.md5 = mocker.MagicMock()
     secret = s3_report.get_url_secret()
     hashlib.md5.assert_called_once_with(URL_SECRET_KEY.encode())
     hashlib.md5().hexdigest.assert_called_once_with()
 
 
-def test_get_meta(s3_report):
-    s3_report.get_s3_report_url = MagicMock(return_value="report_url")
+def test_get_meta(mocker, s3_report):
+    s3_report.get_s3_report_url = mocker.MagicMock(return_value="report_url")
     s3_report.data.meta = {"reports": []}
     meta = s3_report.get_meta()
     assert meta == {"reports_links": ["report_url"]}
