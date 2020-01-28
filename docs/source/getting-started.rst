@@ -181,7 +181,7 @@ If the condition in your monitor fails, this information will appear in the logs
     INFO: [Spidermon] 0 actions in 0.000s
     INFO: [Spidermon] OK
 
-Slack notifications
+Notifications
 -------------------
 
 Receiving fail notification in the logs may be helpful during the development but
@@ -189,6 +189,9 @@ not so useful when you are running a huge number of spiders, so you can define
 actions to be performed when your spider start or finishes (with or without failures).
 
 Spidermon has some built-in actions but you are free to define your own.
+
+Slack notifications
+-------------------
 
 Here we will configure a built-in Spidermon action that sends a pre-defined message to
 a Slack channel using a bot when a monitor fails.
@@ -225,6 +228,46 @@ If a monitor fails, the recipients provided will receive a message in Slack:
 .. image:: /_static/slack_notification.png
    :scale: 50 %
    :alt: Slack Notification
+
+Telegram notifications
+----------------------
+
+Here we will configure a built-in Spidermon action that sends a pre-defined message to
+a Telegram use, group or channel using a bot when a monitor fails.
+
+.. code-block:: python
+
+    # tutorial/monitors.py
+    from spidermon.contrib.actions.telegram.notifiers import SendTelegramMessageSpiderFinished
+
+    # (...your monitors code...)
+
+    class SpiderCloseMonitorSuite(MonitorSuite):
+        monitors = [
+            ItemCountMonitor,
+        ]
+
+        monitors_failed_actions = [
+            SendTelegramMessageSpiderFinished,
+        ]
+
+After enabling the action, you need to provide the `Telegram bot token`_ and `Recipients`. You can
+learn more about how to create and configure a bot by following the steps on :ref:`configuring-telegram-bot`.
+Later, fill the required information in your `settings.py` as follows:
+
+.. code-block:: python
+
+    # tutorial/settings.py
+    (...)
+    SPIDERMON_TELEGRAM_SENDER_TOKEN = '<TELEGRAM_SENDER_TOKEN>'
+    SPIDERMON_TELEGRAM_RECIPIENTS = ['chatid', 'groupid', '@channelname']
+
+If a monitor fails, the recipients provided will receive a message in Telegram:
+
+.. image:: /_static/telegram_notification.png
+   :scale: 50 %
+   :alt: Telegram Notification
+
 
 Item validation
 ---------------
@@ -392,3 +435,4 @@ The resulted item will look like this:
 .. _`Scrapy Tutorial`: https://doc.scrapy.org/en/latest/intro/tutorial.html
 .. _`Scrapy project`: https://doc.scrapy.org/en/latest/intro/tutorial.html?#creating-a-project
 .. _`Slack credentials`: https://api.slack.com/docs/token-types
+.. _`Telegram bot token`: https://core.telegram.org/bots
