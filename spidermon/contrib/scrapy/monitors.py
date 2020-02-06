@@ -176,6 +176,7 @@ class SpiderCloseMonitorSuite(MonitorSuite):
     """This Monitor Suite implements the following monitors:
 
     * :class:`ItemCountMonitor`
+    * :class:`ItemValidationMonitor`
     * :class:`ErrorCountMonitor`
     * :class:`FinishReasonMonitor`
     * :class:`UnwantedHTTPCodesMonitor`
@@ -189,6 +190,7 @@ class SpiderCloseMonitorSuite(MonitorSuite):
 
     monitors = [
         ItemCountMonitor,
+        ItemValidationMonitor,
         ErrorCountMonitor,
         FinishReasonMonitor,
         UnwantedHTTPCodesMonitor,
