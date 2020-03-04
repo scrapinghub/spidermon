@@ -1,3 +1,4 @@
+import json
 import pytest
 
 from scrapy import Spider
@@ -72,3 +73,21 @@ def test_simply_telegram_client(request_get):
     client = SimplyTelegramClient(token="token")
     client.send_message("message", "1234")
     assert request_get.call_count == 1
+
+
+def test_log_error_when_api_return_an_error(mocker, request_get):
+    payload_error = {
+        "ok": False,
+        "error_code": 400,
+        "description": "Bad Request: chat not found",
+    }
+    request_get.return_value.json.return_value = payload_error
+    logger_error = mocker.patch("spidermon.contrib.actions.telegram.logger.error")
+    error_message = "Failed to send message. Telegram api error: %s"
+
+    manager = TelegramMessageManager(sender_token="a-token", fake=False)
+    manager.send_message(to=["1234"], text="Hello")
+
+    assert logger_error.call_count == 1
+    assert error_message == logger_error.call_args[0][0]
+    assert json.dumps(payload_error) == logger_error.call_args[0][1]
