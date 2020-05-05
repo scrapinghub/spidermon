@@ -36,5 +36,6 @@ Contents
    settings
    configuring-slack-for-spidermon
    configuring-telegram-for-spidermon
+   howto/index
    actions
    changelog
