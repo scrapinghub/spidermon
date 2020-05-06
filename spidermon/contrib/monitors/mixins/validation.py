@@ -86,9 +86,8 @@ class ValidationInfo(object):
 
 
 class ValidationMonitorMixin(StatsMonitorMixin):
-    def __init__(self, correct_field_list_handling=False):
-        super(ValidationMonitorMixin, self).__init__()
-        self.correct_field_list_handling = correct_field_list_handling
+
+    correct_field_list_handling = False
 
     @property
     def validation(self):
