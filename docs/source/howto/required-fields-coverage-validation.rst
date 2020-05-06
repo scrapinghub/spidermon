@@ -2,7 +2,7 @@ How do I add required fields coverage validation?
 =================================================
 
 When you enable :ref:`item validation <item-validation>` in your project you can
-use *ValidationMonitorMixin* in your monitor that allows you to perform some extra
+use *ValidationMonitorMixin* in your monitor, which allows you to perform some extra
 checks on your results.
 
 Considering that we have the :ref:`validation schema <quote-item-validation-schema>` from
