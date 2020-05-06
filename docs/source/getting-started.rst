@@ -1,3 +1,5 @@
+.. _getting-started:
+
 Getting started
 ===============
 
@@ -327,6 +329,8 @@ And then modify the spider code to use the newly defined item:
 
 Now we need to create our schematics model in `validators.py` file that will contain
 all the validation rules:
+
+.. _quote-item-validation-schema:
 
 .. code-block:: python
 
