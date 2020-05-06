@@ -6,7 +6,7 @@ use *ValidationMonitorMixin* in your monitor, which allows you to perform some e
 checks on your results.
 
 Considering that we have the :ref:`validation schema <quote-item-validation-schema>` from
-:ref:`getting started <getting-started>` section of our documentation, where **author**
+:ref:`getting started <getting-started>` section of our documentation, where the **author**
 field is required, we want to add a new monitor to ensure that no more than 20% of the items
 returned have the **author** not filled.
 
