@@ -32,9 +32,9 @@ filled. Using that we can create a monitor that accomplish our validation rule:
          )
 
 We also have the option to set an absolute amount of items that we want to allow
-to be not filled. This requires us to use *check_missing_required_fields*
-method. The following monitor will fail if more than 10 items returned does not
-have **author** field filled.
+not to be filled. This requires us to use the *check_missing_required_fields*
+method. The following monitor will fail if more than 10 items returned do not
+have the **author** field filled.
 
 .. code-block:: python
 
