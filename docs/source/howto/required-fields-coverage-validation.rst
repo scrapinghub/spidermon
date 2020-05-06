@@ -50,7 +50,7 @@ have **author** field filled.
 Multiple fields
 ---------------
 
-What if we want to validate more than one field? There is two different ways, depending if you
+What if we want to validate more than one field? There are two different ways, depending on whether you
 want to use the same thresholds for both fields or a different one for each field.
 
 Using the same threshold, we just need to pass a list with the field names to the desired
