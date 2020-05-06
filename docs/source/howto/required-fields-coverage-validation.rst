@@ -13,9 +13,9 @@ returned have the **author** not filled.
 .. note:: The methods that will be presented next only work to check coverage of fields
    that are defined as **required** in your validation schema.
 
-*ValidationMonitorMixin* gives you *check_missing_required_fields_percent* method
-that receives a list of field names and the maximum percentage allowed to not be
-filled. Using that we can create a monitor that accomplish our validation rule:
+*ValidationMonitorMixin* gives you the *check_missing_required_fields_percent* method,
+which receives a list of field names and the maximum percentage allowed not to be
+filled. Using that we can create a monitor that enforces our validation rule:
 
 .. code-block:: python
 
