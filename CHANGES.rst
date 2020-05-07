@@ -1,6 +1,12 @@
 Release notes
 =============
 
+1.12.1 (2020-05-07)
+-------------------
+- bugfix: AttributeError when using ValidationMonitorMixin (`issue
+<https://github.com/scrapinghub/spidermon/issues/246>`_)
+- docs: How-To Guide - Adding required fields coverage validation (`pull-request <https://github.com/scrapinghub/spidermon/pull/247>`_)
+
 1.12.0 (2020-01-09)
 -------------------
 
