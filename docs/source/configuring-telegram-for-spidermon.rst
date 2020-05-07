@@ -23,7 +23,7 @@ Steps
 4. Add the recipients to your Scrapy project's settings, getting the `chat_id` or `group_id` is not straightforward, there is an info bot that can help with this. Just forward a message from the user or group that you want to receive Spidermon notifications to `[@GroupIDbot](https://t.me/GroupIDbot)` and it will reply with the id. To forward a message from a group to the bot, you need to add the bot to that group before.
 
 5. For notifications in groups: `Add your self-created bot <https://telegram.org/faq#q-how-do-i-add-more-members-what-39s-an-invite-link>`_ (from step 1.) to your group.
-For notifictations in channels: Add your self-created bot (from step 1.) as administrator to your channel (not possible in browser version).
+For notifications in channels: Add your self-created bot (from step 1.) as administrator to your channel (not possible in browser version).
 
 
 .. note:
