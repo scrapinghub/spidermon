@@ -19,25 +19,30 @@ stats = {
 
 
 class DummyValidationMonitor(BaseScrapyMonitor, ValidationMonitorMixin):
-    def __init__(
-        self, stats, correct_field_list_handling, methodName="runTest", name=None
-    ):
-        super(DummyValidationMonitor, self).__init__(methodName, name)
-        self.data = Data({"stats": stats})
-        self.correct_field_list_handling = correct_field_list_handling
-
     def runTest(self):
         pass
 
 
 @pytest.fixture
 def monitor():
-    return DummyValidationMonitor(stats, True)
-
+    monitor = DummyValidationMonitor()
+    monitor.correct_field_list_handling = True
+    monitor.data = Data({"stats": stats})
+    return monitor
 
 @pytest.fixture
 def old_monitor():
-    return DummyValidationMonitor(stats, False)
+    monitor = DummyValidationMonitor()
+    monitor.correct_field_list_handling = False
+    monitor.data = Data({"stats": stats})
+    return monitor
+
+
+@pytest.fixture
+def old_monitor_without_attr():
+    monitor = DummyValidationMonitor()
+    monitor.data = Data({"stats": stats})
+    return monitor
 
 
 def test_check_missing_required_fields_no_fields(monitor):
@@ -80,6 +85,12 @@ def test_check_missing_required_fields_no_fields_old(old_monitor):
     msg = "15 required fields are missing!"
     with pytest.raises(AssertionError, match=msg):
         old_monitor.check_missing_required_fields()
+
+
+def test_check_missing_required_fields_no_fields_old_without_attribute(old_monitor_without_attr):
+    msg = "15 required fields are missing!"
+    with pytest.raises(AssertionError, match=msg):
+        old_monitor_without_attr.check_missing_required_fields()
 
 
 def check_missing_required_field(monitor):

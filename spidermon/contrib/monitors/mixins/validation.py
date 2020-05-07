@@ -86,9 +86,8 @@ class ValidationInfo(object):
 
 
 class ValidationMonitorMixin(StatsMonitorMixin):
-    def __init__(self, correct_field_list_handling=False):
-        super(ValidationMonitorMixin, self).__init__()
-        self.correct_field_list_handling = correct_field_list_handling
+
+    correct_field_list_handling = False
 
     @property
     def validation(self):
@@ -111,8 +110,8 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         """
         Checks that the number of "missing_required_field" errors for the ``field_names`` fields is less or equal than
         ``allowed_count`` and raises an error with all problematic fields.
-        If ``field_names`` is None and ``new_behavior`` is True, checks all fields.
-        If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is True, checks all fields.
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is False, checks that the total number of
         "missing_required_field" errors is less or equal than ``allowed_count``.
         """
         if not self.correct_field_list_handling and not field_names:
@@ -178,8 +177,8 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         """
         Checks that the number of "missing_required_field" errors for the ``field_names`` fields divided by the number
         of items is less or equal than ``allowed_percent`` and raises an error with all problematic fields.
-        If ``field_names`` is None and ``self.new_behavior`` is True, checks all fields.
-        If ``field_names`` is None and ``self.new_behavior`` is False, checks that the total number of
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is True, checks all fields.
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is False, checks that the total number of
         "missing_required_field" errors is less or equal than ``allowed_count``.
         """
         if not self.correct_field_list_handling and not field_names:
@@ -246,8 +245,8 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         """
         Checks that the number of errors for the ``field_names`` fields is less or equal than ``allowed_count`` and
         raises an error with all problematic fields.
-        If ``field_names`` is None and ``new_behavior`` is True, checks all fields.
-        If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of errors is less or
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is True, checks all fields.
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is False, checks that the total number of errors is less or
         equal than ``allowed_count``.
         """
         if not self.correct_field_list_handling and not field_names:
@@ -314,8 +313,8 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         """
         Checks that the number of errors for the ``field_names`` fields divided by the number of items is less or equal
         than ``allowed_percent`` and raises an error with all problematic fields.
-        If ``field_names`` is None and ``new_behavior`` is True, checks all fields.
-        If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of errors divided by the
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is True, checks all fields.
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is False, checks that the total number of errors divided by the
         number of items is less or equal than ``allowed_count``
         """
         if not self.correct_field_list_handling and not field_names:
