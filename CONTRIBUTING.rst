@@ -61,62 +61,66 @@ Get Started!
 
 Ready to contribute? Here's how to set up `spidermon` for local development.
 
-1. Fork the `spidermon` repo on GitHub.
+#. Fork the `spidermon` repo on GitHub.
 
-2. Clone your fork locally::
+#. Clone your fork locally::
 
     $ git clone git@github.com:your_name_here/spidermon.git
 
-3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
+#. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
 
     $ mkvirtualenv spidermon
     $ cd spidermon/
 
-4. Create a branch for local development::
+#. Create a branch for local development::
 
     $ git checkout -b name-of-your-bugfix-or-feature
 
    Now you can make your changes locally.
 
-5. When you're done making changes, check that your changes pass the tests,
-including testing other Python versions with tox::
+#. When you're done making changes, check that your changes pass the tests,
+   including testing other Python versions with tox::
 
     $ pip install -r requirements.txt
     $ pip install -r requirements-test.txt
     $ tox
 
-6. Make sure that your code is correctly formatted using `black`_ . No code will
+#. Make sure that your code is correctly formatted using `black`_ . No code will
    be merged without this step::
 
   $ black .
 
-7. If you changed something related to docs, **make sure it compiles properly**::
+#. If you changed something related to docs, **make sure it compiles properly**::
 
     $ cd docs
     $ make html
 
    Now you can go to `spidermon/docs/build` and open `index.html`.
 
-8. Commit your changes and push your branch to GitHub::
+#. Commit your changes and push your branch to GitHub::
 
     $ git add .
     $ git commit -m "Your detailed description of your changes."
     $ git push origin name-of-your-bugfix-or-feature
 
-9. Submit a pull request through the GitHub website.
+#. Submit a pull request through the GitHub website.
 
 Pull Request Guidelines
 -----------------------
 
 Before you submit a pull request, check that it meets these guidelines:
 
-1. The pull request should include tests.
-2. If the pull request adds functionality, the docs should be updated.
-3. Check https://travis-ci.org/scrapinghub/spidermon/pull_requests
+#. The pull request should include tests.
+
+#. If the pull request adds functionality, the docs should be updated.
+
+#. Check https://travis-ci.org/scrapinghub/spidermon/pull_requests
    and make sure that the tests pass for all supported Python versions.
-4. Follow the core developers' advice which aim to ensure code's consistency
+
+#. Follow the core developers' advice which aim to ensure code's consistency
    regardless of variety of approaches used by many contributors.
-5. In case you are unable to continue working on a PR, please leave a short
+
+#. In case you are unable to continue working on a PR, please leave a short
    comment to notify us. We will be pleased to make any changes required to get
    it done.
 
