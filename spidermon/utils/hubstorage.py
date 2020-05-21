@@ -5,7 +5,6 @@ from __future__ import absolute_import
 import os
 from codecs import decode
 
-import six
 from six.moves import map
 
 try:
@@ -35,10 +34,7 @@ class _Hubstorage(object):
 
     @property
     def auth(self):
-        if six.PY2:
-            return os.environ["SHUB_JOBAUTH"].decode("hex")
-        else:
-            return decode(os.environ["SHUB_JOBAUTH"], "hex_codec").decode("utf-8")
+        return decode(os.environ["SHUB_JOBAUTH"], "hex_codec").decode("utf-8")
 
     @property
     def endpoint(self):
