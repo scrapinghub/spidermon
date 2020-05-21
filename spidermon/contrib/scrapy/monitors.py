@@ -1,6 +1,7 @@
-from spidermon import monitors, MonitorSuite, Monitor
+from spidermon import Monitor, MonitorSuite, monitors
 from spidermon.exceptions import NotConfigured
 from spidermon.utils.settings import getdictorlist
+
 from ..monitors.mixins.spider import SpiderMonitorMixin
 
 SPIDERMON_MIN_ITEMS = "SPIDERMON_MIN_ITEMS"
@@ -8,6 +9,7 @@ SPIDERMON_MAX_ERRORS = "SPIDERMON_MAX_ERRORS"
 SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
 SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT"
+SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = "SPIDERMON_MAX_ITEM_VALIDATION_ERRORS"
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -153,10 +155,28 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
             self.assertTrue(count <= max_errors, msg=msg)
 
 
+@monitors.name("Item Validation Monitor")
+class ItemValidationMonitor(BaseScrapyMonitor):
+    """Check for item validation errors if item validation pipelines are enabled.
+
+    You can configure the maximum number of item validation errors using
+    ``SPIDERMON_MAX_ITEM_VALIDATION_ERRORS``. The default is ``0``."""
+
+    @monitors.name("Should not have more item validation errors than configured.")
+    def test_verify_item_validation_error(self):
+        errors_threshold = self.crawler.settings.getint(
+            SPIDERMON_MAX_ITEM_VALIDATION_ERRORS, 0
+        )
+        item_validation_errors = self.stats.get("spidermon/validation/fields/errors", 0)
+        msg = f"Found {item_validation_errors} item validation error. Max allowed is {errors_threshold}."
+        self.assertTrue(item_validation_errors <= errors_threshold, msg=msg)
+
+
 class SpiderCloseMonitorSuite(MonitorSuite):
     """This Monitor Suite implements the following monitors:
 
     * :class:`ItemCountMonitor`
+    * :class:`ItemValidationMonitor`
     * :class:`ErrorCountMonitor`
     * :class:`FinishReasonMonitor`
     * :class:`UnwantedHTTPCodesMonitor`
@@ -170,6 +190,7 @@ class SpiderCloseMonitorSuite(MonitorSuite):
 
     monitors = [
         ItemCountMonitor,
+        ItemValidationMonitor,
         ErrorCountMonitor,
         FinishReasonMonitor,
         UnwantedHTTPCodesMonitor,
