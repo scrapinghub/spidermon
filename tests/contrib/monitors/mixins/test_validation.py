@@ -30,6 +30,7 @@ def monitor():
     monitor.data = Data({"stats": stats})
     return monitor
 
+
 @pytest.fixture
 def old_monitor():
     monitor = DummyValidationMonitor()
@@ -87,7 +88,9 @@ def test_check_missing_required_fields_no_fields_old(old_monitor):
         old_monitor.check_missing_required_fields()
 
 
-def test_check_missing_required_fields_no_fields_old_without_attribute(old_monitor_without_attr):
+def test_check_missing_required_fields_no_fields_old_without_attribute(
+    old_monitor_without_attr,
+):
     msg = "15 required fields are missing!"
     with pytest.raises(AssertionError, match=msg):
         old_monitor_without_attr.check_missing_required_fields()
