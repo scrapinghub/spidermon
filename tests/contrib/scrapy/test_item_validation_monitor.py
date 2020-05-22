@@ -28,7 +28,7 @@ def item_validation_monitor_suite():
 
 
 def test_item_validation_monitor_pass_if_does_not_have_validation_error(
-    item_validation_monitor_suite
+    item_validation_monitor_suite,
 ):
     data = make_data({})
     runner = data.pop("runner")
@@ -38,7 +38,7 @@ def test_item_validation_monitor_pass_if_does_not_have_validation_error(
 
 
 def test_item_validation_monitor_pass_if_does_not_have_validation_error_stat(
-    item_validation_monitor_suite
+    item_validation_monitor_suite,
 ):
     data = make_data({})
     runner = data.pop("runner")
@@ -48,7 +48,7 @@ def test_item_validation_monitor_pass_if_does_not_have_validation_error_stat(
 
 
 def test_item_validation_monitor_fails_if_has_validation_errors(
-    item_validation_monitor_suite
+    item_validation_monitor_suite,
 ):
     data = make_data({})
     runner = data.pop("runner")
