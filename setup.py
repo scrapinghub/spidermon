@@ -6,7 +6,7 @@ test_requirements = [
     "pytest-mock",
     "jinja2",
     "lxml",
-    "premailer==3.6.2",
+    "premailer",
     "scrapy",
     "slackclient>=1.3.0,<2.0.0",
     "twisted>=19.7.0",
@@ -34,7 +34,7 @@ setup(
             "Jinja2",
             "slackclient>=1.3.0,<2.0.0",
             "boto",
-            "premailer==3.6.2",
+            "premailer",
             "sentry-sdk",
         ],
         # Data validation
