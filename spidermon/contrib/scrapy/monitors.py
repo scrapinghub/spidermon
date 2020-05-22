@@ -168,7 +168,9 @@ class ItemValidationMonitor(BaseScrapyMonitor):
             SPIDERMON_MAX_ITEM_VALIDATION_ERRORS, 0
         )
         item_validation_errors = self.stats.get("spidermon/validation/fields/errors", 0)
-        msg = f"Found {item_validation_errors} item validation error. Max allowed is {errors_threshold}."
+        msg = "Found {} item validation error. Max allowed is {}.".format(
+            item_validation_errors, errors_threshold
+        )
         self.assertTrue(item_validation_errors <= errors_threshold, msg=msg)
 
 
