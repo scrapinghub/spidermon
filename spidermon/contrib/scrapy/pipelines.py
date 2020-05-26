@@ -22,6 +22,11 @@ DEFAULT_ADD_ERRORS_TO_ITEM = False
 DEFAULT_DROP_ITEMS_WITH_ERRORS = False
 
 
+class PassThroughPipeline:
+    def process_item(self, item, *args):
+        return item
+
+
 class ItemValidationPipeline(object):
     def __init__(
         self,
@@ -41,6 +46,10 @@ class ItemValidationPipeline(object):
 
     @classmethod
     def from_crawler(cls, crawler):
+        spidermon_enabled = crawler.settings.getbool("SPIDERMON_ENABLED")
+        if not spidermon_enabled:
+            return PassThroughPipeline()
+
         validators = defaultdict(list)
         allowed_types = (list, tuple, dict)
 
