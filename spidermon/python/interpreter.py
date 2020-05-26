@@ -78,11 +78,6 @@ class Interpreter(object):
         type(None),
         bool,  # others
     )
-    try:
-        # Py2 compatibility
-        allowed_objects += (long,)
-    except NameError:
-        pass
 
     def check(self, expression):
         if not isinstance(expression, six.string_types):

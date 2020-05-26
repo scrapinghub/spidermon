@@ -14,7 +14,7 @@ test_requirements = [
 
 setup(
     name="spidermon",
-    version="1.12.0",
+    version="1.12.2",
     url="https://github.com/scrapinghub/spidermon",
     author="Scrapinghub",
     author_email="info@scrapinghub.com",
@@ -25,7 +25,7 @@ setup(
     package_data={"spidermon": ["VERSION"]},
     zip_safe=False,
     include_package_data=True,
-    install_requires=["jsonschema[format]", "python-slugify", "six>=1.12.0"],
+    install_requires=["jsonschema[format]", "python-slugify", "six>=1.12.2"],
     tests_require=test_requirements,
     extras_require={
         # Specific monitors and tools to support notifications and reports
@@ -52,8 +52,6 @@ setup(
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",

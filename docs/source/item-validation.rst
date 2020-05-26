@@ -219,6 +219,8 @@ All ``*_field`` method take a name of one field, while all ``*_fields`` method t
  ``correct_field_list_handling`` monitor attribute to get the correct behavior. This will be the default
  in some later version.
 
+.. note:: The ``*_percent`` methods receive the ratio, not the percent number, so for 15% you need to pass 0.15.
+
 Some examples:
 
 .. code-block:: python
@@ -227,7 +229,7 @@ Some examples:
     self.check_missing_required_fields(field_names=['field2', 'field3'], allowed_count=10)
 
     # checks that field2 has errors in no more than 15% of items
-    self.check_field_errors_percent(field_name='field2', allowed_percent=15)
+    self.check_field_errors_percent(field_name='field2', allowed_percent=0.15)
 
     # checks that no errors is present in any fields
     self.check_field_errors_percent()
