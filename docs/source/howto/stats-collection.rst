@@ -1,7 +1,7 @@
 .. _stats_collection:
 
-Comparing Spider Executions
-===========================
+How do I compare Spider executions?
+===================================
 
 Sometimes it is worthy to compare results from previous executions of your
 spider. For example, we should be able to track whether the number of items

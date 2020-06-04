@@ -1,18 +1,17 @@
 .. _configuring-slack-bot:
 
-====================================
-Configure a Slack bot for Spidermon
-====================================
+How do I configure a Slack bot for Spidermon?
+=============================================
 
 What are bots?
-==============
+--------------
 
 A bot is a type of Slack App designed to interact with users via conversation.
 
 To work with `Slack Actions <https://spidermon.readthedocs.io/en/latest/actions.html#slack-action>`_, you will need a Slack bot which would send `notifications <https://spidermon.readthedocs.io/en/latest/getting-started.html#slack-notifications>`_ to your Slack workspace from Spidermon.
 
 Steps
-=====
+-----
 
 .. note:
     You need to be the `owner/admin <https://get.slack.help/hc/en-us/articles/201314026-Understanding-roles-permissions-inside-Slack>`_ of the `Slack workspace <https://get.slack.help/hc/en-us/articles/206845317-Create-a-Slack-workspace>`_ for which you are trying to create a bot.

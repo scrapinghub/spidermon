@@ -1,18 +1,17 @@
 .. _configuring-telegram-bot:
 
-======================================
-Configure a Telegram bot for Spidermon
-======================================
+How do I configure a Telegram bot for Spidermon?
+================================================
 
 What are bots?
-==============
+--------------
 
 A bot is a type of Telegram user designed to interact with users via conversation.
 
 To work with `Telegram Actions <https://spidermon.readthedocs.io/en/latest/actions.html#telegram-action>`_, you will need a Telegram bot which would send `notifications <https://spidermon.readthedocs.io/en/latest/getting-started.html#telegram-notifications>`_ to Telegram from Spidermon.
 
 Steps
-=====
+-----
 
 #. `Create a Telegram bot <https://core.telegram.org/bots#3-how-do-i-create-a-bot>`_.
 
