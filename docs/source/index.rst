@@ -31,11 +31,8 @@ Contents
    getting-started
    monitors
    item-validation
-   stats-collection
    expression-monitors
    settings
-   configuring-slack-for-spidermon
-   configuring-telegram-for-spidermon
    howto/index
    actions
    changelog
