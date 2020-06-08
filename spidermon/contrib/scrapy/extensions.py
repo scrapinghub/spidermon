@@ -107,6 +107,11 @@ class Spidermon(object):
         crawler.signals.connect(ext.spider_opened, signal=signals.spider_opened)
         crawler.signals.connect(ext.spider_closed, signal=signals.spider_closed)
         crawler.signals.connect(ext.engine_stopped, signal=signals.engine_stopped)
+
+        has_field_coverage = "SPIDERMON_FIELD_COVERAGE" in crawler.settings.keys()
+        if has_field_coverage:
+            crawler.signals.connect(ext.item_scraped, signal=signals.item_scraped)
+
         return ext
 
     def spider_opened(self, spider):
@@ -125,6 +130,9 @@ class Spidermon(object):
     def engine_stopped(self):
         spider = self.crawler.spider
         self._run_suites(spider, self.engine_stopped_suites)
+
+    def item_scraped(self, item, response, spider):
+        ...
 
     def _run_periodic_suites(self, spider, suites):
         suites = [self.load_suite(s) for s in suites]
