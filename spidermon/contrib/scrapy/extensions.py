@@ -132,7 +132,12 @@ class Spidermon(object):
         self._run_suites(spider, self.engine_stopped_suites)
 
     def item_scraped(self, item, response, spider):
-        ...
+        self.crawler.stats.inc_value("spidermon_item_scraped_count")
+
+        item_type = type(item).__name__
+        self.crawler.stats.inc_value(
+            "spidermon_item_scraped_count/{}".format(item_type)
+        )
 
     def _run_periodic_suites(self, spider, suites):
         suites = [self.load_suite(s) for s in suites]
