@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function
 
-__version__ = "1.12.2"
+__version__ = "1.12.3"
 
 from .core.monitors import Monitor
 from .core.suites import MonitorSuite

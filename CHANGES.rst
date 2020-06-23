@@ -1,6 +1,11 @@
 Release notes
 =============
 
+1.12.3 (2020-06-23)
+-------------------
+- bugfix: Fix code formatting errors that was preventing latest version of Spidermon to be deployed in PyPI (`issue <https://github.com/scrapinghub/spidermon/issues/256>`_)
+
+
 1.12.2 (2020-05-07)
 -------------------
 - Fixed version 1.12.1 changelog
