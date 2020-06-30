@@ -131,13 +131,23 @@ class Spidermon(object):
         spider = self.crawler.spider
         self._run_suites(spider, self.engine_stopped_suites)
 
+    def _count_item(self, item, item_count_stat=None):
+        if item_count_stat is None:
+            item_type = type(item).__name__
+            item_count_stat = "spidermon_item_scraped_count/{}".format(item_type)
+            self.crawler.stats.inc_value(item_count_stat)
+
+        for field_name, value in item.items():
+            field_item_count_stat = "{}/{}".format(item_count_stat, field_name)
+            self.crawler.stats.inc_value(field_item_count_stat)
+
+            if isinstance(value, dict):
+                self._count_item(value, field_item_count_stat)
+                continue
+
     def item_scraped(self, item, response, spider):
         self.crawler.stats.inc_value("spidermon_item_scraped_count")
-
-        item_type = type(item).__name__
-        self.crawler.stats.inc_value(
-            "spidermon_item_scraped_count/{}".format(item_type)
-        )
+        self._count_item(item)
 
     def _run_periodic_suites(self, spider, suites):
         suites = [self.load_suite(s) for s in suites]

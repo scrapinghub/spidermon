@@ -49,3 +49,102 @@ def test_add_stats_item_scraped_count_by_item_type(spider):
     assert stats.get("spidermon_item_scraped_count/dict") == 15
     assert stats.get("spidermon_item_scraped_count/Item") == 20
     assert stats.get("spidermon_item_scraped_count/TestItem") == 25
+
+
+def test_item_scraped_count_single_field(spider):
+    returned_items = [{"field1": "value1"}]
+
+    for item in returned_items:
+        spider.crawler.signals.send_catch_log_deferred(
+            signal=signals.item_scraped, item=item, response="", spider=spider,
+        )
+
+    stats = spider.crawler.stats.get_stats()
+    assert stats.get("spidermon_item_scraped_count/dict/field1") == 1
+
+
+def test_item_scraped_count_multiple_field(spider):
+    returned_items = [{"field1": "value1", "field2": "value2"}]
+
+    for item in returned_items:
+        spider.crawler.signals.send_catch_log_deferred(
+            signal=signals.item_scraped, item=item, response="", spider=spider,
+        )
+
+    stats = spider.crawler.stats.get_stats()
+    assert stats.get("spidermon_item_scraped_count/dict/field1") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field2") == 1
+
+
+def test_item_scraped_count_multiple_items(spider):
+    returned_items = [
+        {"field1": "value1", "field2": "value2"},
+        {"field1": "value1", "field2": "value2"},
+    ]
+
+    for item in returned_items:
+        spider.crawler.signals.send_catch_log_deferred(
+            signal=signals.item_scraped, item=item, response="", spider=spider,
+        )
+
+    stats = spider.crawler.stats.get_stats()
+    assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
+
+
+def test_item_scraped_count_multiple_items_field_missing(spider):
+    returned_items = [
+        {"field1": "value1", "field2": "value2"},
+        {"field1": "value1",},
+    ]
+
+    for item in returned_items:
+        spider.crawler.signals.send_catch_log_deferred(
+            signal=signals.item_scraped, item=item, response="", spider=spider,
+        )
+
+    stats = spider.crawler.stats.get_stats()
+    assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/field2") == 1
+
+
+def test_item_scraped_count_single_nested_field(spider):
+    returned_items = [{"field1": {"field1.1": "value1.1"}}]
+
+    for item in returned_items:
+        spider.crawler.signals.send_catch_log_deferred(
+            signal=signals.item_scraped, item=item, response="", spider=spider,
+        )
+
+    stats = spider.crawler.stats.get_stats()
+    assert stats.get("spidermon_item_scraped_count/dict") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field1") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field1/field1.1") == 1
+
+
+def test_item_scraped_count_multiple_nested_field(spider):
+    returned_items = [
+        {
+            "field1": {"field1.1": "value1.1"},
+            "field2": "value2",
+            "field3": {"field3.1": "value3.1"},
+        },
+        {
+            "field1": {"field1.1": "value1.1", "field1.2": "value1.2",},
+            "field2": "value2",
+        },
+    ]
+
+    for item in returned_items:
+        spider.crawler.signals.send_catch_log_deferred(
+            signal=signals.item_scraped, item=item, response="", spider=spider,
+        )
+
+    stats = spider.crawler.stats.get_stats()
+
+    assert stats.get("spidermon_item_scraped_count/dict") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/field1/field1.1") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/field1/field1.2") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/field3") == 1
