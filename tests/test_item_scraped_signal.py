@@ -1,4 +1,7 @@
-from scrapy import Item, signals
+
+
+import pytest
+from scrapy import Field, Item, signals
 from scrapy.spiders import Spider
 from scrapy.utils.test import get_crawler
 
@@ -7,7 +10,8 @@ class TestItem(Item):
     ...
 
 
-def test_add_stats_item_scraped_count_by_item_type():
+@pytest.fixture
+def spider():
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -17,8 +21,12 @@ def test_add_stats_item_scraped_count_by_item_type():
 
     spider = Spider.from_crawler(crawler, "example.com")
 
+    return spider
+
+
+def test_add_stats_item_scraped_count_by_item_type(spider):
     for _ in range(15):
-        crawler.signals.send_catch_log_deferred(
+        spider.crawler.signals.send_catch_log_deferred(
             signal=signals.item_scraped,
             item={"_type": "regular_dict"},
             response="",
@@ -26,16 +34,16 @@ def test_add_stats_item_scraped_count_by_item_type():
         )
 
     for _ in range(20):
-        crawler.signals.send_catch_log_deferred(
+        spider.crawler.signals.send_catch_log_deferred(
             signal=signals.item_scraped, item=Item(), response="", spider=spider,
         )
 
     for _ in range(25):
-        crawler.signals.send_catch_log_deferred(
+        spider.crawler.signals.send_catch_log_deferred(
             signal=signals.item_scraped, item=TestItem(), response="", spider=spider,
         )
 
-    stats = crawler.stats.get_stats()
+    stats = spider.crawler.stats.get_stats()
 
     assert stats.get("spidermon_item_scraped_count") == 60
     assert stats.get("spidermon_item_scraped_count/dict") == 15
