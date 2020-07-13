@@ -84,21 +84,23 @@ class SlackMessageManager:
         user = self.users.get(name, None)
         return user["id"] if user else None
 
-    def _get_users_info(self):
-        return dict(
-            [
-                (member["name"].lower(), member)
-                for member in self._api_call("users.list")["members"]
-            ]
-        )
-
-    def _api_call(self, method, **kwargs):
-        response = self._client.api_call(method, **kwargs)
-
+    def _req_had_errors(self, response):
         has_errors = not response.get("ok")
         if has_errors:
             error_msg = response.get("error", {}).get("msg", "Slack API error")
             logger.error(error_msg)
+        return True
+
+    def _get_users_info(self):
+        response = self._api_call("auth.test")
+        self._req_had_errors(response)
+        member = self._api_call("users.info", user=response["user_id"])
+        return dict([(member["user"]["name"].lower(), member["user"])])
+
+    def _api_call(self, method, **kwargs):
+        response = self._client.api_call(method, **kwargs)
+
+        self._req_had_errors(response)
 
         if isinstance(response, six.string_types):  # slackclient < v1.0
             response = json.loads(response)
