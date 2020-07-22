@@ -15,7 +15,7 @@ def spider():
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
-        "SPIDERMON_FIELD_COVERAGE": {},
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
     }
     crawler = get_crawler(settings_dict=settings)
 

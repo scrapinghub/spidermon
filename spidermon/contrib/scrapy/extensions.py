@@ -108,7 +108,7 @@ class Spidermon(object):
         crawler.signals.connect(ext.spider_closed, signal=signals.spider_closed)
         crawler.signals.connect(ext.engine_stopped, signal=signals.engine_stopped)
 
-        has_field_coverage = "SPIDERMON_FIELD_COVERAGE" in crawler.settings.keys()
+        has_field_coverage = crawler.settings.getbool("SPIDERMON_ADD_FIELD_COVERAGE")
         if has_field_coverage:
             crawler.signals.connect(ext.item_scraped, signal=signals.item_scraped)
 
