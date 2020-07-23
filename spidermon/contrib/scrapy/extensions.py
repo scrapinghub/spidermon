@@ -9,6 +9,7 @@ from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 from spidermon.python import factory
 from spidermon.python.monitors import ExpressionsMonitor
+from spidermon.utils.field_coverage import calculate_field_coverage
 from spidermon.utils.hubstorage import hs
 
 
@@ -123,6 +124,8 @@ class Spidermon(object):
             task.start(time, now=False)
 
     def spider_closed(self, spider):
+        self._add_field_coverage_to_stats()
+
         self._run_suites(spider, self.spider_closed_suites)
         for task in self.periodic_tasks[spider]:
             task.stop()
@@ -144,6 +147,11 @@ class Spidermon(object):
             if isinstance(value, dict):
                 self._count_item(value, field_item_count_stat)
                 continue
+
+    def _add_field_coverage_to_stats(self):
+        stats = self.crawler.stats.get_stats()
+        coverage_stats = calculate_field_coverage(stats)
+        stats.update(coverage_stats)
 
     def item_scraped(self, item, response, spider):
         self.crawler.stats.inc_value("spidermon_item_scraped_count")
