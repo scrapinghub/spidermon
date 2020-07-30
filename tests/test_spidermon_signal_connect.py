@@ -16,7 +16,6 @@ def spidermon_enabled_settings():
     }
 
 
-@pytest.mark.skipif(sys.version_info < (3, 4), reason="requires python3.4 or higher")
 def test_spider_opened_connect_signal(mocker, spidermon_enabled_settings):
     spider_opened_method = mocker.patch.object(Spidermon, "spider_opened")
 
@@ -27,7 +26,6 @@ def test_spider_opened_connect_signal(mocker, spidermon_enabled_settings):
     assert spider_opened_method.called, "spider_opened not called"
 
 
-@pytest.mark.skipif(sys.version_info < (3, 4), reason="requires python3.4 or higher")
 def test_spider_closed_connect_signal(mocker, spidermon_enabled_settings):
     spider_closed_method = mocker.patch.object(Spidermon, "spider_closed")
 
@@ -40,7 +38,6 @@ def test_spider_closed_connect_signal(mocker, spidermon_enabled_settings):
     assert spider_closed_method.called, "spider_closed not called"
 
 
-@pytest.mark.skipif(sys.version_info < (3, 4), reason="requires python3.4 or higher")
 def test_engine_stopped_connect_signal(mocker, spidermon_enabled_settings):
     engine_stopped = mocker.patch.object(Spidermon, "engine_stopped")
 
