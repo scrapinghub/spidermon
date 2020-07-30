@@ -1,6 +1,14 @@
 Release notes
 =============
 
+1.13.0 (2020-06-23)
+-------------------
+- bug: Fix Telegram action error logging
+- feature: Disable item validation pipeline when Spidermon is disabled
+- feature: Item validation built in monitor
+- chore: Removed Python 2.7 support
+- docs: Improved documentation organization
+
 1.12.2 (2020-05-07)
 -------------------
 - Fixed version 1.12.1 changelog
