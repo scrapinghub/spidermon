@@ -235,15 +235,35 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
                "MyCustomItem/field_2": 1.0,
            }"""
 
+    def run(self, result):
+        add_field_coverage_set = self.crawler.settings.getbool(
+            "SPIDERMON_ADD_FIELD_COVERAGE", False
+        )
+        if not add_field_coverage_set:
+            raise NotConfigured(
+                "You should enable field coverage stats (SPIDERMON_ADD_FIELD_COVERAGE=True) on your project settings"
+            )
+        return super(FieldCoverageMonitor, self).run(result)
+
     def test_check_if_field_coverage_rules_are_met(self):
         failures = []
-        field_coverage_rules = self.crawler.settings.getdict("SPIDERMON_FIELD_COVERAGE_RULES", [])
+        field_coverage_rules = self.crawler.settings.getdict(
+            "SPIDERMON_FIELD_COVERAGE_RULES", []
+        )
         for field, expected_coverage in field_coverage_rules.items():
-            real_coverage = self.data.stats.get("spidermon_field_coverage/{}".format(field), 0)
+            real_coverage = self.data.stats.get(
+                "spidermon_field_coverage/{}".format(field), 0
+            )
             if real_coverage < expected_coverage:
-                failures.append("{} (expected {} / real {})".format(field, expected_coverage, real_coverage))
+                failures.append(
+                    "{} (expected {} / real {})".format(
+                        field, expected_coverage, real_coverage
+                    )
+                )
 
-        msg = "\nField coverage rules were not met on the following fields:\n{}".format("\n".join(failures))
+        msg = "\nField coverage rules were not met on the following fields:\n{}".format(
+            "\n".join(failures)
+        )
         self.assertTrue(len(failures) == 0, msg=msg)
 
 
