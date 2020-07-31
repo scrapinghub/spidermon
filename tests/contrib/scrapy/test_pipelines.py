@@ -213,9 +213,6 @@ class PipelineJSONSchemaValidator(PipelineTest):
     ]
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 4), reason="mock requires python3.4 or higher"
-)
 def test_validator_from_url(mocker):
     mocked_get_contents = mocker.patch(
         "spidermon.contrib.validation.jsonschema.tools.get_contents",
