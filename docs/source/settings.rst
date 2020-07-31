@@ -116,3 +116,12 @@ SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS
 Default: ``[]``
 
 List of dictionaries describing :ref:`expression monitors<topics-expression-monitors>` to run when the engine is stopped.
+
+
+.. SPIDERMON_ADD_FIELD_COVERAGE:
+
+SPIDERMON_ADD_FIELD_COVERAGE
+----------------------------
+Default: ``False``
+
+When enabled, Spidermon will add field coverage information in Spider stats.

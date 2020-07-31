@@ -9,6 +9,7 @@ from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 from spidermon.python import factory
 from spidermon.python.monitors import ExpressionsMonitor
+from spidermon.utils.field_coverage import calculate_field_coverage
 from spidermon.utils.hubstorage import hs
 
 
@@ -107,6 +108,11 @@ class Spidermon(object):
         crawler.signals.connect(ext.spider_opened, signal=signals.spider_opened)
         crawler.signals.connect(ext.spider_closed, signal=signals.spider_closed)
         crawler.signals.connect(ext.engine_stopped, signal=signals.engine_stopped)
+
+        has_field_coverage = crawler.settings.getbool("SPIDERMON_ADD_FIELD_COVERAGE")
+        if has_field_coverage:
+            crawler.signals.connect(ext.item_scraped, signal=signals.item_scraped)
+
         return ext
 
     def spider_opened(self, spider):
@@ -118,6 +124,8 @@ class Spidermon(object):
             task.start(time, now=False)
 
     def spider_closed(self, spider):
+        self._add_field_coverage_to_stats()
+
         self._run_suites(spider, self.spider_closed_suites)
         for task in self.periodic_tasks[spider]:
             task.stop()
@@ -125,6 +133,29 @@ class Spidermon(object):
     def engine_stopped(self):
         spider = self.crawler.spider
         self._run_suites(spider, self.engine_stopped_suites)
+
+    def _count_item(self, item, item_count_stat=None):
+        if item_count_stat is None:
+            item_type = type(item).__name__
+            item_count_stat = "spidermon_item_scraped_count/{}".format(item_type)
+            self.crawler.stats.inc_value(item_count_stat)
+
+        for field_name, value in item.items():
+            field_item_count_stat = "{}/{}".format(item_count_stat, field_name)
+            self.crawler.stats.inc_value(field_item_count_stat)
+
+            if isinstance(value, dict):
+                self._count_item(value, field_item_count_stat)
+                continue
+
+    def _add_field_coverage_to_stats(self):
+        stats = self.crawler.stats.get_stats()
+        coverage_stats = calculate_field_coverage(stats)
+        stats.update(coverage_stats)
+
+    def item_scraped(self, item, response, spider):
+        self.crawler.stats.inc_value("spidermon_item_scraped_count")
+        self._count_item(item)
 
     def _run_periodic_suites(self, spider, suites):
         suites = [self.load_suite(s) for s in suites]
