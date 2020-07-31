@@ -1,5 +1,5 @@
 import pytest
-from scrapy import Field, Item, signals
+from scrapy import Item, signals
 from scrapy.spiders import Spider
 from scrapy.utils.test import get_crawler
 
@@ -146,6 +146,19 @@ def test_item_scraped_count_multiple_nested_field(spider):
     assert stats.get("spidermon_item_scraped_count/dict/field1/field1.2") == 1
     assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
     assert stats.get("spidermon_item_scraped_count/dict/field3") == 1
+
+
+def test_item_scraped_count_with_slash_on_field_name(spider):
+    returned_items = [{"field1/with/slash": "value1", "field2": "value2"}]
+
+    for item in returned_items:
+        spider.crawler.signals.send_catch_log_deferred(
+            signal=signals.item_scraped, item=item, response="", spider=spider,
+        )
+
+    stats = spider.crawler.stats.get_stats()
+    assert stats.get("spidermon_item_scraped_count/dict/field1/with/slash") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field2") == 1
 
 
 def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field_coverage_settings():
