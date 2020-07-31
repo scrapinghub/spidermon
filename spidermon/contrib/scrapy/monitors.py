@@ -175,7 +175,7 @@ class ItemValidationMonitor(BaseScrapyMonitor):
 
 
 @monitors.name("Field Coverage Monitor")
-class FieldCoverageMonitor(Monitor, SpiderMonitorMixin):
+class FieldCoverageMonitor(BaseScrapyMonitor):
     """Validate if field coverage rules are met.
 
     To use this monitor you need to enable ``SPIDERMON_ADD_FIELD_COVERAGE``
@@ -207,7 +207,7 @@ class FieldCoverageMonitor(Monitor, SpiderMonitorMixin):
         SPIDERMON_FIELD_COVERAGE_RULES = {
             "dict/field_1": 0.4,  # Expected 40% coverage for field_1
             "dict/field_2": 1.0,  # Expected 100% coverage for field_2
-            "dict/field_3/field_3": 1.0,  # Expected 100% coverage for parent field_3
+            "dict/field_3": 1.0,  # Expected 100% coverage for parent field_3
             "dict/field_3/field_3_1": 0.5,  # Expected 50% coverage for nested field_3_1
         }
 

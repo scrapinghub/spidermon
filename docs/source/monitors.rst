@@ -1,5 +1,3 @@
-.. _monitors:
-
 ====================
 Monitoring your jobs
 ====================
@@ -138,7 +136,7 @@ The Basic Monitors
 Spidermon has some batteries included :)
 
 .. automodule:: spidermon.contrib.scrapy.monitors
-    :members: FinishReasonMonitor, ItemCountMonitor, ErrorCountMonitor, UnwantedHTTPCodesMonitor
+    :members: ErrorCountMonitor, FieldCoverageMonitor, FinishReasonMonitor, ItemCountMonitor, UnwantedHTTPCodesMonitor
 
 Is there a **Basic Scrapy Suite** ready to use?
 ------------------------------------------------
