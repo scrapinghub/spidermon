@@ -174,6 +174,79 @@ class ItemValidationMonitor(BaseScrapyMonitor):
         self.assertTrue(item_validation_errors <= errors_threshold, msg=msg)
 
 
+@monitors.name("Field Coverage Monitor")
+class FieldCoverageMonitor(Monitor, SpiderMonitorMixin):
+    """Validate if field coverage rules are met.
+
+    To use this monitor you need to enable ``SPIDERMON_ADD_FIELD_COVERAGE``
+    setting that will add information about field coverage on your spider
+    statistics.
+
+    To define your field coverage rules create a dictionary containing the
+    expected coverage for each field you want to monitor.
+
+    As example, if the items you are returning from your spider are a Python dictionaries
+    with the following format:
+
+    .. code-block:: python
+
+        {
+            "field_1": "some_value",
+            "field_2": "some_value",
+            "field_3": {
+                "field_3_1": "some_value",
+                "field_3_2": "some_value",
+            }
+        }
+
+    A set of rules may be defined as follows:
+
+    .. code-block:: python
+
+        # project/settings.py
+        SPIDERMON_FIELD_COVERAGE_RULES = {
+            "dict/field_1": 0.4,  # Expected 40% coverage for field_1
+            "dict/field_2": 1.0,  # Expected 100% coverage for field_2
+            "dict/field_3/field_3": 1.0,  # Expected 100% coverage for parent field_3
+            "dict/field_3/field_3_1": 0.5,  # Expected 50% coverage for nested field_3_1
+        }
+
+    You are not obligated to set rules for every field, just the ones thar you are interested.
+    Also, you can monitor nested fields if available in your returned items.
+
+    .. note::
+       If you are returning an item type other than a dictionary, replace `dict` by the
+       class name of the item you are returning.
+
+       Considering you have an item defined as:
+
+       .. code-block:: python
+
+           class MyCustomItem(scrapy.Item):
+               field_1 = scrapy.Field()
+               field_2 = scrapy.Field()
+
+       You must define the field coverage rules as follows:
+
+       .. code-block:: python
+
+           SPIDERMON_FIELD_COVERAGE_RULES = {
+               "MyCustomItem/field_1": 0.4,
+               "MyCustomItem/field_2": 1.0,
+           }"""
+
+    def test_check_if_field_coverage_rules_are_met(self):
+        failures = []
+        field_coverage_rules = self.crawler.settings.getdict("SPIDERMON_FIELD_COVERAGE_RULES", [])
+        for field, expected_coverage in field_coverage_rules.items():
+            real_coverage = self.data.stats.get("spidermon_field_coverage/{}".format(field), 0)
+            if real_coverage < expected_coverage:
+                failures.append("{} (expected {} / real {})".format(field, expected_coverage, real_coverage))
+
+        msg = "\nField coverage rules were not met on the following fields:\n{}".format("\n".join(failures))
+        self.assertTrue(len(failures) == 0, msg=msg)
+
+
 class SpiderCloseMonitorSuite(MonitorSuite):
     """This Monitor Suite implements the following monitors:
 
@@ -182,6 +255,7 @@ class SpiderCloseMonitorSuite(MonitorSuite):
     * :class:`ErrorCountMonitor`
     * :class:`FinishReasonMonitor`
     * :class:`UnwantedHTTPCodesMonitor`
+    * :class:`FieldCoverageMonitor`
 
     You can easily enable this monitor *after* enabling Spidermon::
 
@@ -196,4 +270,5 @@ class SpiderCloseMonitorSuite(MonitorSuite):
         ErrorCountMonitor,
         FinishReasonMonitor,
         UnwantedHTTPCodesMonitor,
+        FieldCoverageMonitor,
     ]
