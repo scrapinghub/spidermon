@@ -178,14 +178,14 @@ class ItemValidationMonitor(BaseScrapyMonitor):
 class FieldCoverageMonitor(BaseScrapyMonitor):
     """Validate if field coverage rules are met.
 
-    To use this monitor you need to enable ``SPIDERMON_ADD_FIELD_COVERAGE``
-    setting that will add information about field coverage on your spider
+    To use this monitor you need to enable the ``SPIDERMON_ADD_FIELD_COVERAGE``
+    setting, which will add information about field coverage to your spider
     statistics.
 
     To define your field coverage rules create a dictionary containing the
     expected coverage for each field you want to monitor.
 
-    As example, if the items you are returning from your spider are a Python dictionaries
+    As an example, if the items you are returning from your spider are Python dictionaries
     with the following format:
 
     .. code-block:: python
@@ -211,7 +211,7 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
             "dict/field_3/field_3_1": 0.5,  # Expected 50% coverage for nested field_3_1
         }
 
-    You are not obligated to set rules for every field, just the ones thar you are interested.
+    You are not obligated to set rules for every field, just for the ones in which you are interested.
     Also, you can monitor nested fields if available in your returned items.
 
     .. note::
@@ -248,20 +248,20 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
     def test_check_if_field_coverage_rules_are_met(self):
         failures = []
         field_coverage_rules = self.crawler.settings.getdict(
-            "SPIDERMON_FIELD_COVERAGE_RULES", []
+            "SPIDERMON_FIELD_COVERAGE_RULES"
         )
         for field, expected_coverage in field_coverage_rules.items():
-            real_coverage = self.data.stats.get(
+            actual_coverage = self.data.stats.get(
                 "spidermon_field_coverage/{}".format(field), 0
             )
-            if real_coverage < expected_coverage:
+            if actual_coverage < expected_coverage:
                 failures.append(
-                    "{} (expected {} / real {})".format(
-                        field, expected_coverage, real_coverage
+                    "{} (expected {}, got {})".format(
+                        field, expected_coverage, actual_coverage
                     )
                 )
 
-        msg = "\nField coverage rules were not met on the following fields:\n{}".format(
+        msg = "\nThe following items did not meet field coverage rules:\n{}".format(
             "\n".join(failures)
         )
         self.assertTrue(len(failures) == 0, msg=msg)
