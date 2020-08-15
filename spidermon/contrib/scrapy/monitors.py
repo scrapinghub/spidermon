@@ -241,7 +241,7 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
         )
         if not add_field_coverage_set:
             raise NotConfigured(
-                "You should enable field coverage stats (SPIDERMON_ADD_FIELD_COVERAGE=True) on your project settings"
+                "To enable field coverage monitor, set SPIDERMON_ADD_FIELD_COVERAGE=True in your project settings"
             )
         return super(FieldCoverageMonitor, self).run(result)
 
