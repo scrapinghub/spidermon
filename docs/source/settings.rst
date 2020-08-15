@@ -165,3 +165,30 @@ field following the format:
       'spidermon_field_coverage/dict/field_1/nested_field_1_2': 0.5,
       'spidermon_item_scraped_count/dict/field_2': 0.5,
 
+.. note::
+
+   A field is counted as scraped and covered if it is returned by the spider, no matter
+   its content. So for the following set of items:
+
+   .. code-block:: python
+
+      [
+        {
+          "field_1": None,
+          "field_2": "value",
+        },
+        {
+          "field_1": "value",
+          "field_2": "value",
+        },
+      ]
+
+    Statistics will be like the following:
+
+   .. code-block:: python
+
+      'spidermon_item_scraped_count/dict': 2,
+      'spidermon_item_scraped_count/dict/field_1': 2,
+      'spidermon_item_scraped_count/dict/field_2': 2,
+      'spidermon_field_coverage/dict/field_1': 1,
+      'spidermon_item_scraped_count/dict/field_2': 1,
