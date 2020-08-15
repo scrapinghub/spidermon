@@ -193,6 +193,7 @@ def test_add_field_coverage_when_spider_closes_if_have_field_coverage_settings()
 
     assert stats.get("spidermon_field_coverage/dict/field1") == 1.0
 
+
 def test_item_scraped_count_ignore_none_values():
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -219,6 +220,7 @@ def test_item_scraped_count_ignore_none_values():
     assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
     assert stats.get("spidermon_item_scraped_count/dict/field2") == 1
 
+
 def test_item_scraped_count_do_not_ignore_none_values():
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -243,6 +245,7 @@ def test_item_scraped_count_do_not_ignore_none_values():
 
     assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
     assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
+
 
 def test_item_scraped_count_do_not_ignore_none_values_by_default(spider):
     returned_items = [

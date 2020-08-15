@@ -157,7 +157,9 @@ class Spidermon(object):
         stats.update(coverage_stats)
 
     def item_scraped(self, item, response, spider):
-        skip_none_values = spider.crawler.settings.getbool("SPIDERMON_FIELD_COVERAGE_SKIP_NONE", False)
+        skip_none_values = spider.crawler.settings.getbool(
+            "SPIDERMON_FIELD_COVERAGE_SKIP_NONE", False
+        )
         self.crawler.stats.inc_value("spidermon_item_scraped_count")
         self._count_item(item, skip_none_values)
 
