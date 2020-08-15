@@ -134,18 +134,21 @@ class Spidermon(object):
         spider = self.crawler.spider
         self._run_suites(spider, self.engine_stopped_suites)
 
-    def _count_item(self, item, item_count_stat=None):
+    def _count_item(self, item, skip_none_values, item_count_stat=None):
         if item_count_stat is None:
             item_type = type(item).__name__
             item_count_stat = "spidermon_item_scraped_count/{}".format(item_type)
             self.crawler.stats.inc_value(item_count_stat)
 
         for field_name, value in item.items():
+            if skip_none_values and value is None:
+                continue
+
             field_item_count_stat = "{}/{}".format(item_count_stat, field_name)
             self.crawler.stats.inc_value(field_item_count_stat)
 
             if isinstance(value, dict):
-                self._count_item(value, field_item_count_stat)
+                self._count_item(value, skip_none_values, field_item_count_stat)
                 continue
 
     def _add_field_coverage_to_stats(self):
@@ -154,8 +157,9 @@ class Spidermon(object):
         stats.update(coverage_stats)
 
     def item_scraped(self, item, response, spider):
+        skip_none_values = spider.crawler.settings.getbool("SPIDERMON_FIELD_COVERAGE_SKIP_NONE", False)
         self.crawler.stats.inc_value("spidermon_item_scraped_count")
-        self._count_item(item)
+        self._count_item(item, skip_none_values)
 
     def _run_periodic_suites(self, spider, suites):
         suites = [self.load_suite(s) for s in suites]

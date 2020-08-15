@@ -118,8 +118,6 @@ Default: ``[]``
 List of dictionaries describing :ref:`expression monitors<topics-expression-monitors>` to run when the engine is stopped.
 
 
-.. SPIDERMON_ADD_FIELD_COVERAGE:
-
 SPIDERMON_ADD_FIELD_COVERAGE
 ----------------------------
 Default: ``False``
@@ -165,30 +163,43 @@ field following the format:
       'spidermon_field_coverage/dict/field_1/nested_field_1_2': 0.5,
       'spidermon_item_scraped_count/dict/field_2': 0.5,
 
-.. note::
+SPIDERMON_FIELD_COVERAGE_SKIP_NONE
+----------------------------------
+Default: ``False``
 
-   A field is counted as scraped and covered if it is returned by the spider, no matter
-   its content. So for the following set of items:
+When enabled, fields returned that contains `None` as value will not be counted as an existing value.
 
-   .. code-block:: python
+Considering your spider returns the following items:
 
-      [
-        {
-          "field_1": None,
-          "field_2": "value",
-        },
-        {
-          "field_1": "value",
-          "field_2": "value",
-        },
-      ]
+.. code-block:: python
 
-    Statistics will be like the following:
+   [
+     {
+       "field_1": None,
+       "field_2": "value",
+     },
+     {
+       "field_1": "value",
+       "field_2": "value",
+     },
+   ]
 
-   .. code-block:: python
+If this setting is set to ``True``, spider statistics will be:
 
-      'spidermon_item_scraped_count/dict': 2,
-      'spidermon_item_scraped_count/dict/field_1': 2,
-      'spidermon_item_scraped_count/dict/field_2': 2,
-      'spidermon_field_coverage/dict/field_1': 1,
-      'spidermon_item_scraped_count/dict/field_2': 1,
+.. code-block:: python
+
+   'spidermon_item_scraped_count/dict': 2,
+   'spidermon_item_scraped_count/dict/field_1': 1,  # Ignored None value
+   'spidermon_item_scraped_count/dict/field_2': 2,
+   'spidermon_field_coverage/dict/field_1': 0.5,  # Ignored None value
+   'spidermon_item_scraped_count/dict/field_2': 1,
+
+If this setting is not provided or set to ``False``, spider statistics will be:
+
+.. code-block:: python
+
+   'spidermon_item_scraped_count/dict': 2,
+   'spidermon_item_scraped_count/dict/field_1': 2,  # Did not ignore None value
+   'spidermon_item_scraped_count/dict/field_2': 2,
+   'spidermon_field_coverage/dict/field_1': 1,  # Did not ignore None value
+   'spidermon_item_scraped_count/dict/field_2': 1,
