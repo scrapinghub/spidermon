@@ -207,12 +207,20 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
         SPIDERMON_FIELD_COVERAGE_RULES = {
             "dict/field_1": 0.4,  # Expected 40% coverage for field_1
             "dict/field_2": 1.0,  # Expected 100% coverage for field_2
-            "dict/field_3": 1.0,  # Expected 100% coverage for parent field_3
+            "dict/field_3": 0.8,  # Expected 80% coverage for parent field_3
             "dict/field_3/field_3_1": 0.5,  # Expected 50% coverage for nested field_3_1
         }
 
     You are not obligated to set rules for every field, just for the ones in which you are interested.
     Also, you can monitor nested fields if available in your returned items.
+
+    .. warning::
+
+       Rules for nested fields will be validated against the total number of items returned.
+
+       For the example below, rule for ``dict/field_3/field_3_1`` will validate if 50%
+       of **all** items returned contains ``field_3_1``, not just the ones that contain
+       parent ``field_3``.
 
     .. note::
        If you are returning an item type other than a dictionary, replace `dict` by the
