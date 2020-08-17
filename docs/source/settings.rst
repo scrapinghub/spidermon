@@ -167,7 +167,7 @@ SPIDERMON_FIELD_COVERAGE_SKIP_NONE
 ----------------------------------
 Default: ``False``
 
-When enabled, fields returned that contains `None` as value will not be counted as an existing value.
+When enabled, returned fields that have ``None`` as value will not be counted as fields with a value.
 
 Considering your spider returns the following items:
 
