@@ -20,6 +20,7 @@ class Interpreter(object):
         "dict",
         "set",
         "tuple",  # Data types
+        "constant",
         "nameconstant",  # language constant (None)
         "unaryop",
         "usub",  # Unary arithmetic operators
