@@ -123,7 +123,7 @@ SPIDERMON_ADD_FIELD_COVERAGE
 Default: ``False``
 
 When enabled, Spidermon will add statistics about the number of items scraped and coverage for each existing
-field following the format:
+field following this format:
 
 ``'spidermon_item_scraped_count/<item_type>/<field_name>': <item_count>``
 ``'spidermon_field_coverage/<item_type>/<field_name>': <coverage>``
