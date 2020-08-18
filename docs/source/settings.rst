@@ -118,10 +118,88 @@ Default: ``[]``
 List of dictionaries describing :ref:`expression monitors<topics-expression-monitors>` to run when the engine is stopped.
 
 
-.. SPIDERMON_ADD_FIELD_COVERAGE:
-
 SPIDERMON_ADD_FIELD_COVERAGE
 ----------------------------
 Default: ``False``
 
-When enabled, Spidermon will add field coverage information in Spider stats.
+When enabled, Spidermon will add statistics about the number of items scraped and coverage for each existing
+field following this format:
+
+``'spidermon_item_scraped_count/<item_type>/<field_name>': <item_count>``
+``'spidermon_field_coverage/<item_type>/<field_name>': <coverage>``
+
+.. note::
+
+   Nested fields are also supported. For example, if your spider returns these items:
+
+   .. code-block:: python
+
+      [
+        {
+          "field_1": {
+            "nested_field_1_1": "value",
+            "nested_field_1_2": "value",
+          },
+        },
+        {
+          "field_1": {
+            "nested_field_1_1": "value",
+          },
+          "field_2": "value"
+        },
+      ]
+
+   Statistics will be like the following:
+
+   .. code-block:: python
+
+      'spidermon_item_scraped_count/dict': 2,
+      'spidermon_item_scraped_count/dict/field_1': 2,
+      'spidermon_item_scraped_count/dict/field_1/nested_field_1_1': 2,
+      'spidermon_item_scraped_count/dict/field_1/nested_field_1_2': 1,
+      'spidermon_item_scraped_count/dict/field_2': 1,
+      'spidermon_field_coverage/dict/field_1': 1,
+      'spidermon_field_coverage/dict/field_1/nested_field_1_1': 1,
+      'spidermon_field_coverage/dict/field_1/nested_field_1_2': 0.5,
+      'spidermon_item_scraped_count/dict/field_2': 0.5,
+
+SPIDERMON_FIELD_COVERAGE_SKIP_NONE
+----------------------------------
+Default: ``False``
+
+When enabled, returned fields that have ``None`` as value will not be counted as fields with a value.
+
+Considering your spider returns the following items:
+
+.. code-block:: python
+
+   [
+     {
+       "field_1": None,
+       "field_2": "value",
+     },
+     {
+       "field_1": "value",
+       "field_2": "value",
+     },
+   ]
+
+If this setting is set to ``True``, spider statistics will be:
+
+.. code-block:: python
+
+   'spidermon_item_scraped_count/dict': 2,
+   'spidermon_item_scraped_count/dict/field_1': 1,  # Ignored None value
+   'spidermon_item_scraped_count/dict/field_2': 2,
+   'spidermon_field_coverage/dict/field_1': 0.5,  # Ignored None value
+   'spidermon_item_scraped_count/dict/field_2': 1,
+
+If this setting is not provided or set to ``False``, spider statistics will be:
+
+.. code-block:: python
+
+   'spidermon_item_scraped_count/dict': 2,
+   'spidermon_item_scraped_count/dict/field_1': 2,  # Did not ignore None value
+   'spidermon_item_scraped_count/dict/field_2': 2,
+   'spidermon_field_coverage/dict/field_1': 1,  # Did not ignore None value
+   'spidermon_item_scraped_count/dict/field_2': 1,
