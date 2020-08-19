@@ -208,13 +208,13 @@ using a bot when your monitor suites finish their execution.
 
 To use this action you need to:
 
-#.  Install `slackclient`_ 1.3 or higher, but lower than 2.0:
+#.  Install `slackclient`_ 2.0 or higher:
 
     .. code-block:: shell
 
-        $ pip install "slackclient>=1.3,<2.0"
+        $ pip install "slackclient>=2.0"
 
-    .. warning:: This action **does not** work with `slackclient`_ 2.0 or later.
+    .. warning:: This action **requires** Python 3.6 or later.
 
 #.  Provide the `Slack credentials`_ in your ``settings.py`` file as follows:
 
