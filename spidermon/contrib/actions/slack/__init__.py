@@ -5,7 +5,7 @@ import json
 import logging
 
 import six
-from slackclient import SlackClient
+from slack import WebClient
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
@@ -27,7 +27,7 @@ class SlackMessageManager:
             raise NotConfigured("You must provide a slack sender name.")
 
         self.fake = fake
-        self._client = SlackClient(sender_token)
+        self._client = WebClient(sender_token)
         self._users = None
 
     @property
@@ -92,8 +92,8 @@ class SlackMessageManager:
             ]
         )
 
-    def _api_call(self, method, **kwargs):
-        response = self._client.api_call(method, **kwargs)
+    def _api_call(self, method, json=None):
+        response = self._client.api_call(method, json=json)
 
         has_errors = not response.get("ok")
         if has_errors:
@@ -105,7 +105,9 @@ class SlackMessageManager:
         return response
 
     def _get_user_channel(self, user_id):
-        return self._api_call("im.open", user=user_id)["channel"]["id"]
+        return self._api_call("conversations.open", json={"users": user_id})["channel"][
+            "id"
+        ]
 
     def _send_user_message(
         self, username, text, parse="full", link_names=1, attachments=None
@@ -126,13 +128,15 @@ class SlackMessageManager:
     ):
         return self._api_call(
             "chat.postMessage",
-            channel=channel,
-            text=text,
-            parse=parse,
-            link_names=link_names,
-            attachments=self._parse_attachments(attachments),
-            username=self.sender_name,
-            icon_url=self.users[self.sender_name]["profile"]["image_48"],
+            json={
+                "channel": channel,
+                "text": text,
+                "parse": parse,
+                "link_names": link_names,
+                "attachments": self._parse_attachments(attachments),
+                "username": self.sender_name,
+                "icon_url": self.users[self.sender_name]["profile"]["image_48"],
+            },
         )
 
     def _parse_attachments(self, attachments):

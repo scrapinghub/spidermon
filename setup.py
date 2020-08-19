@@ -8,7 +8,7 @@ test_requirements = [
     "lxml",
     "premailer",
     "scrapy",
-    "slackclient>=1.3.0,<2.0.0",
+    "slackclient>=2.0.0",
     "twisted>=19.7.0",
 ]
 
@@ -32,7 +32,7 @@ setup(
         "monitoring": [
             "scrapy",
             "Jinja2",
-            "slackclient>=1.3.0,<2.0.0",
+            "slackclient>=2.0.0",
             "boto",
             "premailer",
             "sentry-sdk",

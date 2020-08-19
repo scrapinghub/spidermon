@@ -1,3 +1,4 @@
+import sys
 import pytest
 
 from spidermon.contrib.actions.slack import SlackMessageManager
@@ -8,6 +9,7 @@ def logger_info(mocker):
     return mocker.patch("spidermon.contrib.actions.slack.logger.info")
 
 
+@pytest.mark.skipif(sys.version_info < (3, 6), reason="requires python3.6 or higher")
 def test_log_text_when_fake_set(logger_info):
     text_to_be_logged = "text to be logged"
 
@@ -20,6 +22,7 @@ def test_log_text_when_fake_set(logger_info):
     assert text_to_be_logged in logger_info.call_args[0]
 
 
+@pytest.mark.skipif(sys.version_info < (3, 6), reason="requires python3.6 or higher")
 def test_log_text_and_attachment_when_fake_set(logger_info):
     text_to_be_logged = "text to be logged"
     attach_to_be_logged = "attachment content"
@@ -34,6 +37,7 @@ def test_log_text_and_attachment_when_fake_set(logger_info):
     assert attach_to_be_logged in logger_info.call_args_list[1][0]
 
 
+@pytest.mark.skipif(sys.version_info < (3, 6), reason="requires python3.6 or higher")
 def test_do_not_log_text_when_fake_is_not_set(logger_info):
     text_not_to_be_logged = "text not to be logged"
 
@@ -45,6 +49,7 @@ def test_do_not_log_text_when_fake_is_not_set(logger_info):
     assert logger_info.call_count == 0
 
 
+@pytest.mark.skipif(sys.version_info < (3, 6), reason="requires python3.6 or higher")
 def test_do_not_log_text_and_attach_when_fake_is_not_set(logger_info):
     text_not_to_be_logged = "text not to be logged"
     attach_not_to_be_logged = "attachment content"
