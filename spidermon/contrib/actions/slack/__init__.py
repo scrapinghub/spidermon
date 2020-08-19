@@ -105,9 +105,10 @@ class SlackMessageManager:
         return response
 
     def _get_user_channel(self, user_id):
-        return self._api_call("conversations.open", json={"users": user_id})["channel"][
-            "id"
-        ]
+        return self._api_call(
+            "conversations.open",
+            json={"users": user_id}
+        )["channel"]["id"]
 
     def _send_user_message(
         self, username, text, parse="full", link_names=1, attachments=None
