@@ -57,7 +57,9 @@ def test_no_error_if_add_field_coverage_setting_set_true(field_coverage_monitor_
 def test_monitor_fail_if_coverage_less_than_expected(field_coverage_monitor_suite):
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
-        "SPIDERMON_FIELD_COVERAGE_RULES": {"dict/field": 0.8,},
+        "SPIDERMON_FIELD_COVERAGE_RULES": {
+            "dict/field": 0.8,
+        },
     }
     stats = {"spidermon_field_coverage/dict/field": 0.5}
     data = make_data_for_monitor(settings=settings, stats=stats)
@@ -70,7 +72,9 @@ def test_monitor_fail_if_coverage_less_than_expected(field_coverage_monitor_suit
 def test_monitor_fail_if_no_coverage_from_expected_field(field_coverage_monitor_suite):
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
-        "SPIDERMON_FIELD_COVERAGE_RULES": {"dict/field": 0.8,},
+        "SPIDERMON_FIELD_COVERAGE_RULES": {
+            "dict/field": 0.8,
+        },
     }
     stats = {"spidermon_field_coverage/dict/other_field": 1.0}
     data = make_data_for_monitor(settings=settings, stats=stats)
@@ -83,7 +87,9 @@ def test_monitor_fail_if_no_coverage_from_expected_field(field_coverage_monitor_
 def test_monitor_pass_if_coverage_equal_than_expected(field_coverage_monitor_suite):
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
-        "SPIDERMON_FIELD_COVERAGE_RULES": {"dict/field": 0.8,},
+        "SPIDERMON_FIELD_COVERAGE_RULES": {
+            "dict/field": 0.8,
+        },
     }
     stats = {"spidermon_field_coverage/dict/field": 0.8}
     data = make_data_for_monitor(settings=settings, stats=stats)
@@ -96,7 +102,9 @@ def test_monitor_pass_if_coverage_equal_than_expected(field_coverage_monitor_sui
 def test_monitor_pass_if_coverage_greater_than_expected(field_coverage_monitor_suite):
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
-        "SPIDERMON_FIELD_COVERAGE_RULES": {"dict/field": 0.8,},
+        "SPIDERMON_FIELD_COVERAGE_RULES": {
+            "dict/field": 0.8,
+        },
     }
     stats = {"spidermon_field_coverage/dict/field": 0.9}
     data = make_data_for_monitor(settings=settings, stats=stats)
