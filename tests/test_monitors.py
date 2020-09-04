@@ -93,8 +93,8 @@ def test_item_count_monitor_extracted_less_than_expected(make_data, item_count_s
 
 
 def test_finished_reason_monitor_should_fail(make_data):
-    """ FinishedReason should fail when spider finished with unexpected
-    reason """
+    """FinishedReason should fail when spider finished with unexpected
+    reason"""
     data = make_data()
     runner = data.pop("runner")
     suite = new_suite([FinishReasonMonitor])
@@ -107,8 +107,8 @@ def test_finished_reason_monitor_should_fail(make_data):
 
 
 def test_finished_reason_monitor_should_pass(make_data):
-    """ FinishedReason should succeed when spider finished with expected
-    reason """
+    """FinishedReason should succeed when spider finished with expected
+    reason"""
     data = make_data({SPIDERMON_EXPECTED_FINISH_REASONS: "special_reason"})
     runner = data.pop("runner")
     suite = new_suite([FinishReasonMonitor])
@@ -128,8 +128,8 @@ def test_log_monitor_should_fail(make_data):
 
 
 def test_log_monitor_should_pass(make_data):
-    """ Log should pass if the # of error log message DOES NOT
-    exceed the limit """
+    """Log should pass if the # of error log message DOES NOT
+    exceed the limit"""
     data = make_data({SPIDERMON_MAX_ERRORS: 50})
     runner = data.pop("runner")
     suite = new_suite([ErrorCountMonitor])
@@ -140,7 +140,7 @@ def test_log_monitor_should_pass(make_data):
 
 def test_unwanted_httpcodes_should_fail(make_data):
     """Unwanted HTTP Code should fail if # off responses with error status
-    codes is higher than expected """
+    codes is higher than expected"""
 
     # Scenario # 1
     data = make_data({SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT: 16})
@@ -212,7 +212,7 @@ def test_unwanted_httpcodes_should_fail(make_data):
 
 def test_unwanted_httpcodes_should_pass(make_data):
     """Unwanted HTTP Code should pass if # off responses with error status
-    codes is lower than expected """
+    codes is lower than expected"""
 
     # Scenario # 1
     data = make_data({SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT: 16})

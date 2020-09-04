@@ -33,12 +33,18 @@ def test_add_stats_item_scraped_count_by_item_type(spider):
 
     for _ in range(20):
         spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped, item=Item(), response="", spider=spider,
+            signal=signals.item_scraped,
+            item=Item(),
+            response="",
+            spider=spider,
         )
 
     for _ in range(25):
         spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped, item=TestItem(), response="", spider=spider,
+            signal=signals.item_scraped,
+            item=TestItem(),
+            response="",
+            spider=spider,
         )
 
     stats = spider.crawler.stats.get_stats()
@@ -54,7 +60,10 @@ def test_item_scraped_count_single_field(spider):
 
     for item in returned_items:
         spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped, item=item, response="", spider=spider,
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
         )
 
     stats = spider.crawler.stats.get_stats()
@@ -66,7 +75,10 @@ def test_item_scraped_count_multiple_field(spider):
 
     for item in returned_items:
         spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped, item=item, response="", spider=spider,
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
         )
 
     stats = spider.crawler.stats.get_stats()
@@ -82,7 +94,10 @@ def test_item_scraped_count_multiple_items(spider):
 
     for item in returned_items:
         spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped, item=item, response="", spider=spider,
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
         )
 
     stats = spider.crawler.stats.get_stats()
@@ -93,12 +108,17 @@ def test_item_scraped_count_multiple_items(spider):
 def test_item_scraped_count_multiple_items_field_missing(spider):
     returned_items = [
         {"field1": "value1", "field2": "value2"},
-        {"field1": "value1",},
+        {
+            "field1": "value1",
+        },
     ]
 
     for item in returned_items:
         spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped, item=item, response="", spider=spider,
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
         )
 
     stats = spider.crawler.stats.get_stats()
@@ -111,7 +131,10 @@ def test_item_scraped_count_single_nested_field(spider):
 
     for item in returned_items:
         spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped, item=item, response="", spider=spider,
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
         )
 
     stats = spider.crawler.stats.get_stats()
@@ -128,14 +151,20 @@ def test_item_scraped_count_multiple_nested_field(spider):
             "field3": {"field3.1": "value3.1"},
         },
         {
-            "field1": {"field1.1": "value1.1", "field1.2": "value1.2",},
+            "field1": {
+                "field1.1": "value1.1",
+                "field1.2": "value1.2",
+            },
             "field2": "value2",
         },
     ]
 
     for item in returned_items:
         spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped, item=item, response="", spider=spider,
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
         )
 
     stats = spider.crawler.stats.get_stats()
@@ -159,7 +188,10 @@ def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field_cover
 
     item = {"field1": "value1"}
     spider.crawler.signals.send_catch_log_deferred(
-        signal=signals.item_scraped, item=item, response="", spider=spider,
+        signal=signals.item_scraped,
+        item=item,
+        response="",
+        spider=spider,
     )  # Return item to have some stats to calculate coverage
 
     crawler.signals.send_catch_log(
@@ -182,7 +214,10 @@ def test_add_field_coverage_when_spider_closes_if_have_field_coverage_settings()
 
     item = {"field1": "value1"}
     spider.crawler.signals.send_catch_log_deferred(
-        signal=signals.item_scraped, item=item, response="", spider=spider,
+        signal=signals.item_scraped,
+        item=item,
+        response="",
+        spider=spider,
     )  # Return item to have some stats to calculate coverage
 
     crawler.signals.send_catch_log(
@@ -212,7 +247,10 @@ def test_item_scraped_count_ignore_none_values():
 
     for item in returned_items:
         spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped, item=item, response="", spider=spider,
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
         )
 
     stats = spider.crawler.stats.get_stats()
@@ -238,7 +276,10 @@ def test_item_scraped_count_do_not_ignore_none_values():
 
     for item in returned_items:
         spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped, item=item, response="", spider=spider,
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
         )
 
     stats = spider.crawler.stats.get_stats()
@@ -255,7 +296,10 @@ def test_item_scraped_count_do_not_ignore_none_values_by_default(spider):
 
     for item in returned_items:
         spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped, item=item, response="", spider=spider,
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
         )
 
     stats = spider.crawler.stats.get_stats()

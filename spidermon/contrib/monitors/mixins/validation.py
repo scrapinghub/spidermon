@@ -232,12 +232,14 @@ class ValidationMonitorMixin(StatsMonitorMixin):
     def _get_msg_for_missing_required_percent(
         field_name, missing_percent, allowed_percent
     ):
-        msg = "{percent}% of required field {field} are missing!{threshold_info}".format(
-            percent=missing_percent * 100,
-            field=field_name,
-            threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
-            if allowed_percent > 0
-            else "",
+        msg = (
+            "{percent}% of required field {field} are missing!{threshold_info}".format(
+                percent=missing_percent * 100,
+                field=field_name,
+                threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
+                if allowed_percent > 0
+                else "",
+            )
         )
         return msg
 

@@ -58,10 +58,12 @@ class SendSentryMessage(Action):
             self.send_message(message)
 
     def get_title(self):
-        return "{project_name} | {environment} | Spider {spider_name} notification".format(
-            project_name=self.project_name,
-            environment=self.environment,
-            spider_name=self.data.spider.name,
+        return (
+            "{project_name} | {environment} | Spider {spider_name} notification".format(
+                project_name=self.project_name,
+                environment=self.environment,
+                spider_name=self.data.spider.name,
+            )
         )
 
     def get_message(self):
