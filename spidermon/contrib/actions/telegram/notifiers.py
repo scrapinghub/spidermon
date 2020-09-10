@@ -21,9 +21,7 @@ class SendTelegramMessageSpiderFinished(SendTelegramMessage):
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
-        kwargs = super().from_crawler_kwargs(
-            crawler
-        )
+        kwargs = super().from_crawler_kwargs(crawler)
         kwargs.update(
             {
                 "include_ok_messages": crawler.settings.get(

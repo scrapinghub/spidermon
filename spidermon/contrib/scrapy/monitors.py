@@ -145,9 +145,7 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
 
         for code, max_errors in unwanted_http_codes.items():
             code = int(code)
-            count = self.stats.get(
-                f"downloader/response_status_count/{code}", 0
-            )
+            count = self.stats.get(f"downloader/response_status_count/{code}", 0)
             msg = (
                 "Found {} Responses with status code={} - "
                 "This exceed the limit of {}".format(count, code, max_errors)

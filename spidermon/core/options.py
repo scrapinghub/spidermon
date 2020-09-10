@@ -33,7 +33,8 @@ class OptionsBase:
         return "<{name}:({attributes})>".format(
             name=self.__class__.__name__,
             attributes=", ".join(
-                "{}={}".format(attr, getattr(self, attr)) for attr in self._get_attributes()
+                "{}={}".format(attr, getattr(self, attr))
+                for attr in self._get_attributes()
             ),
         )
 

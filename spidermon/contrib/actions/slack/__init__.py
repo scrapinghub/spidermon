@@ -83,8 +83,8 @@ class SlackMessageManager:
 
     def _get_users_info(self):
         return {
-                member["name"].lower(): member
-                for member in self._api_call("users.list")["members"]
+            member["name"].lower(): member
+            for member in self._api_call("users.list")["members"]
         }
 
     def _api_call(self, method, **kwargs):

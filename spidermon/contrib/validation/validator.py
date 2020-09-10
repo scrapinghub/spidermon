@@ -36,8 +36,8 @@ class Validator:
             return self._errors
         else:
             return {
-                    field_name: self._translator.translate_messages(messages)
-                    for field_name, messages in self._errors.items()
+                field_name: self._translator.translate_messages(messages)
+                for field_name, messages in self._errors.items()
             }
 
     def _add_errors(self, errors):

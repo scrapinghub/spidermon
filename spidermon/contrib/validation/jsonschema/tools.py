@@ -14,17 +14,13 @@ def get_schema_from(source):
         try:
             return json.loads(schema)
         except Exception as e:
-            logger.exception(
-                str(e) + f"\nCould not parse schema from '{source}'"
-            )
+            logger.exception(str(e) + f"\nCould not parse schema from '{source}'")
     elif source.endswith(".json"):
         with open(source) as f:
             try:
                 return json.load(f)
             except Exception as e:
-                logger.exception(
-                    str(e) + f"\nCould not parse schema in '{source}'"
-                )
+                logger.exception(str(e) + f"\nCould not parse schema in '{source}'")
     else:
         schema = load_object(source)
         if isinstance(schema, str):

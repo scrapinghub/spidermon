@@ -86,11 +86,11 @@ class ResponsesInfo:
 
     def _get_response_code(self, code):
         return {
-                code: PercentCounter(count, self.count)
-                for count, code in self._stats_analyzer.search(
-                    pattern=DOWNLOADER_RESPONSE_STATUS + ("(%s)$" % code),
-                    include_matches=True,
-                ).values()
+            code: PercentCounter(count, self.count)
+            for count, code in self._stats_analyzer.search(
+                pattern=DOWNLOADER_RESPONSE_STATUS + ("(%s)$" % code),
+                include_matches=True,
+            ).values()
         }
 
 

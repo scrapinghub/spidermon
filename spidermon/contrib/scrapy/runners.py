@@ -96,9 +96,7 @@ class SpiderMonitorResult(MonitorResult):
         summary = "OK" if self.step.successful else "FAILED"
         infos = self.step.get_infos()
         if infos and sum(infos.values()):
-            summary += " (%s)" % ", ".join(
-                [f"{k}={v}" for k, v in infos.items() if v]
-            )
+            summary += " (%s)" % ", ".join([f"{k}={v}" for k, v in infos.items() if v])
         self.log_info(summary)
 
     def write_errors(self):
