@@ -1,4 +1,3 @@
-import six
 import ast
 
 from spidermon.exceptions import InvalidExpression

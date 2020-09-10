@@ -1,7 +1,4 @@
-import six
-
 from unittest import TestSuite
-import inspect
 import collections
 
 from spidermon.exceptions import InvalidMonitorIterable, NotAllowedMethod

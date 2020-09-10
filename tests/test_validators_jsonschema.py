@@ -4,7 +4,6 @@ from spidermon.contrib.validation import JSONSchemaValidator
 from spidermon.contrib.validation import messages
 
 from slugify import slugify
-import six
 
 
 class SchemaTestCaseMetaclass(type):

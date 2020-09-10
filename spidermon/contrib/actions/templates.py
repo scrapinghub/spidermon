@@ -4,7 +4,6 @@ import inspect
 from jinja2 import Template
 from spidermon.core.actions import ActionOptionsMetaclass, Action
 from spidermon.templates import template_loader
-import six
 
 
 class ActionWithTemplatesMetaclass(ActionOptionsMetaclass):

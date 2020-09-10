@@ -4,7 +4,6 @@ import traceback
 from spidermon.exceptions import SkipAction
 
 from .options import ActionOptionsMetaclass
-import six
 
 
 class Action(metaclass=ActionOptionsMetaclass):

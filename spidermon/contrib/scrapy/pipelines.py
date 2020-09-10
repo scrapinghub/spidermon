@@ -1,4 +1,3 @@
-import six
 import json
 from io import BytesIO
 from collections import defaultdict

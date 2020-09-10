@@ -2,7 +2,6 @@ import ast
 import json
 import logging
 
-import six
 from slackclient import SlackClient
 
 from spidermon.contrib.actions.templates import ActionWithTemplates

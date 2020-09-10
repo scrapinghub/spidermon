@@ -1,6 +1,5 @@
 from collections import OrderedDict
 import time
-from six import itervalues
 
 from spidermon import settings
 

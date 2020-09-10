@@ -3,8 +3,6 @@ import json
 from collections import OrderedDict
 import warnings
 
-import six
-
 
 def getdictorlist(crawler, name, default=None):
     value = crawler.settings.get(name, default)

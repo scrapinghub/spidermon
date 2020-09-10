@@ -2,9 +2,8 @@ import logging
 
 import json
 from scrapy.utils.misc import load_object
-import six
-from six.moves.urllib.parse import urlparse
-from six.moves.urllib.request import urlopen
+from urllib.parse import urlparse
+from urllib.request import urlopen
 
 logger = logging.getLogger(__name__)
 

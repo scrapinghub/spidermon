@@ -1,5 +1,3 @@
-import six
-
 import inspect
 
 from spidermon.exceptions import (

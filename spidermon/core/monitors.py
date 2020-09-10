@@ -1,9 +1,7 @@
 from unittest import TestCase
 
-from spidermon.data import Data
 from spidermon import settings
 from .options import MonitorOptions, MonitorOptionsMetaclass
-import six
 
 
 class Monitor(TestCase, metaclass=MonitorOptionsMetaclass):

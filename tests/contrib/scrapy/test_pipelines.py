@@ -3,13 +3,10 @@ from slugify import slugify
 from scrapy.utils.test import get_crawler
 from scrapy import Item
 from functools import partial
-import sys
 
-import pytest
 from spidermon.contrib.scrapy.pipelines import ItemValidationPipeline
 from tests.fixtures.items import TreeItem, TestItem
 from tests.fixtures.validators import tree_schema, test_schema, test_schema_string
-import six
 
 
 STATS_AMOUNTS = "spidermon/validation/validators"
