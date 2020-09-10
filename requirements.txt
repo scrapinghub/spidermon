@@ -11,5 +11,5 @@ pytest
 pytest-cov
 tox
 sentry-sdk
-black; python_version >= '3.6'
+black
 pytest-mock
