@@ -8,7 +8,7 @@ from scrapy.exceptions import DropItem, NotConfigured
 from scrapy.utils.misc import load_object
 from scrapy.exporters import JsonLinesItemExporter
 from scrapy import Field, Item
-from scrapy.utils.python import to_native_str
+from scrapy.utils.python import to_unicode
 
 from spidermon.contrib.validation import SchematicsValidator, JSONSchemaValidator
 from spidermon.contrib.validation.jsonschema.tools import get_schema_from
@@ -141,7 +141,7 @@ class ItemValidationPipeline(object):
         serialized_json = BytesIO()
         exporter = JsonLinesItemExporter(serialized_json)
         exporter.export_item(item)
-        data = json.loads(to_native_str(serialized_json.getvalue(), exporter.encoding))
+        data = json.loads(to_unicode(serialized_json.getvalue(), exporter.encoding))
         serialized_json.close()
         return data
 
