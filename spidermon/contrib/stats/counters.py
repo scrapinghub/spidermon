@@ -1,8 +1,7 @@
-from __future__ import absolute_import
 import collections
 
 
-class PercentCounterBase(object):
+class PercentCounterBase:
     def __init__(self, total=0):
         self._total = total
 
@@ -26,7 +25,7 @@ class PercentCounterBase(object):
 
 class PercentCounter(PercentCounterBase):
     def __init__(self, count=0, total=0):
-        super(PercentCounter, self).__init__(total)
+        super().__init__(total)
         self._count = count
 
     @property
@@ -41,7 +40,7 @@ class DictPercentCounter(PercentCounterBase, collections.MutableMapping):
     __items_class__ = PercentCounter
 
     def __init__(self, total):
-        super(DictPercentCounter, self).__init__(total)
+        super().__init__(total)
         self._dict = dict()
 
     @property
@@ -89,7 +88,7 @@ class AttributeDictPercentCounter(PercentCounterBase):
     __attribute_dict_name__ = "dict"
 
     def __init__(self, total):
-        super(AttributeDictPercentCounter, self).__init__(total)
+        super().__init__(total)
         setattr(self, self.__attribute_dict_name__, DictPercentCounter(total))
 
     @property

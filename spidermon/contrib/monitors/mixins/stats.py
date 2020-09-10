@@ -1,8 +1,7 @@
-from __future__ import absolute_import
 from spidermon.exceptions import NotConfigured
 
 
-class StatsMonitorMixin(object):
+class StatsMonitorMixin:
     @property
     def stats(self):
         if not self.data.stats:

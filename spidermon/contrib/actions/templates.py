@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import os
 import inspect
 
@@ -10,7 +9,7 @@ import six
 
 class ActionWithTemplatesMetaclass(ActionOptionsMetaclass):
     def __new__(mcs, name, bases, attrs):
-        cls = super(ActionWithTemplatesMetaclass, mcs).__new__(mcs, name, bases, attrs)
+        cls = super().__new__(mcs, name, bases, attrs)
         mcs.add_class_templates(cls)
         return cls
 
@@ -24,12 +23,12 @@ class ActionWithTemplatesMetaclass(ActionOptionsMetaclass):
             template_loader.add_path(template_path)
 
 
-class ActionWithTemplates(six.with_metaclass(ActionWithTemplatesMetaclass, Action)):
+class ActionWithTemplates(Action, metaclass=ActionWithTemplatesMetaclass):
     template_paths = []
     context = None
 
     def __init__(self, context=None):
-        super(ActionWithTemplates, self).__init__()
+        super().__init__()
         self.context = context or self.context or {}
 
     def get_template(self, name):

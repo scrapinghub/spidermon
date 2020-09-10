@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import pytest
 
 from spidermon import MonitorSuite
@@ -13,7 +12,7 @@ from spidermon.exceptions import (
 from .fixtures.suites import *
 
 
-class SuiteDefinition(object):
+class SuiteDefinition:
     def __init__(self, suite_class, monitors=None, expected_number_of_monitors=0):
         self.suite_class = suite_class
         self.monitors = monitors or []

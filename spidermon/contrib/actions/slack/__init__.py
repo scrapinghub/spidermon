@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import ast
 import json
 import logging
@@ -85,12 +83,10 @@ class SlackMessageManager:
         return user["id"] if user else None
 
     def _get_users_info(self):
-        return dict(
-            [
-                (member["name"].lower(), member)
+        return {
+                member["name"].lower(): member
                 for member in self._api_call("users.list")["members"]
-            ]
-        )
+        }
 
     def _api_call(self, method, **kwargs):
         response = self._client.api_call(method, **kwargs)
@@ -100,7 +96,7 @@ class SlackMessageManager:
             error_msg = response.get("error", {}).get("msg", "Slack API error")
             logger.error(error_msg)
 
-        if isinstance(response, six.string_types):  # slackclient < v1.0
+        if isinstance(response, str):  # slackclient < v1.0
             response = json.loads(response)
         return response
 
@@ -168,7 +164,7 @@ class SendSlackMessage(ActionWithTemplates):
         include_attachments=None,
         fake=None,
     ):
-        super(SendSlackMessage, self).__init__()
+        super().__init__()
 
         self.fake = fake or self.fake
         self.manager = SlackMessageManager(

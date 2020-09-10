@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import six
 
 from unittest import TestSuite
@@ -13,7 +12,7 @@ from .options import MonitorOptionsMetaclass
 from .factories import MonitorFactory, ActionFactory
 
 
-class MonitorSuite(six.with_metaclass(MonitorOptionsMetaclass, TestSuite)):
+class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
     monitors = []
     monitors_finished_actions = []
     monitors_passed_actions = []
@@ -132,7 +131,7 @@ class MonitorSuite(six.with_metaclass(MonitorOptionsMetaclass, TestSuite)):
     def add_monitor(self, monitor, name=None):
         monitor = MonitorFactory.load_monitor(monitor, name)
         monitor.set_parent(self)
-        super(MonitorSuite, self).addTest(monitor)
+        super().addTest(monitor)
         self._reorder_tests()
 
     def add_monitors_finished_actions(self, actions):
@@ -175,7 +174,7 @@ class MonitorSuite(six.with_metaclass(MonitorOptionsMetaclass, TestSuite)):
         show_description=True,
     ):
         def debug_attribute(condition, name, value):
-            return "%12s: %s\n" % (name, str(value)) if condition else ""
+            return "{:>12}: {}\n".format(name, str(value)) if condition else ""
 
         s = "-" * 80 + "\n"
         for t in self.all_monitors:

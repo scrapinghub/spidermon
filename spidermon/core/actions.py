@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import abc
 import traceback
 
@@ -8,7 +7,7 @@ from .options import ActionOptionsMetaclass
 import six
 
 
-class Action(six.with_metaclass(ActionOptionsMetaclass, object)):
+class Action(metaclass=ActionOptionsMetaclass):
     """
     Base class for actions.
     """
@@ -59,7 +58,7 @@ class Action(six.with_metaclass(ActionOptionsMetaclass, object)):
         return {}
 
     def __repr__(self):
-        return "<ACTION:(%s) at %s>" % (self.name, hex(id(self)))
+        return "<ACTION:({}) at {}>".format(self.name, hex(id(self)))
 
     def __str__(self):
         return repr(self)

@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import sys
 
 from spidermon import settings
@@ -29,17 +28,17 @@ class TextMonitorResult(MonitorResult):
     LINE_LENGTH = 70
 
     def __init__(self, stream=sys.stderr, verbosity=1):
-        super(TextMonitorResult, self).__init__()
+        super().__init__()
         self.stream = stream
         self.show_all = verbosity > 1
         self.use_dots = verbosity == 1
 
     def next_step(self):
-        super(TextMonitorResult, self).next_step()
+        super().next_step()
         self.write_title(self.step.name)
 
     def finish_step(self):
-        super(TextMonitorResult, self).finish_step()
+        super().finish_step()
         if self.use_dots:
             self.write_line()
         if not self.step.successful:
@@ -49,57 +48,57 @@ class TextMonitorResult(MonitorResult):
 
     @monitors_step_required
     def startTest(self, test):
-        super(TextMonitorResult, self).startTest(test)
+        super().startTest(test)
         self.write_run_start(test)
 
     @monitors_step_required
     def addSuccess(self, test):
-        super(TextMonitorResult, self).addSuccess(test)
+        super().addSuccess(test)
         self.write_run_result(test)
 
     @monitors_step_required
     def addError(self, test, error):
-        super(TextMonitorResult, self).addError(test, error)
+        super().addError(test, error)
         self.write_run_result(test)
 
     @monitors_step_required
     def addFailure(self, test, error):
-        super(TextMonitorResult, self).addFailure(test, error)
+        super().addFailure(test, error)
         self.write_run_result(test)
 
     @monitors_step_required
     def addSkip(self, test, reason):
-        super(TextMonitorResult, self).addSkip(test, reason)
+        super().addSkip(test, reason)
         self.write_run_result(test, reason)
 
     @monitors_step_required
     def addExpectedFailure(self, test, error):
-        super(TextMonitorResult, self).addExpectedFailure(test, error)
+        super().addExpectedFailure(test, error)
         self.write_run_result(test)
 
     @monitors_step_required
     def addUnexpectedSuccess(self, test):
-        super(TextMonitorResult, self).addUnexpectedSuccess(test)
+        super().addUnexpectedSuccess(test)
         self.write_run_result(test)
 
     @actions_step_required
     def start_action(self, action):
-        super(TextMonitorResult, self).start_action(action)
+        super().start_action(action)
         self.write_run_start(action)
 
     @actions_step_required
     def add_action_success(self, action):
-        super(TextMonitorResult, self).add_action_success(action)
+        super().add_action_success(action)
         self.write_run_result(action)
 
     @actions_step_required
     def add_action_skip(self, action, reason):
-        super(TextMonitorResult, self).add_action_skip(action, reason)
+        super().add_action_skip(action, reason)
         self.write_run_result(action, reason)
 
     @actions_step_required
     def add_action_error(self, action, error):
-        super(TextMonitorResult, self).add_action_error(action, error)
+        super().add_action_error(action, error)
         self.write_run_result(action)
 
     def write(self, text):
@@ -121,7 +120,7 @@ class TextMonitorResult(MonitorResult):
         self.write("%s\n" % (text or ""))
 
     def write_run_status(self, text, extra=None):
-        self.write_line("%s%s" % (text, " (%s)" % extra if extra else ""))
+        self.write_line("{}{}".format(text, " (%s)" % extra if extra else ""))
 
     def write_run_start(self, item):
         if self.show_all:
@@ -153,7 +152,7 @@ class TextMonitorResult(MonitorResult):
         for status in self.step.error_statuses:
             for item in self.step.items_for_status(status):
                 self.write_line_bold()
-                self.write_line("%s: %s" % (item.status, item.item.name))
+                self.write_line(f"{item.status}: {item.item.name}")
                 self.write_line_light()
                 self.write_line(item.error)
                 self.write_line()
@@ -163,7 +162,7 @@ class TextMonitorResult(MonitorResult):
         infos = self.step.get_infos()
         if infos and sum(infos.values()):
             self.write_line(
-                " (%s)" % ", ".join(["%s=%s" % (k, v) for k, v in infos.items() if v])
+                " (%s)" % ", ".join([f"{k}={v}" for k, v in infos.items() if v])
             )
         else:
             self.write_line()

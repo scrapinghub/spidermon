@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import ast
 import json
 import logging
@@ -64,7 +62,7 @@ class SendTelegramMessage(ActionWithTemplates):
         message_template=None,
         fake=None,
     ):
-        super(SendTelegramMessage, self).__init__()
+        super().__init__()
 
         self.fake = fake or self.fake
         self.manager = TelegramMessageManager(

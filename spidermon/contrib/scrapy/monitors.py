@@ -19,7 +19,7 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
     def monitor_description(self):
         if self.__class__.__doc__:
             return self.__class__.__doc__.split("\n")[0]
-        return super(BaseScrapyMonitor, self).monitor_description
+        return super().monitor_description
 
 
 @monitors.name("Extracted Items Monitor")
@@ -37,7 +37,7 @@ class ItemCountMonitor(BaseScrapyMonitor):
             raise NotConfigured(
                 "You should specify a minimum number of items " "to check against."
             )
-        return super(ItemCountMonitor, self).run(result)
+        return super().run(result)
 
     @monitors.name("Should extract the minimum amount of items")
     def test_minimum_number_of_items(self):
@@ -146,7 +146,7 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
         for code, max_errors in unwanted_http_codes.items():
             code = int(code)
             count = self.stats.get(
-                "downloader/response_status_count/{}".format(code), 0
+                f"downloader/response_status_count/{code}", 0
             )
             msg = (
                 "Found {} Responses with status code={} - "
@@ -251,7 +251,7 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
             raise NotConfigured(
                 "To enable field coverage monitor, set SPIDERMON_ADD_FIELD_COVERAGE=True in your project settings"
             )
-        return super(FieldCoverageMonitor, self).run(result)
+        return super().run(result)
 
     def test_check_if_field_coverage_rules_are_met(self):
         failures = []
@@ -260,7 +260,7 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
         )
         for field, expected_coverage in field_coverage_rules.items():
             actual_coverage = self.data.stats.get(
-                "spidermon_field_coverage/{}".format(field), 0
+                f"spidermon_field_coverage/{field}", 0
             )
             if actual_coverage < expected_coverage:
                 failures.append(

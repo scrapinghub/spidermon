@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from . import SendTelegramMessage
 
 
@@ -14,7 +13,7 @@ class SendTelegramMessageSpiderFinished(SendTelegramMessage):
     def __init__(
         self, include_ok_messages=None, include_error_messages=None, *args, **kwargs
     ):
-        super(SendTelegramMessageSpiderFinished, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.include_ok_messages = include_ok_messages or self.include_ok_messages
         self.include_error_messages = (
             include_error_messages or self.include_error_messages
@@ -22,7 +21,7 @@ class SendTelegramMessageSpiderFinished(SendTelegramMessage):
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
-        kwargs = super(SendTelegramMessageSpiderFinished, cls).from_crawler_kwargs(
+        kwargs = super().from_crawler_kwargs(
             crawler
         )
         kwargs.update(
@@ -38,7 +37,7 @@ class SendTelegramMessageSpiderFinished(SendTelegramMessage):
         return kwargs
 
     def get_template_context(self):
-        context = super(SendTelegramMessageSpiderFinished, self).get_template_context()
+        context = super().get_template_context()
         context.update(
             {
                 "include_ok_messages": self.include_ok_messages,

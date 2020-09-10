@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from functools import partial
 from unittest import TestCase
 
@@ -25,7 +24,7 @@ def _test_run_suites(self, spider, suites):
         runner.run(suite, **data)
 
 
-class TestData(object):
+class TestData:
 
     __test__ = False
 
@@ -93,7 +92,7 @@ class ExpressionMonitorsTesting(TestCase):
                     raise AssertionError(trace)
             if dt.expected_error:
                 raise AssertionError(
-                    "Expected error <{}> was not raised".format(dt.expected_error)
+                    f"Expected error <{dt.expected_error}> was not raised"
                 )
 
     def test_stats_ready(self):
@@ -113,7 +112,7 @@ class ExpressionMonitorsTesting(TestCase):
         )
 
     def test_spider_ready(self):
-        self.run_test(expression="spider.name == '{}'".format(self.spider_name))
+        self.run_test(expression=f"spider.name == '{self.spider_name}'")
 
     def test_responses_ready(self):
         self.run_test(
