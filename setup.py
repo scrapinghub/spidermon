@@ -59,4 +59,5 @@ setup(
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: System :: Monitoring",
     ],
+    python_requires=">=3.6",
 )
