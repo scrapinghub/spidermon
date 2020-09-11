@@ -20,7 +20,7 @@ To enable it, include the following code in your project settings:
 
 .. code-block:: python
 
-    # myproject/settings.py
+    # tutorial/settings.py
     STATS_CLASS = (
         "spidermon.contrib.stats.statscollectors.LocalStorageStatsHistoryCollector"
     )
@@ -34,7 +34,7 @@ returned in the previous spider executions.
 
 .. code-block:: python
 
-    # myproject/monitors.py
+    # tutorial/monitors.py
     from spidermon import Monitor, MonitorSuite, monitors
 
 
