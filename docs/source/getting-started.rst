@@ -198,8 +198,6 @@ Slack notifications
 Here we will configure a built-in Spidermon action that sends a pre-defined message to
 a Slack channel using a bot when a monitor fails.
 
-  .. warning:: Slack integration **requires** Python 3.6 or later.
-
 .. code-block:: python
 
     # tutorial/monitors.py

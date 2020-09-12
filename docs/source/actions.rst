@@ -214,7 +214,6 @@ To use this action you need to:
 
         $ pip install "slackclient>=2.0"
 
-    .. warning:: This action **requires** Python 3.6 or later.
 
 #.  Provide the `Slack credentials`_ in your ``settings.py`` file as follows:
 
