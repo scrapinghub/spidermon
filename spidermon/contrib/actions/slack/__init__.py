@@ -6,7 +6,6 @@ import logging
 
 import six
 from slack import WebClient
-from slack.errors import SlackApiError
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
@@ -86,26 +85,16 @@ class SlackMessageManager:
         return user["id"] if user else None
 
     def _get_users_info(self):
-        try:
-            return dict(
-                [
-                    (member["name"].lower(), member)
-                    for member in self._client.users_list()["members"]
-                ]
-            )
-        except SlackApiError as e:
-            assert e.response["ok"] is False
-            assert e.response["error"]
-            logger.error(e.response["error"])
+        return dict(
+            [
+                (member["name"].lower(), member)
+                for member in self._client.users_list()["members"]
+            ]
+        )
 
     def _get_user_channel(self, user_id):
-        try:
-            response = self._client.conversations_open(users=[user_id])
-            return response["channel"]["id"]
-        except SlackApiError as e:
-            assert e.response["ok"] is False
-            assert e.response["error"]
-            logger.error(e.response["error"])
+        response = self._client.conversations_open(users=[user_id])
+        return response["channel"]["id"]
 
     def _send_user_message(
         self, username, text, parse="full", link_names=1, attachments=None
@@ -124,20 +113,15 @@ class SlackMessageManager:
     def _send_channel_message(
         self, channel, text, parse="full", link_names=1, attachments=None
     ):
-        try:
-            self._client.chat_postMessage(
-                channel=channel,
-                text=text,
-                parse=parse,
-                link_names=link_names,
-                attachments=self._parse_attachments(attachments),
-                username=self.sender_name,
-                icon_url=self.users[self.sender_name]["profile"]["image_48"],
+        self._client.chat_postMessage(
+            channel=channel,
+            text=text,
+            parse=parse,
+            link_names=link_names,
+            attachments=self._parse_attachments(attachments),
+            username=self.sender_name,
+            icon_url=self.users[self.sender_name]["profile"]["image_48"],
             )
-        except SlackApiError as e:
-            assert e.response["ok"] is False
-            assert e.response["error"]
-            logger.error(e.response["error"])
 
     def _parse_attachments(self, attachments):
         if not attachments:
