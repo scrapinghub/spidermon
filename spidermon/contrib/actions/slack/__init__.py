@@ -92,18 +92,13 @@ class SlackMessageManager:
             ]
         )
 
-    def _get_user_channel(self, user_id):
-        response = self._client.conversations_open(users=[user_id])
-        return response["channel"]["id"]
-
     def _send_user_message(
         self, username, text, parse="full", link_names=1, attachments=None
     ):
         user_id = self._get_user_id(username)
         if user_id:
-            user_channel = self._get_user_channel(user_id)
             return self._send_channel_message(
-                channel=user_channel,
+                channel=user_id,
                 text=text,
                 parse=parse,
                 link_names=link_names,
