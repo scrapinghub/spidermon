@@ -116,7 +116,7 @@ class SlackMessageManager:
             attachments=self._parse_attachments(attachments),
             username=self.sender_name,
             icon_url=self.users[self.sender_name]["profile"]["image_48"],
-            )
+        )
 
     def _parse_attachments(self, attachments):
         if not attachments:
