@@ -1,6 +1,17 @@
 Release notes
 =============
 
+1.14.0 (2020-10-05)
+-------------------
+- feature: Built-in monitor for field and item coverage (`issue#253 <https://github.com/scrapinghub/spidermon/issues/253>`_)
+- feature: Add field coverage statistics (`PR#262 <https://github.com/scrapinghub/spidermon/pull/262>`_)
+- chore: Update required slackclient version (`PR#265 <https://github.com/scrapinghub/spidermon/pull/265>`_)
+- chore: Add Python 3.8 support (`issue#255 <https://github.com/scrapinghub/spidermon/issues/255>`_)
+- chore: Drop Python 3.5 support (`issue#266 <https://github.com/scrapinghub/spidermon/issues/266>`_)
+- chore: Remove test decorator that skips tests if executed in old Python versions (`PR#258 <https://github.com/scrapinghub/spidermon/pull/258>`_)
+- chore: Fix deprecation warnings (`PR#272 <https://github.com/scrapinghub/spidermon/pull/272>`_, `PR#274 <https://github.com/scrapinghub/spidermon/pull/274>`_)
+- docs: Fix inconsistent examples (`PR#273 <https://github.com/scrapinghub/spidermon/pull/273>`_)
+
 1.13.0 (2020-06-23)
 -------------------
 - bug: Fix Telegram action error logging

@@ -62,7 +62,7 @@ For example, the following suite will be executed every 30 minutes:
 .. code-block:: python
 
     SPIDERMON_PERIODIC_MONITORS = {
-        'myproject.monitors.PeriodicMonitorSuite': 1800,
+        'tutorial.monitors.PeriodicMonitorSuite': 1800,
     }
 
 .. _SPIDERMON_SPIDER_CLOSE_MONITORS:

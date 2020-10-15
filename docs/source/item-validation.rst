@@ -146,8 +146,8 @@ that need to be validated.
 
     # settings.py
 
-    SPIDERMON_VALIDATION_MODELS: [
-        'myproject.validators.DummyItemModel'
+    SPIDERMON_VALIDATION_MODELS = [
+        'tutorial.validators.DummyItemModel'
     ]
 
 If you are working on a spider that produces multiple items types, you can define it
@@ -157,9 +157,11 @@ as a `dict`:
 
     # settings.py
 
-    SPIDERMON_VALIDATION_MODELS: {
-        DummyItem: 'myproject.validators.DummyItemModel',
-        OtherItem: 'myproject.validators.OtherItemModel',
+    from tutorial.items import DummyItem, OtherItem
+
+    SPIDERMON_VALIDATION_MODELS = {
+        DummyItem: 'tutorial.validators.DummyItemModel',
+        OtherItem: 'tutorial.validators.OtherItemModel',
     }
 
 .. _SPIDERMON_VALIDATION_SCHEMAS:
@@ -175,7 +177,7 @@ A `list` containing the location of the item schema. Could be a local path or a 
 
     # settings.py
 
-    SPIDERMON_VALIDATION_SCHEMAS: [
+    SPIDERMON_VALIDATION_SCHEMAS = [
         '/path/to/schema.json',
         's3://bucket/schema.json',
         'https://example.com/schema.json',
@@ -188,7 +190,9 @@ as a `dict`:
 
     # settings.py
 
-    SPIDERMON_VALIDATION_SCHEMAS: {
+    from tutorial.items import DummyItem, OtherItem
+
+    SPIDERMON_VALIDATION_SCHEMAS = {
         DummyItem: '/path/to/dummyitem_schema.json',
         OtherItem: '/path/to/otheritem_schema.json',
     }

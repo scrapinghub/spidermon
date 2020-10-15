@@ -120,7 +120,7 @@ class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
             test.init_data(data)
 
     def add_monitors(self, monitors):
-        if not isinstance(monitors, collections.Iterable):
+        if not isinstance(monitors, collections.abc.Iterable):
             raise InvalidMonitorIterable("Monitors definition is not iterable")
         for m in monitors:
             self.add_monitor(m)

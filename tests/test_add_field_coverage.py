@@ -5,7 +5,8 @@ from scrapy.utils.test import get_crawler
 
 
 class TestItem(Item):
-    ...
+
+    __test__ = False
 
 
 @pytest.fixture

@@ -8,13 +8,13 @@ test_requirements = [
     "lxml",
     "premailer",
     "scrapy",
-    "slackclient>=1.3.0,<2.0.0",
+    "slackclient",
     "twisted>=19.7.0",
 ]
 
 setup(
     name="spidermon",
-    version="1.13.0",
+    version="1.14.0",
     url="https://github.com/scrapinghub/spidermon",
     author="Scrapinghub",
     author_email="info@scrapinghub.com",
@@ -32,7 +32,7 @@ setup(
         "monitoring": [
             "scrapy",
             "Jinja2",
-            "slackclient>=1.3.0,<2.0.0",
+            "slackclient",
             "boto",
             "premailer",
             "sentry-sdk",
@@ -56,6 +56,7 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: System :: Monitoring",
     ],
