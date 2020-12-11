@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import logging
+from itertools import groupby
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +103,18 @@ class SendSentryMessage(Action):
 
     @staticmethod
     def get_tags(message):
-        return {}
+        tags = {}
+        failed_monitors = message.get("failed_monitors", [])
+        failed_monitors = [y.split("/") for y in failed_monitors]
+        for key, group in groupby(failed_monitors, key=lambda x: x[0]):
+            for mon in group:
+                try:
+                    k = mon[1].lower().replace(" ", "_")
+                    # 32 chars undocumented tag key length
+                    tags.update({k[:32]: 1})
+                except IndexError:
+                    pass
+        return tags
 
     def send_message(self, message):
 
