@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import logging
+from hashlib import md5
 from itertools import groupby
 
 logger = logging.getLogger(__name__)
@@ -116,6 +117,12 @@ class SendSentryMessage(Action):
                     pass
         return tags
 
+    @staticmethod
+    def get_reason_hash(message):
+        failed_monitors = "".join(sorted(message.get("failed_monitors", [])))
+        # an integer hash with 10 digits
+        return int(md5(failed_monitors.encode("utf-8")).hexdigest(), 16) % 10 ** 10
+
     def send_message(self, message):
 
         sentry_client = Client(dsn=self.sentry_dsn, environment=self.environment)
@@ -125,6 +132,9 @@ class SendSentryMessage(Action):
             tags = self.get_tags(message)
             for key, val in tags.items():
                 scope.set_tag(key, val)
+
+            reason_hash = self.get_reason_hash(message)
+            scope.set_tag("reason_hash", reason_hash)
 
             spider_name = message.get("spider_name", "")
 
