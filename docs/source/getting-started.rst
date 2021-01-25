@@ -302,7 +302,7 @@ Later, fill the required information in your `settings.py` as follows:
     (...)
     SPIDERMON_DISCORD_WEBHOOK_URL = '<DISCORD_WEBHOOK_URL>'
 
-If a monitor fails, the recipients provided will receive a message in Telegram:
+If a monitor fails, the recipients provided will receive a message in Discord:
 
 .. image:: /_static/discord_notification.png
    :scale: 50 %
