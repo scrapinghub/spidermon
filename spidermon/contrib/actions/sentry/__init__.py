@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import logging
-from hashlib import md5
 from itertools import groupby
 
 logger = logging.getLogger(__name__)
@@ -102,47 +101,35 @@ class SendSentryMessage(Action):
 
         return message
 
-    @staticmethod
-    def get_tags(message):
-        tags = {}
+    def get_tags(self, message):
+        tags = {
+            "spider_name": message.get("spider_name", ""),
+            "project_name": self.project_name,
+        }
+
         failed_monitors = message.get("failed_monitors", [])
         failed_monitors = [y.split("/") for y in failed_monitors]
         for key, group in groupby(failed_monitors, key=lambda x: x[0]):
             for mon in group:
                 try:
                     k = mon[1].lower().replace(" ", "_")
-                    # 32 chars undocumented tag key length
+                    # tag keys are limited to 32 chars
                     tags.update({k[:32]: 1})
                 except IndexError:
                     pass
         return tags
-
-    @staticmethod
-    def get_reason_hash(message):
-        failed_monitors = "".join(sorted(message.get("failed_monitors", [])))
-        # an integer hash with 10 digits
-        return int(md5(failed_monitors.encode("utf-8")).hexdigest(), 16) % 10 ** 10
 
     def send_message(self, message):
 
         sentry_client = Client(dsn=self.sentry_dsn, environment=self.environment)
 
         with configure_scope() as scope:
-            # set custom tags
             tags = self.get_tags(message)
             for key, val in tags.items():
                 scope.set_tag(key, val)
 
-            reason_hash = self.get_reason_hash(message)
-            scope.set_tag("reason_hash", reason_hash)
-
-            spider_name = message.get("spider_name", "")
-
-            scope.set_tag("spider_name", spider_name)
-            scope.set_tag("project_name", self.project_name)
-
             scope.set_extra("job_link", message.get("job_link", ""))
-            scope.set_extra("spider_name", spider_name)
+            scope.set_extra("spider_name", message.get("spider_name", ""))
             scope.set_extra("items_count", message.get("items_count", 0))
 
             scope.set_extra(
