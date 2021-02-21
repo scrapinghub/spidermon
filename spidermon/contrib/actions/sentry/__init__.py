@@ -74,7 +74,7 @@ class SendSentryMessage(Action):
 
         message["title"] = self.get_title()
         if self.data.job:
-            message["job_link"] = "https://app.scrapinghub.com/p/{job_id}".format(
+            message["job_link"] = "https://app.zyte.com/p/{job_id}".format(
                 job_id=self.data.job.key
             )
 
