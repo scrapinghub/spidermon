@@ -82,6 +82,6 @@ returned in the previous spider executions.
        and will be available only in the job logs.
 
 .. _`STATS_CLASS`: https://docs.scrapy.org/en/latest/topics/settings.html#stats-class
-.. _`spider settings`: https://support.scrapinghub.com/support/solutions/articles/22000200670-customizing-scrapy-settings-in-scrapy-cloud
-.. _`Scrapy Cloud`: https://scrapinghub.com/scrapy-cloud
-.. _`DotScrapy Persistence Add-on`: https://support.scrapinghub.com/support/solutions/articles/22000200401-dotscrapy-persistence-addon
+.. _`spider settings`: https://support.zyte.com/support/solutions/articles/22000200670-customizing-scrapy-settings-in-scrapy-cloud
+.. _`Scrapy Cloud`: https://www.zyte.com/scrapy-cloud/
+.. _`DotScrapy Persistence Add-on`: https://support.zyte.com/support/solutions/articles/22000200401-dotscrapy-persistence-addon

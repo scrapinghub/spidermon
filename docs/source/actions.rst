@@ -479,7 +479,7 @@ of the setting that will contain the list of tags that will be included in the j
     TAG_TO_ADD_WHEN_PASS = ['passed', ]
     TAG_TO_ADD_WHEN_FAIL = ['failed', ]
 
-.. _Scrapy Cloud: https://scrapinghub.com/scrapy-cloud
+.. _Scrapy Cloud: https://zyte.com/scrapy-cloud
 
 .. _actions-file-report:
 
