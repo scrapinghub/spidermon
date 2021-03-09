@@ -3,6 +3,8 @@ from __future__ import absolute_import
 import logging
 from itertools import groupby
 
+from slugify import slugify
+
 logger = logging.getLogger(__name__)
 
 from sentry_sdk import configure_scope
@@ -112,9 +114,9 @@ class SendSentryMessage(Action):
         for key, group in groupby(failed_monitors, key=lambda x: x[0]):
             for mon in group:
                 try:
-                    k = mon[1].lower().replace(" ", "_")
                     # tag keys are limited to 32 chars
-                    tags.update({k[:32]: 1})
+                    k = slugify(mon[1], max_length=32, separator="_")
+                    tags.update({k: 1})
                 except IndexError:
                     pass
         return tags
