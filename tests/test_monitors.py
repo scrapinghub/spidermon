@@ -8,11 +8,13 @@ from spidermon.contrib.scrapy.monitors import (
     ItemCountMonitor,
     ErrorCountMonitor,
     UnwantedHTTPCodesMonitor,
+    RetryCountMonitor,
     SPIDERMON_MIN_ITEMS,
     SPIDERMON_EXPECTED_FINISH_REASONS,
     SPIDERMON_MAX_ERRORS,
     SPIDERMON_UNWANTED_HTTP_CODES,
     SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT,
+    SPIDERMON_MAX_RETRIES,
 )
 from spidermon import MonitorSuite
 from spidermon.exceptions import NotConfigured
@@ -263,5 +265,51 @@ def test_unwanted_httpcodes_should_pass(make_data):
     runner = data.pop("runner")
     suite = new_suite([UnwantedHTTPCodesMonitor])
     data["stats"]["downloader/response_status_count/500"] = 9
+    runner.run(suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+
+def test_retry_count_monitor_should_fail(make_data):
+    """Retry Count should fail if the retry count is higher than expected"""
+
+    data = make_data({SPIDERMON_MAX_RETRIES: 10})
+
+    runner = data.pop("runner")
+    suite = new_suite([RetryCountMonitor])
+    data["stats"]["retry/max_reached"] = 12
+    runner.run(suite, **data)
+    assert (
+        "Too many requests (12) reached the maximum retry amount"
+        in runner.result.monitor_results[0].error
+    )
+
+
+def test_retry_count_monitor_should_pass(make_data):
+    """Retry Count should fail if the retry count is not higher than expected"""
+
+    # Scenario # 1
+    data = make_data({SPIDERMON_MAX_RETRIES: -1})
+
+    runner = data.pop("runner")
+    suite = new_suite([RetryCountMonitor])
+    data["stats"]["retry/max_reached"] = 3
+    runner.run(suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+    # Scenario # 2
+    data = make_data()
+
+    runner = data.pop("runner")
+    suite = new_suite([RetryCountMonitor])
+    data["stats"]["retry/max_reached"] = 3
+    runner.run(suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+    # Scenario # 3
+    data = make_data({SPIDERMON_MAX_RETRIES: 10})
+
+    runner = data.pop("runner")
+    suite = new_suite([RetryCountMonitor])
+    data["stats"]["retry/max_reached"] = 5
     runner.run(suite, **data)
     assert runner.result.monitor_results[0].error is None

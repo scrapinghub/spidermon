@@ -10,6 +10,7 @@ SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
 SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT"
 SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = "SPIDERMON_MAX_ITEM_VALIDATION_ERRORS"
+SPIDERMON_MAX_RETRIES = "SPIDERMON_MAX_RETRIES"
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -153,6 +154,29 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
                 "This exceed the limit of {}".format(count, code, max_errors)
             )
             self.assertTrue(count <= max_errors, msg=msg)
+
+
+@monitors.name("Retry Count monitor")
+class RetryCountMonitor(BaseScrapyMonitor):
+    """Check if any requests have reached the maximum amount of retries
+    and the crawler had to drop those requests.
+
+    You can configure it using the ``SPIDERMON_MAX_RETRIES`` setting.
+    The default is ``-1`` which disables the monitor.
+    """
+
+    @monitors.name(
+        "Should not hit the limit of requests that reached the maximum retry amount"
+    )
+    def test_maximum_retries(self):
+        max_reached = self.stats.get("retry/max_reached", 0)
+        threshold = self.crawler.settings.getint(SPIDERMON_MAX_RETRIES, -1)
+        if threshold < 0:
+            return
+        msg = "Too many requests ({}) reached the maximum retry amount".format(
+            max_reached
+        )
+        self.assertLessEqual(max_reached, threshold, msg=msg)
 
 
 @monitors.name("Item Validation Monitor")
