@@ -4,7 +4,7 @@
   render_dash_link
 ===============================================#}
 {% macro render_dash_link() %}
-    <a class="btn btn-blue btn-sm" href="https://app.scrapinghub.com/p/{{ data.job.key }}" target="_blank">
+    <a class="btn btn-blue btn-sm" href="https://app.zyte.com/p/{{ data.job.key }}" target="_blank">
         See job
     </a>
 {% endmacro %}
@@ -48,12 +48,12 @@
 {% macro render_header_data_job_link(value, classes=None) %}
     {% if classes %}
         <span class="{{ classes }}">
-            <a href="https://app.scrapinghub.com/p/{{ value }}" target="_blank" style="color: inherit;">
+            <a href="https://app.zyte.com/p/{{ value }}" target="_blank" style="color: inherit;">
                 {{ value }}
             </a>
         </span>
     {% else %}
-        <a href="https://app.scrapinghub.com/p/{{ value }}" target="_blank" style="color: inherit;">
+        <a href="https://app.zyte.com/p/{{ value }}" target="_blank" style="color: inherit;">
                 {{ value }}
             </a>
     {% endif %}
