@@ -595,6 +595,11 @@ A notification on `Sentry`_ will look like the following one:
    :scale: 50 %
    :alt: Sentry Notification
 
+The message will have tags based on the failed monitor names (after replacing
+whitespace, special symbols etc.), but as the tag length is limited to 32 chars
+you should use ``@monitors.name`` to set monitor names that will produce useful
+tag names.
+
 The following settings are needed to make this action workable:
 
 .. _SPIDERMON_SENTRY_DSN:
