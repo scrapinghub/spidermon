@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import logging
-from itertools import groupby
 
 from slugify import slugify
 
@@ -108,17 +107,9 @@ class SendSentryMessage(Action):
             "spider_name": message.get("spider_name", ""),
             "project_name": self.project_name,
         }
-
-        failed_monitors = message.get("failed_monitors", [])
-        failed_monitors = [y.split("/") for y in failed_monitors]
-        for key, group in groupby(failed_monitors, key=lambda x: x[0]):
-            for mon in group:
-                try:
-                    # tag keys are limited to 32 chars
-                    k = slugify(mon[1], max_length=32, separator="_")
-                    tags.update({k: 1})
-                except IndexError:
-                    pass
+        for failed_monitor in message.get("failed_monitors", []):
+            key = slugify(failed_monitor.split("/")[-1], max_length=32, separator="_")
+            tags[key] = 1
         return tags
 
     def send_message(self, message):
