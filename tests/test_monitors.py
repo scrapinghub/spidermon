@@ -7,11 +7,13 @@ from spidermon.contrib.scrapy.monitors import (
     FinishReasonMonitor,
     ItemCountMonitor,
     ErrorCountMonitor,
+    WarningCountMonitor,
     UnwantedHTTPCodesMonitor,
     RetryCountMonitor,
     SPIDERMON_MIN_ITEMS,
     SPIDERMON_EXPECTED_FINISH_REASONS,
     SPIDERMON_MAX_ERRORS,
+    SPIDERMON_MAX_WARNINGS,
     SPIDERMON_UNWANTED_HTTP_CODES,
     SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT,
     SPIDERMON_MAX_RETRIES,
@@ -119,8 +121,8 @@ def test_finished_reason_monitor_should_pass(make_data):
     assert runner.result.monitor_results[0].error is None
 
 
-def test_log_monitor_should_fail(make_data):
-    """ Log should fail if the # of error log messages exceed the limit """
+def test_error_count_monitor_should_fail(make_data):
+    """ ErrorCount should fail if the # of error log messages exceed the limit """
     data = make_data()
     runner = data.pop("runner")
     suite = new_suite([ErrorCountMonitor])
@@ -129,13 +131,62 @@ def test_log_monitor_should_fail(make_data):
     assert "Found 2 errors in log" in runner.result.monitor_results[0].error
 
 
-def test_log_monitor_should_pass(make_data):
-    """Log should pass if the # of error log message DOES NOT
+def test_error_count_monitor_should_pass(make_data):
+    """ErrorCount should pass if the # of error log message DOES NOT
     exceed the limit"""
     data = make_data({SPIDERMON_MAX_ERRORS: 50})
     runner = data.pop("runner")
     suite = new_suite([ErrorCountMonitor])
     data["stats"]["log_count/ERROR"] = 2
+    runner.run(suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+
+def test_warning_monitor_should_fail(make_data):
+    """ WarningCount should fail if the # of warning log messages exceed the limit """
+
+    # Scenario # 1
+    data = make_data({SPIDERMON_MAX_WARNINGS: 0})
+    runner = data.pop("runner")
+    suite = new_suite([WarningCountMonitor])
+    data["stats"]["log_count/WARNING"] = 2
+    runner.run(suite, **data)
+    assert "Found 2 warnings in log" in runner.result.monitor_results[0].error
+
+    # Scenario # 2
+    data = make_data({SPIDERMON_MAX_WARNINGS: 10})
+    runner = data.pop("runner")
+    suite = new_suite([WarningCountMonitor])
+    data["stats"]["log_count/WARNING"] = 12
+    runner.run(suite, **data)
+    assert "Found 12 warnings in log" in runner.result.monitor_results[0].error
+
+
+def test_warning_monitor_should_pass(make_data):
+    """WarningCount should pass if the # of warning log message DOES NOT
+    exceed the limit"""
+
+    # Scenario # 1
+    data = make_data({SPIDERMON_MAX_WARNINGS: -1})
+    runner = data.pop("runner")
+    suite = new_suite([WarningCountMonitor])
+    data["stats"]["log_count/WARNING"] = 99999
+    runner.run(suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+    # Scenario # 2
+    data = make_data()
+    runner = data.pop("runner")
+    suite = new_suite([WarningCountMonitor])
+    data["stats"]["log_count/WARNING"] = 99999
+    runner.run(suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+    # Scenario # 3
+    data = make_data({SPIDERMON_MAX_WARNINGS: 50})
+    runner = data.pop("runner")
+    suite = new_suite([WarningCountMonitor])
+    data["stats"]["log_count/WARNING"] = 2
     runner.run(suite, **data)
     assert runner.result.monitor_results[0].error is None
 
