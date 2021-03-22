@@ -14,6 +14,7 @@ SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = "SPIDERMON_MAX_ITEM_VALIDATION_ERRORS"
 SPIDERMON_MAX_RETRIES = "SPIDERMON_MAX_RETRIES"
 SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS = "SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS"
 SPIDERMON_MIN_SUCCESSFUL_REQUESTS = "SPIDERMON_MIN_SUCCESSFUL_REQUESTS"
+SPIDERMON_MAX_REQUESTS_ALLOWED = "SPIDERMON_MAX_REQUESTS_ALLOWED"
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -241,6 +242,28 @@ class SuccessfulRequestsMonitor(BaseScrapyMonitor):
             requests
         )
         self.assertGreaterEqual(requests, threshold, msg=msg)
+
+
+@monitors.name("Total Requests monitor")
+class TotalRequestsMonitor(BaseScrapyMonitor):
+    """Check the total amount of requests.
+
+    You can configure it using the ``SPIDERMON_MAX_REQUESTS_ALLOWED`` setting.
+    The default is ``-1`` which disables the monitor.
+    """
+
+    @monitors.name(
+        "Should not hit the total limit of requests"
+    )
+    def test_request_count_exceeded_limit(self):
+        requests = self.stats.get("downloader/request_count", 0)
+        threshold = self.crawler.settings.getint(SPIDERMON_MAX_REQUESTS_ALLOWED, -1)
+        if threshold < 0:
+            return
+        msg = "Too many ({}) requests".format(
+            requests
+        )
+        self.assertLessEqual(requests, threshold, msg=msg)
 
 
 @monitors.name("Item Validation Monitor")

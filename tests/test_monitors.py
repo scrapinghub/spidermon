@@ -12,6 +12,7 @@ from spidermon.contrib.scrapy.monitors import (
     RetryCountMonitor,
     DownloaderExceptionMonitor,
     SuccessfulRequestsMonitor,
+    TotalRequestsMonitor,
     SPIDERMON_MIN_ITEMS,
     SPIDERMON_EXPECTED_FINISH_REASONS,
     SPIDERMON_MAX_ERRORS,
@@ -21,6 +22,7 @@ from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_MAX_RETRIES,
     SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS,
     SPIDERMON_MIN_SUCCESSFUL_REQUESTS,
+    SPIDERMON_MAX_REQUESTS_ALLOWED,
 )
 from spidermon import MonitorSuite
 from spidermon.exceptions import NotConfigured
@@ -435,5 +437,48 @@ def test_successful_requests_monitor_should_pass(make_data):
     runner = data.pop("runner")
     suite = new_suite([SuccessfulRequestsMonitor])
     data["stats"]["downloader/response_status_count/200"] = 15
+    runner.run(suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+
+def test_total_requests_monitor_should_fail(make_data):
+    """Total Requests should fail if the request count is higher than expected"""
+
+    data = make_data({SPIDERMON_MAX_REQUESTS_ALLOWED: 10})
+
+    runner = data.pop("runner")
+    suite = new_suite([TotalRequestsMonitor])
+    data["stats"]["downloader/request_count"] = 13
+    runner.run(suite, **data)
+    assert (
+        "Too many (13) requests"
+        in runner.result.monitor_results[0].error
+    )
+
+
+def test_total_requests_monitor_should_pass(make_data):
+    """Successful Requests should pass if the request count is not higher than expected"""
+
+    # Scenario # 1
+    data = make_data({SPIDERMON_MAX_REQUESTS_ALLOWED: -1})
+    runner = data.pop("runner")
+    suite = new_suite([TotalRequestsMonitor])
+    data["stats"]["downloader/request_count"] = 99999
+    runner.run(suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+    # Scenario # 2
+    data = make_data({})
+    runner = data.pop("runner")
+    suite = new_suite([TotalRequestsMonitor])
+    data["stats"]["downloader/request_count"] = 99999
+    runner.run(suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+    # Scenario # 3
+    data = make_data({SPIDERMON_MAX_REQUESTS_ALLOWED: 10})
+    runner = data.pop("runner")
+    suite = new_suite([TotalRequestsMonitor])
+    data["stats"]["downloader/request_count"] = 4
     runner.run(suite, **data)
     assert runner.result.monitor_results[0].error is None
