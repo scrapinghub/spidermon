@@ -381,8 +381,7 @@ def test_downloader_exception_monitor_should_fail(make_data):
     data["stats"]["downloader/exception_count"] = 12
     runner.run(suite, **data)
     assert (
-        "Too many downloader exceptions (12)"
-        in runner.result.monitor_results[0].error
+        "Too many downloader exceptions (12)" in runner.result.monitor_results[0].error
     )
 
 
@@ -423,10 +422,7 @@ def test_successful_requests_monitor_should_fail(make_data):
     suite = new_suite([SuccessfulRequestsMonitor])
     data["stats"]["downloader/response_status_count/200"] = 3
     runner.run(suite, **data)
-    assert (
-        "Too few (3) successful requests"
-        in runner.result.monitor_results[0].error
-    )
+    assert "Too few (3) successful requests" in runner.result.monitor_results[0].error
 
 
 def test_successful_requests_monitor_should_pass(make_data):
@@ -450,10 +446,7 @@ def test_total_requests_monitor_should_fail(make_data):
     suite = new_suite([TotalRequestsMonitor])
     data["stats"]["downloader/request_count"] = 13
     runner.run(suite, **data)
-    assert (
-        "Too many (13) requests"
-        in runner.result.monitor_results[0].error
-    )
+    assert "Too many (13) requests" in runner.result.monitor_results[0].error
 
 
 def test_total_requests_monitor_should_pass(make_data):

@@ -188,17 +188,15 @@ class DownloaderExceptionMonitor(BaseScrapyMonitor):
     The default is ``-1`` which disables the monitor.
     """
 
-    @monitors.name(
-        "Should not hit the limit of downloader exceptions"
-    )
+    @monitors.name("Should not hit the limit of downloader exceptions")
     def test_maximum_downloader_exceptions(self):
         exception_count = self.stats.get("downloader/exception_count", 0)
-        threshold = self.crawler.settings.getint(SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS, -1)
+        threshold = self.crawler.settings.getint(
+            SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS, -1
+        )
         if threshold < 0:
             return
-        msg = "Too many downloader exceptions ({})".format(
-            exception_count
-        )
+        msg = "Too many downloader exceptions ({})".format(exception_count)
         self.assertLessEqual(exception_count, threshold, msg=msg)
 
 
@@ -232,15 +230,11 @@ class SuccessfulRequestsMonitor(BaseScrapyMonitor):
     You can configure it using the ``SPIDERMON_MIN_SUCCESSFUL_REQUESTS`` setting.
     """
 
-    @monitors.name(
-        "Should have at least the minimum number of successful requests"
-    )
+    @monitors.name("Should have at least the minimum number of successful requests")
     def test_minimum_successful_requests(self):
         requests = self.stats.get("downloader/response_status_count/200", 0)
         threshold = self.crawler.settings.getint(SPIDERMON_MIN_SUCCESSFUL_REQUESTS, 0)
-        msg = "Too few ({}) successful requests".format(
-            requests
-        )
+        msg = "Too few ({}) successful requests".format(requests)
         self.assertGreaterEqual(requests, threshold, msg=msg)
 
 
@@ -252,17 +246,13 @@ class TotalRequestsMonitor(BaseScrapyMonitor):
     The default is ``-1`` which disables the monitor.
     """
 
-    @monitors.name(
-        "Should not hit the total limit of requests"
-    )
+    @monitors.name("Should not hit the total limit of requests")
     def test_request_count_exceeded_limit(self):
         requests = self.stats.get("downloader/request_count", 0)
         threshold = self.crawler.settings.getint(SPIDERMON_MAX_REQUESTS_ALLOWED, -1)
         if threshold < 0:
             return
-        msg = "Too many ({}) requests".format(
-            requests
-        )
+        msg = "Too many ({}) requests".format(requests)
         self.assertLessEqual(requests, threshold, msg=msg)
 
 
