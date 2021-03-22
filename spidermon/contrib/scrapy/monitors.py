@@ -13,6 +13,7 @@ SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COU
 SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = "SPIDERMON_MAX_ITEM_VALIDATION_ERRORS"
 SPIDERMON_MAX_RETRIES = "SPIDERMON_MAX_RETRIES"
 SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS = "SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS"
+SPIDERMON_MIN_SUCCESSFUL_REQUESTS = "SPIDERMON_MIN_SUCCESSFUL_REQUESTS"
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -221,6 +222,25 @@ class RetryCountMonitor(BaseScrapyMonitor):
             max_reached
         )
         self.assertLessEqual(max_reached, threshold, msg=msg)
+
+
+@monitors.name("Successful Requests monitor")
+class SuccessfulRequestsMonitor(BaseScrapyMonitor):
+    """Check the amount of successful requests.
+
+    You can configure it using the ``SPIDERMON_MIN_SUCCESSFUL_REQUESTS`` setting.
+    """
+
+    @monitors.name(
+        "Should have at least the minimum number of successful requests"
+    )
+    def test_minimum_successful_requests(self):
+        requests = self.stats.get("downloader/response_status_count/200", 0)
+        threshold = self.crawler.settings.getint(SPIDERMON_MIN_SUCCESSFUL_REQUESTS, 0)
+        msg = "Too few ({}) successful requests".format(
+            requests
+        )
+        self.assertGreaterEqual(requests, threshold, msg=msg)
 
 
 @monitors.name("Item Validation Monitor")
