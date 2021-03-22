@@ -12,6 +12,7 @@ SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
 SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT"
 SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = "SPIDERMON_MAX_ITEM_VALIDATION_ERRORS"
 SPIDERMON_MAX_RETRIES = "SPIDERMON_MAX_RETRIES"
+SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS = "SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS"
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -174,6 +175,29 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
                 "This exceed the limit of {}".format(count, code, max_errors)
             )
             self.assertTrue(count <= max_errors, msg=msg)
+
+
+@monitors.name("Downloader Exceptions monitor")
+class DownloaderExceptionMonitor(BaseScrapyMonitor):
+    """Check the amount of downloader exceptions (timeouts, rejected
+    connections, etc.).
+
+    You can configure it using the ``SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS`` setting.
+    The default is ``-1`` which disables the monitor.
+    """
+
+    @monitors.name(
+        "Should not hit the limit of downloader exceptions"
+    )
+    def test_maximum_downloader_exceptions(self):
+        exception_count = self.stats.get("downloader/exception_count", 0)
+        threshold = self.crawler.settings.getint(SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS, -1)
+        if threshold < 0:
+            return
+        msg = "Too many downloader exceptions ({})".format(
+            exception_count
+        )
+        self.assertLessEqual(exception_count, threshold, msg=msg)
 
 
 @monitors.name("Retry Count monitor")

@@ -10,6 +10,7 @@ from spidermon.contrib.scrapy.monitors import (
     WarningCountMonitor,
     UnwantedHTTPCodesMonitor,
     RetryCountMonitor,
+    DownloaderExceptionMonitor,
     SPIDERMON_MIN_ITEMS,
     SPIDERMON_EXPECTED_FINISH_REASONS,
     SPIDERMON_MAX_ERRORS,
@@ -17,6 +18,7 @@ from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_UNWANTED_HTTP_CODES,
     SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT,
     SPIDERMON_MAX_RETRIES,
+    SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS,
 )
 from spidermon import MonitorSuite
 from spidermon.exceptions import NotConfigured
@@ -362,5 +364,47 @@ def test_retry_count_monitor_should_pass(make_data):
     runner = data.pop("runner")
     suite = new_suite([RetryCountMonitor])
     data["stats"]["retry/max_reached"] = 5
+    runner.run(suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+
+def test_downloader_exception_monitor_should_fail(make_data):
+    """Downloader Exceptions should fail if the downloader exceptions count is higher than expected"""
+
+    data = make_data({SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS: 10})
+    runner = data.pop("runner")
+    suite = new_suite([DownloaderExceptionMonitor])
+    data["stats"]["downloader/exception_count"] = 12
+    runner.run(suite, **data)
+    assert (
+        "Too many downloader exceptions (12)"
+        in runner.result.monitor_results[0].error
+    )
+
+
+def test_downloader_exception_monitor_should_pass(make_data):
+    """Downloader Exceptions should pass if the downloader exceptions count is not higher than expected"""
+
+    # Scenario # 1
+    data = make_data({SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS: -1})
+    runner = data.pop("runner")
+    suite = new_suite([DownloaderExceptionMonitor])
+    data["stats"]["downloader/exception_count"] = 99999
+    runner.run(suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+    # Scenario # 2
+    data = make_data()
+    runner = data.pop("runner")
+    suite = new_suite([DownloaderExceptionMonitor])
+    data["stats"]["downloader/exception_count"] = 99999
+    runner.run(suite, **data)
+    assert runner.result.monitor_results[0].error is None
+
+    # Scenario # 3
+    data = make_data({SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS: 10})
+    runner = data.pop("runner")
+    suite = new_suite([DownloaderExceptionMonitor])
+    data["stats"]["downloader/exception_count"] = 3
     runner.run(suite, **data)
     assert runner.result.monitor_results[0].error is None
