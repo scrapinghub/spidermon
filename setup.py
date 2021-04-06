@@ -34,6 +34,7 @@ setup(
             "Jinja2",
             "slackclient",
             "boto",
+            "boto3",
             "premailer",
             "sentry-sdk",
         ],
