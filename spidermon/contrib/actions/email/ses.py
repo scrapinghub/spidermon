@@ -1,5 +1,6 @@
 from __future__ import absolute_import
-from boto import ses
+
+import boto3
 
 from spidermon.exceptions import NotConfigured
 from spidermon.utils.settings import get_aws_credentials
@@ -44,10 +45,26 @@ class SendSESEmail(SendEmail):
         )
         return kwargs
 
+    def _get_recipients(self):
+        recipients = []
+        for recipient_subset in (self.to, self.cc, self.bcc):
+            if not recipient_subset:
+                pass
+            elif isinstance(recipient_subset, str):
+                recipients.append(recipient_subset)
+            else:
+                recipients.extend(recipient_subset)
+        return recipients
+
     def send_message(self, message):
-        session = ses.connect_to_region(
-            self.aws_region_name,
+        client = boto3.client(
+            service_name="ses",
+            region_name=self.aws_region_name,
             aws_access_key_id=self.aws_access_key,
             aws_secret_access_key=self.aws_secret_key,
         )
-        session.send_raw_email(raw_message=message.as_string())
+        client.send_raw_email(
+            Source=self.sender,
+            Destinations=self._get_recipients(),
+            RawMessage={"Data": message.as_string()},
+        )
