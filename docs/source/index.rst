@@ -35,4 +35,5 @@ Contents
    settings
    howto/index
    actions
+   mixins
    changelog
