@@ -19,7 +19,7 @@ when your monitor suite finishes no matter if it passed or failed:
         ]
 
 By default, Spidermon uses a HTML template that can be altered in
-:ref:`SPIDERMON_BODY_HTML_TEMPLATE` setting. You can use `Jinja2`_ as your
+`SPIDERMON_BODY_HTML_TEMPLATE`_ setting. You can use `Jinja2`_ as your
 template engine.
 
 The result of a report generated using this default template may be seen next:
