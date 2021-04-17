@@ -49,8 +49,6 @@ SPIDERMON_SENTRY_LOG_LEVEL
 
 Default: ``error``
 
-It could be set to any level provided by `Sentry Log Level`_
-
 SPIDERMON_SENTRY_FAKE
 ---------------------
 
@@ -59,5 +57,4 @@ Default: ``False``
 If set `True`, the Sentry message will be in the logs but nothing will be sent.
 
 .. _`Sentry`: https://sentry.io/
-.. _`Sentry DSN`: https://docs.sentry.io/error-reporting/quickstart/?platform=python#configure-the-sdk
-.. _`Sentry Log Level`: https://docs.sentry.io/enriching-error-data/context/?platform=python#setting-the-level
+.. _`Sentry DSN`: https://docs.sentry.io/product/sentry-basics/dsn-explainer/#dsn-utilization
