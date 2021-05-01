@@ -56,4 +56,4 @@ SPIDERMON_DISCORD_MESSAGE_TEMPLATE
 Path to a Jinja2 template file to format messages sent by the Discord Action.
 
 .. _`Discord`: https://discord.com/
-.. _`Discord webhook url`: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
+.. _`Discord webhook url`: https://discord.com/developers/docs/resources/webhook

@@ -480,3 +480,4 @@ The resulted item will look like this:
 .. _`Scrapy project`: https://doc.scrapy.org/en/latest/intro/tutorial.html?#creating-a-project
 .. _`Slack credentials`: https://api.slack.com/docs/token-types
 .. _`Telegram bot token`: https://core.telegram.org/bots
+.. _`Discord Webhook URL`: https://discord.com/developers/docs/resources/webhook
