@@ -4,7 +4,7 @@
 Expression Monitors
 ====================
 
-Expressions Monitors are :ref:`monitors<monitors>` created on-the-fly when Spidermon extension
+Expressions Monitors are :ref:`monitors:monitors` created on-the-fly when Spidermon extension
 initializes. They can create tests based on simple expressions defined in a dictionary in
 your settings like::
 
@@ -20,13 +20,13 @@ your settings like::
         },
     ]
 
-The definition of each monitor should follow the :ref:`expression-monitor-schema`.
+The definition of each monitor should follow the `expression monitor schema`_.
 
 Use the following settings to configure expression monitors:
 
-    * :ref:`SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS`
-    * :ref:`SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS`
-    * :ref:`SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS`
+    * :ref:`settings:SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS`
+    * :ref:`settings:SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS`
+    * :ref:`settings:SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS`
 
 You have the following objects available to be used in your *expression*:
 
@@ -46,19 +46,16 @@ You have the following objects available to be used in your *expression*:
     To have a more deep understand about which features of the language are available
     please refer to ``spidermon.python.interpreter.Interpreter``.
 
-
-.. _how-to-create-expression-monitor:
-
 How to create an expression monitor
 ===================================
 
 First you need to choose *when* you want to run your expression monitors.
 
-You can use :ref:`SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS` to run a monitor
-when a spider opens, or :ref:`SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS` if you
+You can use :ref:`settings:SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS` to run a monitor
+when a spider opens, or :ref:`settings:SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS` if you
 want to run a monitor when a spider is closed.
 
-There's also the :ref:`SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS` setting to run a monitor
+There's also the :ref:`settings:SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS` setting to run a monitor
 once the engine has stopped.
 
 Here's an example of how to declare two ``ExpressionMonitors``.
@@ -96,9 +93,6 @@ finished with ``finished``::
             ],
         }
     ]
-
-
-.. _expression-monitor-schema:
 
 Expression monitor schema
 =========================

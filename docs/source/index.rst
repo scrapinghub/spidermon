@@ -34,5 +34,5 @@ Contents
    expression-monitors
    settings
    howto/index
-   actions
+   actions/index
    changelog
