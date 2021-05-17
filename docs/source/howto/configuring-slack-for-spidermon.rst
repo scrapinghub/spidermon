@@ -8,7 +8,8 @@ What are bots?
 
 A bot is a type of Slack App designed to interact with users via conversation.
 
-To work with `Slack Actions <https://spidermon.readthedocs.io/en/latest/actions.html#slack-action>`_, you will need a Slack bot which would send `notifications <https://spidermon.readthedocs.io/en/latest/getting-started.html#slack-notifications>`_ to your Slack workspace from Spidermon.
+To work with :doc:`Slack Actions </actions/slack-action>`, you will need a Slack bot which would
+send notifications to your Slack workspace from Spidermon.
 
 Steps
 -----

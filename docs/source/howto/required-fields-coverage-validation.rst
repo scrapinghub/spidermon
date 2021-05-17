@@ -1,12 +1,12 @@
 How do I add required fields coverage validation?
 =================================================
 
-When you enable :ref:`item validation <item-validation>` in your project you can
+When you enable :ref:`item-validation:item validation` in your project you can
 use *ValidationMonitorMixin* in your monitor, which allows you to perform some extra
 checks on your results.
 
 Considering that we have the :ref:`validation schema <quote-item-validation-schema>` from the
-:ref:`getting started <getting-started>` section of our documentation, where the **author**
+:ref:`getting-started:getting started` section of our documentation, where the **author**
 field is required, we want to add a new monitor to ensure that no more than 20% of the items
 returned have the **author** not filled.
 

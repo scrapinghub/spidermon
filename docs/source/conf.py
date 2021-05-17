@@ -29,6 +29,8 @@ sys.path.insert(0, os.path.abspath("../.."))
 # ones.
 extensions = ["sphinx.ext.autodoc", "sphinx.ext.autosectionlabel"]
 
+autosectionlabel_prefix_document = True
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
@@ -45,8 +47,8 @@ master_doc = "index"
 
 # General information about the project.
 project = "Spidermon"
-copyright = "2019, Scrapinghub"
-author = "Scrapinghub"
+copyright = "2021, Zyte"
+author = "Zyte"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -217,7 +219,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "spidermon.tex", "Spidermon Documentation", "Scrapinghub", "manual")
+    (master_doc, "spidermon.tex", "Spidermon Documentation", "Zyte", "manual")
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

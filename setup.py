@@ -14,10 +14,10 @@ test_requirements = [
 
 setup(
     name="spidermon",
-    version="1.14.0",
+    version="1.15.0",
     url="https://github.com/scrapinghub/spidermon",
-    author="Scrapinghub",
-    author_email="info@scrapinghub.com",
+    author="Zyte",
+    author_email="opensource@zyte.com",
     description=("Spidermon is a framework to build monitors for Scrapy spiders."),
     long_description=("Spidermon is a framework to build monitors for Scrapy spiders."),
     license="BSD",
@@ -34,6 +34,7 @@ setup(
             "Jinja2",
             "slackclient",
             "boto",
+            "boto3",
             "premailer",
             "sentry-sdk",
         ],
