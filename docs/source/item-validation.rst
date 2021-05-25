@@ -15,6 +15,12 @@ the first step is to enable the built-in item pipeline in your project settings:
         'spidermon.contrib.scrapy.pipelines.ItemValidationPipeline': 800,
     }
 
+.. warning::
+
+  Preferably, enable it as the last pipeline executed, ensuring that no
+  subsequent pipeline changes the content of the item, ignoring the
+  validation already performed.
+
 After that, you need to choose which validation library will be used. Spidermon
 accepts schemas defined using schematics_ or `JSON Schema`_.
 
