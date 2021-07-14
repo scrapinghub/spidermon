@@ -17,6 +17,7 @@ class StoreMock:
     def set(self, data):
         self.stored_data.append(data)
 
+
 @pytest.fixture
 def stats_collection(monkeypatch):
     store = StoreMock()
@@ -25,6 +26,7 @@ def stats_collection(monkeypatch):
         "_open_collection",
         lambda *args: store,
     )
+
 
 @pytest.fixture
 def test_settings():
@@ -58,6 +60,7 @@ def test_spider_has_stats_history_queue_with_specified_max_size(
     assert crawler.spider.stats_history.maxlen == max_stored_stats
     crawler.stop()
 
+
 @pytest.mark.parametrize("initial_max_len,end_max_len", [(5, 2), (5, 10), (5, 5)])
 def test_spider_update_stats_history_queue_max_size(
     test_settings, stats_collection, initial_max_len, end_max_len
@@ -89,6 +92,7 @@ def test_spider_has_last_stats_history_when_opened_again(
     assert crawler.spider.stats_history[0]["first_execution"] == "value"
     crawler.stop()
 
+
 def test_spider_has_two_last_stats_history_when_opened_third_time(
     test_settings, stats_collection
 ):
@@ -108,6 +112,7 @@ def test_spider_has_two_last_stats_history_when_opened_third_time(
     assert "second_execution" in crawler.spider.stats_history[0].keys()
     assert "first_execution" in crawler.spider.stats_history[1].keys()
     crawler.stop()
+
 
 def test_spider_limit_number_of_stored_stats(test_settings, stats_collection):
     test_settings["SPIDERMON_MAX_STORED_STATS"] = 2

@@ -45,7 +45,7 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
 class DashCollectionsStatsHistoryCollector(HubStorageStatsCollector):
     def _open_collection(self, spider):
         sh_client = scrapinghub.ScrapinghubClient()
-        proj_id = os.environ.get('SCRAPY_PROJECT_ID')
+        proj_id = os.environ.get("SCRAPY_PROJECT_ID")
         if proj_id is None:
             # not running on dash
             return
@@ -57,7 +57,7 @@ class DashCollectionsStatsHistoryCollector(HubStorageStatsCollector):
         return store
 
     def _get_stat_history(self):
-        data = [d.get('value') for d in self.store.iter()]
+        data = [d.get("value") for d in self.store.iter()]
         return data
 
     def open_spider(self, spider):
@@ -86,9 +86,9 @@ class DashCollectionsStatsHistoryCollector(HubStorageStatsCollector):
             stats_history.appendleft(self._stats)
             for index, data in enumerate(stats_history):
                 if index == 0:
-                    job_id = os.environ.get('SCRAPY_JOB', '')
+                    job_id = os.environ.get("SCRAPY_JOB", "")
                     if job_id:
-                        data['job_url'] = f'https://app.zyte.com/p/{job_id}'
+                        data["job_url"] = f"https://app.zyte.com/p/{job_id}"
                 # this will create up to SPIDERMON_MAX_STORED_STATS objects
                 # with keys 0 -> SPIDERMON_MAX_STORED_STATS - 1
-                self.store.set({'_key': str(index), 'value': data})
+                self.store.set({"_key": str(index), "value": data})
