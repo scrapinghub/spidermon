@@ -69,19 +69,15 @@ returned in the previous spider executions.
 
     class SpiderCloseMonitorSuite(MonitorSuite):
         monitors = [HistoryMonitor]
+When running on `Scrapy Cloud`_ you can use ``spidermon.contrib.stats.statscollectors.DashCollectionsStatsHistoryCollector`` instead.
+This will save your stats in a `collection`_ on your scrapy dashboard, named like ``{your_spider_name}_stats_history``. The rest of the sample code presented previously will work unchanged.
+
 
 .. warning::
-    Running your spider in `Scrapy Cloud`_ requires you to manually change some settings
-    in your project:
-
-    #. Enable `DotScrapy Persistence Add-on`_ in your project to keep your ``.scrapy`` directory
-       available between job executions.
-    #. `STATS_CLASS`_ is overriden by default in `Scrapy Cloud`_. You need to manually include
-       ``spidermon.contrib.stats.statscollectors.LocalStorageStatsHistoryCollector`` in your `spider
-       settings`_. The drawback is that you job stats will not be uploaded to Scrapy Cloud interface
-       and will be available only in the job logs.
+    `STATS_CLASS`_ is overriden by default in `Scrapy Cloud`_. You need to manually include ``spidermon.contrib.stats.statscollectors.DashCollectionsStatsHistoryCollector`` in your `spider settings`_.
 
 .. _`STATS_CLASS`: https://docs.scrapy.org/en/latest/topics/settings.html#stats-class
 .. _`spider settings`: https://support.zyte.com/support/solutions/articles/22000200670-customizing-scrapy-settings-in-scrapy-cloud
 .. _`Scrapy Cloud`: https://www.zyte.com/scrapy-cloud/
 .. _`DotScrapy Persistence Add-on`: https://support.zyte.com/support/solutions/articles/22000200401-dotscrapy-persistence-addon
+.. _`collection`: https://docs.zyte.com/scrapy-cloud/collections.html
