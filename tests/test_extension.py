@@ -1,7 +1,4 @@
-try:
-    import unittest.mock as mock
-except ImportError:
-    from unittest import mock
+from unittest import mock
 import pytest
 
 from scrapy import signals
