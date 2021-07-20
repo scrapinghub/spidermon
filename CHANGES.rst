@@ -1,6 +1,11 @@
 Release notes
 =============
 
+1.15.0 (2021-04-06)
+-------------------
+- feature: Improve content of Sentry messages (`PR#279 <https://github.com/scrapinghub/spidermon/pull/279>`_)
+- bug: Replace `boto` with `boto3` for Amazon SES work correctly (`issue#285 <https://github.com/scrapinghub/spidermon/issues/285>`_)
+
 1.14.0 (2020-10-05)
 -------------------
 - feature: Built-in monitor for field and item coverage (`issue#253 <https://github.com/scrapinghub/spidermon/issues/253>`_)
