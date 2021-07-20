@@ -10,7 +10,7 @@ def new_suite():
 
 
 def test_log_monitor_should_fail(make_data):
-    """ Log should fail if the # of error log messages exceed the limit """
+    """Log should fail if the # of error log messages exceed the limit"""
     data = make_data()
     runner = data.pop("runner")
     suite = new_suite()
