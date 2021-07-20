@@ -44,7 +44,7 @@ def new_suite(monitors):
 
 
 def test_needs_to_configure_item_count_monitor(make_data, item_count_suite):
-    """Should raise an exception when ItemCountMonitor it's not configured """
+    """Should raise an exception when ItemCountMonitor it's not configured"""
     data = make_data()
     runner = data.pop("runner")
     data["crawler"].stats.set_value("item_scraped_count", 10)
@@ -53,7 +53,7 @@ def test_needs_to_configure_item_count_monitor(make_data, item_count_suite):
 
 
 def test_item_count_monitor_should_fail(make_data, item_count_suite):
-    """ItemCount should fail when the desired # of items is not extracted """
+    """ItemCount should fail when the desired # of items is not extracted"""
     data = make_data({SPIDERMON_MIN_ITEMS: 100})
     runner = data.pop("runner")
     data["stats"]["item_scraped_count"] = 10
@@ -63,7 +63,7 @@ def test_item_count_monitor_should_fail(make_data, item_count_suite):
 
 
 def test_item_count_monitor_extracted_exact_items(make_data, item_count_suite):
-    """ItemCount should pass when extract the exact amount of items """
+    """ItemCount should pass when extract the exact amount of items"""
     data = make_data({"SPIDERMON_MIN_ITEMS": 100})
     runner = data.pop("runner")
     data["stats"]["item_scraped_count"] = 100
@@ -72,7 +72,7 @@ def test_item_count_monitor_extracted_exact_items(make_data, item_count_suite):
 
 
 def test_item_count_monitor_extracted_more_than_expected(make_data, item_count_suite):
-    """ItemCount should pass when extract more than expected amount """
+    """ItemCount should pass when extract more than expected amount"""
     data = make_data({"SPIDERMON_MIN_ITEMS": 100})
     runner = data.pop("runner")
     data["stats"]["item_scraped_count"] = 500
@@ -81,7 +81,7 @@ def test_item_count_monitor_extracted_more_than_expected(make_data, item_count_s
 
 
 def test_item_count_monitor_extracted_less_than_expected(make_data, item_count_suite):
-    """ItemCount should fail when extract less than expected amount """
+    """ItemCount should fail when extract less than expected amount"""
     data = make_data({"SPIDERMON_MIN_ITEMS": 100})
     runner = data.pop("runner")
     data["stats"]["item_scraped_count"] = 50
@@ -118,7 +118,7 @@ def test_finished_reason_monitor_should_pass(make_data):
 
 
 def test_log_monitor_should_fail(make_data):
-    """ Log should fail if the # of error log messages exceed the limit """
+    """Log should fail if the # of error log messages exceed the limit"""
     data = make_data()
     runner = data.pop("runner")
     suite = new_suite([ErrorCountMonitor])
