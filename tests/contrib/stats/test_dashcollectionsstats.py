@@ -1,4 +1,5 @@
 from collections import deque
+from unittest.mock import patch, MagicMock
 
 import pytest
 
@@ -35,6 +36,32 @@ def test_settings():
             "spidermon.contrib.stats.statscollectors.DashCollectionsStatsHistoryCollector"
         )
     }
+
+
+@patch("spidermon.contrib.stats.statscollectors.scrapinghub")
+def test_open_spider_without_api(scrapinghub_mock, test_settings):
+    mock_spider = MagicMock()
+    crawler = get_crawler(Spider, test_settings)
+    pipe = DashCollectionsStatsHistoryCollector(crawler)
+
+    pipe.open_spider(mock_spider)
+
+    assert pipe.store is None
+
+
+@patch("spidermon.contrib.stats.statscollectors.scrapinghub")
+@patch("spidermon.contrib.stats.statscollectors.os.environ.get")
+def test_open_collection_with_api(scrapinghub_mock, os_enviorn_mock, test_settings):
+    mock_spider = MagicMock()
+    mock_spider.name = "test"
+
+    os_enviorn_mock.return_value = 1234
+    crawler = get_crawler(Spider, test_settings)
+    pipe = DashCollectionsStatsHistoryCollector(crawler)
+
+    store = pipe._open_collection(mock_spider)
+
+    assert store is not None
 
 
 def test_spider_has_stats_history_attribute_when_opened_with_collector(
@@ -137,3 +164,28 @@ def test_spider_limit_number_of_stored_stats(test_settings, stats_collection):
     assert "third_execution" in crawler.spider.stats_history[0].keys()
     assert "second_execution" in crawler.spider.stats_history[1].keys()
     crawler.stop()
+
+
+@patch("spidermon.contrib.stats.statscollectors.os.environ.get")
+def test_job_id_added(mock_os_enviorn_get, test_settings, stats_collection):
+    mock_os_enviorn_get.return_value = "test/test/test"
+    crawler = get_crawler(Spider, test_settings)
+    crawler.crawl("foo_spider")
+    crawler.stop()
+
+    mock_os_enviorn_get.assert_called_with("SCRAPY_JOB", "")
+    assert (
+        crawler.spider.stats_history[0]["job_url"]
+        == "https://app.zyte.com/p/test/test/test"
+    )
+
+
+@patch("spidermon.contrib.stats.statscollectors.os.environ.get")
+def test_job_id_not_available(mock_os_enviorn_get, test_settings, stats_collection):
+    mock_os_enviorn_get.return_value = None
+    crawler = get_crawler(Spider, test_settings)
+    crawler.crawl("foo_spider")
+    crawler.stop()
+
+    mock_os_enviorn_get.assert_called_with("SCRAPY_JOB", "")
+    assert "job_url" not in crawler.spider.stats_history[0]
