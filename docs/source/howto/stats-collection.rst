@@ -69,6 +69,7 @@ returned in the previous spider executions.
 
     class SpiderCloseMonitorSuite(MonitorSuite):
         monitors = [HistoryMonitor]
+
 When running on `Scrapy Cloud`_ you can use ``spidermon.contrib.stats.statscollectors.DashCollectionsStatsHistoryCollector`` instead.
 This will save your stats in a `collection`_ on your scrapy dashboard, named like ``{your_spider_name}_stats_history``. The rest of the sample code presented previously will work unchanged.
 
