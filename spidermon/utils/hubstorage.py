@@ -7,18 +7,11 @@ from codecs import decode
 
 from six.moves import map
 
-try:
-    try:
-        from scrapinghub import HubstorageClient
-    except ImportError:
-        from hubstorage.client import HubstorageClient
-except ImportError:
-    HubstorageClient = None
-
+from scrapinghub import HubstorageClient
 
 class _Hubstorage(object):
     def __init__(self):
-        self.available = "SHUB_JOBKEY" in os.environ and HubstorageClient is not None
+        self.available = "SHUB_JOBKEY" in os.environ
         self._client = None
         self._project = None
         self._job = None
