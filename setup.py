@@ -10,6 +10,8 @@ test_requirements = [
     "scrapy",
     "slackclient",
     "twisted>=19.7.0",
+    'scrapinghub',
+    'scrapinghub-entrypoint-scrapy',
 ]
 
 setup(
