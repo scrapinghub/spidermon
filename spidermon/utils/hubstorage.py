@@ -9,6 +9,7 @@ from six.moves import map
 
 from scrapinghub import HubstorageClient
 
+
 class _Hubstorage(object):
     def __init__(self):
         self.available = "SHUB_JOBKEY" in os.environ
