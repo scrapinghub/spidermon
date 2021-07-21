@@ -2,6 +2,8 @@ from __future__ import absolute_import
 
 import logging
 
+from slugify import slugify
+
 logger = logging.getLogger(__name__)
 
 from sentry_sdk import configure_scope
@@ -100,12 +102,24 @@ class SendSentryMessage(Action):
 
         return message
 
+    def get_tags(self, message):
+        tags = {
+            "spider_name": message.get("spider_name", ""),
+            "project_name": self.project_name,
+        }
+        for failed_monitor in message.get("failed_monitors", []):
+            key = slugify(failed_monitor.split("/")[-1], max_length=32, separator="_")
+            tags[key] = 1
+        return tags
+
     def send_message(self, message):
 
         sentry_client = Client(dsn=self.sentry_dsn, environment=self.environment)
 
         with configure_scope() as scope:
-            scope.set_tag("project_name", self.project_name)
+            tags = self.get_tags(message)
+            for key, val in tags.items():
+                scope.set_tag(key, val)
 
             scope.set_extra("job_link", message.get("job_link", ""))
             scope.set_extra("spider_name", message.get("spider_name", ""))

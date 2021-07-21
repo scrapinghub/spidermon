@@ -2,9 +2,9 @@
 Spidermon
 =========
 
-.. image:: https://img.shields.io/travis/scrapinghub/spidermon/master
-    :target: https://travis-ci.org/scrapinghub/spidermon
-    :alt: travis build status master branch
+.. image:: https://github.com/scrapinghub/spidermon/workflows/CI/badge.svg?branch=master
+    :target: https://github.com/scrapinghub/spidermon/actions?workflow=CI
+    :alt: CI Status
 
 .. image:: https://img.shields.io/codecov/c/github/scrapinghub/spidermon.svg
     :target: http://codecov.io/github/scrapinghub/spidermon?branch=master
