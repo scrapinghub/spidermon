@@ -24,10 +24,9 @@ def test_retry_count_monitor_should_fail(make_data):
     )
 
 
-def test_retry_count_monitor_should_pass(make_data):
-    """Retry Count should fail if the retry count is not higher than expected"""
+def test_retry_count_monitor_should_pass_disabled(make_data):
+    """Retry Count should pass if the limit is negative"""
 
-    # Scenario # 1
     data = make_data({SPIDERMON_MAX_RETRIES: -1})
 
     runner = data.pop("runner")
@@ -36,7 +35,10 @@ def test_retry_count_monitor_should_pass(make_data):
     runner.run(suite, **data)
     assert runner.result.monitor_results[0].error is None
 
-    # Scenario # 2
+
+def test_retry_count_monitor_should_pass_default(make_data):
+    """Retry Count should pass if the limit is not set"""
+
     data = make_data()
 
     runner = data.pop("runner")
@@ -45,7 +47,10 @@ def test_retry_count_monitor_should_pass(make_data):
     runner.run(suite, **data)
     assert runner.result.monitor_results[0].error is None
 
-    # Scenario # 3
+
+def test_retry_count_monitor_should_pass_under_limit(make_data):
+    """Retry Count should pass if the retry count is not higher than expected"""
+
     data = make_data({SPIDERMON_MAX_RETRIES: 10})
 
     runner = data.pop("runner")

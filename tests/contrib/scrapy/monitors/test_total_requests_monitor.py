@@ -21,10 +21,9 @@ def test_total_requests_monitor_should_fail(make_data):
     assert "Too many (13) requests" in runner.result.monitor_results[0].error
 
 
-def test_total_requests_monitor_should_pass(make_data):
-    """Successful Requests should pass if the request count is not higher than expected"""
+def test_total_requests_monitor_should_pass_disabled(make_data):
+    """Total Requests should pass if the limit is negative"""
 
-    # Scenario # 1
     data = make_data({SPIDERMON_MAX_REQUESTS_ALLOWED: -1})
     runner = data.pop("runner")
     suite = new_suite()
@@ -32,7 +31,10 @@ def test_total_requests_monitor_should_pass(make_data):
     runner.run(suite, **data)
     assert runner.result.monitor_results[0].error is None
 
-    # Scenario # 2
+
+def test_total_requests_monitor_should_pass_default(make_data):
+    """Total Requests should pass if the limit is not set"""
+
     data = make_data({})
     runner = data.pop("runner")
     suite = new_suite()
@@ -40,7 +42,10 @@ def test_total_requests_monitor_should_pass(make_data):
     runner.run(suite, **data)
     assert runner.result.monitor_results[0].error is None
 
-    # Scenario # 3
+
+def test_total_requests_monitor_should_pass_under_limit(make_data):
+    """Total Requests should pass if the request count is not higher than expected"""
+
     data = make_data({SPIDERMON_MAX_REQUESTS_ALLOWED: 10})
     runner = data.pop("runner")
     suite = new_suite()

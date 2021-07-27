@@ -22,10 +22,9 @@ def test_downloader_exception_monitor_should_fail(make_data):
     )
 
 
-def test_downloader_exception_monitor_should_pass(make_data):
-    """Downloader Exceptions should pass if the downloader exceptions count is not higher than expected"""
+def test_downloader_exception_monitor_should_pass_disabled(make_data):
+    """Downloader Exceptions should pass if the limit is negative"""
 
-    # Scenario # 1
     data = make_data({SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS: -1})
     runner = data.pop("runner")
     suite = new_suite()
@@ -33,7 +32,10 @@ def test_downloader_exception_monitor_should_pass(make_data):
     runner.run(suite, **data)
     assert runner.result.monitor_results[0].error is None
 
-    # Scenario # 2
+
+def test_downloader_exception_monitor_should_pass_default(make_data):
+    """Downloader Exceptions should pass if the limit is not set"""
+
     data = make_data()
     runner = data.pop("runner")
     suite = new_suite()
@@ -41,7 +43,10 @@ def test_downloader_exception_monitor_should_pass(make_data):
     runner.run(suite, **data)
     assert runner.result.monitor_results[0].error is None
 
-    # Scenario # 3
+
+def test_downloader_exception_monitor_should_pass_under_limit(make_data):
+    """Downloader Exceptions should pass if the downloader exceptions count is not higher than expected"""
+
     data = make_data({SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS: 10})
     runner = data.pop("runner")
     suite = new_suite()
