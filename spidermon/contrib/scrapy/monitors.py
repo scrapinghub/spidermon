@@ -382,9 +382,14 @@ class SpiderCloseMonitorSuite(MonitorSuite):
     * :class:`ItemCountMonitor`
     * :class:`ItemValidationMonitor`
     * :class:`ErrorCountMonitor`
+    * :class:`WarningCountMonitor`
     * :class:`FinishReasonMonitor`
     * :class:`UnwantedHTTPCodesMonitor`
     * :class:`FieldCoverageMonitor`
+    * :class:`RetryCountMonitor`
+    * :class:`DownloaderExceptionMonitor`
+    * :class:`SuccessfulRequestsMonitor`
+    * :class:`TotalRequestsMonitor`
 
     You can easily enable this monitor *after* enabling Spidermon::
 
@@ -397,7 +402,12 @@ class SpiderCloseMonitorSuite(MonitorSuite):
         ItemCountMonitor,
         ItemValidationMonitor,
         ErrorCountMonitor,
+        WarningCountMonitor,
         FinishReasonMonitor,
         UnwantedHTTPCodesMonitor,
         FieldCoverageMonitor,
+        RetryCountMonitor,
+        DownloaderExceptionMonitor,
+        SuccessfulRequestsMonitor,
+        TotalRequestsMonitor,
     ]
