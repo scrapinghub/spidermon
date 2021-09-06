@@ -6,6 +6,7 @@ import logging
 
 import six
 from slack import WebClient
+from slack.errors import SlackApiError
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
@@ -115,8 +116,35 @@ class SlackMessageManager:
             link_names=link_names,
             attachments=self._parse_attachments(attachments),
             username=self.sender_name,
-            icon_url=self.users[self.sender_name]["profile"]["image_48"],
+            icon_url=self._get_icon_url(),
         )
+
+    def _get_icon_url(self):
+        """
+        Looks up the icon url for the user set as the message sender
+
+        This will only return a URL if the slack app has users:read permission and
+        bot appears in the organisation user list. A no frills bot intended to
+        just send messages is not likely to fulfill these criteria, so it returns
+        None in this situation, which will result in slack using the bot's App Icon.
+        """
+        try:
+            icon_url = self.users[self.sender_name]["profile"]["image_48"]
+        except SlackApiError as e:
+            if (
+                e.response.data.get("error") == "missing_scope"
+                and e.response.data.get("needed") == "users:read"
+            ):
+                # bot does not have read permissions for slack org
+                # can be an expected outcome - will use its own icon
+                icon_url = None
+            else:
+                raise e
+        except KeyError:
+            # bot has read permissions for slack org but can't find sender in list
+            # can be an expected outcome - will use its own icon
+            icon_url = None
+        return icon_url
 
     def _parse_attachments(self, attachments):
         if not attachments:
