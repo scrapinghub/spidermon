@@ -12,7 +12,7 @@ SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
 SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT"
 SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = "SPIDERMON_MAX_ITEM_VALIDATION_ERRORS"
-SPIDERMON_MAX_RUNTIME = "SPIDERMON_MAX_EXECUTION_TIME"
+SPIDERMON_MAX_EXECUTION_TIME = "SPIDERMON_MAX_EXECUTION_TIME"
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -278,16 +278,16 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
         self.assertTrue(len(failures) == 0, msg=msg)
 
 
-@monitors.name('Periodic run time monitor')
-class PeriodicRuntimeMonitor(Monitor, StatsMonitorMixin):
+@monitors.name('Periodic execution time monitor')
+class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
     """Check for runtime exceeding a target maximum runtime.
 
         You can configure the maximum runtime (in seconds) using
         ``SPIDERMON_MAX_EXECUTION_TIME``."""
 
-    @monitors.name('Maximum number of errors reached')
+    @monitors.name('Maximum execution time reached')
     def test_runtime(self):
-        max_runtime = self.crawler.settings.getint(SPIDERMON_MAX_RUNTIME)
+        max_runtime = self.crawler.settings.getint(SPIDERMON_MAX_EXECUTION_TIME)
         if not max_runtime:
             return
         now = datetime.datetime.now()
@@ -332,12 +332,12 @@ class SpiderCloseMonitorSuite(MonitorSuite):
 class PeriodicMonitorSuite(MonitorSuite):
     """This Monitor Suite implements the following monitors:
 
-        * :class:`PeriodicRuntimeMonitor`
+        * :class:`PeriodicExecutionTimeMonitor`
 
         You can easily enable this monitor *after* enabling Spidermon::
 
-                SPIDERMON_PERIODIC_MONITORS = (
-                    'spidermon.contrib.scrapy.monitors.PeriodicMonitorSuite',
-                )
+                SPIDERMON_PERIODIC_MONITORS = {
+                    'spidermon.contrib.scrapy.monitors.PeriodicMonitorSuite': # check time in seconds,
+                }
         """
-    monitors = [PeriodicRuntimeMonitor]
+    monitors = [PeriodicExecutionTimeMonitor]
