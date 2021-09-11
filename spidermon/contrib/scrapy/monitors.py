@@ -1,8 +1,10 @@
+import datetime
+
 from spidermon import Monitor, MonitorSuite, monitors
 from spidermon.exceptions import NotConfigured
 from spidermon.utils.settings import getdictorlist
 
-from ..monitors.mixins.spider import SpiderMonitorMixin
+from ..monitors.mixins.spider import SpiderMonitorMixin, StatsMonitorMixin
 
 SPIDERMON_MIN_ITEMS = "SPIDERMON_MIN_ITEMS"
 SPIDERMON_MAX_ERRORS = "SPIDERMON_MAX_ERRORS"
@@ -10,6 +12,7 @@ SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
 SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT"
 SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = "SPIDERMON_MAX_ITEM_VALIDATION_ERRORS"
+SPIDERMON_MAX_RUNTIME = "SPIDERMON_MAX_EXECUTION_TIME"
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -275,6 +278,30 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
         self.assertTrue(len(failures) == 0, msg=msg)
 
 
+@monitors.name('Periodic run time monitor')
+class PeriodicRuntimeMonitor(Monitor, StatsMonitorMixin):
+    """Check for runtime exceeding a target maximum runtime.
+
+        You can configure the maximum runtime (in seconds) using
+        ``SPIDERMON_MAX_EXECUTION_TIME``."""
+
+    @monitors.name('Maximum number of errors reached')
+    def test_runtime(self):
+        max_runtime = self.crawler.settings.getint(SPIDERMON_MAX_RUNTIME)
+        if not max_runtime:
+            return
+        now = datetime.datetime.now()
+        start_time = self.data.stats.get('start_time')
+        if not start_time:
+            return
+
+        start_dt = datetime.datetime.fromtimestamp(start_time/1000)
+        duration = now - start_dt
+
+        msg = 'The job has exceeded the maximum runtime'
+        self.assertLessEqual(duration.total_seconds(), max_runtime, msg=msg)
+
+
 class SpiderCloseMonitorSuite(MonitorSuite):
     """This Monitor Suite implements the following monitors:
 
@@ -300,3 +327,17 @@ class SpiderCloseMonitorSuite(MonitorSuite):
         UnwantedHTTPCodesMonitor,
         FieldCoverageMonitor,
     ]
+
+
+class PeriodicMonitorSuite(MonitorSuite):
+    """This Monitor Suite implements the following monitors:
+
+        * :class:`PeriodicRuntimeMonitor`
+
+        You can easily enable this monitor *after* enabling Spidermon::
+
+                SPIDERMON_PERIODIC_MONITORS = (
+                    'spidermon.contrib.scrapy.monitors.PeriodicMonitorSuite',
+                )
+        """
+    monitors = [PeriodicRuntimeMonitor]
