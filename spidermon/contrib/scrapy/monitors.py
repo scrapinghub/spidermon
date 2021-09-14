@@ -10,6 +10,8 @@ SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
 SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT"
 SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = "SPIDERMON_MAX_ITEM_VALIDATION_ERRORS"
+SPIDERMON_MAX_CLIENT_HTTP_ERRORS = "SPIDERMON_MAX_CLIENT_HTTP_ERRORS"
+SPIDERMON_MAX_SERVER_HTTP_ERRORS = "SPIDERMON_MAX_SERVER_HTTP_ERRORS"
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -155,6 +157,47 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
             self.assertTrue(count <= max_errors, msg=msg)
 
 
+@monitors.name("Unwanted HTTP codes family monitor")
+class UnwantedHTTPCodesFamilyMonitor(BaseScrapyMonitor):
+    """Check for maximum number of unwanted HTTP codes family.
+    You can configure it using ``SPIDERMON_MAX_CLIENT_HTTP_ERRORS`` setting
+    or ``SPIDERMON_MAX_SERVER_HTTP_ERRORS`` setting
+
+    This monitor fails if during the spider execution, we receive
+    more than the number of ``SPIDERMON_MAX_CLIENT_HTTP_ERRORS``
+    setting for sum of all response codes like 4xx.
+
+    This monitor fails if during the spider execution, we receive
+    more than the number of ``SPIDERMON_MAX_CLIENT_HTTP_ERRORS``
+    setting for sum of all response codes like 5xx.
+
+    Default values are:
+        SPIDERMON_MAX_CLIENT_HTTP_ERRORS = -1
+        SPIDERMON_MAX_SERVER_HTTP_ERRORS = -1
+    """
+
+    unwanted_codes_family = {
+        "client": {"codes": "4", "setting": SPIDERMON_MAX_CLIENT_HTTP_ERRORS},
+        "server": {"codes": "5", "setting": SPIDERMON_MAX_SERVER_HTTP_ERRORS},
+    }
+
+    @monitors.name("Should not have any warnings")
+    def test_check_unwanted_http_codes_family(self):
+        for code_family, settings in self.unwanted_codes_family.items():
+
+            errors_threshold = self.crawler.settings.getint(settings["setting"], -1)
+            if errors_threshold < 0:
+                continue
+
+            error_key_t = "downloader/response_status_count/{}".format(settings["codes"])
+            error_keys = [k for k in list(self.stats.keys()) if error_key_t in k]
+            errors_count = sum([self.stats[k] for k in error_keys])
+            msg = "Found {} {} errors in log, maximum expected is {}".format(
+                errors_count, code_family, errors_threshold
+            )
+            self.assertTrue(errors_count <= errors_threshold, msg=msg)
+
+
 @monitors.name("Item Validation Monitor")
 class ItemValidationMonitor(BaseScrapyMonitor):
     """Check for item validation errors if item validation pipelines are enabled.
@@ -283,6 +326,7 @@ class SpiderCloseMonitorSuite(MonitorSuite):
     * :class:`ErrorCountMonitor`
     * :class:`FinishReasonMonitor`
     * :class:`UnwantedHTTPCodesMonitor`
+    * :class:`UnwantedHTTPCodesFamilyMonitor`
     * :class:`FieldCoverageMonitor`
 
     You can easily enable this monitor *after* enabling Spidermon::
@@ -298,5 +342,6 @@ class SpiderCloseMonitorSuite(MonitorSuite):
         ErrorCountMonitor,
         FinishReasonMonitor,
         UnwantedHTTPCodesMonitor,
+        UnwantedHTTPCodesFamilyMonitor,
         FieldCoverageMonitor,
     ]
