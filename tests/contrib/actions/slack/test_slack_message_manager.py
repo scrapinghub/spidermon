@@ -47,7 +47,19 @@ def test_get_invalid_permissions_icon_url(mock_webclient):
         data = {"error": "missing_scope", "needed": "users:read"}
 
     fake_error = SlackApiError("message", FakeResponse())
-    mock_webclient._get_users_info.side_effect = fake_error
+    mock_webclient().users_list.side_effect = fake_error
     manager = SlackMessageManager(sender_token="Fake", sender_name="test_invalid_bot")
     url = manager._get_icon_url()
     assert url is None
+
+
+def test_get_invalid_unknown_slack_error_icon_url(mock_webclient):
+    class FakeResponse:
+        data = {"error": "unknown", "needed": "unknown"}
+
+    fake_error = SlackApiError("mocked error", FakeResponse())
+    mock_webclient().users_list.side_effect = fake_error
+    manager = SlackMessageManager(sender_token="Fake", sender_name="test_invalid_bot")
+    with pytest.raises(SlackApiError) as excinfo:
+        manager._get_icon_url()
+    assert excinfo.value.response.data == {"error": "unknown", "needed": "unknown"}
