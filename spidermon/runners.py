@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import sys
 
 from spidermon.core.suites import MonitorSuite
@@ -8,7 +7,7 @@ from spidermon.exceptions import InvalidMonitor, InvalidResult
 from spidermon.data import Data
 
 
-class MonitorRunner(object):
+class MonitorRunner:
     data_immutable_dicts = ["stats"]
     data_default_data = {"meta": {}}
 
@@ -99,7 +98,7 @@ class MonitorRunner(object):
 
 class TextMonitorRunner(MonitorRunner):
     def __init__(self, stream=sys.stderr, verbosity=1):
-        super(TextMonitorRunner, self).__init__()
+        super().__init__()
         self.stream = stream
         self.verbosity = verbosity
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # spidermon documentation build configuration file, created by
 # sphinx-quickstart on Tue Apr 21 21:43:18 2015.
@@ -47,9 +46,9 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"Spidermon"
-copyright = u"2021, Zyte"
-author = u"Zyte"
+project = "Spidermon"
+copyright = "2021, Zyte"
+author = "Zyte"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -220,7 +219,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "spidermon.tex", u"Spidermon Documentation", u"Zyte", "manual")
+    (master_doc, "spidermon.tex", "Spidermon Documentation", "Zyte", "manual")
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -248,7 +247,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "spidermon", u"Spidermon Documentation", [author], 1)]
+man_pages = [(master_doc, "spidermon", "Spidermon Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -263,7 +262,7 @@ texinfo_documents = [
     (
         master_doc,
         "spidermon",
-        u"Spidermon Documentation",
+        "Spidermon Documentation",
         author,
         "spidermon",
         "One line description of project.",

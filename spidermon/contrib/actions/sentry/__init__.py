@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import logging
 
 from slugify import slugify
@@ -28,7 +26,7 @@ class SendSentryMessage(Action):
         project_name="",
         environment="",
     ):
-        super(SendSentryMessage, self).__init__()
+        super().__init__()
         self.fake = fake or self.fake
         self.sentry_log_level = sentry_log_level or self.sentry_log_level
         self.sentry_dsn = sentry_dsn or self.sentry_dsn

@@ -14,7 +14,7 @@ class ItemCountMonitor(Monitor):
         item_extracted = getattr(self.data.stats, "item_scraped_count", 0)
         self.assertFalse(
             item_extracted < minimum_threshold,
-            msg="Extracted less than {} items".format(minimum_threshold),
+            msg=f"Extracted less than {minimum_threshold} items",
         )
 
 
@@ -28,7 +28,7 @@ class ItemValidationMonitor(Monitor, StatsMonitorMixin):
         self.assertEqual(
             validation_errors,
             0,
-            msg="Found validation errors in {} fields".format(validation_errors),
+            msg=f"Found validation errors in {validation_errors} fields",
         )
 
         self.data.stats

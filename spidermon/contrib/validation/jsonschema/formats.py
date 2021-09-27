@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from jsonschema._format import FormatChecker, _checks_drafts
 from jsonschema.compat import str_types
 

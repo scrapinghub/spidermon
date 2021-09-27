@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import re
 from collections import defaultdict
 
@@ -6,7 +5,7 @@ from collections import defaultdict
 RE_PATTERN_INSTANCE = type(re.compile(""))
 
 
-class Validator(object):
+class Validator:
     default_translator = None
     name = "validator"
 
@@ -36,12 +35,10 @@ class Validator(object):
         if not self._translator:
             return self._errors
         else:
-            return dict(
-                [
-                    (field_name, self._translator.translate_messages(messages))
-                    for field_name, messages in self._errors.items()
-                ]
-            )
+            return {
+                field_name: self._translator.translate_messages(messages)
+                for field_name, messages in self._errors.items()
+            }
 
     def _add_errors(self, errors):
         for field_name, messages in errors.items():

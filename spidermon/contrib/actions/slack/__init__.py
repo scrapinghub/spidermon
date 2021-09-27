@@ -1,10 +1,7 @@
-from __future__ import absolute_import
-
 import ast
 import json
 import logging
 
-import six
 from slack import WebClient
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
@@ -151,7 +148,7 @@ class SendSlackMessage(ActionWithTemplates):
         include_attachments=None,
         fake=None,
     ):
-        super(SendSlackMessage, self).__init__()
+        super().__init__()
 
         self.fake = fake or self.fake
         self.manager = SlackMessageManager(

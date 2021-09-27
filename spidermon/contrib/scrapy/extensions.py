@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from scrapy import signals
 from scrapy.exceptions import NotConfigured
 from scrapy.utils.misc import load_object
@@ -13,7 +11,7 @@ from spidermon.utils.field_coverage import calculate_field_coverage
 from spidermon.utils.hubstorage import hs
 
 
-class Spidermon(object):
+class Spidermon:
     def __init__(
         self,
         crawler,
@@ -137,14 +135,14 @@ class Spidermon(object):
     def _count_item(self, item, skip_none_values, item_count_stat=None):
         if item_count_stat is None:
             item_type = type(item).__name__
-            item_count_stat = "spidermon_item_scraped_count/{}".format(item_type)
+            item_count_stat = f"spidermon_item_scraped_count/{item_type}"
             self.crawler.stats.inc_value(item_count_stat)
 
         for field_name, value in item.items():
             if skip_none_values and value is None:
                 continue
 
-            field_item_count_stat = "{}/{}".format(item_count_stat, field_name)
+            field_item_count_stat = f"{item_count_stat}/{field_name}"
             self.crawler.stats.inc_value(field_item_count_stat)
 
             if isinstance(value, dict):
