@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import warnings
 
 from spidermon.contrib.stats.counters import (
@@ -35,7 +34,7 @@ class FieldErrorsInfo(MetaDictPercentCounter):
     __items_class__ = FieldErrorsDictPercentCounter
 
     def __init__(self, fields_count, items_count):
-        super(FieldErrorsInfo, self).__init__(items_count)
+        super().__init__(items_count)
         self._fields_count = fields_count
 
     @property
@@ -43,14 +42,14 @@ class FieldErrorsInfo(MetaDictPercentCounter):
         return self._fields_count
 
 
-class ItemsInfo(object):
+class ItemsInfo:
     def __init__(self, items_count, items_with_errors, items_dropped):
         self.count = items_count
         self.errors = PercentCounter(count=items_with_errors, total=items_count)
         self.dropped = PercentCounter(count=items_dropped, total=items_count)
 
 
-class ValidationInfo(object):
+class ValidationInfo:
     def __init__(self, stats, prefix=None):
         self.analyzer = StatsAnalyzer(
             stats=stats, prefix=prefix or STATS_DEFAULT_VALIDATION_PREFIX

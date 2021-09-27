@@ -1,8 +1,6 @@
-from __future__ import absolute_import
 import pytest
 
 from .fixtures.names import *
-from six.moves import zip
 
 
 NAMES = [

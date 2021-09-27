@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import inspect
 from unittest import TestLoader
 from functools import cmp_to_key as _cmp_to_key
@@ -6,7 +5,6 @@ from functools import cmp_to_key as _cmp_to_key
 from .core.monitors import Monitor
 from .core.suites import MonitorSuite
 from .exceptions import InvalidMonitor
-from six.moves import filter
 
 
 class MonitorLoader(TestLoader):
