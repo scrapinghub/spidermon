@@ -7,7 +7,7 @@ class SchematicsMessageTranslator(MessageTranslator):
         r"^Rogue field$": messages.UNEXPECTED_FIELD,
         # BaseType
         r"^This field is required.$": messages.MISSING_REQUIRED_FIELD,
-        r"^Value must be one of .*\.$": messages.VALUE_NOT_IN_CHOICES,
+        r"^Value \(.*?\) must be one of \[.*?\]\.$": messages.VALUE_NOT_IN_CHOICES,
         # StringType
         r"^Couldn't interpret '.*' as string\.$": messages.INVALID_STRING,
         r"^String value is too long\.$": messages.FIELD_TOO_LONG,
