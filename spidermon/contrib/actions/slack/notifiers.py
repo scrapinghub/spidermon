@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from . import SendSlackMessage
 
 
@@ -24,7 +23,7 @@ class SendSlackMessageSpiderFinished(SendSlackMessage):
         *args,
         **kwargs
     ):
-        super(SendSlackMessageSpiderFinished, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.include_ok_attachments = (
             include_ok_attachments or self.include_ok_attachments
         )
@@ -36,7 +35,7 @@ class SendSlackMessageSpiderFinished(SendSlackMessage):
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
-        kwargs = super(SendSlackMessageSpiderFinished, cls).from_crawler_kwargs(crawler)
+        kwargs = super().from_crawler_kwargs(crawler)
         kwargs.update(
             {
                 "include_ok_attachments": crawler.settings.get(
@@ -59,12 +58,12 @@ class SendSlackMessageSpiderFinished(SendSlackMessage):
         if (self.monitors_failed and self.include_error_attachments) or (
             self.monitors_passed and self.include_ok_attachments
         ):
-            return super(SendSlackMessageSpiderFinished, self).get_attachments()
+            return super().get_attachments()
         else:
             return None
 
     def get_template_context(self):
-        context = super(SendSlackMessageSpiderFinished, self).get_template_context()
+        context = super().get_template_context()
         context.update(
             {
                 "include_ok_attachments": self.include_ok_attachments,

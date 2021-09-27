@@ -1,15 +1,12 @@
-from __future__ import absolute_import
 from unittest import TestCase
 
-from spidermon.data import Data
 from spidermon import settings
 from .options import MonitorOptions, MonitorOptionsMetaclass
-import six
 
 
-class Monitor(six.with_metaclass(MonitorOptionsMetaclass, TestCase)):
+class Monitor(TestCase, metaclass=MonitorOptionsMetaclass):
     def __init__(self, methodName="runTest", name=None):
-        super(Monitor, self).__init__(methodName)
+        super().__init__(methodName)
         self._name = name
         self._data = None
         self._parent = None
@@ -105,7 +102,7 @@ class Monitor(six.with_metaclass(MonitorOptionsMetaclass, TestCase)):
         MonitorOptions.add_or_create(self.method.__func__)
 
     def __repr__(self):
-        return "<MONITOR:(%s) at %s>" % (self.name, hex(id(self)))
+        return "<MONITOR:({}) at {}>".format(self.name, hex(id(self)))
 
     def __str__(self):
         return self.name

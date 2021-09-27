@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import hashlib
 
 from boto.s3.connection import S3Connection
@@ -14,7 +13,7 @@ DEFAULT_S3_CONTENT_TYPE = "text/html"
 URL_SECRET_KEY = "The secret to life the universe and everything"
 
 
-class S3Uploader(object):
+class S3Uploader:
     def __init__(self, aws_key, aws_secret):
         self.connection = S3Connection(
             aws_access_key_id=aws_key, aws_secret_access_key=aws_secret
@@ -23,7 +22,7 @@ class S3Uploader(object):
     def upload_from_file(
         self, source_filename, s3_bucket, s3_filename, headers=None, make_public=False
     ):
-        with open(source_filename, "r") as f:
+        with open(source_filename) as f:
             self._upload_with_method(
                 bucket=s3_bucket,
                 method_name="set_contents_from_file",
@@ -78,7 +77,7 @@ class CreateS3Report(CreateReport):
         *args,
         **kwargs
     ):
-        super(CreateS3Report, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.aws_access_key = aws_access_key or self.aws_access_key
         self.aws_secret_key = aws_secret_key or self.aws_secret_key
@@ -98,7 +97,7 @@ class CreateS3Report(CreateReport):
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
-        kwargs = super(CreateS3Report, cls).from_crawler_kwargs(crawler)
+        kwargs = super().from_crawler_kwargs(crawler)
         (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(
             crawler.settings
         )

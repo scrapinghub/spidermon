@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from slugify import slugify
 
 
@@ -13,7 +12,7 @@ class NAMES:
     VALIDATORS = "validators"
 
 
-class ValidationStatsManager(object):
+class ValidationStatsManager:
     def __init__(self, stats, prefix=None, slugify=True):
         self.stats = stats
         self.prefix = prefix or STATS_DEFAULT_VALIDATION_PREFIX

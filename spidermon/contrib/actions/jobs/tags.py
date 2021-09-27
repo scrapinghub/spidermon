@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from spidermon.core.actions import Action
 from spidermon.exceptions import NotConfigured
 
@@ -8,13 +7,13 @@ class JobTagsAction(Action):
     tag_settings = None
 
     def __init__(self, tags=None):
-        super(JobTagsAction, self).__init__()
+        super().__init__()
         tags = tags or self.tags
         self.tags = tags if isinstance(tags, list) else [tags]
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
-        kwargs = super(JobTagsAction, cls).from_crawler_kwargs(crawler)
+        kwargs = super().from_crawler_kwargs(crawler)
         if cls.tag_settings:
             kwargs.update({"tags": crawler.settings.get(cls.tag_settings)})
         return kwargs

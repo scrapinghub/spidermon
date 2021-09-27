@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import pytest
 
 from spidermon.python import Interpreter
@@ -36,4 +35,4 @@ def test_evaluated_expressions(interpreter):
     for expression, result in EXPRESSIONS_TO_EVALUATE:
         assert result == interpreter.eval(
             expression, data
-        ), 'Expression fails: "%s" != %s' % (expression, result)
+        ), f'Expression fails: "{expression}" != {result}'
