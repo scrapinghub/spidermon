@@ -6,10 +6,15 @@ from ..monitors.mixins.spider import SpiderMonitorMixin
 
 SPIDERMON_MIN_ITEMS = "SPIDERMON_MIN_ITEMS"
 SPIDERMON_MAX_ERRORS = "SPIDERMON_MAX_ERRORS"
+SPIDERMON_MAX_WARNINGS = "SPIDERMON_MAX_WARNINGS"
 SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
 SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT"
 SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = "SPIDERMON_MAX_ITEM_VALIDATION_ERRORS"
+SPIDERMON_MAX_RETRIES = "SPIDERMON_MAX_RETRIES"
+SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS = "SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS"
+SPIDERMON_MIN_SUCCESSFUL_REQUESTS = "SPIDERMON_MIN_SUCCESSFUL_REQUESTS"
+SPIDERMON_MAX_REQUESTS_ALLOWED = "SPIDERMON_MAX_REQUESTS_ALLOWED"
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -63,6 +68,25 @@ class ErrorCountMonitor(BaseScrapyMonitor):
             no_of_errors, errors_threshold
         )
         self.assertTrue(no_of_errors <= errors_threshold, msg=msg)
+
+
+@monitors.name("Warning Count Monitor")
+class WarningCountMonitor(BaseScrapyMonitor):
+    """Check for warnings in the spider log.
+
+    You can configure the expected number of WARNINGS log messages using
+    ``SPIDERMON_MAX_WARNINGS``. The default is ``-1`` which disables the monitor."""
+
+    @monitors.name("Should not have any warnings")
+    def test_max_errors_in_log(self):
+        warnings_threshold = self.crawler.settings.getint(SPIDERMON_MAX_WARNINGS, -1)
+        if warnings_threshold < 0:
+            return
+        no_of_warnings = self.stats.get("log_count/WARNING", 0)
+        msg = "Found {} warnings in log, maximum expected is " "{}".format(
+            no_of_warnings, warnings_threshold
+        )
+        self.assertTrue(no_of_warnings <= warnings_threshold, msg=msg)
 
 
 @monitors.name("Finish Reason Monitor")
@@ -151,6 +175,83 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
                 "This exceed the limit of {}".format(count, code, max_errors)
             )
             self.assertTrue(count <= max_errors, msg=msg)
+
+
+@monitors.name("Downloader Exceptions monitor")
+class DownloaderExceptionMonitor(BaseScrapyMonitor):
+    """Check the amount of downloader exceptions (timeouts, rejected
+    connections, etc.).
+
+    You can configure it using the ``SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS`` setting.
+    The default is ``-1`` which disables the monitor.
+    """
+
+    @monitors.name("Should not hit the limit of downloader exceptions")
+    def test_maximum_downloader_exceptions(self):
+        exception_count = self.stats.get("downloader/exception_count", 0)
+        threshold = self.crawler.settings.getint(
+            SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS, -1
+        )
+        if threshold < 0:
+            return
+        msg = "Too many downloader exceptions ({})".format(exception_count)
+        self.assertLessEqual(exception_count, threshold, msg=msg)
+
+
+@monitors.name("Retry Count monitor")
+class RetryCountMonitor(BaseScrapyMonitor):
+    """Check if any requests have reached the maximum amount of retries
+    and the crawler had to drop those requests.
+
+    You can configure it using the ``SPIDERMON_MAX_RETRIES`` setting.
+    The default is ``-1`` which disables the monitor.
+    """
+
+    @monitors.name(
+        "Should not hit the limit of requests that reached the maximum retry amount"
+    )
+    def test_maximum_retries(self):
+        max_reached = self.stats.get("retry/max_reached", 0)
+        threshold = self.crawler.settings.getint(SPIDERMON_MAX_RETRIES, -1)
+        if threshold < 0:
+            return
+        msg = "Too many requests ({}) reached the maximum retry amount".format(
+            max_reached
+        )
+        self.assertLessEqual(max_reached, threshold, msg=msg)
+
+
+@monitors.name("Successful Requests monitor")
+class SuccessfulRequestsMonitor(BaseScrapyMonitor):
+    """Check the amount of successful requests.
+
+    You can configure it using the ``SPIDERMON_MIN_SUCCESSFUL_REQUESTS`` setting.
+    """
+
+    @monitors.name("Should have at least the minimum number of successful requests")
+    def test_minimum_successful_requests(self):
+        requests = self.stats.get("downloader/response_status_count/200", 0)
+        threshold = self.crawler.settings.getint(SPIDERMON_MIN_SUCCESSFUL_REQUESTS, 0)
+        msg = "Too few ({}) successful requests".format(requests)
+        self.assertGreaterEqual(requests, threshold, msg=msg)
+
+
+@monitors.name("Total Requests monitor")
+class TotalRequestsMonitor(BaseScrapyMonitor):
+    """Check the total amount of requests.
+
+    You can configure it using the ``SPIDERMON_MAX_REQUESTS_ALLOWED`` setting.
+    The default is ``-1`` which disables the monitor.
+    """
+
+    @monitors.name("Should not hit the total limit of requests")
+    def test_request_count_exceeded_limit(self):
+        requests = self.stats.get("downloader/request_count", 0)
+        threshold = self.crawler.settings.getint(SPIDERMON_MAX_REQUESTS_ALLOWED, -1)
+        if threshold < 0:
+            return
+        msg = "Too many ({}) requests".format(requests)
+        self.assertLessEqual(requests, threshold, msg=msg)
 
 
 @monitors.name("Item Validation Monitor")
@@ -279,9 +380,14 @@ class SpiderCloseMonitorSuite(MonitorSuite):
     * :class:`ItemCountMonitor`
     * :class:`ItemValidationMonitor`
     * :class:`ErrorCountMonitor`
+    * :class:`WarningCountMonitor`
     * :class:`FinishReasonMonitor`
     * :class:`UnwantedHTTPCodesMonitor`
     * :class:`FieldCoverageMonitor`
+    * :class:`RetryCountMonitor`
+    * :class:`DownloaderExceptionMonitor`
+    * :class:`SuccessfulRequestsMonitor`
+    * :class:`TotalRequestsMonitor`
 
     You can easily enable this monitor *after* enabling Spidermon::
 
@@ -294,7 +400,12 @@ class SpiderCloseMonitorSuite(MonitorSuite):
         ItemCountMonitor,
         ItemValidationMonitor,
         ErrorCountMonitor,
+        WarningCountMonitor,
         FinishReasonMonitor,
         UnwantedHTTPCodesMonitor,
         FieldCoverageMonitor,
+        RetryCountMonitor,
+        DownloaderExceptionMonitor,
+        SuccessfulRequestsMonitor,
+        TotalRequestsMonitor,
     ]
