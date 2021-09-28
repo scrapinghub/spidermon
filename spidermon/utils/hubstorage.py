@@ -1,11 +1,9 @@
 """
 Module to hold a reference to singleton Hubstorage client and Job instance
 """
-from __future__ import absolute_import
 import os
 from codecs import decode
 
-from six.moves import map
 
 try:
     try:
@@ -16,7 +14,7 @@ except ImportError:
     HubstorageClient = None
 
 
-class _Hubstorage(object):
+class _Hubstorage:
     def __init__(self):
         self.available = "SHUB_JOBKEY" in os.environ and HubstorageClient is not None
         self._client = None

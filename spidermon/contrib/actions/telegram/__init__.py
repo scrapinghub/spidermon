@@ -1,11 +1,6 @@
-from __future__ import absolute_import
-
-import ast
 import json
 import logging
 import requests
-
-import six
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
@@ -64,7 +59,7 @@ class SendTelegramMessage(ActionWithTemplates):
         message_template=None,
         fake=None,
     ):
-        super(SendTelegramMessage, self).__init__()
+        super().__init__()
 
         self.fake = fake or self.fake
         self.manager = TelegramMessageManager(

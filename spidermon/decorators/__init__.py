@@ -1,4 +1,4 @@
-class DecoratorWithAttributes(object):
+class DecoratorWithAttributes:
     name = None
     attributes = {}
 
@@ -23,7 +23,7 @@ class DecoratorWithAttributes(object):
             return self.attributes[name]
 
 
-class OptionsDecorator(object):
+class OptionsDecorator:
     @classmethod
     def set_value(cls, options_class, value_name):
         def value_decorator(value):

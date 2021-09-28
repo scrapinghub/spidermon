@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from spidermon import settings
 
 from .fixtures.levels import *
