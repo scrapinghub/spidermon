@@ -386,8 +386,9 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
 
     @monitors.name("Maximum execution time reached")
     def test_execution_time(self):
-        spider = self.crawler.spider
-        project_setting = self.crawler.settings.getint(SPIDERMON_MAX_EXECUTION_TIME)
+        crawler = self.data.get('crawler')
+        spider = crawler.spider
+        project_setting = crawler.settings.getint(SPIDERMON_MAX_EXECUTION_TIME)
         max_execution_time = getattr(
             spider, SPIDERMON_MAX_EXECUTION_TIME, project_setting
         )
@@ -402,7 +403,7 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
         duration = now - start_dt
 
         msg = "The job has exceeded the maximum execution time"
-        self.assertLessEqual(duration.total_seconds(), max_execution_time, msg=msg)
+        self.assertLess(duration.total_seconds(), max_execution_time, msg=msg)
 
 
 class SpiderCloseMonitorSuite(MonitorSuite):
