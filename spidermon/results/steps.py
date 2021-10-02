@@ -1,14 +1,12 @@
-from __future__ import absolute_import
 from collections import OrderedDict
 import time
-from six import itervalues
 
 from spidermon import settings
 
 from .items import ItemResult, MonitorResult, ActionResult
 
 
-class Step(object):
+class Step:
     item_result_class = ItemResult
     successful_statuses = []
     error_statuses = []
@@ -51,7 +49,7 @@ class Step(object):
 
     @property
     def all_items(self):
-        return list(itervalues(self._results))
+        return list(self._results.values())
 
     def get_infos(self):
         raise NotImplementedError

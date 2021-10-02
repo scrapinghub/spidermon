@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from spidermon.contrib.stats.analyzer import StatsAnalyzer
 from spidermon.contrib.stats.counters import DictPercentCounter, PercentCounter
 from spidermon.exceptions import NotConfigured
@@ -21,7 +19,7 @@ DOWNLOADER_STATUS_CODES_ERRORS = (
 )
 
 
-class ResponsesInfo(object):
+class ResponsesInfo:
     def __init__(self, stats):
         self._stats_analyzer = StatsAnalyzer(stats=stats)
         self.count = self._stats_analyzer.search(DOWNLOADER_RESPONSE_COUNT + "$").get(
@@ -87,15 +85,13 @@ class ResponsesInfo(object):
         return return_codes
 
     def _get_response_code(self, code):
-        return dict(
-            [
-                (code, PercentCounter(count, self.count))
-                for count, code in self._stats_analyzer.search(
-                    pattern=DOWNLOADER_RESPONSE_STATUS + ("(%s)$" % code),
-                    include_matches=True,
-                ).values()
-            ]
-        )
+        return {
+            code: PercentCounter(count, self.count)
+            for count, code in self._stats_analyzer.search(
+                pattern=DOWNLOADER_RESPONSE_STATUS + ("(%s)$" % code),
+                include_matches=True,
+            ).values()
+        }
 
 
 class SpiderMonitorMixin(StatsMonitorMixin, JobMonitorMixin):

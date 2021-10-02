@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import abc
 from spidermon import settings
 
@@ -7,7 +6,7 @@ class OptionsMetaclassBase(abc.ABCMeta):
     __options_class__ = None
 
     def __new__(mcs, name, bases, attrs):
-        cls = super(OptionsMetaclassBase, mcs).__new__(mcs, name, bases, attrs)
+        cls = super().__new__(mcs, name, bases, attrs)
         if not cls.__options_class__:
             raise TypeError(
                 "Options class not defined! "
@@ -17,7 +16,7 @@ class OptionsMetaclassBase(abc.ABCMeta):
         return cls
 
 
-class OptionsBase(object):
+class OptionsBase:
     __options_name__ = "options"
 
     @classmethod
@@ -28,13 +27,14 @@ class OptionsBase(object):
         return False
 
     def _get_attributes(self):
-        return dict([(k, v) for k, v in self.__dict__.items() if not k.startswith("_")])
+        return {k: v for k, v in self.__dict__.items() if not k.startswith("_")}
 
     def __str__(self):
         return "<{name}:({attributes})>".format(
             name=self.__class__.__name__,
             attributes=", ".join(
-                "%s=%s" % (attr, getattr(self, attr)) for attr in self._get_attributes()
+                "{}={}".format(attr, getattr(self, attr))
+                for attr in self._get_attributes()
             ),
         )
 
