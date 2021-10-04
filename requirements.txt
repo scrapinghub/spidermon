@@ -4,7 +4,7 @@ slackclient
 boto
 premailer
 jsonschema[format]==3.2.0
-schematics
+schematics==2.1.0
 python-slugify
 scrapy
 pytest
