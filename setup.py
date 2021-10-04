@@ -14,7 +14,7 @@ test_requirements = [
 
 setup(
     name="spidermon",
-    version="1.15.0",
+    version="1.15.1",
     url="https://github.com/scrapinghub/spidermon",
     author="Zyte",
     author_email="opensource@zyte.com",
