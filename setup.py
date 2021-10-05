@@ -25,7 +25,7 @@ setup(
     package_data={"spidermon": ["VERSION"]},
     zip_safe=False,
     include_package_data=True,
-    install_requires=["jsonschema[format]", "python-slugify"],
+    install_requires=["jsonschema[format]==3.2.0", "python-slugify"],
     tests_require=test_requirements,
     extras_require={
         # Specific monitors and tools to support notifications and reports
