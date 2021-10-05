@@ -1,6 +1,15 @@
 Release notes
 =============
 
+1.15.2 (2021-10-04)
+-------------------
+- chore: Add Github Actions support and remove Travis
+
+1.15.1 (2021-10-04)
+-------------------
+- chore: Pin `jsonschema` version to 3.2.0 to avoid problems with newest version that has backward incompatible changes
+- chore: Pin `schematics` version to 2.1.0 to avoid problems with newest version that has backward incompatible changes
+
 1.15.0 (2021-04-06)
 -------------------
 - feature: Improve content of Sentry messages (`PR#279 <https://github.com/scrapinghub/spidermon/pull/279>`_)
