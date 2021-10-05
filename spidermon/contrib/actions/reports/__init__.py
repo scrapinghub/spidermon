@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
 
@@ -7,7 +6,7 @@ class CreateReport(ActionWithTemplates):
     template = None
 
     def __init__(self, template=None, *args, **kwargs):
-        super(CreateReport, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.template = template or self.template
         self.report = ""
         if not self.template:
@@ -15,7 +14,7 @@ class CreateReport(ActionWithTemplates):
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
-        kwargs = super(CreateReport, cls).from_crawler_kwargs(crawler)
+        kwargs = super().from_crawler_kwargs(crawler)
         kwargs.update(
             {
                 "template": crawler.settings.get("SPIDERMON_REPORT_TEMPLATE"),

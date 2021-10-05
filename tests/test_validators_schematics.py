@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import schematics
 from schematics.exceptions import ValidationError
 from schematics.models import Model

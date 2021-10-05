@@ -1,5 +1,3 @@
-.. _item-validation:
-
 Item Validation
 ===============
 
@@ -16,6 +14,12 @@ the first step is to enable the built-in item pipeline in your project settings:
     ITEM_PIPELINES = {
         'spidermon.contrib.scrapy.pipelines.ItemValidationPipeline': 800,
     }
+
+.. warning::
+
+  Preferably, enable it as the last pipeline executed, ensuring that no
+  subsequent pipeline changes the content of the item, ignoring the
+  validation already performed.
 
 After that, you need to choose which validation library will be used. Spidermon
 accepts schemas defined using schematics_ or `JSON Schema`_.
@@ -92,15 +96,13 @@ Settings
 
 These are the settings used for configuring item validation:
 
-.. _SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS:
-
 SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Default: ``False``
 
 When set to ``True``, this adds a field called `_validation` to the item that contains any validation errors.
-You can change the name of the field by assigning a name to :ref:`SPIDERMON_VALIDATION_ERRORS_FIELD`:
+You can change the name of the field by assigning a name to `SPIDERMON_VALIDATION_ERRORS_FIELD`_:
 
 .. code-block:: js
 
@@ -113,8 +115,6 @@ You can change the name of the field by assigning a name to :ref:`SPIDERMON_VALI
         'tags': ['age', 'fairytales', 'growing-up']
     }
 
-.. _SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS:
-
 SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -122,17 +122,13 @@ Default: ``False``
 
 Whether to drop items that contain validation errors.
 
-.. _SPIDERMON_VALIDATION_ERRORS_FIELD:
-
 SPIDERMON_VALIDATION_ERRORS_FIELD
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Default: ``_validation``
 
 The name of the field added to the item when a validation error happens and
-:ref:`SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS` is enabled.
-
-.. _SPIDERMON_VALIDATION_MODELS:
+`SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS`_ is enabled.
 
 SPIDERMON_VALIDATION_MODELS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -163,8 +159,6 @@ as a `dict`:
         DummyItem: 'tutorial.validators.DummyItemModel',
         OtherItem: 'tutorial.validators.OtherItemModel',
     }
-
-.. _SPIDERMON_VALIDATION_SCHEMAS:
 
 SPIDERMON_VALIDATION_SCHEMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

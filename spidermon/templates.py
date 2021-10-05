@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import datetime
 import inspect
 import os
@@ -50,7 +48,7 @@ def get_environment(paths):
     return environment
 
 
-class TemplateLoader(object):
+class TemplateLoader:
     def __init__(self):
         self.paths = []
         self.reload_env()

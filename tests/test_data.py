@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import pytest
 
 from spidermon.data import Data

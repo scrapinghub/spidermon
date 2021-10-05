@@ -25,7 +25,7 @@ setup(
     package_data={"spidermon": ["VERSION"]},
     zip_safe=False,
     include_package_data=True,
-    install_requires=["jsonschema[format]==3.2.0", "python-slugify", "six>=1.12.2"],
+    install_requires=["jsonschema[format]", "python-slugify"],
     tests_require=test_requirements,
     extras_require={
         # Specific monitors and tools to support notifications and reports
@@ -39,7 +39,7 @@ setup(
             "sentry-sdk",
         ],
         # Data validation
-        "validation": ["schematics==2.1.0"],
+        "validation": ["schematics"],
         # Tools to run the tests
         "tests": test_requirements,
         "pep8": ["black"],

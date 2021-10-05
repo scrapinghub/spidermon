@@ -1,4 +1,3 @@
-six
 Jinja2
 slackclient
 boto
