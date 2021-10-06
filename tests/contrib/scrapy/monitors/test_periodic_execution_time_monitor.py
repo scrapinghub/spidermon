@@ -86,7 +86,7 @@ def test_periodic_execution_monitor_spider_setting(
     # with this set up, mock spider has a setting less than project setting
     # should error because existence of spider setting overrides project setting
     data = make_data({SPIDERMON_MAX_EXECUTION_TIME: fake_execution_time + 1})
-    setattr(mock_spider, SPIDERMON_MAX_EXECUTION_TIME, fake_execution_time)
+    setattr(mock_spider, SPIDERMON_MAX_EXECUTION_TIME.lower(), fake_execution_time)
 
     runner = data.pop("runner")
     data["crawler"].stats.set_value("start_time", fake_start_time_ts * 1000)

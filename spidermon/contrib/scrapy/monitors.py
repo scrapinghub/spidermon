@@ -390,7 +390,7 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
         spider = crawler.spider
         project_setting = crawler.settings.getint(SPIDERMON_MAX_EXECUTION_TIME)
         max_execution_time = getattr(
-            spider, SPIDERMON_MAX_EXECUTION_TIME, project_setting
+            spider, SPIDERMON_MAX_EXECUTION_TIME.lower(), project_setting
         )
         if not max_execution_time:
             return
