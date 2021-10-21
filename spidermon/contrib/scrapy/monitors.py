@@ -288,7 +288,9 @@ class UnwantedHTTPCodesFamilyMonitor(BaseScrapyMonitor):
             if errors_threshold < 0:
                 continue
 
-            error_key_t = "downloader/response_status_count/{}".format(settings["codes"])
+            error_key_t = "downloader/response_status_count/{}".format(
+                settings["codes"]
+            )
             error_keys = [k for k in list(self.stats.keys()) if error_key_t in k]
             errors_count = sum([self.stats[k] for k in error_keys])
             msg = "Found {} {} errors in log, maximum expected is {}".format(

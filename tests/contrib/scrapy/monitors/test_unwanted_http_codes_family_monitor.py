@@ -33,7 +33,9 @@ def test_unwanted_client_errors_monitor_should_pass(make_data):
     The limit is 12.
     """
 
-    data = make_data({SPIDERMON_MAX_CLIENT_HTTP_ERRORS: 5, SPIDERMON_MAX_SERVER_HTTP_ERRORS: 12})
+    data = make_data(
+        {SPIDERMON_MAX_CLIENT_HTTP_ERRORS: 5, SPIDERMON_MAX_SERVER_HTTP_ERRORS: 12}
+    )
     runner = data.pop("runner")
     suite = new_suite()
     data["stats"]["downloader/response_status_count/400"] = 1
