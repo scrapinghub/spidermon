@@ -1,12 +1,9 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
 from unittest import TestCase
 
 from spidermon.contrib.validation import JSONSchemaValidator
 from spidermon.contrib.validation import messages
 
 from slugify import slugify
-import six
 
 
 class SchemaTestCaseMetaclass(type):
@@ -21,19 +18,19 @@ class SchemaTestCaseMetaclass(type):
 
             return _function
 
-        cls = super(SchemaTestCaseMetaclass, mcs).__new__(mcs, name, bases, attrs)
+        cls = super().__new__(mcs, name, bases, attrs)
         for dt in getattr(cls, "data_tests", []):
             function_name = "test_%s" % slugify(dt.name, separator="_").lower()
             setattr(cls, function_name, _test_function(dt))
         return cls
 
 
-class SchemaTest(six.with_metaclass(SchemaTestCaseMetaclass, TestCase)):
+class SchemaTest(TestCase, metaclass=SchemaTestCaseMetaclass):
     schema = {}
     data_tests = []
 
 
-class DataTest(object):
+class DataTest:
     def __init__(self, name, data, valid, expected_errors=None, schema=None):
         self.name = name
         self.data = data
@@ -1550,9 +1547,9 @@ class Type(SchemaTest):
         ("string", "abc", None),
         ("string", "-", None),
         ("string", "...", None),
-        ("string", u"", None),
-        ("string", u"abc", None),
-        ("string", u"España", None),
+        ("string", "", None),
+        ("string", "abc", None),
+        ("string", "España", None),
         ("string", "1", None),
         ("string", None, messages.INVALID_STRING),
         ("string", 1, messages.INVALID_STRING),

@@ -1,13 +1,12 @@
-from __future__ import absolute_import
 import re
 
 
-class MessageTranslator(object):
+class MessageTranslator:
 
     messages = {}
 
     def __init__(self):
-        self.compiled_messages = dict([(m, re.compile(m)) for m in self.messages])
+        self.compiled_messages = {m: re.compile(m) for m in self.messages}
 
     def translate_messages(self, messages):
         return [self.translate_message(m) for m in messages]

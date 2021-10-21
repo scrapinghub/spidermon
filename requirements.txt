@@ -1,10 +1,9 @@
-six
 Jinja2
 slackclient
 boto
 premailer
-jsonschema[format]
-schematics
+jsonschema[format]==3.2.0
+schematics==2.1.0
 python-slugify
 scrapy
 pytest

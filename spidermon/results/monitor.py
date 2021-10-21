@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from collections import OrderedDict
 import unittest
 
@@ -26,7 +25,7 @@ actions_step_required = step_required_decorator(settings.STEPS.ACTION_RELATED)
 
 class MonitorResult(unittest.TestResult):
     def __init__(self):
-        super(MonitorResult, self).__init__()
+        super().__init__()
         self._steps = OrderedDict(
             [(step, self._get_step_class(step)(step)) for step in settings.STEPS.ALL]
         )
@@ -84,42 +83,42 @@ class MonitorResult(unittest.TestResult):
 
     @monitors_step_required
     def startTest(self, test):
-        super(MonitorResult, self).startTest(test)
+        super().startTest(test)
         self.step.add_item(test)
 
     @monitors_step_required
     def addSuccess(self, test):
-        super(MonitorResult, self).addSuccess(test)
+        super().addSuccess(test)
         self.step[test].status = settings.MONITOR.STATUS.SUCCESS
 
     @monitors_step_required
     def addError(self, test, error):
-        super(MonitorResult, self).addError(test, error)
+        super().addError(test, error)
         self.step[test].status = settings.MONITOR.STATUS.ERROR
         self.step[test].error = self._exc_info_to_string(error, test)
 
     @monitors_step_required
     def addFailure(self, test, error):
-        super(MonitorResult, self).addFailure(test, error)
+        super().addFailure(test, error)
         self.step[test].status = settings.MONITOR.STATUS.FAILURE
         self.step[test].error = self._exc_info_to_string(error, test)
         self.step[test].reason = str(error[1])
 
     @monitors_step_required
     def addSkip(self, test, reason):
-        super(MonitorResult, self).addSkip(test, reason)
+        super().addSkip(test, reason)
         self.step[test].status = settings.MONITOR.STATUS.FAILURE
         self.step[test].reason = reason
 
     @monitors_step_required
     def addExpectedFailure(self, test, error):
-        super(MonitorResult, self).addExpectedFailure(test, error)
+        super().addExpectedFailure(test, error)
         self.step[test].status = settings.MONITOR.STATUS.EXPECTED_FAILURE
         self.step[test].error = self._exc_info_to_string(error, test)
 
     @monitors_step_required
     def addUnexpectedSuccess(self, test):
-        super(MonitorResult, self).addUnexpectedSuccess(test)
+        super().addUnexpectedSuccess(test)
         self.step[test].status = settings.MONITOR.STATUS.UNEXPECTED_SUCCESS
 
     @actions_step_required

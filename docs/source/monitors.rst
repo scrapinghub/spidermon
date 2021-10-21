@@ -136,7 +136,10 @@ The Basic Monitors
 Spidermon has some batteries included :)
 
 .. automodule:: spidermon.contrib.scrapy.monitors
-    :members: ItemCountMonitor, ErrorCountMonitor, FinishReasonMonitor, UnwantedHTTPCodesMonitor, ItemValidationMonitor, FieldCoverageMonitor, UnwantedHTTPCodesFamilyMonitor
+    :members: ItemCountMonitor, ErrorCountMonitor, WarningCountMonitor, FinishReasonMonitor,
+              UnwantedHTTPCodesMonitor, ItemValidationMonitor, FieldCoverageMonitor,
+              RetryCountMonitor, DownloaderExceptionMonitor, SuccessfulRequestsMonitor,
+              TotalRequestsMonitor, UnwantedHTTPCodesFamilyMonitor
 
 Is there a **Basic Scrapy Suite** ready to use?
 ------------------------------------------------
@@ -146,6 +149,9 @@ Of course, there is! We really want to make it easy for you to monitor your spid
 .. automodule:: spidermon.contrib.scrapy.monitors
     :members: SpiderCloseMonitorSuite
     :noindex:
+
+If you want only some of these monitors it's easy to create your own suite with
+your own list of monitors similar to this one.
 
 Periodic Monitors
 -----------------

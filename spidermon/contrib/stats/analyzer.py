@@ -1,8 +1,7 @@
-from __future__ import absolute_import
 import re
 
 
-class StatsAnalyzer(object):
+class StatsAnalyzer:
     def __init__(self, stats, prefix=None):
         self.stats = stats
         self.prefix = prefix or ""
