@@ -74,8 +74,8 @@ def test_choices():
         expected=(
             False,
             {
-                "a": [messages.VALUE_NOT_IN_CHOICES],
-                "b": [messages.VALUE_NOT_IN_CHOICES],
+                "a": ["Value must be one of ['a', 'b']."],
+                "b": ["Value must be one of [1, 2, 3]."],
             },
         ),
     )
