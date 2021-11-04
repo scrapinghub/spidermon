@@ -80,7 +80,9 @@ def test_periodic_execution_monitor_not_set(make_data, monitor_suite, mock_spide
         assert r.error is None
 
 
-def test_periodic_execution_monitor_no_start_time(make_data, monitor_suite, mock_spider):
+def test_periodic_execution_monitor_no_start_time(
+    make_data, monitor_suite, mock_spider
+):
     """PeriodicExecutionTimeMonitor should fail if start time was too long ago"""
     data = make_data({SPIDERMON_MAX_EXECUTION_TIME: 100})
     runner = data.pop("runner")
