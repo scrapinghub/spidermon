@@ -2,6 +2,7 @@ from collections import deque
 from unittest.mock import patch, MagicMock
 
 import pytest
+import scrapinghub
 
 from scrapy import Spider
 from scrapy.utils.test import get_crawler
@@ -10,8 +11,11 @@ from spidermon.contrib.stats.statscollectors import DashCollectionsStatsHistoryC
 
 class StoreMock:
     stored_data = []
+    raise_iter_error = False
 
     def iter(self):
+        if self.raise_iter_error:
+            raise scrapinghub.client.exceptions.NotFound
         yield from self.stored_data
         self.stored_data = []
 
@@ -22,6 +26,17 @@ class StoreMock:
 @pytest.fixture
 def stats_collection(monkeypatch):
     store = StoreMock()
+    monkeypatch.setattr(
+        DashCollectionsStatsHistoryCollector,
+        "_open_collection",
+        lambda *args: store,
+    )
+
+
+@pytest.fixture
+def stats_collection_not_exist(monkeypatch):
+    store = StoreMock()
+    store.raise_iter_error = True
     monkeypatch.setattr(
         DashCollectionsStatsHistoryCollector,
         "_open_collection",
@@ -189,3 +204,18 @@ def test_job_id_not_available(mock_os_enviorn_get, test_settings, stats_collecti
 
     mock_os_enviorn_get.assert_called_with("SCRAPY_JOB", "")
     assert "job_url" not in crawler.spider.stats_history[0]
+
+
+@patch("spidermon.contrib.stats.statscollectors.os.environ.get")
+def test_stats_history_when_no_collection(
+    os_enviorn_mock, stats_collection_not_exist, test_settings
+):
+    mock_spider = MagicMock()
+    mock_spider.crawler.settings.getint.return_value = 100
+    mock_spider.name = "test"
+
+    os_enviorn_mock.return_value = 1234
+    crawler = get_crawler(Spider, test_settings)
+    pipe = DashCollectionsStatsHistoryCollector(crawler)
+    pipe.open_spider(mock_spider)
+    assert mock_spider.stats_history == deque([], maxlen=100)
