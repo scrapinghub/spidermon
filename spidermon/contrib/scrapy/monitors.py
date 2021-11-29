@@ -392,6 +392,15 @@ class JobsComparisonMonitor(BaseScrapyMonitor):
     ``SPIDERMON_JOBS_COMPARISON_STATUS`` setting. The default is ``("finished",)``.
     """
 
+    @monitors.name("Should not have a big drop in item count compared to previous jobs")
+    def test_if_item_count_from_previous_jobs_have_decreased(self):
+        # 1. get the number of jobs and check if monitor is enabled
+        number_of_jobs = self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON, 0)
+        if not number_of_jobs:
+            return
+
+        assert False
+
 
 class SpiderCloseMonitorSuite(MonitorSuite):
     """This Monitor Suite implements the following monitors:
