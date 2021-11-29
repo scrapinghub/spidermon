@@ -4,7 +4,7 @@ import pytest
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_JOBS_COMPARISON,
-    SPIDERMON_JOBS_COMPARISON_STATUS,
+    SPIDERMON_JOBS_COMPARISON_STATES,
     SPIDERMON_JOBS_COMPARISON_THRESHOLD,
     JobsComparisonMonitor,
 )

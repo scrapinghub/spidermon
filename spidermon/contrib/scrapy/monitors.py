@@ -16,7 +16,7 @@ SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS = "SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS"
 SPIDERMON_MIN_SUCCESSFUL_REQUESTS = "SPIDERMON_MIN_SUCCESSFUL_REQUESTS"
 SPIDERMON_MAX_REQUESTS_ALLOWED = "SPIDERMON_MAX_REQUESTS_ALLOWED"
 SPIDERMON_JOBS_COMPARISON = "SPIDERMON_JOBS_COMPARISON"
-SPIDERMON_JOBS_COMPARISON_STATUS = "SPIDERMON_JOBS_COMPARISON_STATUS"
+SPIDERMON_JOBS_COMPARISON_STATES = "SPIDERMON_JOBS_COMPARISON_STATES"
 SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
 
 
@@ -388,8 +388,8 @@ class JobsComparisonMonitor(BaseScrapyMonitor):
     using the setting ``SPIDERMON_JOBS_COMPARISON_THRESHOLD``. We expect a float number between
     ``0.0`` and ``1.0``. The default is ``0.8``.
 
-    You can filter which jobs to compare based on their status using the
-    ``SPIDERMON_JOBS_COMPARISON_STATUS`` setting. The default is ``("finished",)``.
+    You can filter which jobs to compare based on their states using the
+    ``SPIDERMON_JOBS_COMPARISON_STATES`` setting. The default value is ``("finished",)``.
     """
 
     @monitors.name("Should not have a big drop in item count compared to previous jobs")
