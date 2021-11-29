@@ -1,5 +1,6 @@
 from spidermon import Monitor, MonitorSuite, monitors
 from spidermon.exceptions import NotConfigured
+from spidermon.utils.hubstorage import hs
 from spidermon.utils.settings import getdictorlist
 
 from ..monitors.mixins.spider import SpiderMonitorMixin
@@ -392,6 +393,10 @@ class JobsComparisonMonitor(BaseScrapyMonitor):
     ``SPIDERMON_JOBS_COMPARISON_STATES`` setting. The default value is ``("finished",)``.
     """
 
+    @property
+    def client(self):
+        return hs
+
     @monitors.name("Should not have a big drop in item count compared to previous jobs")
     def test_if_item_count_from_previous_jobs_have_decreased(self):
         # 1. get the number of jobs and check if monitor is enabled
@@ -399,7 +404,23 @@ class JobsComparisonMonitor(BaseScrapyMonitor):
         if not number_of_jobs:
             return
 
-        assert False
+        # 2. get the previous jobs meeting the defined states
+        states = self.crawler.settings.getlist(
+            SPIDERMON_JOBS_COMPARISON_STATES, ("finished",)
+        )
+        jobs = self.client.spider.jobs.list(state=states, count=number_of_jobs)
+
+        # 3. get the average item count and calculate the acceptable threshold
+        previous_count = sum(job.get("items", 0) for job in jobs) / len(jobs)
+        threshold = self.crawler.settings.getfloat(
+            SPIDERMON_JOBS_COMPARISON_THRESHOLD, 0.8
+        )
+        expected_items_count = previous_count * threshold
+
+        # 4. assert the the difference isn't greater than the threshold
+        item_extracted = getattr(self.stats, "item_scraped_count", 0)
+        msg = "error"
+        self.assertGreaterEqual(item_extracted, expected_items_count, msg)
 
 
 class SpiderCloseMonitorSuite(MonitorSuite):
