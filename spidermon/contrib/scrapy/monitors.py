@@ -15,6 +15,9 @@ SPIDERMON_MAX_RETRIES = "SPIDERMON_MAX_RETRIES"
 SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS = "SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS"
 SPIDERMON_MIN_SUCCESSFUL_REQUESTS = "SPIDERMON_MIN_SUCCESSFUL_REQUESTS"
 SPIDERMON_MAX_REQUESTS_ALLOWED = "SPIDERMON_MAX_REQUESTS_ALLOWED"
+SPIDERMON_JOBS_COMPARISON = "SPIDERMON_JOBS_COMPARISON"
+SPIDERMON_JOBS_COMPARISON_STATUS = "SPIDERMON_JOBS_COMPARISON_STATUS"
+SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -372,6 +375,22 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
             "\n".join(failures)
         )
         self.assertTrue(len(failures) == 0, msg=msg)
+
+
+@monitors.name("Jobs Comparison Monitor")
+class JobsComparisonMonitor(BaseScrapyMonitor):
+    """Check for a drop in scraped item count compared to previous jobs.
+
+    You need to set the number of previous jobs to compare, using ``SPIDERMON_JOBS_COMPARISON``.
+    The default is ``0`` which disables the monitor. We use the average of the scraped items count.
+
+    You can configure which percentage of the previous item count is the minimum acceptable, by
+    using the setting ``SPIDERMON_JOBS_COMPARISON_THRESHOLD``. We expect a float number between
+    ``0.0`` and ``1.0``. The default is ``0.8``.
+
+    You can filter which jobs to compare based on their status using the
+    ``SPIDERMON_JOBS_COMPARISON_STATUS`` setting. The default is ``("finished",)``.
+    """
 
 
 class SpiderCloseMonitorSuite(MonitorSuite):
