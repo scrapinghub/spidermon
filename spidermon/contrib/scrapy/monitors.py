@@ -1,3 +1,4 @@
+from enum import Enum, auto
 from spidermon import Monitor, MonitorSuite, monitors
 from spidermon.exceptions import NotConfigured
 from spidermon.utils.settings import getdictorlist
@@ -17,6 +18,15 @@ SPIDERMON_MIN_SUCCESSFUL_REQUESTS = "SPIDERMON_MIN_SUCCESSFUL_REQUESTS"
 SPIDERMON_MAX_REQUESTS_ALLOWED = "SPIDERMON_MAX_REQUESTS_ALLOWED"
 
 
+class AssertionType(Enum):
+    EQ = "EQUAL"
+    NEQ = "NOT EQUAL"
+    GT = "GREATER THAN"
+    GTE = "GREATER THAN OR EQUAL"
+    LT = "LESS THAN"
+    LTE = "LESS THAN OR EQUAL"
+
+
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
     longMessage = False
 
@@ -25,6 +35,55 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
         if self.__class__.__doc__:
             return self.__class__.__doc__.split("\n")[0]
         return super().monitor_description
+
+
+class BaseStatMonitor(BaseScrapyMonitor):
+    def run(self, result):
+        has_threshold_config = any(
+            [hasattr(self, "threshold_setting"), hasattr(self, "get_threshold")]
+        )
+        if not has_threshold_config:
+            raise NotConfigured(
+                f"{self.__class__.__name__} should include a a `threshold_setting` attribute "
+                "to be configured in your project settings with the desired threshold "
+                "or a `get_threshold` method that returns the desired threshold."
+            )
+
+        if (
+            hasattr(self, "threshold_setting")
+            and self.threshold_setting not in self.crawler.settings.attributes
+        ):
+            raise NotConfigured(
+                f"Configure {self.threshold_setting} to your project"
+                f"settings to use {self.monitor_name}."
+            )
+
+        return super().run(result)
+
+    def _get_threshold_value(self):
+        if hasattr(self, "get_threshold"):
+            return self.get_threshold()
+        return self.crawler.settings.get(self.threshold_setting)
+
+    def test_stat_monitor(self):
+        assertions = {
+            AssertionType.GT: self.assertGreater,
+            AssertionType.GTE: self.assertGreaterEqual,
+            AssertionType.LT: self.assertLess,
+            AssertionType.LTE: self.assertLessEqual,
+            AssertionType.EQ: self.assertEqual,
+            AssertionType.NEQ: self.assertNotEqual,
+        }
+        threshold = self._get_threshold_value()
+        value = self.stats.get(self.stat_name)
+
+        assertion_method = assertions.get(self.assert_type)
+        assertion_method(
+            value,
+            threshold,
+            msg=f"'{self.stat_name}' - expected: {self.assert_type.value} "
+            f"to {threshold} - obtained: {value}",
+        )
 
 
 @monitors.name("Extracted Items Monitor")
