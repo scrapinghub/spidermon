@@ -1,3 +1,5 @@
+import math
+
 from spidermon import Monitor, MonitorSuite, monitors
 from spidermon.exceptions import NotConfigured
 from spidermon.utils.hubstorage import hs
@@ -415,12 +417,14 @@ class JobsComparisonMonitor(BaseScrapyMonitor):
         threshold = self.crawler.settings.getfloat(
             SPIDERMON_JOBS_COMPARISON_THRESHOLD, 0.8
         )
-        expected_items_count = previous_count * threshold
+        expected_item_extracted = math.ceil(previous_count * threshold)
 
         # 4. assert the the difference isn't greater than the threshold
         item_extracted = getattr(self.stats, "item_scraped_count", 0)
-        msg = "error"
-        self.assertGreaterEqual(item_extracted, expected_items_count, msg)
+        msg = "Extracted {} items in this job, minimum expected is {}".format(
+            item_extracted, expected_item_extracted
+        )
+        self.assertGreaterEqual(item_extracted, expected_item_extracted, msg)
 
 
 class SpiderCloseMonitorSuite(MonitorSuite):

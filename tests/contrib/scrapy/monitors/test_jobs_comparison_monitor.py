@@ -13,7 +13,7 @@ from spidermon.contrib.scrapy.monitors import (
 @pytest.fixture
 def mock_client(previous_counts):
     return Mock(
-        **{'spider.jobs.list.return_value': [dict(items=c) for c in previous_counts]}
+        **{"spider.jobs.list.return_value": [dict(items=c) for c in previous_counts]}
     )
 
 
@@ -52,7 +52,7 @@ def test_jobs_comparison_monitor_is_enabled(
         (80, [100, 101, 99, 102], 0.8, True),
     ],
 )
-def test_jobs_comparison_monitor(
+def test_jobs_comparison_monitor_threshold(
     make_data, mock_suite, item_count, threshold, should_raise
 ):
     data = make_data(
@@ -63,3 +63,18 @@ def test_jobs_comparison_monitor(
     runner.run(mock_suite, **data)
 
     assert should_raise == bool(runner.result.monitor_results[0].error)
+
+
+@pytest.mark.parametrize("previous_counts", ([10],))
+def test_jobs_comparison_monitor_error_msg(make_data, mock_suite):
+    data = make_data(
+        {SPIDERMON_JOBS_COMPARISON: 1, SPIDERMON_JOBS_COMPARISON_THRESHOLD: 0.9}
+    )
+    data["stats"]["item_scraped_count"] = 8
+    runner = data.pop("runner")
+    runner.run(mock_suite, **data)
+
+    assert (
+        "Extracted 8 items in this job, minimum expected is 9"
+        in runner.result.monitor_results[0].error
+    )
