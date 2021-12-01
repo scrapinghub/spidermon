@@ -193,10 +193,16 @@ class SendSlackMessage(ActionWithTemplates):
         self.recipients = recipients or self.recipients
         self.message = message or self.message
         self.message_template = message_template or self.message_template
-        self.include_message = include_message or self.include_message
+
+        if include_message is not None:
+            self.include_message = include_message
+
+        if include_attachments is not None:
+            self.include_attachments = include_attachments
+
         self.attachments = attachments or self.attachments
         self.attachments_template = attachments_template or self.attachments_template
-        self.include_attachments = include_attachments or self.include_attachments
+
         if not self.fake and not self.recipients:
             raise NotConfigured(
                 "You must provide at least one recipient for the message."
@@ -216,10 +222,10 @@ class SendSlackMessage(ActionWithTemplates):
             "attachments_template": crawler.settings.get(
                 "SPIDERMON_SLACK_ATTACHMENTS_TEMPLATE"
             ),
-            "include_message": crawler.settings.getbool(
+            "include_message": crawler.settings.get(
                 "SPIDERMON_SLACK_INCLUDE_MESSAGE"
             ),
-            "include_attachments": crawler.settings.getbool(
+            "include_attachments": crawler.settings.get(
                 "SPIDERMON_SLACK_INCLUDE_ATTACHMENTS"
             ),
             "fake": crawler.settings.getbool("SPIDERMON_SLACK_FAKE"),
