@@ -55,8 +55,17 @@ Other settings available:
 SPIDERMON_SLACK_ATTACHMENTS
 ---------------------------
 
+Default ``None``
+
+A string representing a `slack message attachment`_ JSON block.
+
 SPIDERMON_SLACK_ATTACHMENTS_TEMPLATE
 ------------------------------------
+
+Default ``None``
+
+Absolute path to a `Jinja2`_ template from which slack messages will be constructed from.
+If None it will use the default template from `the notifier templates folder <https://github.com/scrapinghub/spidermon/tree/master/spidermon/contrib/actions/slack/templates/slack/spider/notifier>`_.
 
 SPIDERMON_SLACK_FAKE
 --------------------
@@ -68,27 +77,65 @@ If set `True`, the Slack message content will be in the logs but nothing will be
 SPIDERMON_SLACK_INCLUDE_ATTACHMENTS
 -----------------------------------
 
+Default ``True``
+
+Include attachment content in slack notification.
+
 SPIDERMON_SLACK_INCLUDE_MESSAGE
 -------------------------------
+
+Default ``True``
+
+Include message content in slack notification.
 
 SPIDERMON_SLACK_MESSAGE
 -----------------------
 
+Default ``None``
+
+A string representing containing standard text to send as a slack message.
+
 SPIDERMON_SLACK_MESSAGE_TEMPLATE
 --------------------------------
+
+Default: ``None``
+
+Absolute path to a `Jinja2`_ template from which slack messages will be constructed from.
+If None it will use the default template from the `notifier templates folder`_.
+
 
 SPIDERMON_SLACK_NOTIFIER_INCLUDE_ERROR_ATTACHMENTS
 --------------------------------------------------
 
+Default: ``True``
+
+For `SendSlackMessageSpiderFinished` notifier only. Whether to include attachments in error notification messages.
+
 SPIDERMON_SLACK_NOTIFIER_INCLUDE_OK_ATTACHMENTS
 -----------------------------------------------
+
+Default: ``False``
+
+For `SendSlackMessageSpiderFinished` notifier only. Whether to include attachments in ok notification messages.
 
 SPIDERMON_SLACK_NOTIFIER_INCLUDE_REPORT_LINK
 --------------------------------------------
 
+Default: ``False``
+
+For `SendSlackMessageSpiderFinished` notifier only. Whether to include a link to a spidermon report. See `file report actions`_.
+
 SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX
 -------------------------------------
+
+Default: ``0``
+
+For `SendSlackMessageSpiderFinished` notifier only. The index of the report to link if multiple reports generated. See `file report actions`_.
 
 .. _`Slack`: https://slack.com/
 .. _`Slack credentials`: https://api.slack.com/docs/token-types
 .. _`slackclient`: https://pypi.org/project/slackclient/
+.. _`slack message attachment`: https://api.slack.com/reference/messaging/attachments
+.. _`Jinja2`: http://jinja.pocoo.org/
+.. _`notifier templates folder`: https://github.com/scrapinghub/spidermon/tree/master/spidermon/contrib/actions/slack/templates/slack/spider/notifier
+.. _`file report actions`: https://spidermon.readthedocs.io/en/latest/actions/file-report-action.html
