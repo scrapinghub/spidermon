@@ -27,10 +27,12 @@ class SendSlackMessageSpiderFinished(SendSlackMessage):
         self.include_ok_attachments = (
             include_ok_attachments or self.include_ok_attachments
         )
-        self.include_error_attachments = (
-            include_error_attachments or self.include_error_attachments
-        )
-        self.include_report_link = include_report_link or self.include_report_link
+        if include_error_attachments is not None:
+            self.include_error_attachments = include_error_attachments
+
+        if include_report_link is not None:
+            self.include_report_link = include_report_link
+
         self.report_index = report_index or self.report_index
 
     @classmethod
