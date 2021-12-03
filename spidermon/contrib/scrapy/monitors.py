@@ -28,6 +28,54 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
 
 
 class BaseStatMonitor(BaseScrapyMonitor):
+    """Base Monitor class for stat-related monitors.
+
+    Create a monitor class inheriting from this class to have a custom
+    monitor that validates numerical stats from your job execution
+    against a configurable threshold.
+
+    As an example, we will create a new monitor that will check if the
+    value obtained in a job stat 'numerical_job_statistic' is greater than
+    or equal to the value configured in ``CUSTOM_STAT_THRESHOLD`` project
+    setting:
+
+    .. code-block:: python
+
+        class MyCustomStatMonitor(BaseStatMonitor):
+            stat_name = "numerical_job_statistic"
+            threshold_setting = "CUSTOM_STAT_THRESHOLD"
+            assert_type = ">="
+
+    For the ``assert_type`` property you can select one of the following:
+
+    ==  =====================
+    >   Greater than
+    >=  Greater than or equal
+    <   Less than
+    <=  Less than or equal
+    ==  Equal
+    !=  Not equal
+    ==  =====================
+
+    Sometimes, we don't want a fixed threshold, but a dynamic based on more than
+    one stat or getting data external from the job execution (e.g., you want the
+    threshold to be related to another stat, or you want to get the value
+    of a stat from a previous job).
+
+    As an example, the following monitor will use as threshold the a variable number
+    of errors allowed based on the number of items scraped. So this monitor will pass
+    only if the number of errors is less than 1% of the number of items scraped:
+
+    .. code-block:: python
+
+        class MyCustomStatMonitor(BaseStatMonitor):
+            stat_name = "log_count/ERROR"
+            assert_type = "<"
+
+            def get_threshold(self):
+                item_scraped_count = self.stats.get("item_scraped_count")
+                return item_scraped_count * 0.01"""
+
     def run(self, result):
         has_threshold_config = any(
             [hasattr(self, "threshold_setting"), hasattr(self, "get_threshold")]
