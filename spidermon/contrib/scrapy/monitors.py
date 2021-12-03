@@ -1,4 +1,3 @@
-from enum import Enum, auto
 from spidermon import Monitor, MonitorSuite, monitors
 from spidermon.exceptions import NotConfigured
 from spidermon.utils.settings import getdictorlist
@@ -16,15 +15,6 @@ SPIDERMON_MAX_RETRIES = "SPIDERMON_MAX_RETRIES"
 SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS = "SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS"
 SPIDERMON_MIN_SUCCESSFUL_REQUESTS = "SPIDERMON_MIN_SUCCESSFUL_REQUESTS"
 SPIDERMON_MAX_REQUESTS_ALLOWED = "SPIDERMON_MAX_REQUESTS_ALLOWED"
-
-
-class AssertionType(Enum):
-    EQ = "EQUAL"
-    NEQ = "NOT EQUAL"
-    GT = "GREATER THAN"
-    GTE = "GREATER THAN OR EQUAL"
-    LT = "LESS THAN"
-    LTE = "LESS THAN OR EQUAL"
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -67,12 +57,12 @@ class BaseStatMonitor(BaseScrapyMonitor):
 
     def test_stat_monitor(self):
         assertions = {
-            AssertionType.GT: self.assertGreater,
-            AssertionType.GTE: self.assertGreaterEqual,
-            AssertionType.LT: self.assertLess,
-            AssertionType.LTE: self.assertLessEqual,
-            AssertionType.EQ: self.assertEqual,
-            AssertionType.NEQ: self.assertNotEqual,
+            ">": self.assertGreater,
+            ">=": self.assertGreaterEqual,
+            "<": self.assertLess,
+            "<=": self.assertLessEqual,
+            "==": self.assertEqual,
+            "!=": self.assertNotEqual,
         }
         threshold = self._get_threshold_value()
         value = self.stats.get(self.stat_name)
@@ -81,8 +71,8 @@ class BaseStatMonitor(BaseScrapyMonitor):
         assertion_method(
             value,
             threshold,
-            msg=f"'{self.stat_name}' - expected: {self.assert_type.value} "
-            f"to {threshold} - obtained: {value}",
+            msg=f"Expecting '{self.stat_name}' to be '{self.assert_type}' "
+            f"to '{threshold}'. Current value: '{value}'",
         )
 
 
