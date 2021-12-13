@@ -74,7 +74,26 @@ class BaseStatMonitor(BaseScrapyMonitor):
 
             def get_threshold(self):
                 item_scraped_count = self.stats.get("item_scraped_count")
-                return item_scraped_count * 0.01"""
+                return item_scraped_count * 0.01
+
+    By default, if the stat can't be found in job statistics, the monitor will fail.
+    If you want the monitor to be skipped in that case, you should set ``fail_if_stat_missing``
+    attribute as ``False``.
+
+
+    The following monitor will not fail if the job doesn't have a ``numerical_job_statistic``
+    value in its statistics:
+
+    .. code-block:: python
+
+        class MyCustomStatMonitor(BaseStatMonitor):
+            stat_name = "numerical_job_statistic"
+            threshold_setting = "CUSTOM_STAT_THRESHOLD"
+            assert_type = ">="
+            fail_if_stat_missing = False
+    """
+
+    fail_if_stat_missing = True
 
     def run(self, result):
         has_threshold_config = any(
@@ -113,6 +132,14 @@ class BaseStatMonitor(BaseScrapyMonitor):
             "!=": self.assertNotEqual,
         }
         threshold = self._get_threshold_value()
+
+        if self.stat_name not in self.stats:
+            message = f"Unable to find '{self.stat_name}' in job stats."
+            if self.fail_if_stat_missing:
+                self.fail(message)
+            else:
+                self.skipTest(message)
+
         value = self.stats.get(self.stat_name)
 
         assertion_method = assertions.get(self.assert_type)

@@ -107,7 +107,7 @@ class MonitorResult(unittest.TestResult):
     @monitors_step_required
     def addSkip(self, test, reason):
         super().addSkip(test, reason)
-        self.step[test].status = settings.MONITOR.STATUS.FAILURE
+        self.step[test].status = settings.MONITOR.STATUS.SKIPPED
         self.step[test].reason = reason
 
     @monitors_step_required
