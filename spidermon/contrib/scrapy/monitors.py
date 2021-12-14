@@ -6,7 +6,6 @@ from ..monitors.mixins.spider import SpiderMonitorMixin
 
 SPIDERMON_MIN_ITEMS = "SPIDERMON_MIN_ITEMS"
 SPIDERMON_MAX_ERRORS = "SPIDERMON_MAX_ERRORS"
-SPIDERMON_MAX_WARNINGS = "SPIDERMON_MAX_WARNINGS"
 SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
 SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT"
@@ -195,22 +194,19 @@ class ErrorCountMonitor(BaseScrapyMonitor):
 
 
 @monitors.name("Warning Count Monitor")
-class WarningCountMonitor(BaseScrapyMonitor):
+class WarningCountMonitor(BaseStatMonitor):
     """Check for warnings in the spider log.
 
-    You can configure the expected number of WARNINGS log messages using
-    ``SPIDERMON_MAX_WARNINGS``. The default is ``-1`` which disables the monitor."""
+    You can configure it using ``SPIDERMON_MAX_WARNINGS`` setting.
+    There's **NO** default value for this setting, if you try to use this
+    monitor without setting it, it'll raise a ``NotConfigured`` exception.
 
-    @monitors.name("Should not have any warnings")
-    def test_max_errors_in_log(self):
-        warnings_threshold = self.crawler.settings.getint(SPIDERMON_MAX_WARNINGS, -1)
-        if warnings_threshold < 0:
-            return
-        no_of_warnings = self.stats.get("log_count/WARNING", 0)
-        msg = "Found {} warnings in log, maximum expected is " "{}".format(
-            no_of_warnings, warnings_threshold
-        )
-        self.assertTrue(no_of_warnings <= warnings_threshold, msg=msg)
+    If the job doesn't have any warning, the monitor will be skipped."""
+
+    stat_name = "log_count/WARNING"
+    threshold_setting = "SPIDERMON_MAX_WARNINGS"
+    assert_type = "<="
+    fail_if_stat_missing = False
 
 
 @monitors.name("Finish Reason Monitor")
