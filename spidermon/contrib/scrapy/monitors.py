@@ -4,7 +4,6 @@ from spidermon.utils.settings import getdictorlist
 
 from ..monitors.mixins.spider import SpiderMonitorMixin
 
-SPIDERMON_MIN_ITEMS = "SPIDERMON_MIN_ITEMS"
 SPIDERMON_MAX_ERRORS = "SPIDERMON_MAX_ERRORS"
 SPIDERMON_MAX_WARNINGS = "SPIDERMON_MAX_WARNINGS"
 SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
@@ -152,7 +151,7 @@ class BaseStatMonitor(BaseScrapyMonitor):
 
 
 @monitors.name("Extracted Items Monitor")
-class ItemCountMonitor(BaseScrapyMonitor):
+class ItemCountMonitor(BaseStatMonitor):
     """Check if spider extracted the minimum number of items.
 
     You can configure it using ``SPIDERMON_MIN_ITEMS`` setting.
@@ -160,21 +159,9 @@ class ItemCountMonitor(BaseScrapyMonitor):
     monitor without setting it, it'll raise a ``NotConfigured`` exception.
     """
 
-    def run(self, result):
-        self.minimum_threshold = self.crawler.settings.getint(SPIDERMON_MIN_ITEMS, 0)
-        if not self.minimum_threshold:
-            raise NotConfigured(
-                "You should specify a minimum number of items " "to check against."
-            )
-        return super().run(result)
-
-    @monitors.name("Should extract the minimum amount of items")
-    def test_minimum_number_of_items(self):
-        item_extracted = getattr(self.stats, "item_scraped_count", 0)
-        msg = "Extracted {} items, the expected minimum is {}".format(
-            item_extracted, self.minimum_threshold
-        )
-        self.assertTrue(item_extracted >= self.minimum_threshold, msg=msg)
+    stat_name = "item_scraped_count"
+    threshold_setting = "SPIDERMON_MIN_ITEMS"
+    assert_type = ">="
 
 
 @monitors.name("Error Count Monitor")
