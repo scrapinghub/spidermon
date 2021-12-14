@@ -177,6 +177,22 @@ class ItemCountMonitor(BaseScrapyMonitor):
         self.assertTrue(item_extracted >= self.minimum_threshold, msg=msg)
 
 
+@monitors.name("Critical Count Monitor")
+class CriticalCountMonitor(BaseStatMonitor):
+    """Check for critical errors in the spider log.
+
+    You can configure it using ``SPIDERMON_MAX_CRITICALS`` setting.
+    There's **NO** default value for this setting, if you try to use this
+    monitor without setting it, it'll raise a ``NotConfigured`` exception.
+
+    If the job doesn't have any critical error, the monitor will be skipped."""
+
+    stat_name = "log_count/CRITICAL"
+    threshold_setting = "SPIDERMON_MAX_CRITICALS"
+    assert_type = "<="
+    fail_if_stat_missing = False
+
+
 @monitors.name("Error Count Monitor")
 class ErrorCountMonitor(BaseScrapyMonitor):
     """Check for errors in the spider log.
