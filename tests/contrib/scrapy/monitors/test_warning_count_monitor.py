@@ -1,72 +1,58 @@
+import pytest
+
 from spidermon.contrib.scrapy.monitors import (
     WarningCountMonitor,
-    SPIDERMON_MAX_WARNINGS,
 )
 from spidermon import MonitorSuite
+from spidermon.exceptions import NotConfigured
+from spidermon import settings
 
 
-def new_suite():
+@pytest.fixture
+def warning_count_suite():
     return MonitorSuite(monitors=[WarningCountMonitor])
 
 
-def test_warning_monitor_should_fail_zero(make_data):
-    """WarningCount should fail if the # of warning log messages exceed the limit.
-
-    The limit is 0.
-    """
-
-    data = make_data({SPIDERMON_MAX_WARNINGS: 0})
-    runner = data.pop("runner")
-    suite = new_suite()
-    data["stats"]["log_count/WARNING"] = 2
-    runner.run(suite, **data)
-    assert "Found 2 warnings in log" in runner.result.monitor_results[0].error
-
-
-def test_warning_monitor_should_fail_nonzero(make_data):
-    """WarningCount should fail if the # of warning log messages exceed the limit.
-
-    The limit is greater than 0.
-    """
-
-    data = make_data({SPIDERMON_MAX_WARNINGS: 10})
-    runner = data.pop("runner")
-    suite = new_suite()
-    data["stats"]["log_count/WARNING"] = 12
-    runner.run(suite, **data)
-    assert "Found 12 warnings in log" in runner.result.monitor_results[0].error
-
-
-def test_warning_monitor_should_pass_disabled(make_data):
-    """WarningCount should pass if the limit is negative."""
-
-    data = make_data({SPIDERMON_MAX_WARNINGS: -1})
-    runner = data.pop("runner")
-    suite = new_suite()
-    data["stats"]["log_count/WARNING"] = 99999
-    runner.run(suite, **data)
-    assert runner.result.monitor_results[0].error is None
-
-
-def test_warning_monitor_should_pass_default(make_data):
-    """WarningCount should pass if the limit is not set."""
-
+def test_needs_to_configure_warning_count_monitor(make_data, warning_count_suite):
     data = make_data()
     runner = data.pop("runner")
-    suite = new_suite()
-    data["stats"]["log_count/WARNING"] = 99999
-    runner.run(suite, **data)
-    assert runner.result.monitor_results[0].error is None
+    data["crawler"].stats.set_value(WarningCountMonitor.stat_name, 10)
+    with pytest.raises(NotConfigured):
+        runner.run(warning_count_suite, **data)
 
 
-def test_warning_monitor_should_pass_under_limit(make_data):
-    """WarningCount should pass if the # of warning log message DOES NOT
-    exceed the limit.
-    """
-
-    data = make_data({SPIDERMON_MAX_WARNINGS: 50})
+@pytest.mark.parametrize(
+    "value,threshold,expected_status",
+    [
+        (0, 100, settings.MONITOR.STATUS.SUCCESS),
+        (50, 100, settings.MONITOR.STATUS.SUCCESS),
+        (99, 100, settings.MONITOR.STATUS.SUCCESS),
+        (100, 100, settings.MONITOR.STATUS.SUCCESS),
+        (101, 100, settings.MONITOR.STATUS.FAILURE),
+        (1000, 1, settings.MONITOR.STATUS.FAILURE),
+    ],
+)
+def test_warning_count_monitor_validation(
+    make_data, warning_count_suite, value, threshold, expected_status
+):
+    data = make_data({WarningCountMonitor.threshold_setting: threshold})
     runner = data.pop("runner")
-    suite = new_suite()
-    data["stats"]["log_count/WARNING"] = 2
-    runner.run(suite, **data)
-    assert runner.result.monitor_results[0].error is None
+
+    data["stats"][WarningCountMonitor.stat_name] = value
+
+    runner.run(warning_count_suite, **data)
+
+    assert len(runner.result.monitor_results) == 1
+    assert runner.result.monitor_results[0].status == expected_status
+
+
+def test_warning_count_skip_monitor_if_no_warnings(make_data, warning_count_suite):
+    data = make_data({WarningCountMonitor.threshold_setting: 100})
+    runner = data.pop("runner")
+
+    data["stats"]["some_stat"] = 1000
+
+    runner.run(warning_count_suite, **data)
+
+    assert len(runner.result.monitor_results) == 1
+    assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.SKIPPED
