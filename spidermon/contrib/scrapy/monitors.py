@@ -4,7 +4,6 @@ from spidermon.utils.settings import getdictorlist
 
 from ..monitors.mixins.spider import SpiderMonitorMixin
 
-SPIDERMON_MAX_ERRORS = "SPIDERMON_MAX_ERRORS"
 SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
 SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT"
@@ -180,20 +179,19 @@ class CriticalCountMonitor(BaseStatMonitor):
 
 
 @monitors.name("Error Count Monitor")
-class ErrorCountMonitor(BaseScrapyMonitor):
+class ErrorCountMonitor(BaseStatMonitor):
     """Check for errors in the spider log.
 
-    You can configure the expected number of ERROR log messages using
-    ``SPIDERMON_MAX_ERRORS``. The default is ``0``."""
+    You can configure it using ``SPIDERMON_MAX_ERRORS`` setting.
+    There's **NO** default value for this setting, if you try to use this
+    monitor without setting it, it'll raise a ``NotConfigured`` exception.
 
-    @monitors.name("Should not have any errors")
-    def test_max_errors_in_log(self):
-        errors_threshold = self.crawler.settings.getint(SPIDERMON_MAX_ERRORS, 0)
-        no_of_errors = self.stats.get("log_count/ERROR", 0)
-        msg = "Found {} errors in log, maximum expected is " "{}".format(
-            no_of_errors, errors_threshold
-        )
-        self.assertTrue(no_of_errors <= errors_threshold, msg=msg)
+    If the job doesn't have any error, the monitor will be skipped."""
+
+    stat_name = "log_count/ERROR"
+    threshold_setting = "SPIDERMON_MAX_ERRORS"
+    assert_type = "<="
+    fail_if_stat_missing = False
 
 
 @monitors.name("Warning Count Monitor")
