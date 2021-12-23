@@ -1,6 +1,19 @@
 Release notes
 =============
 
+1.16.0 (2021-12-23)
+-------------------
+- feature: Create base class to aid the creation of custom monitors that only validates against a job stat value (`PR#325 <https://github.com/scrapinghub/spidermon/pull/325`_)
+- feature: Add built-in monitor for critical errors (`PR#329 <https://github.com/scrapinghub/spidermon/pull/329`_)
+- feature: Use new base class to implement some built-in monitors (`PR#326 <https://github.com/scrapinghub/spidermon/pull/326`_ `PR#327 <https://github.com/scrapinghub/spidermon/pull/327`_ `PR#328 <https://github.com/scrapinghub/spidermon/pull/328`_)
+- feature: Add new built-in monitors for common validations (`PR#284 <https://github.com/scrapinghub/spidermon/pull/284`_)
+- bug: Allow Slack bot to send notification correctly even if an icon URL is not defined to the bot (`PR#307 <https://github.com/scrapinghub/spidermon/pull/307`_)
+- bug: Fix regex to match validation error message from schematics library (`PR#310 <https://github.com/scrapinghub/spidermon/pull/310`_)
+- chore: Remove six library and upgrade Python syntax (`PR#270 <https://github.com/scrapinghub/spidermon/pull/
+270>`_)
+- chore: Remove travis and configure Github Actions (`PR#291 <https://github.com/scrapinghub/spidermon/pull/
+291>`_)
+
 1.15.2 (2021-10-04)
 -------------------
 - chore: Add Github Actions support and remove Travis
