@@ -7,6 +7,8 @@ test_requirements = [
     "jinja2",
     "lxml",
     "premailer",
+    "scrapinghub",
+    "scrapinghub-entrypoint-scrapy",
     "scrapy",
     "slackclient",
     "twisted>=19.7.0",
