@@ -130,6 +130,21 @@ Here is an example of how to configure a new monitor suite in your project:
 
       ``result`` stats of the spider execution
 
+Base Stat Monitor
+-----------------
+
+Most of the monitors we create validate a numerical value from job stats against a configurable
+threshold. This is a common pattern that leads us to create almost repeated code for any new monitor
+we add to our projects.
+
+To reduce the amount of boilerplate code, we have this base class that your custom monitor can
+inherit from and with a few attributes you end with a full functional monitor that just needs
+to be added to your Monitor Suite to be used.
+
+.. automodule:: spidermon.contrib.scrapy.monitors
+    :members: BaseStatMonitor
+    :noindex:
+
 The Basic Monitors
 ------------------
 
