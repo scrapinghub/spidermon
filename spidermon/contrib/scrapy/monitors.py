@@ -1,13 +1,16 @@
+import datetime
+
 from spidermon import Monitor, MonitorSuite, monitors
 from spidermon.exceptions import NotConfigured
 from spidermon.utils.settings import getdictorlist
 
-from ..monitors.mixins.spider import SpiderMonitorMixin
+from ..monitors.mixins.spider import SpiderMonitorMixin, StatsMonitorMixin
 
 SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
 SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT"
 SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = "SPIDERMON_MAX_ITEM_VALIDATION_ERRORS"
+SPIDERMON_MAX_EXECUTION_TIME = "SPIDERMON_MAX_EXECUTION_TIME"
 SPIDERMON_MAX_RETRIES = "SPIDERMON_MAX_RETRIES"
 SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS = "SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS"
 SPIDERMON_MIN_SUCCESSFUL_REQUESTS = "SPIDERMON_MIN_SUCCESSFUL_REQUESTS"
@@ -495,6 +498,31 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
         self.assertTrue(len(failures) == 0, msg=msg)
 
 
+@monitors.name("Periodic execution time monitor")
+class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
+    """Check for runtime exceeding a target maximum runtime.
+
+    You can configure the maximum runtime (in seconds) using
+    ``SPIDERMON_MAX_EXECUTION_TIME`` as a project setting or spider attribute."""
+
+    @monitors.name("Maximum execution time reached")
+    def test_execution_time(self):
+        crawler = self.data.get("crawler")
+        max_execution_time = crawler.settings.getint(SPIDERMON_MAX_EXECUTION_TIME)
+        if not max_execution_time:
+            return
+        now = datetime.datetime.now()
+        start_time = self.data.stats.get("start_time")
+        if not start_time:
+            return
+
+        start_dt = datetime.datetime.fromtimestamp(start_time / 1000)
+        duration = now - start_dt
+
+        msg = "The job has exceeded the maximum execution time"
+        self.assertLess(duration.total_seconds(), max_execution_time, msg=msg)
+
+
 class SpiderCloseMonitorSuite(MonitorSuite):
     """This Monitor Suite implements the following monitors:
 
@@ -530,3 +558,18 @@ class SpiderCloseMonitorSuite(MonitorSuite):
         SuccessfulRequestsMonitor,
         TotalRequestsMonitor,
     ]
+
+
+class PeriodicMonitorSuite(MonitorSuite):
+    """This Monitor Suite implements the following monitors:
+
+    * :class:`PeriodicExecutionTimeMonitor`
+
+    You can easily enable this monitor *after* enabling Spidermon::
+
+            SPIDERMON_PERIODIC_MONITORS = {
+                'spidermon.contrib.scrapy.monitors.PeriodicMonitorSuite': # check time in seconds,
+            }
+    """
+
+    monitors = [PeriodicExecutionTimeMonitor]
