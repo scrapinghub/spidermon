@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import re
 
 from jsonschema.validators import validator_for
@@ -16,7 +15,7 @@ class JSONSchemaValidator(Validator):
     name = "JSONSchema"
 
     def __init__(self, schema, translator=None, use_default_translator=True):
-        super(JSONSchemaValidator, self).__init__(
+        super().__init__(
             translator=translator, use_default_translator=use_default_translator
         )
         self._schema = schema

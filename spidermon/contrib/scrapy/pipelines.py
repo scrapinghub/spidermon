@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-import six
 import json
 from io import BytesIO
 from collections import defaultdict
@@ -27,7 +25,7 @@ class PassThroughPipeline:
         return item
 
 
-class ItemValidationPipeline(object):
+class ItemValidationPipeline:
     def __init__(
         self,
         validators,
@@ -93,7 +91,7 @@ class ItemValidationPipeline(object):
 
     @classmethod
     def _load_jsonschema_validator(cls, schema):
-        if isinstance(schema, six.string_types):
+        if isinstance(schema, str):
             schema = get_schema_from(schema)
         if not isinstance(schema, dict):
             raise NotConfigured(

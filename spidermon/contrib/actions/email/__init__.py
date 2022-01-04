@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import logging
@@ -42,7 +41,7 @@ class SendEmail(ActionWithTemplates):
         *args,
         **kwargs
     ):
-        super(SendEmail, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.sender = sender or self.sender
         self.subject = subject or self.subject
         self.subject_template = subject_template or self.subject_template

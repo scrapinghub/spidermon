@@ -1,6 +1,5 @@
 import pytest
 import spidermon.contrib.validation.jsonschema.tools as schema_tools
-from six.moves.urllib.error import HTTPError
 
 
 def test_get_schema_from_url_fails(caplog, mocker):

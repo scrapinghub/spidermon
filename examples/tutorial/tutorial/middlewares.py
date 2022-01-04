@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Define here the models for your spider middleware
 #
 # See documentation in:
@@ -8,7 +6,7 @@
 from scrapy import signals
 
 
-class TutorialSpiderMiddleware(object):
+class TutorialSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
     # passed objects.
@@ -32,8 +30,7 @@ class TutorialSpiderMiddleware(object):
         # it has processed the response.
 
         # Must return an iterable of Request, dict or Item objects.
-        for i in result:
-            yield i
+        yield from result
 
     def process_spider_exception(self, response, exception, spider):
         # Called when a spider or process_spider_input() method
@@ -49,14 +46,13 @@ class TutorialSpiderMiddleware(object):
         # that it doesn’t have a response associated.
 
         # Must return only requests (not items).
-        for r in start_requests:
-            yield r
+        yield from start_requests
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
 
 
-class TutorialDownloaderMiddleware(object):
+class TutorialDownloaderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.

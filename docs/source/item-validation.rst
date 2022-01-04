@@ -81,7 +81,10 @@ an example of a schema for the quotes item from the :doc:`tutorial </getting-sta
         "pattern": ""
       },
       "tags": {
-        "type"
+        "type": "array",
+        "items": {
+          "type":"string"
+        }
       }
     },
     "required": [

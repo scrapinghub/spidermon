@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import re
 
 import schematics
@@ -14,7 +13,7 @@ class SchematicsValidator(Validator):
     name = "Schematics"
 
     def __init__(self, model, translator=None, use_default_translator=True):
-        super(SchematicsValidator, self).__init__(
+        super().__init__(
             translator=translator, use_default_translator=use_default_translator
         )
         self._model = model
@@ -32,7 +31,7 @@ class SchematicsValidator(Validator):
         self._restore_required_fields()
 
     def _reset(self):
-        super(SchematicsValidator, self)._reset()
+        super()._reset()
         self._data = {}
 
     def _set_data(self, data):
@@ -86,7 +85,7 @@ class SchematicsValidator(Validator):
                     self._errors[field_name] += messages
 
     def _get_transformed_child_errors(self, field_name, errors):
-        return dict([("%s.%s" % (field_name, k), v) for k, v in errors.items()])
+        return {f"{field_name}.{k}": v for k, v in errors.items()}
 
     def _clean_messages(self, messages):
         """

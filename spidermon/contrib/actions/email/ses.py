@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import boto3
 
 from spidermon.exceptions import NotConfigured
@@ -21,7 +19,7 @@ class SendSESEmail(SendEmail):
         *args,
         **kwargs
     ):
-        super(SendSESEmail, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.aws_access_key = aws_access_key or self.aws_access_key
         self.aws_secret_key = aws_secret_key or self.aws_secret_key
         self.aws_region_name = aws_region_name or self.aws_region_name
@@ -32,7 +30,7 @@ class SendSESEmail(SendEmail):
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
-        kwargs = super(SendSESEmail, cls).from_crawler_kwargs(crawler)
+        kwargs = super().from_crawler_kwargs(crawler)
         (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(
             crawler.settings
         )
