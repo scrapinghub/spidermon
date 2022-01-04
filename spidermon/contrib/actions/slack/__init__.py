@@ -222,9 +222,7 @@ class SendSlackMessage(ActionWithTemplates):
             "attachments_template": crawler.settings.get(
                 "SPIDERMON_SLACK_ATTACHMENTS_TEMPLATE"
             ),
-            "include_message": crawler.settings.get(
-                "SPIDERMON_SLACK_INCLUDE_MESSAGE"
-            ),
+            "include_message": crawler.settings.get("SPIDERMON_SLACK_INCLUDE_MESSAGE"),
             "include_attachments": crawler.settings.get(
                 "SPIDERMON_SLACK_INCLUDE_ATTACHMENTS"
             ),
