@@ -1,7 +1,4 @@
-try:
-    import unittest.mock as mock
-except ImportError:
-    import mock
+from unittest import mock
 import pytest
 
 from scrapy import signals
@@ -14,7 +11,7 @@ def suites():
 
 
 def test_spider_opened_suites_should_run(get_crawler, suites):
-    """The suites defined at spider_opened_suites should be loaded and run """
+    """The suites defined at spider_opened_suites should be loaded and run"""
     crawler = get_crawler()
     spidermon = Spidermon(crawler, spider_opened_suites=suites)
     spidermon.spider_opened_suites[0].run = mock.MagicMock()
@@ -24,7 +21,7 @@ def test_spider_opened_suites_should_run(get_crawler, suites):
 
 
 def test_spider_closed_suites_should_run(get_crawler, suites):
-    """The suites defined at spider_closed_suites should be loaded and run """
+    """The suites defined at spider_closed_suites should be loaded and run"""
     crawler = get_crawler()
     spidermon = Spidermon(
         crawler, spider_opened_suites=suites, spider_closed_suites=suites
@@ -37,7 +34,7 @@ def test_spider_closed_suites_should_run(get_crawler, suites):
 
 
 def test_engine_stopped_suites_should_run(get_crawler, suites):
-    """The suites defined at engine_stopped_suites should be loaded and run """
+    """The suites defined at engine_stopped_suites should be loaded and run"""
     crawler = get_crawler()
     spidermon = Spidermon(crawler, engine_stopped_suites=suites)
     spidermon.engine_stopped_suites[0].run = mock.MagicMock()
@@ -47,7 +44,7 @@ def test_engine_stopped_suites_should_run(get_crawler, suites):
 
 
 def test_spider_opened_suites_should_run_from_signal(get_crawler, suites):
-    """The suites defined at SPIDERMON_SPIDER_OPEN_MONITORS setting should be loaded and run """
+    """The suites defined at SPIDERMON_SPIDER_OPEN_MONITORS setting should be loaded and run"""
     settings = {"SPIDERMON_SPIDER_OPEN_MONITORS": suites}
     crawler = get_crawler(settings)
     spidermon = Spidermon.from_crawler(crawler)
@@ -57,7 +54,7 @@ def test_spider_opened_suites_should_run_from_signal(get_crawler, suites):
 
 
 def test_spider_closed_suites_should_run_from_signal(get_crawler, suites):
-    """The suites defined at SPIDERMON_SPIDER_CLOSE_MONITORS setting should be loaded and run """
+    """The suites defined at SPIDERMON_SPIDER_CLOSE_MONITORS setting should be loaded and run"""
     settings = {"SPIDERMON_SPIDER_CLOSE_MONITORS": suites}
     crawler = get_crawler(settings)
     spidermon = Spidermon.from_crawler(crawler)
@@ -67,7 +64,7 @@ def test_spider_closed_suites_should_run_from_signal(get_crawler, suites):
 
 
 def test_engine_stopped_suites_should_run_from_signal(get_crawler, suites):
-    """The suites defined at SPIDERMON_ENGINE_STOP_MONITORS setting should be loaded and run """
+    """The suites defined at SPIDERMON_ENGINE_STOP_MONITORS setting should be loaded and run"""
     settings = {"SPIDERMON_ENGINE_STOP_MONITORS": suites}
     crawler = get_crawler(settings)
     spidermon = Spidermon.from_crawler(crawler)

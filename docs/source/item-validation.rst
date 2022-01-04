@@ -1,5 +1,3 @@
-.. _item-validation:
-
 Item Validation
 ===============
 
@@ -16,6 +14,12 @@ the first step is to enable the built-in item pipeline in your project settings:
     ITEM_PIPELINES = {
         'spidermon.contrib.scrapy.pipelines.ItemValidationPipeline': 800,
     }
+
+.. warning::
+
+  Preferably, enable it as the last pipeline executed, ensuring that no
+  subsequent pipeline changes the content of the item, ignoring the
+  validation already performed.
 
 After that, you need to choose which validation library will be used. Spidermon
 accepts schemas defined using schematics_ or `JSON Schema`_.
@@ -77,7 +81,10 @@ an example of a schema for the quotes item from the :doc:`tutorial </getting-sta
         "pattern": ""
       },
       "tags": {
-        "type"
+        "type": "array",
+        "items": {
+          "type":"string"
+        }
       }
     },
     "required": [
@@ -92,15 +99,13 @@ Settings
 
 These are the settings used for configuring item validation:
 
-.. _SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS:
-
 SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Default: ``False``
 
 When set to ``True``, this adds a field called `_validation` to the item that contains any validation errors.
-You can change the name of the field by assigning a name to :ref:`SPIDERMON_VALIDATION_ERRORS_FIELD`:
+You can change the name of the field by assigning a name to `SPIDERMON_VALIDATION_ERRORS_FIELD`_:
 
 .. code-block:: js
 
@@ -113,8 +118,6 @@ You can change the name of the field by assigning a name to :ref:`SPIDERMON_VALI
         'tags': ['age', 'fairytales', 'growing-up']
     }
 
-.. _SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS:
-
 SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -122,17 +125,13 @@ Default: ``False``
 
 Whether to drop items that contain validation errors.
 
-.. _SPIDERMON_VALIDATION_ERRORS_FIELD:
-
 SPIDERMON_VALIDATION_ERRORS_FIELD
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Default: ``_validation``
 
 The name of the field added to the item when a validation error happens and
-:ref:`SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS` is enabled.
-
-.. _SPIDERMON_VALIDATION_MODELS:
+`SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS`_ is enabled.
 
 SPIDERMON_VALIDATION_MODELS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -146,8 +145,8 @@ that need to be validated.
 
     # settings.py
 
-    SPIDERMON_VALIDATION_MODELS: [
-        'myproject.validators.DummyItemModel'
+    SPIDERMON_VALIDATION_MODELS = [
+        'tutorial.validators.DummyItemModel'
     ]
 
 If you are working on a spider that produces multiple items types, you can define it
@@ -157,12 +156,12 @@ as a `dict`:
 
     # settings.py
 
-    SPIDERMON_VALIDATION_MODELS: {
-        DummyItem: 'myproject.validators.DummyItemModel',
-        OtherItem: 'myproject.validators.OtherItemModel',
-    }
+    from tutorial.items import DummyItem, OtherItem
 
-.. _SPIDERMON_VALIDATION_SCHEMAS:
+    SPIDERMON_VALIDATION_MODELS = {
+        DummyItem: 'tutorial.validators.DummyItemModel',
+        OtherItem: 'tutorial.validators.OtherItemModel',
+    }
 
 SPIDERMON_VALIDATION_SCHEMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -175,7 +174,7 @@ A `list` containing the location of the item schema. Could be a local path or a 
 
     # settings.py
 
-    SPIDERMON_VALIDATION_SCHEMAS: [
+    SPIDERMON_VALIDATION_SCHEMAS = [
         '/path/to/schema.json',
         's3://bucket/schema.json',
         'https://example.com/schema.json',
@@ -188,7 +187,9 @@ as a `dict`:
 
     # settings.py
 
-    SPIDERMON_VALIDATION_SCHEMAS: {
+    from tutorial.items import DummyItem, OtherItem
+
+    SPIDERMON_VALIDATION_SCHEMAS = {
         DummyItem: '/path/to/dummyitem_schema.json',
         OtherItem: '/path/to/otheritem_schema.json',
     }
@@ -219,6 +220,8 @@ All ``*_field`` method take a name of one field, while all ``*_fields`` method t
  ``correct_field_list_handling`` monitor attribute to get the correct behavior. This will be the default
  in some later version.
 
+.. note:: The ``*_percent`` methods receive the ratio, not the percent number, so for 15% you need to pass 0.15.
+
 Some examples:
 
 .. code-block:: python
@@ -227,7 +230,7 @@ Some examples:
     self.check_missing_required_fields(field_names=['field2', 'field3'], allowed_count=10)
 
     # checks that field2 has errors in no more than 15% of items
-    self.check_field_errors_percent(field_name='field2', allowed_percent=15)
+    self.check_field_errors_percent(field_name='field2', allowed_percent=0.15)
 
     # checks that no errors is present in any fields
     self.check_field_errors_percent()

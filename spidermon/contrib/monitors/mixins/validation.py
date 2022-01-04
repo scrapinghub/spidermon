@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import warnings
 
 from spidermon.contrib.stats.counters import (
@@ -35,7 +34,7 @@ class FieldErrorsInfo(MetaDictPercentCounter):
     __items_class__ = FieldErrorsDictPercentCounter
 
     def __init__(self, fields_count, items_count):
-        super(FieldErrorsInfo, self).__init__(items_count)
+        super().__init__(items_count)
         self._fields_count = fields_count
 
     @property
@@ -43,14 +42,14 @@ class FieldErrorsInfo(MetaDictPercentCounter):
         return self._fields_count
 
 
-class ItemsInfo(object):
+class ItemsInfo:
     def __init__(self, items_count, items_with_errors, items_dropped):
         self.count = items_count
         self.errors = PercentCounter(count=items_with_errors, total=items_count)
         self.dropped = PercentCounter(count=items_dropped, total=items_count)
 
 
-class ValidationInfo(object):
+class ValidationInfo:
     def __init__(self, stats, prefix=None):
         self.analyzer = StatsAnalyzer(
             stats=stats, prefix=prefix or STATS_DEFAULT_VALIDATION_PREFIX
@@ -86,9 +85,8 @@ class ValidationInfo(object):
 
 
 class ValidationMonitorMixin(StatsMonitorMixin):
-    def __init__(self, correct_field_list_handling=False):
-        super(ValidationMonitorMixin, self).__init__()
-        self.correct_field_list_handling = correct_field_list_handling
+
+    correct_field_list_handling = False
 
     @property
     def validation(self):
@@ -111,8 +109,8 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         """
         Checks that the number of "missing_required_field" errors for the ``field_names`` fields is less or equal than
         ``allowed_count`` and raises an error with all problematic fields.
-        If ``field_names`` is None and ``new_behavior`` is True, checks all fields.
-        If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is True, checks all fields.
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is False, checks that the total number of
         "missing_required_field" errors is less or equal than ``allowed_count``.
         """
         if not self.correct_field_list_handling and not field_names:
@@ -178,8 +176,8 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         """
         Checks that the number of "missing_required_field" errors for the ``field_names`` fields divided by the number
         of items is less or equal than ``allowed_percent`` and raises an error with all problematic fields.
-        If ``field_names`` is None and ``self.new_behavior`` is True, checks all fields.
-        If ``field_names`` is None and ``self.new_behavior`` is False, checks that the total number of
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is True, checks all fields.
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is False, checks that the total number of
         "missing_required_field" errors is less or equal than ``allowed_count``.
         """
         if not self.correct_field_list_handling and not field_names:
@@ -233,12 +231,14 @@ class ValidationMonitorMixin(StatsMonitorMixin):
     def _get_msg_for_missing_required_percent(
         field_name, missing_percent, allowed_percent
     ):
-        msg = "{percent}% of required field {field} are missing!{threshold_info}".format(
-            percent=missing_percent * 100,
-            field=field_name,
-            threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
-            if allowed_percent > 0
-            else "",
+        msg = (
+            "{percent}% of required field {field} are missing!{threshold_info}".format(
+                percent=missing_percent * 100,
+                field=field_name,
+                threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
+                if allowed_percent > 0
+                else "",
+            )
         )
         return msg
 
@@ -246,8 +246,8 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         """
         Checks that the number of errors for the ``field_names`` fields is less or equal than ``allowed_count`` and
         raises an error with all problematic fields.
-        If ``field_names`` is None and ``new_behavior`` is True, checks all fields.
-        If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of errors is less or
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is True, checks all fields.
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is False, checks that the total number of errors is less or
         equal than ``allowed_count``.
         """
         if not self.correct_field_list_handling and not field_names:
@@ -314,8 +314,8 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         """
         Checks that the number of errors for the ``field_names`` fields divided by the number of items is less or equal
         than ``allowed_percent`` and raises an error with all problematic fields.
-        If ``field_names`` is None and ``new_behavior`` is True, checks all fields.
-        If ``field_names`` is None and ``new_behavior`` is False, checks that the total number of errors divided by the
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is True, checks all fields.
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is False, checks that the total number of errors divided by the
         number of items is less or equal than ``allowed_count``
         """
         if not self.correct_field_list_handling and not field_names:

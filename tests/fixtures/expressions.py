@@ -1,5 +1,3 @@
-from six import PY2
-
 SYNTAXERROR_EXPRESSIONS = ["?", "a string", "a="]
 
 INVALID_EXPRESSIONS = [
@@ -148,8 +146,3 @@ EXPRESSIONS_TO_EVALUATE = [
     ("True if not stats.has_errors else False", False),
     ("stats.item_scraped_count in range(29830, 29840)", True),
 ]
-
-
-if PY2:
-    VALID_EXPRESSIONS.extend(["51924361L", "a <> b"])
-    EXPRESSIONS_TO_EVALUATE.extend([("stats.item_scraped_count <> 10000", True)])

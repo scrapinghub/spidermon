@@ -1,25 +1,16 @@
 """
 Module to hold a reference to singleton Hubstorage client and Job instance
 """
-from __future__ import absolute_import
 import os
 from codecs import decode
 
-import six
-from six.moves import map
 
-try:
-    try:
-        from scrapinghub import HubstorageClient
-    except ImportError:
-        from hubstorage.client import HubstorageClient
-except ImportError:
-    HubstorageClient = None
+from scrapinghub import HubstorageClient
 
 
-class _Hubstorage(object):
+class _Hubstorage:
     def __init__(self):
-        self.available = "SHUB_JOBKEY" in os.environ and HubstorageClient is not None
+        self.available = "SHUB_JOBKEY" in os.environ
         self._client = None
         self._project = None
         self._job = None
@@ -35,10 +26,7 @@ class _Hubstorage(object):
 
     @property
     def auth(self):
-        if six.PY2:
-            return os.environ["SHUB_JOBAUTH"].decode("hex")
-        else:
-            return decode(os.environ["SHUB_JOBAUTH"], "hex_codec").decode("utf-8")
+        return decode(os.environ["SHUB_JOBAUTH"], "hex_codec").decode("utf-8")
 
     @property
     def endpoint(self):

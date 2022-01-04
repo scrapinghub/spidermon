@@ -1,8 +1,7 @@
-from __future__ import absolute_import
 from spidermon.exceptions import NotConfigured
 
 
-class JobMonitorMixin(object):
+class JobMonitorMixin:
     @property
     def job(self):
         if not self.data.job:

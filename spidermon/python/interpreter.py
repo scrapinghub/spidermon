@@ -1,11 +1,9 @@
-from __future__ import absolute_import
-import six
 import ast
 
 from spidermon.exceptions import InvalidExpression
 
 
-class Interpreter(object):
+class Interpreter:
 
     ast_allowed_nodes = (
         "expr",
@@ -20,6 +18,7 @@ class Interpreter(object):
         "dict",
         "set",
         "tuple",  # Data types
+        "constant",
         "nameconstant",  # language constant (None)
         "unaryop",
         "usub",  # Unary arithmetic operators
@@ -67,7 +66,7 @@ class Interpreter(object):
 
     allowed_objects = (
         str,
-        six.text_type,  # strings
+        str,  # strings
         int,
         float,
         complex,  # numbers
@@ -78,14 +77,9 @@ class Interpreter(object):
         type(None),
         bool,  # others
     )
-    try:
-        # Py2 compatibility
-        allowed_objects += (long,)
-    except NameError:
-        pass
 
     def check(self, expression):
-        if not isinstance(expression, six.string_types):
+        if not isinstance(expression, str):
             raise InvalidExpression("Python expressions must be defined as strings")
         if not expression:
             raise InvalidExpression("Empty python expression")

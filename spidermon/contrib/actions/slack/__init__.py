@@ -1,11 +1,9 @@
-from __future__ import absolute_import
-
 import ast
 import json
 import logging
 
-import six
-from slackclient import SlackClient
+from slack import WebClient
+from slack.errors import SlackApiError
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
@@ -27,7 +25,7 @@ class SlackMessageManager:
             raise NotConfigured("You must provide a slack sender name.")
 
         self.fake = fake
-        self._client = SlackClient(sender_token)
+        self._client = WebClient(sender_token)
         self._users = None
 
     @property
@@ -88,33 +86,17 @@ class SlackMessageManager:
         return dict(
             [
                 (member["name"].lower(), member)
-                for member in self._api_call("users.list")["members"]
+                for member in self._client.users_list()["members"]
             ]
         )
-
-    def _api_call(self, method, **kwargs):
-        response = self._client.api_call(method, **kwargs)
-
-        has_errors = not response.get("ok")
-        if has_errors:
-            error_msg = response.get("error", {}).get("msg", "Slack API error")
-            logger.error(error_msg)
-
-        if isinstance(response, six.string_types):  # slackclient < v1.0
-            response = json.loads(response)
-        return response
-
-    def _get_user_channel(self, user_id):
-        return self._api_call("im.open", user=user_id)["channel"]["id"]
 
     def _send_user_message(
         self, username, text, parse="full", link_names=1, attachments=None
     ):
         user_id = self._get_user_id(username)
         if user_id:
-            user_channel = self._get_user_channel(user_id)
             return self._send_channel_message(
-                channel=user_channel,
+                channel=user_id,
                 text=text,
                 parse=parse,
                 link_names=link_names,
@@ -124,16 +106,47 @@ class SlackMessageManager:
     def _send_channel_message(
         self, channel, text, parse="full", link_names=1, attachments=None
     ):
-        return self._api_call(
-            "chat.postMessage",
+        self._client.chat_postMessage(
             channel=channel,
             text=text,
             parse=parse,
             link_names=link_names,
             attachments=self._parse_attachments(attachments),
             username=self.sender_name,
-            icon_url=self.users[self.sender_name]["profile"]["image_48"],
+            icon_url=self._get_icon_url(),
         )
+
+    def _get_icon_url(self):
+        """
+        Looks up the icon url for the user set as the message sender
+
+        This will only return a URL if the slack app has users:read permission and
+        bot appears in the organisation user list. A no frills bot intended to
+        just send messages is not likely to fulfill these criteria, so it returns
+        None in this situation, which will result in slack using the bot's App Icon.
+        """
+        try:
+            icon_url = self.users[self.sender_name]["profile"]["image_48"]
+        except SlackApiError as e:
+            if (
+                e.response.data.get("error") == "missing_scope"
+                and e.response.data.get("needed") == "users:read"
+            ):
+                logger.warning(
+                    f"bot does not have users:read permissions for slack org - default icon url used"
+                )
+                # can be an expected outcome - will use its own icon
+                icon_url = None
+            else:
+                raise e
+        except KeyError:
+            # bot has read permissions for slack org but can't find sender in list
+            # can be an expected outcome - will use its own icon
+            logger.warning(
+                f"bot cannot finder user in slack org member list - default icon url used"
+            )
+            icon_url = None
+        return icon_url
 
     def _parse_attachments(self, attachments):
         if not attachments:
@@ -168,7 +181,7 @@ class SendSlackMessage(ActionWithTemplates):
         include_attachments=None,
         fake=None,
     ):
-        super(SendSlackMessage, self).__init__()
+        super().__init__()
 
         self.fake = fake or self.fake
         self.manager = SlackMessageManager(

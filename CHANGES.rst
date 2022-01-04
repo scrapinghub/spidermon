@@ -1,6 +1,76 @@
 Release notes
 =============
 
+1.16.2 (2021-12-23)
+-------------------
+- feature: Create base class to aid the creation of custom monitors that only validates against a job stat value (`PR#325 <https://github.com/scrapinghub/spidermon/pull/325>`_)
+- feature: Add built-in monitor for critical errors (`PR#329 <https://github.com/scrapinghub/spidermon/pull/329>`_)
+- feature: Use new base class to implement some built-in monitors (`PR#326 <https://github.com/scrapinghub/spidermon/pull/326>`_ `PR#327 <https://github.com/scrapinghub/spidermon/pull/327>`_ `PR#328 <https://github.com/scrapinghub/spidermon/pull/328>`_)
+- feature: Add new built-in monitors for common validations (`PR#284 <https://github.com/scrapinghub/spidermon/pull/284>`_)
+- bug: Allow Slack bot to send notification correctly even if an icon URL is not defined to the bot (`PR#307 <https://github.com/scrapinghub/spidermon/pull/307>`_)
+- bug: Fix regex to match validation error message from schematics library (`PR#310 <https://github.com/scrapinghub/spidermon/pull/310>`_)
+- chore: Remove six library and upgrade Python syntax (`PR#270 <https://github.com/scrapinghub/spidermon/pull/270>`_)
+- chore: Remove travis and configure Github Actions (`PR#291 <https://github.com/scrapinghub/spidermon/pull/291>`_)
+
+1.15.2 (2021-10-04)
+-------------------
+- chore: Add Github Actions support and remove Travis
+
+1.15.1 (2021-10-04)
+-------------------
+- chore: Pin `jsonschema` version to 3.2.0 to avoid problems with newest version that has backward incompatible changes
+- chore: Pin `schematics` version to 2.1.0 to avoid problems with newest version that has backward incompatible changes
+
+1.15.0 (2021-04-06)
+-------------------
+- feature: Improve content of Sentry messages (`PR#279 <https://github.com/scrapinghub/spidermon/pull/279>`_)
+- bug: Replace `boto` with `boto3` for Amazon SES work correctly (`issue#285 <https://github.com/scrapinghub/spidermon/issues/285>`_)
+
+1.14.0 (2020-10-05)
+-------------------
+- feature: Built-in monitor for field and item coverage (`issue#253 <https://github.com/scrapinghub/spidermon/issues/253>`_)
+- feature: Add field coverage statistics (`PR#262 <https://github.com/scrapinghub/spidermon/pull/262>`_)
+- chore: Update required slackclient version (`PR#265 <https://github.com/scrapinghub/spidermon/pull/265>`_)
+- chore: Add Python 3.8 support (`issue#255 <https://github.com/scrapinghub/spidermon/issues/255>`_)
+- chore: Drop Python 3.5 support (`issue#266 <https://github.com/scrapinghub/spidermon/issues/266>`_)
+- chore: Remove test decorator that skips tests if executed in old Python versions (`PR#258 <https://github.com/scrapinghub/spidermon/pull/258>`_)
+- chore: Fix deprecation warnings (`PR#272 <https://github.com/scrapinghub/spidermon/pull/272>`_, `PR#274 <https://github.com/scrapinghub/spidermon/pull/274>`_)
+- docs: Fix inconsistent examples (`PR#273 <https://github.com/scrapinghub/spidermon/pull/273>`_)
+
+1.13.0 (2020-06-23)
+-------------------
+- bug: Fix Telegram action error logging
+- feature: Disable item validation pipeline when Spidermon is disabled
+- feature: Item validation built in monitor
+- chore: Removed Python 2.7 support
+- docs: Improved documentation organization
+
+1.12.2 (2020-05-07)
+-------------------
+- Fixed version 1.12.1 changelog
+
+1.12.1 (2020-05-07)
+-------------------
+- bugfix: AttributeError when using ValidationMonitorMixin (`issue <https://github.com/scrapinghub/spidermon/issues/246>`_)
+- docs: How-To Guide - Adding required fields coverage validation (`pull request <https://github.com/scrapinghub/spidermon/pull/247>`_)
+
+1.12.0 (2020-01-09)
+-------------------
+
+- Dropped python 3.4 support
+- Added action to send monitor reports to Telegram
+- Added fallback to scrapy AWS settings
+- Logged errors from Slack API calls
+- Allowed to define SPIDERMON_SLACK_RECIPIENTS setting as a comma-separated string with the desired recipients
+- Read SES settings with getlist
+- Added documentation of Expression Monitors
+- Improved Slack action documentation
+- Fixed sphinx warnings when building docs
+- Fixed warnings in docs build
+- Validate docs build in CI
+- Applied and enforced black formatting on spidermon source code
+- Configured test coverage reporting in project
+
 1.11.0 (2019-08-02)
 -------------------
 

@@ -1,6 +1,3 @@
-from __future__ import absolute_import
-import six
-
 import inspect
 
 from spidermon.exceptions import (
@@ -12,7 +9,7 @@ from .monitors import Monitor
 from .actions import Action
 
 
-class MonitorFactory(object):
+class MonitorFactory:
     @classmethod
     def load_monitor(cls, monitor, name=None):
         from .suites import MonitorSuite
@@ -47,7 +44,7 @@ class MonitorFactory(object):
         if len(monitor_tuple) != 2:
             cls.raise_invalid_tuple()
         name, monitor = monitor_tuple
-        if not isinstance(name, six.string_types):
+        if not isinstance(name, str):
             cls.raise_invalid_tuple()
         return cls.load_monitor(monitor=monitor, name=name)
 
@@ -76,7 +73,7 @@ class MonitorFactory(object):
         )
 
 
-class ActionFactory(object):
+class ActionFactory:
     @classmethod
     def load_action(cls, action, crawler=None):
         if inspect.isclass(action):

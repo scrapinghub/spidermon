@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import logging
 
 from spidermon.results.monitor import (
@@ -15,15 +13,15 @@ LOG_MESSAGE_HEADER = "Spidermon"
 
 class SpiderMonitorResult(MonitorResult):
     def __init__(self, spider):
-        super(SpiderMonitorResult, self).__init__()
+        super().__init__()
         self.spider = spider
 
     def next_step(self):
-        super(SpiderMonitorResult, self).next_step()
+        super().next_step()
         self.write_title()
 
     def finish_step(self):
-        super(SpiderMonitorResult, self).finish_step()
+        super().finish_step()
         self.log_info(line())
         if not self.step.successful:
             self.write_errors()
@@ -32,47 +30,47 @@ class SpiderMonitorResult(MonitorResult):
 
     @monitors_step_required
     def addSuccess(self, test):
-        super(SpiderMonitorResult, self).addSuccess(test)
+        super().addSuccess(test)
         self.write_item_result(test)
 
     @monitors_step_required
     def addError(self, test, error):
-        super(SpiderMonitorResult, self).addError(test, error)
+        super().addError(test, error)
         self.write_item_result(test)
 
     @monitors_step_required
     def addFailure(self, test, error):
-        super(SpiderMonitorResult, self).addFailure(test, error)
+        super().addFailure(test, error)
         self.write_item_result(test)
 
     @monitors_step_required
     def addSkip(self, test, reason):
-        super(SpiderMonitorResult, self).addSkip(test, reason)
+        super().addSkip(test, reason)
         self.write_item_result(test, reason)
 
     @monitors_step_required
     def addExpectedFailure(self, test, error):
-        super(SpiderMonitorResult, self).addExpectedFailure(test, error)
+        super().addExpectedFailure(test, error)
         self.write_item_result(test)
 
     @monitors_step_required
     def addUnexpectedSuccess(self, test):
-        super(SpiderMonitorResult, self).addUnexpectedSuccess(test)
+        super().addUnexpectedSuccess(test)
         self.write_item_result(test)
 
     @actions_step_required
     def add_action_success(self, action):
-        super(SpiderMonitorResult, self).add_action_success(action)
+        super().add_action_success(action)
         self.write_item_result(action)
 
     @actions_step_required
     def add_action_skip(self, action, reason):
-        super(SpiderMonitorResult, self).add_action_skip(action, reason)
+        super().add_action_skip(action, reason)
         self.write_item_result(action, reason)
 
     @actions_step_required
     def add_action_error(self, action, error):
-        super(SpiderMonitorResult, self).add_action_error(action, error)
+        super().add_action_error(action, error)
         self.write_item_result(action)
 
     def write_title(self):
@@ -98,9 +96,7 @@ class SpiderMonitorResult(MonitorResult):
         summary = "OK" if self.step.successful else "FAILED"
         infos = self.step.get_infos()
         if infos and sum(infos.values()):
-            summary += " (%s)" % ", ".join(
-                ["%s=%s" % (k, v) for k, v in infos.items() if v]
-            )
+            summary += " (%s)" % ", ".join([f"{k}={v}" for k, v in infos.items() if v])
         self.log_info(summary)
 
     def write_errors(self):
@@ -109,7 +105,7 @@ class SpiderMonitorResult(MonitorResult):
                 msg = Message()
                 msg.write_line()
                 msg.write_bold_separator()
-                msg.write_line("%s: %s" % (item.status, item.item.name))
+                msg.write_line(f"{item.status}: {item.item.name}")
                 msg.write_light_separator()
                 msg.write(item.error)
                 self.log_error(msg)
@@ -121,12 +117,12 @@ class SpiderMonitorResult(MonitorResult):
         self.log(msg, level=logging.INFO)
 
     def log(self, msg, level=logging.DEBUG):
-        self.spider.log("[%s] %s" % (LOG_MESSAGE_HEADER, msg), level=level)
+        self.spider.log(f"[{LOG_MESSAGE_HEADER}] {msg}", level=level)
 
 
 class SpiderMonitorRunner(MonitorRunner):
     def __init__(self, spider):
-        super(SpiderMonitorRunner, self).__init__()
+        super().__init__()
         self.spider = spider
 
     def create_result(self):

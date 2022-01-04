@@ -2,12 +2,13 @@
 Spidermon
 =========
 
-.. image:: https://img.shields.io/travis/scrapinghub/spidermon/master
-    :target: https://travis-ci.org/scrapinghub/spidermon
-    :alt: travis build status master branch
+.. image:: https://github.com/scrapinghub/spidermon/workflows/CI/badge.svg?branch=master
+    :target: https://github.com/scrapinghub/spidermon/actions?workflow=CI
+    :alt: CI Status
 
-.. image:: https://img.shields.io/codecov/c/github/scrapinghub/spidermon.svg?style=flat
-    :alt: Codecov
+.. image:: https://img.shields.io/codecov/c/github/scrapinghub/spidermon.svg
+    :target: http://codecov.io/github/scrapinghub/spidermon?branch=master
+    :alt: Coverage report
 
 .. image:: https://img.shields.io/pypi/v/spidermon.svg
     :target: https://pypi.python.org/pypi/spidermon
@@ -33,7 +34,7 @@ Spidermon is an extension for Scrapy spiders. The package provides useful tools 
 Requirements
 ============
 
-* Python 2.7 or Python 3.4+
+* Python 3.6, Python 3.7, Python 3.8 or Python 3.9
 
 Install
 =======

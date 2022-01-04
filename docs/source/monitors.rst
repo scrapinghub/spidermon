@@ -1,5 +1,3 @@
-.. _monitors:
-
 ====================
 Monitoring your jobs
 ====================
@@ -132,13 +130,31 @@ Here is an example of how to configure a new monitor suite in your project:
 
       ``result`` stats of the spider execution
 
+Base Stat Monitor
+-----------------
+
+Most of the monitors we create validate a numerical value from job stats against a configurable
+threshold. This is a common pattern that leads us to create almost repeated code for any new monitor
+we add to our projects.
+
+To reduce the amount of boilerplate code, we have this base class that your custom monitor can
+inherit from and with a few attributes you end with a full functional monitor that just needs
+to be added to your Monitor Suite to be used.
+
+.. automodule:: spidermon.contrib.scrapy.monitors
+    :members: BaseStatMonitor
+    :noindex:
+
 The Basic Monitors
 ------------------
 
 Spidermon has some batteries included :)
 
 .. automodule:: spidermon.contrib.scrapy.monitors
-    :members: FinishReasonMonitor, ItemCountMonitor, ErrorCountMonitor, UnwantedHTTPCodesMonitor
+    :members: ItemCountMonitor, ErrorCountMonitor, WarningCountMonitor, FinishReasonMonitor,
+              UnwantedHTTPCodesMonitor, ItemValidationMonitor, FieldCoverageMonitor,
+              RetryCountMonitor, DownloaderExceptionMonitor, SuccessfulRequestsMonitor,
+              TotalRequestsMonitor
 
 Is there a **Basic Scrapy Suite** ready to use?
 ------------------------------------------------
@@ -148,6 +164,9 @@ Of course, there is! We really want to make it easy for you to monitor your spid
 .. automodule:: spidermon.contrib.scrapy.monitors
     :members: SpiderCloseMonitorSuite
     :noindex:
+
+If you want only some of these monitors it's easy to create your own suite with
+your own list of monitors similar to this one.
 
 Periodic Monitors
 -----------------
@@ -168,7 +187,7 @@ First we define a new action that will close the spider when executed:
 
 .. code-block:: python
 
-    # myproject/actions.py
+    # tutorial/actions.py
     from spidermon.core.actions import Action
 
     class CloseSpiderAction(Action):
@@ -183,8 +202,8 @@ and then take an action if it fails:
 
 .. code-block:: python
 
-    # myproject/monitors.py
-    from myproject.actions import CloseSpiderAction
+    # tutorial/monitors.py
+    from tutorial.actions import CloseSpiderAction
 
     @monitors.name('Periodic job stats monitor')
     class PeriodicJobStatsMonitor(Monitor, StatsMonitorMixin):
@@ -205,10 +224,10 @@ The last step is to configure the suite to be executed every 60 seconds:
 
 .. code-block:: python
 
-    # myproject/settings.py
+    # tutorial/settings.py
 
     SPIDERMON_PERIODIC_MONITORS = {
-        'myproject.monitors.PeriodicMonitorSuite': 60,  # time in seconds
+        'tutorial.monitors.PeriodicMonitorSuite': 60,  # time in seconds
     }
 
 What to monitor?

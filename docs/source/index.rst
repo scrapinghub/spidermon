@@ -18,7 +18,7 @@ following features:
   * Schematics: `<https://github.com/schematics/schematics>`_
 * It allows you to define conditions that should trigger an alert based on
   Scrapy stats.
-* It supports notifications via email and Slack.
+* It supports notifications via email, Slack and Telegram.
 * It can generate custom reports.
 
 Contents
@@ -31,9 +31,8 @@ Contents
    getting-started
    monitors
    item-validation
-   stats-collection
    expression-monitors
    settings
-   configuring-slack-for-spidermon
-   actions
+   howto/index
+   actions/index
    changelog

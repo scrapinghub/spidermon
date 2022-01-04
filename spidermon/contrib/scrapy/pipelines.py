@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-import six
 import json
 from io import BytesIO
 from collections import defaultdict
@@ -8,7 +6,7 @@ from scrapy.exceptions import DropItem, NotConfigured
 from scrapy.utils.misc import load_object
 from scrapy.exporters import JsonLinesItemExporter
 from scrapy import Field, Item
-from scrapy.utils.python import to_native_str
+from scrapy.utils.python import to_unicode
 
 from spidermon.contrib.validation import SchematicsValidator, JSONSchemaValidator
 from spidermon.contrib.validation.jsonschema.tools import get_schema_from
@@ -22,7 +20,12 @@ DEFAULT_ADD_ERRORS_TO_ITEM = False
 DEFAULT_DROP_ITEMS_WITH_ERRORS = False
 
 
-class ItemValidationPipeline(object):
+class PassThroughPipeline:
+    def process_item(self, item, *args):
+        return item
+
+
+class ItemValidationPipeline:
     def __init__(
         self,
         validators,
@@ -41,6 +44,10 @@ class ItemValidationPipeline(object):
 
     @classmethod
     def from_crawler(cls, crawler):
+        spidermon_enabled = crawler.settings.getbool("SPIDERMON_ENABLED")
+        if not spidermon_enabled:
+            return PassThroughPipeline()
+
         validators = defaultdict(list)
         allowed_types = (list, tuple, dict)
 
@@ -84,7 +91,7 @@ class ItemValidationPipeline(object):
 
     @classmethod
     def _load_jsonschema_validator(cls, schema):
-        if isinstance(schema, six.string_types):
+        if isinstance(schema, str):
             schema = get_schema_from(schema)
         if not isinstance(schema, dict):
             raise NotConfigured(
@@ -132,7 +139,7 @@ class ItemValidationPipeline(object):
         serialized_json = BytesIO()
         exporter = JsonLinesItemExporter(serialized_json)
         exporter.export_item(item)
-        data = json.loads(to_native_str(serialized_json.getvalue(), exporter.encoding))
+        data = json.loads(to_unicode(serialized_json.getvalue(), exporter.encoding))
         serialized_json.close()
         return data
 

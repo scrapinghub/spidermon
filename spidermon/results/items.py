@@ -1,8 +1,7 @@
-from __future__ import absolute_import
 from spidermon import settings
 
 
-class ItemResult(object):
+class ItemResult:
     def __init__(self, item):
         self.item = item
         self.status = settings.UNDEFINED_STATUS
@@ -15,7 +14,7 @@ class MonitorResult(ItemResult):
     name = "monitor"
 
     def __init__(self, item):
-        super(MonitorResult, self).__init__(item)
+        super().__init__(item)
         self.status = settings.MONITOR.STATUSES.DEFAULT
 
     @property
@@ -27,7 +26,7 @@ class ActionResult(ItemResult):
     name = "action"
 
     def __init__(self, item):
-        super(ActionResult, self).__init__(item)
+        super().__init__(item)
         self.status = settings.ACTION.STATUSES.DEFAULT
 
     @property

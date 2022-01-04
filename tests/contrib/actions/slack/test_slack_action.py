@@ -1,3 +1,4 @@
+import sys
 import pytest
 
 from spidermon.contrib.actions.slack import SlackMessageManager
