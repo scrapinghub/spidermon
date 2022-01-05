@@ -11,6 +11,7 @@ from spidermon import MonitorSuite
 FAKE_EXECUTION_TIME = 100
 FAKE_START_TS = 1632834644
 
+
 @pytest.fixture
 def monitor_suite():
     return MonitorSuite(monitors=[PeriodicExecutionTimeMonitor])
@@ -34,13 +35,18 @@ def mock_datetime(mocker):
 
 
 def test_periodic_execution_monitor_should_fail(
-    make_data, mock_datetime, monitor_suite, mock_spider,
+    make_data,
+    mock_datetime,
+    monitor_suite,
+    mock_spider,
 ):
     """PeriodicExecutionTimeMonitor should fail if start time was too long ago"""
     data = make_data({SPIDERMON_MAX_EXECUTION_TIME: FAKE_EXECUTION_TIME - 1})
     runner = data.pop("runner")
     data["crawler"].spider = mock_spider
-    data["crawler"].stats.set_value("start_time", datetime.datetime.fromtimestamp(FAKE_START_TS))
+    data["crawler"].stats.set_value(
+        "start_time", datetime.datetime.fromtimestamp(FAKE_START_TS)
+    )
     error_expected = "AssertionError: 100.0 not less than 99 : The job has exceeded the maximum execution time"
 
     runner.run(monitor_suite, **data)
@@ -49,14 +55,19 @@ def test_periodic_execution_monitor_should_fail(
 
 
 def test_periodic_execution_monitor_should_pass(
-    make_data, mock_datetime, monitor_suite, mock_spider,
+    make_data,
+    mock_datetime,
+    monitor_suite,
+    mock_spider,
 ):
     """PeriodicExecutionTimeMonitor should pass if start time was not too long ago"""
 
     data = make_data({SPIDERMON_MAX_EXECUTION_TIME: FAKE_EXECUTION_TIME + 1})
     runner = data.pop("runner")
     data["crawler"].spider = mock_spider
-    data["crawler"].stats.set_value("start_time", datetime.datetime.fromtimestamp(FAKE_START_TS))
+    data["crawler"].stats.set_value(
+        "start_time", datetime.datetime.fromtimestamp(FAKE_START_TS)
+    )
 
     runner.run(monitor_suite, **data)
     for r in runner.result.monitor_results:
