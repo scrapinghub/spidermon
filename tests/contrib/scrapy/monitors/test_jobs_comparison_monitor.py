@@ -11,15 +11,13 @@ from spidermon.contrib.scrapy.monitors import (
 
 
 @pytest.fixture
-def mock_client(previous_counts):
-    return Mock(
-        **{"spider.jobs.list.return_value": [dict(items=c) for c in previous_counts]}
-    )
+def mock_jobs(previous_counts):
+    return Mock(return_value=[dict(items=c) for c in previous_counts])
 
 
 @pytest.fixture
-def mock_suite(mock_client, monkeypatch):
-    monkeypatch.setattr(JobsComparisonMonitor, "client", mock_client)
+def mock_suite(mock_jobs, monkeypatch):
+    monkeypatch.setattr(JobsComparisonMonitor, "_get_jobs", mock_jobs)
     return MonitorSuite(monitors=[JobsComparisonMonitor])
 
 
