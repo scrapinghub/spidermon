@@ -7,6 +7,8 @@ test_requirements = [
     "jinja2",
     "lxml",
     "premailer",
+    "scrapinghub",
+    "scrapinghub-entrypoint-scrapy",
     "scrapy",
     "slackclient",
     "twisted>=19.7.0",
@@ -14,7 +16,7 @@ test_requirements = [
 
 setup(
     name="spidermon",
-    version="1.15.2",
+    version="1.16.2",
     url="https://github.com/scrapinghub/spidermon",
     author="Zyte",
     author_email="opensource@zyte.com",
