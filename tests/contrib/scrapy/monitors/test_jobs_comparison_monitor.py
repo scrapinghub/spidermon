@@ -40,7 +40,11 @@ def test_jobs_comparison_monitor_is_enabled(
     runner.run(mock_suite, **data)
 
     is_enabled = runner.result.monitor_results[0].error is not None
-    assert is_enabled == expected
+    assert (
+        is_enabled == expected
+        or runner.result.monitor_results[0].reason
+        == "Jobs comparison monitor is disabled"
+    )
 
 
 @pytest.mark.parametrize(
@@ -75,6 +79,6 @@ def test_jobs_comparison_monitor_error_msg(make_data, mock_suite):
     runner.run(mock_suite, **data)
 
     assert (
-        "Extracted 8 items in this job, minimum expected is 9"
+        "Expecting 'item_scraped_count' to be '>=' to '9'. Current value: '8'"
         in runner.result.monitor_results[0].error
     )

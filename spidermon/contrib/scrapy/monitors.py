@@ -529,7 +529,7 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
 
 
 @monitors.name("Jobs Comparison Monitor")
-class JobsComparisonMonitor(BaseScrapyMonitor):
+class JobsComparisonMonitor(BaseStatMonitor):
     """Check for a drop in scraped item count compared to previous jobs.
 
     You need to set the number of previous jobs to compare, using ``SPIDERMON_JOBS_COMPARISON``.
@@ -543,16 +543,18 @@ class JobsComparisonMonitor(BaseScrapyMonitor):
     ``SPIDERMON_JOBS_COMPARISON_STATES`` setting. The default value is ``("finished",)``.
     """
 
+    stat_name = "item_scraped_count"
+    assert_type = ">="
+
     @property
     def client(self):
         return hs
 
-    @monitors.name("Should not have a big drop in item count compared to previous jobs")
-    def test_if_item_count_from_previous_jobs_have_decreased(self):
+    def get_threshold(self):
         # 1. get the number of jobs and check if monitor is enabled
         number_of_jobs = self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON, 0)
         if not number_of_jobs:
-            return
+            self.skipTest("Jobs comparison monitor is disabled")
 
         # 2. get the previous jobs meeting the defined states
         states = self.crawler.settings.getlist(
@@ -566,13 +568,7 @@ class JobsComparisonMonitor(BaseScrapyMonitor):
             SPIDERMON_JOBS_COMPARISON_THRESHOLD, 0.8
         )
         expected_item_extracted = math.ceil(previous_count * threshold)
-
-        # 4. assert the the difference isn't greater than the threshold
-        item_extracted = getattr(self.stats, "item_scraped_count", 0)
-        msg = "Extracted {} items in this job, minimum expected is {}".format(
-            item_extracted, expected_item_extracted
-        )
-        self.assertGreaterEqual(item_extracted, expected_item_extracted, msg)
+        return expected_item_extracted
 
 
 class SpiderCloseMonitorSuite(MonitorSuite):
