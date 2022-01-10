@@ -547,8 +547,7 @@ class JobsComparisonMonitor(BaseStatMonitor):
     assert_type = ">="
 
     def _get_jobs(self, states, number_of_jobs):
-        spider = zyte.get_current_project().spiders.get(self._spider_name)
-        return spider.jobs.list(state=states, count=number_of_jobs)
+        return zyte.client.spider.jobs.list(state=states, count=number_of_jobs)
 
     def get_threshold(self):
         # 1. get the number of jobs and check if monitor is enabled
@@ -560,7 +559,7 @@ class JobsComparisonMonitor(BaseStatMonitor):
         states = self.crawler.settings.getlist(
             SPIDERMON_JOBS_COMPARISON_STATES, ("finished",)
         )
-        jobs = self._get_jobs(state=states, count=number_of_jobs)
+        jobs = self._get_jobs(states, number_of_jobs)
 
         # 3. get the average item count and calculate the acceptable threshold
         previous_count = sum(job.get("items", 0) for job in jobs) / len(jobs)
