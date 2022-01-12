@@ -171,7 +171,7 @@ class Spidermon:
             runner.run(suite, **data)
 
     def _generate_data_for_spider(self, spider):
-        from spidermon.utils.hubstorage import hs
+        from spidermon.utils.zyte import client as hs
 
         return {
             "stats": self.crawler.stats.get_stats(spider),
