@@ -8,7 +8,7 @@ from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 from spidermon.python import factory
 from spidermon.python.monitors import ExpressionsMonitor
 from spidermon.utils.field_coverage import calculate_field_coverage
-from spidermon.utils.hubstorage import hs
+from spidermon.utils.zyte import client as hs
 
 
 class Spidermon:
