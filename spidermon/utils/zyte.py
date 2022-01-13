@@ -6,12 +6,17 @@ well as either "SH_APIKEY" or "SHUB_JOBAUTH" to access Scrapy Cloud API.
 """
 import os
 
-from scrapinghub import ScrapinghubClient
+try:
+    from scrapinghub import ScrapinghubClient
+
+    HAS_CLIENT = True
+except ImportError:
+    HAS_CLIENT = False
 
 
 class Client:
     def __init__(self):
-        self.available = "SHUB_JOBKEY" in os.environ
+        self.available = HAS_CLIENT and "SHUB_JOBKEY" in os.environ
         self._client = None
         self._project = None
         self._spider = None
