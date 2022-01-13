@@ -6,7 +6,7 @@ from spidermon.utils import zyte
 
 @pytest.fixture
 def no_env_mock_module(monkeypatch):
-    monkeypatch.delenv("SHUB_JOBKEY")
+    monkeypatch.delenv("SHUB_JOBKEY", raising=False)
     monkeypatch.setattr(zyte, "ScrapinghubClient", mock.MagicMock())
     return zyte
 
