@@ -65,3 +65,11 @@ def test_client_property_spider(mock_module):
 
     client._job.metadata.get.assert_called_with("spider")
     client._project.spiders.get.assert_called_with("my_awesome_spider")
+
+
+def test_client_close(mock_module):
+    client = mock_module.Client()
+
+    client.client
+    client.close()
+    client._client.close.assert_called()
