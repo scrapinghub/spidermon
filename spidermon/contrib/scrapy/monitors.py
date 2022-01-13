@@ -530,7 +530,12 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
 
 @monitors.name("Jobs Comparison Monitor")
 class JobsComparisonMonitor(BaseStatMonitor):
-    """Check for a drop in scraped item count compared to previous jobs.
+    """
+    .. note::
+       This monitor is useful when running jobs in
+       `Zyte's Scrapy Cloud <https://www.zyte.com/scrapy-cloud/>`_.
+
+    Check for a drop in scraped item count compared to previous jobs.
 
     You need to set the number of previous jobs to compare, using ``SPIDERMON_JOBS_COMPARISON``.
     The default is ``0`` which disables the monitor. We use the average of the scraped items count.
