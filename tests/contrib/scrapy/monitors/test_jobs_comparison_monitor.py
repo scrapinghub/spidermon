@@ -2,6 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 from spidermon import MonitorSuite
+from spidermon.contrib.scrapy import monitors
 from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_JOBS_COMPARISON,
     SPIDERMON_JOBS_COMPARISON_STATES,
@@ -19,6 +20,13 @@ def mock_jobs(previous_counts):
 def mock_suite(mock_jobs, monkeypatch):
     monkeypatch.setattr(JobsComparisonMonitor, "_get_jobs", mock_jobs)
     return MonitorSuite(monitors=[JobsComparisonMonitor])
+
+
+@pytest.fixture
+def mock_suite_and_zyte_client(monkeypatch):
+    monkeypatch.setattr(monitors, "zyte", Mock())
+    monitors.zyte.client.spider.jobs.list.return_value = []
+    return MonitorSuite(monitors=[monitors.JobsComparisonMonitor]), monitors.zyte
 
 
 @pytest.mark.parametrize(
@@ -79,4 +87,30 @@ def test_jobs_comparison_monitor_error_msg(make_data, mock_suite):
     assert (
         "Expecting 'item_scraped_count' to be '>=' to '9'. Current value: '8'"
         in runner.result.monitor_results[0].error
+    )
+
+
+@pytest.mark.parametrize(
+    ["states", "number_of_jobs"],
+    [(("finished",), 5), (("foo", "bar"), 10)],
+)
+def test_arguments_passed_to_zyte_client(
+    make_data,
+    mock_suite_and_zyte_client,
+    states,
+    number_of_jobs,
+):
+    data = make_data(
+        {
+            SPIDERMON_JOBS_COMPARISON: number_of_jobs,
+            SPIDERMON_JOBS_COMPARISON_STATES: states,
+        }
+    )
+    suite, zyte_module = mock_suite_and_zyte_client
+    runner = data.pop("runner")
+    runner.run(suite, **data)
+
+    zyte_module.client.spider.jobs.list.assert_called_with(
+        state=list(states),
+        count=number_of_jobs,
     )
