@@ -6,6 +6,7 @@ from spidermon.contrib.scrapy import monitors
 from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_JOBS_COMPARISON,
     SPIDERMON_JOBS_COMPARISON_STATES,
+    SPIDERMON_JOBS_COMPARISON_TAGS,
     SPIDERMON_JOBS_COMPARISON_THRESHOLD,
     JobsComparisonMonitor,
 )
@@ -24,6 +25,7 @@ def mock_suite(mock_jobs, monkeypatch):
 
 @pytest.fixture
 def mock_suite_and_zyte_client(monkeypatch):
+    monkeypatch.setenv("SHUB_JOB_DATA", '{"tags":["tag1","tag2","tag3"]}')
     monkeypatch.setattr(monitors, "zyte", Mock())
     monitors.zyte.client.spider.jobs.list.return_value = []
     return MonitorSuite(monitors=[monitors.JobsComparisonMonitor]), monitors.zyte
@@ -75,35 +77,25 @@ def test_jobs_comparison_monitor_threshold(
     assert should_raise == bool(runner.result.monitor_results[0].error)
 
 
-@pytest.mark.parametrize("previous_counts", ([10],))
-def test_jobs_comparison_monitor_error_msg(make_data, mock_suite):
-    data = make_data(
-        {SPIDERMON_JOBS_COMPARISON: 1, SPIDERMON_JOBS_COMPARISON_THRESHOLD: 0.9}
-    )
-    data["stats"]["item_scraped_count"] = 8
-    runner = data.pop("runner")
-    runner.run(mock_suite, **data)
-
-    assert (
-        "Expecting 'item_scraped_count' to be '>=' to '9'. Current value: '8'"
-        in runner.result.monitor_results[0].error
-    )
-
-
 @pytest.mark.parametrize(
-    ["states", "number_of_jobs"],
-    [(("finished",), 5), (("foo", "bar"), 10)],
+    ["states", "number_of_jobs", "tags"],
+    [
+        (("finished",), 5, ("tag1", "tag2")),
+        (("foo", "bar"), 10, ("tag3",)),
+    ],
 )
 def test_arguments_passed_to_zyte_client(
     make_data,
     mock_suite_and_zyte_client,
     states,
     number_of_jobs,
+    tags,
 ):
     data = make_data(
         {
             SPIDERMON_JOBS_COMPARISON: number_of_jobs,
             SPIDERMON_JOBS_COMPARISON_STATES: states,
+            SPIDERMON_JOBS_COMPARISON_TAGS: tags,
         }
     )
     suite, zyte_module = mock_suite_and_zyte_client
@@ -113,4 +105,5 @@ def test_arguments_passed_to_zyte_client(
     zyte_module.client.spider.jobs.list.assert_called_with(
         state=list(states),
         count=number_of_jobs,
+        filters={"has_tag": list(tags)},
     )

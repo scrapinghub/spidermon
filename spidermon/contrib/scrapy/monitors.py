@@ -1,5 +1,7 @@
 import datetime
+import json
 import math
+import os
 
 from spidermon import Monitor, MonitorSuite, monitors
 from spidermon.exceptions import NotConfigured
@@ -19,6 +21,7 @@ SPIDERMON_MIN_SUCCESSFUL_REQUESTS = "SPIDERMON_MIN_SUCCESSFUL_REQUESTS"
 SPIDERMON_MAX_REQUESTS_ALLOWED = "SPIDERMON_MAX_REQUESTS_ALLOWED"
 SPIDERMON_JOBS_COMPARISON = "SPIDERMON_JOBS_COMPARISON"
 SPIDERMON_JOBS_COMPARISON_STATES = "SPIDERMON_JOBS_COMPARISON_STATES"
+SPIDERMON_JOBS_COMPARISON_TAGS = "SPIDERMON_JOBS_COMPARISON_TAGS"
 SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
 
 
@@ -546,13 +549,37 @@ class JobsComparisonMonitor(BaseStatMonitor):
 
     You can filter which jobs to compare based on their states using the
     ``SPIDERMON_JOBS_COMPARISON_STATES`` setting. The default value is ``("finished",)``.
+
+    You can also filter which jobs to compare based on their tags using the
+    ``SPIDERMON_JOBS_COMPARISON_TAGS`` setting. Among the defined tags we consider only those
+    that are also present in the current job.
     """
 
     stat_name = "item_scraped_count"
     assert_type = ">="
 
-    def _get_jobs(self, states, number_of_jobs):
-        return zyte.client.spider.jobs.list(state=states, count=number_of_jobs)
+    def _get_jobs(self, states, number_of_jobs, tags=None):
+        return zyte.client.spider.jobs.list(
+            state=states,
+            count=number_of_jobs,
+            filters=dict(has_tag=tags) if tags else None,
+        )
+
+    def _get_tags_to_filter(self):
+        """
+        Return the intersect of the desired tags to filter and
+        the ones from the current job.
+        """
+        desired_tags = self.crawler.settings.getlist(SPIDERMON_JOBS_COMPARISON_TAGS)
+        if not desired_tags:
+            return {}
+
+        current_tags = json.loads(os.environ.get("SHUB_JOB_DATA", "{}")).get("tags")
+        if not current_tags:
+            return {}
+
+        tags_to_filter = set(desired_tags) & set(current_tags)
+        return sorted(tags_to_filter)
 
     def get_threshold(self):
         # 1. get the number of jobs and check if monitor is enabled
@@ -560,11 +587,12 @@ class JobsComparisonMonitor(BaseStatMonitor):
         if not number_of_jobs:
             self.skipTest("Jobs comparison monitor is disabled")
 
-        # 2. get the previous jobs meeting the defined states
+        # 2. get the previous jobs meeting the defined states and tags
         states = self.crawler.settings.getlist(
             SPIDERMON_JOBS_COMPARISON_STATES, ("finished",)
         )
-        jobs = self._get_jobs(states, number_of_jobs)
+        tags = self._get_tags_to_filter()
+        jobs = self._get_jobs(states, number_of_jobs, tags)
 
         # 3. get the average item count and calculate the acceptable threshold
         previous_count = sum(job.get("items", 0) for job in jobs) / len(jobs)
