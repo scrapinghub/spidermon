@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 test_requirements = [
     "pytest>=2.7.0",
@@ -34,6 +34,7 @@ setup(
         "monitoring": [
             "scrapy",
             "Jinja2",
+            "scrapinghub",
             "slackclient",
             "boto",
             "boto3",
