@@ -8,8 +8,6 @@ Note that "SHUB_JOBAUTH" can't access all API endpoints.
 """
 import os
 
-from scrapy.utils.project import get_project_settings
-
 try:
     from scrapinghub import ScrapinghubClient
 
@@ -42,6 +40,8 @@ class Client:
         return self._client
 
     def _apikey(self):
+        from scrapy.utils.project import get_project_settings
+
         apikey = (
             get_project_settings().get("SHUB_APIKEY")
             or os.environ.get("SH_APIKEY")
