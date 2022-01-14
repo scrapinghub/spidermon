@@ -14,6 +14,7 @@ def no_env_mock_module(monkeypatch):
 @pytest.fixture
 def mock_module(monkeypatch):
     monkeypatch.setenv("SHUB_JOBKEY", "123/456/789")
+    monkeypatch.setenv("SH_APIKEY", "foobar")
     monkeypatch.setattr(zyte, "ScrapinghubClient", mock.MagicMock())
     return zyte
 
