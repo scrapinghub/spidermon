@@ -556,13 +556,12 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
         max_execution_time = crawler.settings.getint(SPIDERMON_MAX_EXECUTION_TIME)
         if not max_execution_time:
             return
-        now = datetime.datetime.now()
+        now = datetime.datetime.utcnow()
         start_time = self.data.stats.get("start_time")
         if not start_time:
             return
 
-        start_dt = datetime.datetime.fromtimestamp(start_time / 1000)
-        duration = now - start_dt
+        duration = now - start_time
 
         msg = "The job has exceeded the maximum execution time"
         self.assertLess(duration.total_seconds(), max_execution_time, msg=msg)
