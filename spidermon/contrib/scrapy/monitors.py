@@ -1,16 +1,16 @@
+import datetime
+
 from spidermon import Monitor, MonitorSuite, monitors
 from spidermon.exceptions import NotConfigured
 from spidermon.utils.settings import getdictorlist
 
-from ..monitors.mixins.spider import SpiderMonitorMixin
+from ..monitors.mixins.spider import SpiderMonitorMixin, StatsMonitorMixin
 
-SPIDERMON_MIN_ITEMS = "SPIDERMON_MIN_ITEMS"
-SPIDERMON_MAX_ERRORS = "SPIDERMON_MAX_ERRORS"
-SPIDERMON_MAX_WARNINGS = "SPIDERMON_MAX_WARNINGS"
 SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
 SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT"
 SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = "SPIDERMON_MAX_ITEM_VALIDATION_ERRORS"
+SPIDERMON_MAX_EXECUTION_TIME = "SPIDERMON_MAX_EXECUTION_TIME"
 SPIDERMON_MAX_RETRIES = "SPIDERMON_MAX_RETRIES"
 SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS = "SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS"
 SPIDERMON_MIN_SUCCESSFUL_REQUESTS = "SPIDERMON_MIN_SUCCESSFUL_REQUESTS"
@@ -27,8 +27,132 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
         return super().monitor_description
 
 
+class BaseStatMonitor(BaseScrapyMonitor):
+    """Base Monitor class for stat-related monitors.
+
+    Create a monitor class inheriting from this class to have a custom
+    monitor that validates numerical stats from your job execution
+    against a configurable threshold.
+
+    As an example, we will create a new monitor that will check if the
+    value obtained in a job stat 'numerical_job_statistic' is greater than
+    or equal to the value configured in ``CUSTOM_STAT_THRESHOLD`` project
+    setting:
+
+    .. code-block:: python
+
+        class MyCustomStatMonitor(BaseStatMonitor):
+            stat_name = "numerical_job_statistic"
+            threshold_setting = "CUSTOM_STAT_THRESHOLD"
+            assert_type = ">="
+
+    For the ``assert_type`` property you can select one of the following:
+
+    ==  =====================
+    >   Greater than
+    >=  Greater than or equal
+    <   Less than
+    <=  Less than or equal
+    ==  Equal
+    !=  Not equal
+    ==  =====================
+
+    Sometimes, we don't want a fixed threshold, but a dynamic based on more than
+    one stat or getting data external from the job execution (e.g., you want the
+    threshold to be related to another stat, or you want to get the value
+    of a stat from a previous job).
+
+    As an example, the following monitor will use as threshold the a variable number
+    of errors allowed based on the number of items scraped. So this monitor will pass
+    only if the number of errors is less than 1% of the number of items scraped:
+
+    .. code-block:: python
+
+        class MyCustomStatMonitor(BaseStatMonitor):
+            stat_name = "log_count/ERROR"
+            assert_type = "<"
+
+            def get_threshold(self):
+                item_scraped_count = self.stats.get("item_scraped_count")
+                return item_scraped_count * 0.01
+
+    By default, if the stat can't be found in job statistics, the monitor will fail.
+    If you want the monitor to be skipped in that case, you should set ``fail_if_stat_missing``
+    attribute as ``False``.
+
+
+    The following monitor will not fail if the job doesn't have a ``numerical_job_statistic``
+    value in its statistics:
+
+    .. code-block:: python
+
+        class MyCustomStatMonitor(BaseStatMonitor):
+            stat_name = "numerical_job_statistic"
+            threshold_setting = "CUSTOM_STAT_THRESHOLD"
+            assert_type = ">="
+            fail_if_stat_missing = False
+    """
+
+    fail_if_stat_missing = True
+
+    def run(self, result):
+        has_threshold_config = any(
+            [hasattr(self, "threshold_setting"), hasattr(self, "get_threshold")]
+        )
+        if not has_threshold_config:
+            raise NotConfigured(
+                f"{self.__class__.__name__} should include a a `threshold_setting` attribute "
+                "to be configured in your project settings with the desired threshold "
+                "or a `get_threshold` method that returns the desired threshold."
+            )
+
+        if (
+            hasattr(self, "threshold_setting")
+            and self.threshold_setting not in self.crawler.settings.attributes
+        ):
+            raise NotConfigured(
+                f"Configure {self.threshold_setting} to your project"
+                f"settings to use {self.monitor_name}."
+            )
+
+        return super().run(result)
+
+    def _get_threshold_value(self):
+        if hasattr(self, "get_threshold"):
+            return self.get_threshold()
+        return self.crawler.settings.get(self.threshold_setting)
+
+    def test_stat_monitor(self):
+        assertions = {
+            ">": self.assertGreater,
+            ">=": self.assertGreaterEqual,
+            "<": self.assertLess,
+            "<=": self.assertLessEqual,
+            "==": self.assertEqual,
+            "!=": self.assertNotEqual,
+        }
+        threshold = self._get_threshold_value()
+
+        if self.stat_name not in self.stats:
+            message = f"Unable to find '{self.stat_name}' in job stats."
+            if self.fail_if_stat_missing:
+                self.fail(message)
+            else:
+                self.skipTest(message)
+
+        value = self.stats.get(self.stat_name)
+
+        assertion_method = assertions.get(self.assert_type)
+        assertion_method(
+            value,
+            threshold,
+            msg=f"Expecting '{self.stat_name}' to be '{self.assert_type}' "
+            f"to '{threshold}'. Current value: '{value}'",
+        )
+
+
 @monitors.name("Extracted Items Monitor")
-class ItemCountMonitor(BaseScrapyMonitor):
+class ItemCountMonitor(BaseStatMonitor):
     """Check if spider extracted the minimum number of items.
 
     You can configure it using ``SPIDERMON_MIN_ITEMS`` setting.
@@ -36,57 +160,57 @@ class ItemCountMonitor(BaseScrapyMonitor):
     monitor without setting it, it'll raise a ``NotConfigured`` exception.
     """
 
-    def run(self, result):
-        self.minimum_threshold = self.crawler.settings.getint(SPIDERMON_MIN_ITEMS, 0)
-        if not self.minimum_threshold:
-            raise NotConfigured(
-                "You should specify a minimum number of items " "to check against."
-            )
-        return super().run(result)
+    stat_name = "item_scraped_count"
+    threshold_setting = "SPIDERMON_MIN_ITEMS"
+    assert_type = ">="
 
-    @monitors.name("Should extract the minimum amount of items")
-    def test_minimum_number_of_items(self):
-        item_extracted = getattr(self.stats, "item_scraped_count", 0)
-        msg = "Extracted {} items, the expected minimum is {}".format(
-            item_extracted, self.minimum_threshold
-        )
-        self.assertTrue(item_extracted >= self.minimum_threshold, msg=msg)
+
+@monitors.name("Critical Count Monitor")
+class CriticalCountMonitor(BaseStatMonitor):
+    """Check for critical errors in the spider log.
+
+    You can configure it using ``SPIDERMON_MAX_CRITICALS`` setting.
+    There's **NO** default value for this setting, if you try to use this
+    monitor without setting it, it'll raise a ``NotConfigured`` exception.
+
+    If the job doesn't have any critical error, the monitor will be skipped."""
+
+    stat_name = "log_count/CRITICAL"
+    threshold_setting = "SPIDERMON_MAX_CRITICALS"
+    assert_type = "<="
+    fail_if_stat_missing = False
 
 
 @monitors.name("Error Count Monitor")
-class ErrorCountMonitor(BaseScrapyMonitor):
+class ErrorCountMonitor(BaseStatMonitor):
     """Check for errors in the spider log.
 
-    You can configure the expected number of ERROR log messages using
-    ``SPIDERMON_MAX_ERRORS``. The default is ``0``."""
+    You can configure it using ``SPIDERMON_MAX_ERRORS`` setting.
+    There's **NO** default value for this setting, if you try to use this
+    monitor without setting it, it'll raise a ``NotConfigured`` exception.
 
-    @monitors.name("Should not have any errors")
-    def test_max_errors_in_log(self):
-        errors_threshold = self.crawler.settings.getint(SPIDERMON_MAX_ERRORS, 0)
-        no_of_errors = self.stats.get("log_count/ERROR", 0)
-        msg = "Found {} errors in log, maximum expected is " "{}".format(
-            no_of_errors, errors_threshold
-        )
-        self.assertTrue(no_of_errors <= errors_threshold, msg=msg)
+    If the job doesn't have any error, the monitor will be skipped."""
+
+    stat_name = "log_count/ERROR"
+    threshold_setting = "SPIDERMON_MAX_ERRORS"
+    assert_type = "<="
+    fail_if_stat_missing = False
 
 
 @monitors.name("Warning Count Monitor")
-class WarningCountMonitor(BaseScrapyMonitor):
+class WarningCountMonitor(BaseStatMonitor):
     """Check for warnings in the spider log.
 
-    You can configure the expected number of WARNINGS log messages using
-    ``SPIDERMON_MAX_WARNINGS``. The default is ``-1`` which disables the monitor."""
+    You can configure it using ``SPIDERMON_MAX_WARNINGS`` setting.
+    There's **NO** default value for this setting, if you try to use this
+    monitor without setting it, it'll raise a ``NotConfigured`` exception.
 
-    @monitors.name("Should not have any warnings")
-    def test_max_errors_in_log(self):
-        warnings_threshold = self.crawler.settings.getint(SPIDERMON_MAX_WARNINGS, -1)
-        if warnings_threshold < 0:
-            return
-        no_of_warnings = self.stats.get("log_count/WARNING", 0)
-        msg = "Found {} warnings in log, maximum expected is " "{}".format(
-            no_of_warnings, warnings_threshold
-        )
-        self.assertTrue(no_of_warnings <= warnings_threshold, msg=msg)
+    If the job doesn't have any warning, the monitor will be skipped."""
+
+    stat_name = "log_count/WARNING"
+    threshold_setting = "SPIDERMON_MAX_WARNINGS"
+    assert_type = "<="
+    fail_if_stat_missing = False
 
 
 @monitors.name("Finish Reason Monitor")
@@ -374,6 +498,30 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
         self.assertTrue(len(failures) == 0, msg=msg)
 
 
+@monitors.name("Periodic execution time monitor")
+class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
+    """Check for runtime exceeding a target maximum runtime.
+
+    You can configure the maximum runtime (in seconds) using
+    ``SPIDERMON_MAX_EXECUTION_TIME`` as a project setting or spider attribute."""
+
+    @monitors.name("Maximum execution time reached")
+    def test_execution_time(self):
+        crawler = self.data.get("crawler")
+        max_execution_time = crawler.settings.getint(SPIDERMON_MAX_EXECUTION_TIME)
+        if not max_execution_time:
+            return
+        now = datetime.datetime.utcnow()
+        start_time = self.data.stats.get("start_time")
+        if not start_time:
+            return
+
+        duration = now - start_time
+
+        msg = "The job has exceeded the maximum execution time"
+        self.assertLess(duration.total_seconds(), max_execution_time, msg=msg)
+
+
 class SpiderCloseMonitorSuite(MonitorSuite):
     """This Monitor Suite implements the following monitors:
 
@@ -409,3 +557,18 @@ class SpiderCloseMonitorSuite(MonitorSuite):
         SuccessfulRequestsMonitor,
         TotalRequestsMonitor,
     ]
+
+
+class PeriodicMonitorSuite(MonitorSuite):
+    """This Monitor Suite implements the following monitors:
+
+    * :class:`PeriodicExecutionTimeMonitor`
+
+    You can easily enable this monitor *after* enabling Spidermon::
+
+            SPIDERMON_PERIODIC_MONITORS = {
+                'spidermon.contrib.scrapy.monitors.PeriodicMonitorSuite': # check time in seconds,
+            }
+    """
+
+    monitors = [PeriodicExecutionTimeMonitor]

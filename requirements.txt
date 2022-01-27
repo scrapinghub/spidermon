@@ -12,3 +12,5 @@ tox
 sentry-sdk
 black
 pytest-mock
+scrapinghub
+scrapinghub-entrypoint-scrapy
