@@ -12,7 +12,6 @@ SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COU
 SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = "SPIDERMON_MAX_ITEM_VALIDATION_ERRORS"
 SPIDERMON_MAX_EXECUTION_TIME = "SPIDERMON_MAX_EXECUTION_TIME"
 SPIDERMON_MAX_RETRIES = "SPIDERMON_MAX_RETRIES"
-SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS = "SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS"
 SPIDERMON_MIN_SUCCESSFUL_REQUESTS = "SPIDERMON_MIN_SUCCESSFUL_REQUESTS"
 SPIDERMON_MAX_REQUESTS_ALLOWED = "SPIDERMON_MAX_REQUESTS_ALLOWED"
 
@@ -302,24 +301,26 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
 
 
 @monitors.name("Downloader Exceptions monitor")
-class DownloaderExceptionMonitor(BaseScrapyMonitor):
-    """Check the amount of downloader exceptions (timeouts, rejected
-    connections, etc.).
+class DownloaderExceptionMonitor(BaseStatMonitor):
+    """This monitor checks if the amount of downloader
+    exceptions (timeouts, rejected connections, etc.) is
+    lesser or equal to a specified threshold.
 
-    You can configure it using the ``SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS`` setting.
-    The default is ``-1`` which disables the monitor.
+    This amount is provided by ``downloader/exception_count``
+    value of your job statistics. If the value is not available
+    in the statistics (i.e., no exception was raised), the monitor
+    will pass.
+
+    Configure the threshold using the ``SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS``
+    setting. There's **NO** default value for this setting.
+    If you try to use this monitor without a value specified, a
+    ``NotConfigured`` exception will be raised.
     """
 
-    @monitors.name("Should not hit the limit of downloader exceptions")
-    def test_maximum_downloader_exceptions(self):
-        exception_count = self.stats.get("downloader/exception_count", 0)
-        threshold = self.crawler.settings.getint(
-            SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS, -1
-        )
-        if threshold < 0:
-            return
-        msg = "Too many downloader exceptions ({})".format(exception_count)
-        self.assertLessEqual(exception_count, threshold, msg=msg)
+    stat_name = "downloader/exception_count"
+    threshold_setting = "SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS"
+    assert_type = "<="
+    fail_if_stat_missing = False
 
 
 @monitors.name("Retry Count monitor")
