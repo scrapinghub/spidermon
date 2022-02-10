@@ -308,7 +308,7 @@ class DownloaderExceptionMonitor(BaseStatMonitor):
     This amount is provided by ``downloader/exception_count``
     value of your job statistics. If the value is not available
     in the statistics (i.e., no exception was raised), the monitor
-    will pass.
+    will be skipped.
 
     Configure the threshold using the ``SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS``
     setting. There's **NO** default value for this setting.

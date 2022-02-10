@@ -1,8 +1,6 @@
 import pytest
 
-from spidermon.contrib.scrapy.monitors import (
-    DownloaderExceptionMonitor,
-)
+from spidermon.contrib.scrapy.monitors import DownloaderExceptionMonitor
 from spidermon import MonitorSuite
 from spidermon.exceptions import NotConfigured
 from spidermon import settings
@@ -21,6 +19,17 @@ def test_needs_to_configure_downloader_exception_monitor(
     data["crawler"].stats.set_value(DownloaderExceptionMonitor.stat_name, 10)
     with pytest.raises(NotConfigured):
         runner.run(downloader_exception_suite, **data)
+
+
+def test_skip_monitor_if_stat_not_in_job_stats(make_data, downloader_exception_suite):
+    data = make_data({DownloaderExceptionMonitor.threshold_setting: 100})
+    runner = data.pop("runner")
+    data["crawler"].stats.set_value("item_scraped_count", 10)
+
+    runner.run(downloader_exception_suite, **data)
+
+    assert len(runner.result.monitor_results) == 1
+    assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.SKIPPED
 
 
 @pytest.mark.parametrize(
