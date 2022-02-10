@@ -109,7 +109,7 @@ class BaseStatMonitor(BaseScrapyMonitor):
             and self.threshold_setting not in self.crawler.settings.attributes
         ):
             raise NotConfigured(
-                f"Configure {self.threshold_setting} to your project"
+                f"Configure {self.threshold_setting} to your project "
                 f"settings to use {self.monitor_name}."
             )
 
