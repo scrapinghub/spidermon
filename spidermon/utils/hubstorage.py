@@ -5,9 +5,6 @@ import os
 from codecs import decode
 
 
-from scrapinghub import HubstorageClient
-
-
 class _Hubstorage:
     def __init__(self):
         self.available = "SHUB_JOBKEY" in os.environ
@@ -46,6 +43,8 @@ class _Hubstorage:
 
     @property
     def client(self):
+        from scrapinghub import HubstorageClient
+
         if self._client is None:
             self._client = HubstorageClient(endpoint=self.endpoint, auth=self.auth)
         return self._client
