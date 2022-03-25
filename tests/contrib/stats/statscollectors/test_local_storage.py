@@ -5,7 +5,9 @@ import pytest
 
 from scrapy import Spider
 from scrapy.utils.test import get_crawler
-from spidermon.contrib.stats.statscollectors import LocalStorageStatsHistoryCollector
+from spidermon.contrib.stats.statscollectors.local_storage import (
+    LocalStorageStatsHistoryCollector,
+)
 
 
 @pytest.fixture
@@ -21,7 +23,7 @@ def stats_temporary_location(monkeypatch, tmp_path):
 def test_settings():
     return {
         "STATS_CLASS": (
-            "spidermon.contrib.stats.statscollectors.LocalStorageStatsHistoryCollector"
+            "spidermon.contrib.stats.statscollectors.local_storage.LocalStorageStatsHistoryCollector"
         )
     }
 
@@ -126,3 +128,25 @@ def test_spider_limit_number_of_stored_stats(test_settings, stats_temporary_loca
     assert "third_execution" in crawler.spider.stats_history[0].keys()
     assert "second_execution" in crawler.spider.stats_history[1].keys()
     crawler.stop()
+
+
+def test_able_to_import_deprecated_local_storage_stats_collector_module():
+    """
+    To avoid an error when importing this stats collector with the old location
+    in legacy code, we need to ensure that LocalStorageStatsHistoryCollector can
+    be imported as the old module.
+
+    Original module:
+    spidermon.contrib.stats.statscollectors.LocalStorageStatsHistoryCollector
+
+    New module:
+    spidermon.contrib.stats.statscollectors.local_storage.LocalStorageStatsHistoryCollector
+    """
+    try:
+        from spidermon.contrib.stats.statscollectors import (
+            LocalStorageStatsHistoryCollector,
+        )
+    except ModuleNotFoundError:
+        assert (
+            False
+        ), f"Unable to import spidermon.contrib.stats.statscollectors.LocalStorageStatsHistoryCollector"
