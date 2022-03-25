@@ -22,7 +22,7 @@ To enable it, include the following code in your project settings:
 
     # tutorial/settings.py
     STATS_CLASS = (
-        "spidermon.contrib.stats.statscollectors.LocalStorageStatsHistoryCollector"
+        "spidermon.contrib.stats.statscollectors.local_storage.LocalStorageStatsHistoryCollector"
     )
 
     # Stores the stats of the last 10 spider execution (default=100)
@@ -70,12 +70,12 @@ returned in the previous spider executions.
     class SpiderCloseMonitorSuite(MonitorSuite):
         monitors = [HistoryMonitor]
 
-When running on `Scrapy Cloud`_ you can use ``spidermon.contrib.stats.statscollectors.DashCollectionsStatsHistoryCollector`` instead.
+When running on `Scrapy Cloud`_ you can use ``spidermon.contrib.stats.statscollectors.sc_collections.ScrapyCloudCollectionsStatsHistoryCollector`` instead.
 This will save your stats in a `collection`_ on your scrapy dashboard, named like ``{your_spider_name}_stats_history``. The rest of the sample code presented previously will work unchanged.
 
 
 .. warning::
-    `STATS_CLASS`_ is overriden by default in `Scrapy Cloud`_. You need to manually include ``spidermon.contrib.stats.statscollectors.DashCollectionsStatsHistoryCollector`` in your `spider settings`_.
+    `STATS_CLASS`_ is overriden by default in `Scrapy Cloud`_. You need to manually include ``spidermon.contrib.stats.statscollectors.sc_collections.DashCollectionsStatsHistoryCollector`` in your `spider settings`_.
 
 .. _`STATS_CLASS`: https://docs.scrapy.org/en/latest/topics/settings.html#stats-class
 .. _`spider settings`: https://support.zyte.com/support/solutions/articles/22000200670-customizing-scrapy-settings-in-scrapy-cloud
