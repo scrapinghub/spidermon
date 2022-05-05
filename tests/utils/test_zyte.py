@@ -26,6 +26,9 @@ def test_client_creation_no_env(no_env_mock_module):
     assert client.spider_id == None
     assert client.job_id == None
 
+    with pytest.raises(RuntimeError):
+        client._apikey()
+
 
 def test_client_creation(mock_module):
     client = mock_module.Client()
@@ -74,3 +77,15 @@ def test_client_close(mock_module):
     client.client
     client.close()
     client._client.close.assert_called()
+
+
+@pytest.mark.parametrize("expected", [False, True])
+def test_has_client(monkeypatch, expected):
+    import sys
+    from importlib import reload
+
+    if not expected:
+        monkeypatch.setitem(sys.modules, "scrapinghub", None)
+
+    reload(zyte)
+    assert zyte.HAS_CLIENT == expected
