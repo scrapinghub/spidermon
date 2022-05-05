@@ -171,7 +171,7 @@ class Spidermon:
             runner.run(suite, **data)
 
     def _generate_data_for_spider(self, spider):
-        from spidermon.utils.zyte import client as hs
+        from spidermon.utils.zyte import client
 
         return {
             "stats": self.crawler.stats.get_stats(spider),
@@ -180,5 +180,5 @@ class Spidermon:
             else [],
             "crawler": self.crawler,
             "spider": spider,
-            "job": hs.job if hs.available else None,
+            "job": client.job if client.available else None,
         }
