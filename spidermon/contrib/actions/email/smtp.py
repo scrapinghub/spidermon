@@ -57,4 +57,6 @@ class SendSmtpEmail(SendEmail):
 
         server = MailSender(self.smtp_host, self.sender, self.smtp_user, self.smtp_password,
                             self.smtp_port, smtpssl=self.smtp_ssl)
-        server.send(to=self.to, subject=message["Subject"], body=message.as_string(), cc=self.cc)
+        server.send(
+            to=self.to, subject=message["Subject"], body=message.as_string(), cc=self.cc
+        )
