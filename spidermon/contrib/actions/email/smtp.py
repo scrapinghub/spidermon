@@ -46,7 +46,7 @@ class SendSmtpEmail(SendEmail):
         )
         return kwargs
 
-    def send_message(self, message):
+    def send_message(self, message, **kwargs):
         if not self.sender:
             raise NotConfigured("You must provide the sender.")
         if not self.to:
@@ -56,7 +56,11 @@ class SendSmtpEmail(SendEmail):
             return
 
         server = MailSender(self.smtp_host, self.sender, self.smtp_user, self.smtp_password,
-                            self.smtp_port, smtpssl=self.smtp_ssl)
+                            self.smtp_port, smtpssl=self.smtp_ssl, debug=bool(kwargs.get('debug')))
         server.send(
-            to=self.to, subject=message["Subject"], body=message.as_string(), cc=self.cc
+            to=self.to,
+            subject=message["Subject"],
+            body=message.as_string(),
+            cc=self.cc,
+            _callback=kwargs.get('_callback'),
         )

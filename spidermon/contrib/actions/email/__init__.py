@@ -161,5 +161,5 @@ class SendEmail(ActionWithTemplates):
 
         return message
 
-    def send_message(self, message):
+    def send_message(self, message, **kwargs):
         raise NotImplementedError
