@@ -1,0 +1,19 @@
+{% macro render_result(emoji, result) %}
+{{ emoji }}  {{ result.monitor.name }}
+{% endmacro %}
+
+{% macro render_results(emoji, results) %}
+{% for result in results %} {{- render_result(emoji, result) -}} {% endfor %}
+{% endmacro %}
+
+{% macro render_passed() %}
+{{- render_results("✔️", result.monitors_passed_results) -}}
+{% endmacro %}
+
+{% macro render_failed() %}
+{{ render_results("❌", result.monitors_failed_results) }}
+{% endmacro %}
+
+{% macro render_job_url() %}{% if data.job %} / [view job in Scrapy Cloud](https://app.scrapinghub.com/p/{{ data.job.key }}){% endif %}{% endmacro %}
+{% macro render_url() %}{{ render_job_url() }}{% endmacro %}
+{% macro render_spider_name() %}{% if data.spider %}{{ data.spider.name }}{% elif data.job %}{{ data.job.metadata['spider'] }}{% else %}??{% endif %}{% endmacro %}

@@ -82,7 +82,7 @@ Ready to contribute? Here's how to set up `spidermon` for local development.
    including testing other Python versions with tox::
 
     $ pip install -r requirements.txt
-    $ pip install -r requirements-test.txt
+    $ pip install -r requirements-docs.txt
     $ tox
 
 #. Make sure that your code is correctly formatted using `black`_ . No code will

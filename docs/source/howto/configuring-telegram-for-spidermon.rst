@@ -9,7 +9,7 @@ What are bots?
 A bot is a type of Telegram user designed to interact with users via conversation.
 
 To work with :doc:`Telegram Actions </actions/telegram-action>`, you will need a Telegram bot which would
-send notificationsto Telegram from Spidermon.
+send notifications to Telegram from Spidermon.
 
 Steps
 -----

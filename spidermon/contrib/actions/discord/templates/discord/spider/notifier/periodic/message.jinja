@@ -1,0 +1,12 @@
+{% import 'discord/spider/notifier/macros.jinja' as renderer with context %}
+{{ "💀" }} "`{{ renderer.render_spider_name() }}`" Detected errors on running spider!{{ renderer.render_job_url() }} _(errors={{ result.monitors_failed_results|length }})_ {{ "\n\n" }}
+{%- if include_ok_messages and monitors_passed -%}
+```
+{{ renderer.render_passed() -}}
+```
+{% endif %}
+{%- if include_error_messages and monitors_failed -%}
+```
+{{ renderer.render_failed() -}}
+```
+{% endif %}
