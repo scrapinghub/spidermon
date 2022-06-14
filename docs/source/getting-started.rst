@@ -269,7 +269,7 @@ If a monitor fails, the recipients provided will receive a message in Telegram:
    :alt: Telegram Notification
 
 Discord notifications
-----------------------
+---------------------
 
 Here we will configure a built-in Spidermon action that sends a pre-defined message to
 a Discord channel using a bot when a monitor fails.
@@ -298,7 +298,7 @@ Later, fill the required information in your `settings.py` as follows:
 
     # tutorial/settings.py
     (...)
-    SPIDERMON_DISCORD_WEBHOOK_URL = '<DISCORD_WEBHOOK_URL>'
+    SPIDERMON_DISCORD_WEBHOOK_URL = "<DISCORD_WEBHOOK_URL>"
 
 If a monitor fails, the recipients provided will receive a message in Discord:
 

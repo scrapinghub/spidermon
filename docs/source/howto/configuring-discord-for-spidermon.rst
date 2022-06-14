@@ -1,7 +1,7 @@
 .. _configuring-discord-bot:
 
 How do I configure a Discord bot for Spidermon?
-================================================
+===============================================
 
 What are bots?
 --------------
@@ -23,4 +23,4 @@ Steps
 .. code-block:: python
 
     # settings.py
-    SPIDERMON_DISCORD_WEBHOOK_URL = 'DISCORD_WEBHOOK_URL'
+    SPIDERMON_DISCORD_WEBHOOK_URL = "DISCORD_WEBHOOK_URL"
