@@ -19,9 +19,7 @@ SPIDERMON_VALIDATION_MODELS = ("tutorial.validators.QuoteItem",)
 
 SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS = True
 
-STATS_CLASS = (
-    "spidermon.contrib.stats.statscollectors.LocalStorageStatsHistoryCollector"
-)
+STATS_CLASS = "spidermon.contrib.stats.statscollectors.local_storage.LocalStorageStatsHistoryCollector"
 
 SPIDERMON_MAX_STORED_STATS = 10  # Stores the stats of the last 10 spider execution
 

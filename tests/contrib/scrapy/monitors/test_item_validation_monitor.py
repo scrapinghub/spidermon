@@ -1,32 +1,30 @@
 import pytest
 
-from spidermon.contrib.scrapy.monitors import DownloaderExceptionMonitor
+from spidermon.contrib.scrapy.monitors import ItemValidationMonitor
 from spidermon import MonitorSuite
 from spidermon.exceptions import NotConfigured
 from spidermon import settings
 
 
 @pytest.fixture
-def downloader_exception_suite():
-    return MonitorSuite(monitors=[DownloaderExceptionMonitor])
+def item_validation_suite():
+    return MonitorSuite(monitors=[ItemValidationMonitor])
 
 
-def test_needs_to_configure_downloader_exception_monitor(
-    make_data, downloader_exception_suite
-):
+def test_needs_to_configure_item_validation_monitor(make_data, item_validation_suite):
     data = make_data()
     runner = data.pop("runner")
-    data["crawler"].stats.set_value(DownloaderExceptionMonitor.stat_name, 10)
+    data["crawler"].stats.set_value(ItemValidationMonitor.stat_name, 10)
     with pytest.raises(NotConfigured):
-        runner.run(downloader_exception_suite, **data)
+        runner.run(item_validation_suite, **data)
 
 
-def test_skip_monitor_if_stat_not_in_job_stats(make_data, downloader_exception_suite):
-    data = make_data({DownloaderExceptionMonitor.threshold_setting: 100})
+def test_skip_monitor_if_stat_not_in_job_stats(make_data, item_validation_suite):
+    data = make_data({ItemValidationMonitor.threshold_setting: 100})
     runner = data.pop("runner")
     data["crawler"].stats.set_value("item_scraped_count", 10)
 
-    runner.run(downloader_exception_suite, **data)
+    runner.run(item_validation_suite, **data)
 
     assert len(runner.result.monitor_results) == 1
     assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.SKIPPED
@@ -41,17 +39,18 @@ def test_skip_monitor_if_stat_not_in_job_stats(make_data, downloader_exception_s
         (100, 100, settings.MONITOR.STATUS.SUCCESS),
         (101, 100, settings.MONITOR.STATUS.FAILURE),
         (1000, 1, settings.MONITOR.STATUS.FAILURE),
+        (1, 0, settings.MONITOR.STATUS.FAILURE),
     ],
 )
-def test_downloader_exception_monitor_validation(
-    make_data, downloader_exception_suite, value, threshold, expected_status
+def test_item_validation_monitor_validation(
+    make_data, item_validation_suite, value, threshold, expected_status
 ):
-    data = make_data({DownloaderExceptionMonitor.threshold_setting: threshold})
+    data = make_data({ItemValidationMonitor.threshold_setting: threshold})
     runner = data.pop("runner")
 
-    data["stats"][DownloaderExceptionMonitor.stat_name] = value
+    data["stats"][ItemValidationMonitor.stat_name] = value
 
-    runner.run(downloader_exception_suite, **data)
+    runner.run(item_validation_suite, **data)
 
     assert len(runner.result.monitor_results) == 1
     assert runner.result.monitor_results[0].status == expected_status

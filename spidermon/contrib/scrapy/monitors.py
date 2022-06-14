@@ -9,10 +9,8 @@ from ..monitors.mixins.spider import SpiderMonitorMixin, StatsMonitorMixin
 SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
 SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT = "SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT"
-SPIDERMON_MAX_ITEM_VALIDATION_ERRORS = "SPIDERMON_MAX_ITEM_VALIDATION_ERRORS"
 SPIDERMON_MAX_EXECUTION_TIME = "SPIDERMON_MAX_EXECUTION_TIME"
 SPIDERMON_MAX_RETRIES = "SPIDERMON_MAX_RETRIES"
-SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS = "SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS"
 SPIDERMON_MIN_SUCCESSFUL_REQUESTS = "SPIDERMON_MIN_SUCCESSFUL_REQUESTS"
 SPIDERMON_MAX_REQUESTS_ALLOWED = "SPIDERMON_MAX_REQUESTS_ALLOWED"
 
@@ -111,7 +109,7 @@ class BaseStatMonitor(BaseScrapyMonitor):
             and self.threshold_setting not in self.crawler.settings.attributes
         ):
             raise NotConfigured(
-                f"Configure {self.threshold_setting} to your project"
+                f"Configure {self.threshold_setting} to your project "
                 f"settings to use {self.monitor_name}."
             )
 
@@ -302,24 +300,26 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
 
 
 @monitors.name("Downloader Exceptions monitor")
-class DownloaderExceptionMonitor(BaseScrapyMonitor):
-    """Check the amount of downloader exceptions (timeouts, rejected
-    connections, etc.).
+class DownloaderExceptionMonitor(BaseStatMonitor):
+    """This monitor checks if the amount of downloader
+    exceptions (timeouts, rejected connections, etc.) is
+    lesser or equal to a specified threshold.
 
-    You can configure it using the ``SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS`` setting.
-    The default is ``-1`` which disables the monitor.
+    This amount is provided by ``downloader/exception_count``
+    value of your job statistics. If the value is not available
+    in the statistics (i.e., no exception was raised), the monitor
+    will be skipped.
+
+    Configure the threshold using the ``SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS``
+    setting. There's **NO** default value for this setting.
+    If you try to use this monitor without a value specified, a
+    ``NotConfigured`` exception will be raised.
     """
 
-    @monitors.name("Should not hit the limit of downloader exceptions")
-    def test_maximum_downloader_exceptions(self):
-        exception_count = self.stats.get("downloader/exception_count", 0)
-        threshold = self.crawler.settings.getint(
-            SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS, -1
-        )
-        if threshold < 0:
-            return
-        msg = "Too many downloader exceptions ({})".format(exception_count)
-        self.assertLessEqual(exception_count, threshold, msg=msg)
+    stat_name = "downloader/exception_count"
+    threshold_setting = "SPIDERMON_MAX_DOWNLOADER_EXCEPTIONS"
+    assert_type = "<="
+    fail_if_stat_missing = False
 
 
 @monitors.name("Retry Count monitor")
@@ -379,22 +379,30 @@ class TotalRequestsMonitor(BaseScrapyMonitor):
 
 
 @monitors.name("Item Validation Monitor")
-class ItemValidationMonitor(BaseScrapyMonitor):
-    """Check for item validation errors if item validation pipelines are enabled.
+class ItemValidationMonitor(BaseStatMonitor):
+    """This monitor checks if the amount of validation errors
+    is lesser or equal to a specified threshold.
 
-    You can configure the maximum number of item validation errors using
-    ``SPIDERMON_MAX_ITEM_VALIDATION_ERRORS``. The default is ``0``."""
+    This amount is provided by ``spidermon/validation/fields/errors``
+    value of your job statistics. If the value is not available
+    in the statistics (i.e., no validation errors), the monitor
+    will be skipped.
 
-    @monitors.name("Should not have more item validation errors than configured.")
-    def test_verify_item_validation_error(self):
-        errors_threshold = self.crawler.settings.getint(
-            SPIDERMON_MAX_ITEM_VALIDATION_ERRORS, 0
-        )
-        item_validation_errors = self.stats.get("spidermon/validation/fields/errors", 0)
-        msg = "Found {} item validation error. Max allowed is {}.".format(
-            item_validation_errors, errors_threshold
-        )
-        self.assertTrue(item_validation_errors <= errors_threshold, msg=msg)
+    .. warning::
+
+       You need to enable item validation in your project so
+       this monitor can be used.
+
+    Configure the threshold using the ``SPIDERMON_MAX_ITEM_VALIDATION_ERRORS``
+    setting. There's **NO** default value for this setting.
+    If you try to use this monitor without a value specified, a
+    ``NotConfigured`` exception will be raised.
+    """
+
+    stat_name = "spidermon/validation/fields/errors"
+    threshold_setting = "SPIDERMON_MAX_ITEM_VALIDATION_ERRORS"
+    assert_type = "<="
+    fail_if_stat_missing = False
 
 
 @monitors.name("Field Coverage Monitor")
@@ -511,13 +519,12 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
         max_execution_time = crawler.settings.getint(SPIDERMON_MAX_EXECUTION_TIME)
         if not max_execution_time:
             return
-        now = datetime.datetime.now()
+        now = datetime.datetime.utcnow()
         start_time = self.data.stats.get("start_time")
         if not start_time:
             return
 
-        start_dt = datetime.datetime.fromtimestamp(start_time / 1000)
-        duration = now - start_dt
+        duration = now - start_time
 
         msg = "The job has exceeded the maximum execution time"
         self.assertLess(duration.total_seconds(), max_execution_time, msg=msg)

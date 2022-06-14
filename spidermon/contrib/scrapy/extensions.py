@@ -8,7 +8,6 @@ from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 from spidermon.python import factory
 from spidermon.python.monitors import ExpressionsMonitor
 from spidermon.utils.field_coverage import calculate_field_coverage
-from spidermon.utils.hubstorage import hs
 
 
 class Spidermon:
@@ -172,6 +171,8 @@ class Spidermon:
             runner.run(suite, **data)
 
     def _generate_data_for_spider(self, spider):
+        from spidermon.utils.zyte import client
+
         return {
             "stats": self.crawler.stats.get_stats(spider),
             "stats_history": spider.stats_history
@@ -179,5 +180,5 @@ class Spidermon:
             else [],
             "crawler": self.crawler,
             "spider": spider,
-            "job": hs.job if hs.available else None,
+            "job": client.job if client.available else None,
         }
