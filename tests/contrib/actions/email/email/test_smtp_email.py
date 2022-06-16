@@ -2,6 +2,7 @@ import pytest
 from scrapy.utils.test import get_crawler
 
 from spidermon.contrib.actions.email.smtp import SendSmtpEmail
+from spidermon.exceptions import NotConfigured
 
 
 sent_subject = None
@@ -164,6 +165,59 @@ def test_email_sent(mock_render_template, settings_subject, expected_subject):
     send_email.send_message(send_email.get_message(), debug=True, _callback=_catch_mail_sent)
     assert sent_subject == expected_subject
 
+
+def test_fail_if_no_smtp_host():
+    crawler = get_crawler(
+        settings_dict={
+            "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
+            "SPIDERMON_EMAIL_TO": "to.someone@somewhere.com",
+            "SPIDERMON_EMAIL_SUBJECT": "HERE IS THE TITLE",
+            "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
+            "SPIDERMON_BODY_HTML": "some html",
+            "SPIDERMON_BODY_TEXT": "some text",
+            "SPIDERMON_SMTP_PORT": 8080,
+            "SPIDERMON_SMTP_USER": "test_user",
+            "SPIDERMON_SMTP_PASSWORD": "test_password",
+        }
+    )
+    with pytest.raises(NotConfigured):
+        SendSmtpEmail.from_crawler(crawler)
+
+
+def test_fail_if_no_smtp_user():
+    crawler = get_crawler(
+        settings_dict={
+            "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
+            "SPIDERMON_EMAIL_TO": "to.someone@somewhere.com",
+            "SPIDERMON_EMAIL_SUBJECT": "HERE IS THE TITLE",
+            "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
+            "SPIDERMON_BODY_HTML": "some html",
+            "SPIDERMON_BODY_TEXT": "some text",
+            "SPIDERMON_SMTP_HOST": "localhost",
+            "SPIDERMON_SMTP_PORT": 8080,
+            "SPIDERMON_SMTP_PASSWORD": "test_password",
+        }
+    )
+    with pytest.raises(NotConfigured):
+        SendSmtpEmail.from_crawler(crawler)
+
+
+def test_fail_if_no_smtp_password():
+    crawler = get_crawler(
+        settings_dict={
+            "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
+            "SPIDERMON_EMAIL_TO": "to.someone@somewhere.com",
+            "SPIDERMON_EMAIL_SUBJECT": "HERE IS THE TITLE",
+            "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
+            "SPIDERMON_BODY_HTML": "some html",
+            "SPIDERMON_BODY_TEXT": "some text",
+            "SPIDERMON_SMTP_HOST": "localhost",
+            "SPIDERMON_SMTP_PORT": 8080,
+            "SPIDERMON_SMTP_USER": "test_user",
+        }
+    )
+    with pytest.raises(NotConfigured):
+        SendSmtpEmail.from_crawler(crawler)
 
 def _catch_mail_sent(to, subject, body, cc, attach, msg):
     global sent_subject
