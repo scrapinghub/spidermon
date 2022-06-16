@@ -162,7 +162,11 @@ def test_email_sent(mock_render_template, settings_subject, expected_subject):
         }
     )
     send_email = SendSmtpEmail.from_crawler(crawler)
-    send_email.send_message(send_email.get_message(), debug=True, _callback=_catch_mail_sent)
+    send_email.send_message(
+        send_email.get_message(),
+        debug=True,
+        _callback=_catch_mail_sent
+    )
     assert sent_subject == expected_subject
 
 
@@ -218,6 +222,7 @@ def test_fail_if_no_smtp_password():
     )
     with pytest.raises(NotConfigured):
         SendSmtpEmail.from_crawler(crawler)
+
 
 def _catch_mail_sent(to, subject, body, cc, attach, msg):
     global sent_subject

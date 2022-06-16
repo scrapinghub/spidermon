@@ -5,6 +5,7 @@ from scrapy.mail import MailSender
 
 from . import SendEmail
 
+
 class SendSmtpEmail(SendEmail):
     def __init__(
             self,
@@ -38,7 +39,8 @@ class SendSmtpEmail(SendEmail):
                 "smtp_host": crawler.settings.get("SPIDERMON_SMTP_HOST"),
                 "smtp_port": crawler.settings.getint("SPIDERMON_SMTP_PORT"),
                 "smtp_user": crawler.settings.get("SPIDERMON_SMTP_USER"),
-                "smtp_password": crawler.settings.get("SPIDERMON_SMTP_PASSWORD"),
+                "smtp_password":
+                    crawler.settings.get("SPIDERMON_SMTP_PASSWORD"),
                 "smtp_ssl": crawler.settings.getbool("SPIDERMON_SMTP_SSL")
             }
         )
@@ -51,8 +53,16 @@ class SendSmtpEmail(SendEmail):
         if not self.sender or not self.to:
             return
 
-        server = MailSender(self.smtp_host, self.sender, self.smtp_user, self.smtp_password,
-                            self.smtp_port, smtpssl=self.smtp_ssl, debug=bool(kwargs.get('debug')))
+        server = MailSender(
+            self.smtp_host,
+            self.sender,
+            self.smtp_user,
+            self.smtp_password,
+            self.smtp_port,
+            smtpssl=self.smtp_ssl,
+            debug=bool(kwargs.get('debug'))
+        )
+
         server.send(
             to=self.to,
             subject=message["Subject"],
