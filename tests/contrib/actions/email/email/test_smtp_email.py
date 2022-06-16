@@ -163,9 +163,7 @@ def test_email_sent(mock_render_template, settings_subject, expected_subject):
     )
     send_email = SendSmtpEmail.from_crawler(crawler)
     send_email.send_message(
-        send_email.get_message(),
-        debug=True,
-        _callback=_catch_mail_sent
+        send_email.get_message(), debug=True, _callback=_catch_mail_sent
     )
     assert sent_subject == expected_subject
 

@@ -8,14 +8,14 @@ from . import SendEmail
 
 class SendSmtpEmail(SendEmail):
     def __init__(
-            self,
-            smtp_host=None,
-            smtp_port=25,
-            smtp_user=None,
-            smtp_password=None,
-            smtp_ssl=False,
-            *args,
-            **kwargs
+        self,
+        smtp_host=None,
+        smtp_port=25,
+        smtp_user=None,
+        smtp_password=None,
+        smtp_ssl=False,
+        *args,
+        **kwargs
     ):
         super(SendSmtpEmail, self).__init__(*args, **kwargs)
         self.smtp_host = smtp_host
@@ -39,9 +39,8 @@ class SendSmtpEmail(SendEmail):
                 "smtp_host": crawler.settings.get("SPIDERMON_SMTP_HOST"),
                 "smtp_port": crawler.settings.getint("SPIDERMON_SMTP_PORT"),
                 "smtp_user": crawler.settings.get("SPIDERMON_SMTP_USER"),
-                "smtp_password":
-                    crawler.settings.get("SPIDERMON_SMTP_PASSWORD"),
-                "smtp_ssl": crawler.settings.getbool("SPIDERMON_SMTP_SSL")
+                "smtp_password": crawler.settings.get("SPIDERMON_SMTP_PASSWORD"),
+                "smtp_ssl": crawler.settings.getbool("SPIDERMON_SMTP_SSL"),
             }
         )
         return kwargs
@@ -60,7 +59,7 @@ class SendSmtpEmail(SendEmail):
             self.smtp_password,
             self.smtp_port,
             smtpssl=self.smtp_ssl,
-            debug=bool(kwargs.get('debug'))
+            debug=bool(kwargs.get("debug")),
         )
 
         server.send(
@@ -68,5 +67,5 @@ class SendSmtpEmail(SendEmail):
             subject=message["Subject"],
             body=message.as_string(),
             cc=self.cc,
-            _callback=kwargs.get('_callback'),
+            _callback=kwargs.get("_callback"),
         )
