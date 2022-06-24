@@ -25,11 +25,17 @@ class SendSmtpEmail(SendEmail):
         self.smtp_ssl = smtp_ssl
 
         if not self.fake and not self.smtp_host:
-            raise NotConfigured("YOU MUST PROVIDE THE SMTP HOST.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_SMTP_HOST setting."
+            )
         if not self.fake and not self.smtp_user:
-            raise NotConfigured("YOU MUST PROVIDE THE SMTP USER.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_SMTP_USER setting."
+            )
         if not self.fake and not self.smtp_password:
-            raise NotConfigured("YOU MUST PROVIDE THE SMTP PASSWORD.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_SMTP_PASSWORD setting."
+            )
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
@@ -47,7 +53,9 @@ class SendSmtpEmail(SendEmail):
 
     def send_message(self, message, **kwargs):
         if not self.sender:
-            raise NotConfigured("You must provide the sender.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_EMAIL_SENDER setting."
+            )
 
         if not self.sender or not self.to:
             return
