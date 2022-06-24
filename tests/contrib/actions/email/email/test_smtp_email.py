@@ -1,7 +1,11 @@
 import pytest
 from scrapy.utils.test import get_crawler
 
-from spidermon.contrib.actions.email.smtp import SendSmtpEmail
+from spidermon.contrib.actions.email.smtp import (
+    SendSmtpEmail,
+    DEFAULT_SMTP_PORT,
+    DEFAULT_SMTP_ENFORCE_SSL,
+)
 from spidermon.exceptions import NotConfigured
 
 
@@ -14,6 +18,58 @@ def mock_render_template(mocker):
     mocker.patch.object(SendSmtpEmail, "get_subject", lambda s: s.subject)
     mocker.patch.object(SendSmtpEmail, "get_body_text", lambda s: s.body_text)
     mocker.patch.object(SendSmtpEmail, "get_body_html", lambda s: s.body_html)
+
+
+@pytest.fixture
+def smtp_action_settings():
+    return {
+        "SPIDERMON_SMTP_HOST": "smtp.example.com",
+        "SPIDERMON_SMTP_USER": "smtp_user",
+        "SPIDERMON_SMTP_PASSWORD": "smtp_password",
+        "SPIDERMON_SMTP_PORT": DEFAULT_SMTP_PORT,
+        "SPIDERMON_SMTP_ENFORCE_SSL": DEFAULT_SMTP_ENFORCE_SSL,
+        "SPIDERMON_EMAIL_SENDER": "from@email.xom",
+        "SPIDERMON_EMAIL_TO": "to@example.com",
+        "SPIDERMON_EMAIL_SUBJECT": "Email Subject",
+        "SPIDERMON_EMAIL_REPLY_TO": "reply.to@example.com",
+        "SPIDERMON_BODY_HTML": "some html",
+        "SPIDERMON_BODY_TEXT": "some text",
+        "SPIDERMON_EMAIL_FAKE": False,
+    }
+
+
+def test_use_default_smtp_port_if_not_provided(smtp_action_settings):
+    del smtp_action_settings["SPIDERMON_SMTP_PORT"]
+    crawler = get_crawler(settings_dict=smtp_action_settings)
+    send_smtp_email_action = SendSmtpEmail.from_crawler(crawler)
+
+    assert send_smtp_email_action.smtp_port == DEFAULT_SMTP_PORT
+
+
+def test_use_configured_smtp_port_when_provided(smtp_action_settings):
+    smtp_action_settings["SPIDERMON_SMTP_PORT"] = 465
+    crawler = get_crawler(settings_dict=smtp_action_settings)
+    send_smtp_email_action = SendSmtpEmail.from_crawler(crawler)
+
+    assert send_smtp_email_action.smtp_port == 465
+
+
+def test_use_default_smtp_enforce_ssl_if_not_provided(smtp_action_settings):
+    del smtp_action_settings["SPIDERMON_SMTP_ENFORCE_SSL"]
+    crawler = get_crawler(settings_dict=smtp_action_settings)
+    send_smtp_email_action = SendSmtpEmail.from_crawler(crawler)
+
+    assert send_smtp_email_action.smtp_enforce_ssl == DEFAULT_SMTP_ENFORCE_SSL
+
+
+def test_use_configured_smtp_enforce_ssl_when_provided(smtp_action_settings):
+    not_default_smtp_enforce_ssl = not DEFAULT_SMTP_ENFORCE_SSL
+
+    smtp_action_settings["SPIDERMON_SMTP_ENFORCE_SSL"] = not_default_smtp_enforce_ssl
+    crawler = get_crawler(settings_dict=smtp_action_settings)
+    send_smtp_email_action = SendSmtpEmail.from_crawler(crawler)
+
+    assert send_smtp_email_action.smtp_enforce_ssl == not_default_smtp_enforce_ssl
 
 
 @pytest.mark.parametrize(
