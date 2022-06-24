@@ -24,15 +24,15 @@ class SendSmtpEmail(SendEmail):
         self.smtp_password = smtp_password
         self.smtp_ssl = smtp_ssl
 
-        if not self.fake and not self.smtp_host:
+        if not self.smtp_host:
             raise NotConfigured(
                 "You must provide a value for SPIDERMON_SMTP_HOST setting."
             )
-        if not self.fake and not self.smtp_user:
+        if not self.smtp_user:
             raise NotConfigured(
                 "You must provide a value for SPIDERMON_SMTP_USER setting."
             )
-        if not self.fake and not self.smtp_password:
+        if not self.smtp_password:
             raise NotConfigured(
                 "You must provide a value for SPIDERMON_SMTP_PASSWORD setting."
             )
