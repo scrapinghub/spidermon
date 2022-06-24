@@ -168,56 +168,32 @@ def test_email_sent(mock_render_template, settings_subject, expected_subject):
     assert sent_subject == expected_subject
 
 
-def test_fail_if_no_smtp_host():
-    crawler = get_crawler(
-        settings_dict={
-            "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
-            "SPIDERMON_EMAIL_TO": "to.someone@somewhere.com",
-            "SPIDERMON_EMAIL_SUBJECT": "HERE IS THE TITLE",
-            "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
-            "SPIDERMON_BODY_HTML": "some html",
-            "SPIDERMON_BODY_TEXT": "some text",
-            "SPIDERMON_SMTP_PORT": 8080,
-            "SPIDERMON_SMTP_USER": "test_user",
-            "SPIDERMON_SMTP_PASSWORD": "test_password",
-        }
-    )
-    with pytest.raises(NotConfigured):
-        SendSmtpEmail.from_crawler(crawler)
+@pytest.mark.parametrize(
+    "missing_setting",
+    [
+        "SPIDERMON_SMTP_HOST",
+        "SPIDERMON_SMTP_USER",
+        "SPIDERMON_SMTP_PASSWORD",
+    ],
+)
+def test_raise_not_configured_if_required_setting_not_provided(missing_setting):
+    settings = {
+        "SPIDERMON_SMTP_HOST": "localhost",
+        "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
+        "SPIDERMON_EMAIL_TO": "to.someone@somewhere.com",
+        "SPIDERMON_EMAIL_SUBJECT": "HERE IS THE TITLE",
+        "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
+        "SPIDERMON_BODY_HTML": "some html",
+        "SPIDERMON_BODY_TEXT": "some text",
+        "SPIDERMON_SMTP_PORT": 8080,
+        "SPIDERMON_SMTP_USER": "test_user",
+        "SPIDERMON_SMTP_PASSWORD": "test_password",
+    }
 
+    # Remove requred setting so we can test if exception is raised
+    del settings[missing_setting]
 
-def test_fail_if_no_smtp_user():
-    crawler = get_crawler(
-        settings_dict={
-            "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
-            "SPIDERMON_EMAIL_TO": "to.someone@somewhere.com",
-            "SPIDERMON_EMAIL_SUBJECT": "HERE IS THE TITLE",
-            "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
-            "SPIDERMON_BODY_HTML": "some html",
-            "SPIDERMON_BODY_TEXT": "some text",
-            "SPIDERMON_SMTP_HOST": "localhost",
-            "SPIDERMON_SMTP_PORT": 8080,
-            "SPIDERMON_SMTP_PASSWORD": "test_password",
-        }
-    )
-    with pytest.raises(NotConfigured):
-        SendSmtpEmail.from_crawler(crawler)
-
-
-def test_fail_if_no_smtp_password():
-    crawler = get_crawler(
-        settings_dict={
-            "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
-            "SPIDERMON_EMAIL_TO": "to.someone@somewhere.com",
-            "SPIDERMON_EMAIL_SUBJECT": "HERE IS THE TITLE",
-            "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
-            "SPIDERMON_BODY_HTML": "some html",
-            "SPIDERMON_BODY_TEXT": "some text",
-            "SPIDERMON_SMTP_HOST": "localhost",
-            "SPIDERMON_SMTP_PORT": 8080,
-            "SPIDERMON_SMTP_USER": "test_user",
-        }
-    )
+    crawler = get_crawler(settings_dict=settings)
     with pytest.raises(NotConfigured):
         SendSmtpEmail.from_crawler(crawler)
 
