@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
 
     steps:
       - uses: actions/checkout@v2
@@ -27,10 +27,10 @@ jobs:
       - name: Run tests
         run: tox -e py
       - name: Run docs and formatting tests
-        if: ${{ matrix.python-version == 3.9 }}
+        if: ${{ matrix.python-version == 3.10 }}
         run: |
           tox -e docs
           tox -e pep8
       - name: Upload coverage.xml to codecov
-        if: ${{ matrix.python-version == 3.9 }}
+        if: ${{ matrix.python-version == 3.10 }}
         uses: codecov/codecov-action@v1
