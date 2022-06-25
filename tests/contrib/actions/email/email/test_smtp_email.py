@@ -73,135 +73,19 @@ def test_use_configured_smtp_enforce_ssl_when_provided(smtp_action_settings):
 
 
 @pytest.mark.parametrize(
-    "settings_to, expected_to",
+    "setting,attribute",
     [
-        ("to.someone@somewhere.com", "to.someone@somewhere.com"),
-        (
-            ("to.someone@somewhere.com", "to.someone.2@somewhere.com"),
-            "to.someone@somewhere.com, to.someone.2@somewhere.com",
-        ),
-        (
-            " to.someone@somewhere.com, to.someone.2@somewhere.com ",
-            "to.someone@somewhere.com, to.someone.2@somewhere.com",
-        ),
-        (
-            "to.someone@somewhere.com,to.someone.2@somewhere.com",
-            "to.someone@somewhere.com, to.someone.2@somewhere.com",
-        ),
-        (
-            ["to.someone@somewhere.com", "to.someone.2@somewhere.com"],
-            "to.someone@somewhere.com, to.someone.2@somewhere.com",
-        ),
+        ("SPIDERMON_SMTP_HOST", "smtp_host"),
+        ("SPIDERMON_SMTP_USER", "smtp_user"),
+        ("SPIDERMON_SMTP_PASSWORD", "smtp_password"),
+        ("SPIDERMON_SMTP_PORT", "smtp_port"),
+        ("SPIDERMON_SMTP_ENFORCE_SSL", "smtp_enforce_ssl"),
     ],
 )
-def test_email_message_to(mock_render_template, settings_to, expected_to):
-    crawler = get_crawler(
-        settings_dict={
-            "SPIDERMON_SMTP_HOST": "smtp.example.com",
-            "SPIDERMON_SMTP_USER": "smtp_user",
-            "SPIDERMON_SMTP_PASSWORD": "smtp_password",
-            "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
-            "SPIDERMON_EMAIL_TO": settings_to,
-            "SPIDERMON_EMAIL_SUBJECT": "HERE IS THE TITLE",
-            "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
-            "SPIDERMON_BODY_HTML": "some html",
-            "SPIDERMON_BODY_TEXT": "some text",
-            "SPIDERMON_EMAIL_FAKE": False,
-        }
-    )
-
-    send_email = SendSmtpEmail.from_crawler(crawler)
-    message = send_email.get_message()
-
-    assert message["To"] == expected_to
-
-
-@pytest.mark.parametrize(
-    "settings_cc, expected_cc",
-    [
-        ("cc.someone@somewhere.com", "cc.someone@somewhere.com"),
-        (
-            ("cc.someone@somewhere.com", "cc.someone.2@somewhere.com"),
-            "cc.someone@somewhere.com, cc.someone.2@somewhere.com",
-        ),
-        (
-            " cc.someone@somewhere.com, cc.someone.2@somewhere.com ",
-            "cc.someone@somewhere.com, cc.someone.2@somewhere.com",
-        ),
-        (
-            "cc.someone@somewhere.com,cc.someone.2@somewhere.com",
-            "cc.someone@somewhere.com, cc.someone.2@somewhere.com",
-        ),
-        (
-            ["cc.someone@somewhere.com", "cc.someone.2@somewhere.com"],
-            "cc.someone@somewhere.com, cc.someone.2@somewhere.com",
-        ),
-    ],
-)
-def test_email_message_cc(mock_render_template, settings_cc, expected_cc):
-    crawler = get_crawler(
-        settings_dict={
-            "SPIDERMON_SMTP_HOST": "smtp.example.com",
-            "SPIDERMON_SMTP_USER": "smtp_user",
-            "SPIDERMON_SMTP_PASSWORD": "smtp_password",
-            "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
-            "SPIDERMON_EMAIL_TO": "to.someone@somewhere.com",
-            "SPIDERMON_EMAIL_CC": settings_cc,
-            "SPIDERMON_EMAIL_SUBJECT": "HERE IS THE TITLE",
-            "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
-            "SPIDERMON_BODY_HTML": "some html",
-            "SPIDERMON_BODY_TEXT": "some text",
-            "SPIDERMON_EMAIL_FAKE": False,
-        }
-    )
-    send_email = SendSmtpEmail.from_crawler(crawler)
-    message = send_email.get_message()
-
-    assert message["Cc"] == expected_cc
-
-
-@pytest.mark.parametrize(
-    "settings_bcc, expected_bcc",
-    [
-        ("bcc.someone@somewhere.com", "bcc.someone@somewhere.com"),
-        (
-            ("bcc.someone@somewhere.com", "bcc.someone.2@somewhere.com"),
-            "bcc.someone@somewhere.com, bcc.someone.2@somewhere.com",
-        ),
-        (
-            " bcc.someone@somewhere.com, bcc.someone.2@somewhere.com ",
-            "bcc.someone@somewhere.com, bcc.someone.2@somewhere.com",
-        ),
-        (
-            "bcc.someone@somewhere.com,bcc.someone.2@somewhere.com",
-            "bcc.someone@somewhere.com, bcc.someone.2@somewhere.com",
-        ),
-        (
-            ["bcc.someone@somewhere.com", "bcc.someone.2@somewhere.com"],
-            "bcc.someone@somewhere.com, bcc.someone.2@somewhere.com",
-        ),
-    ],
-)
-def test_email_message_bcc(mock_render_template, settings_bcc, expected_bcc):
-    crawler = get_crawler(
-        settings_dict={
-            "SPIDERMON_SMTP_HOST": "smtp.example.com",
-            "SPIDERMON_SMTP_USER": "smtp_user",
-            "SPIDERMON_SMTP_PASSWORD": "smtp_password",
-            "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
-            "SPIDERMON_EMAIL_TO": "to.someone@somewhere.com",
-            "SPIDERMON_EMAIL_BCC": settings_bcc,
-            "SPIDERMON_EMAIL_SUBJECT": "HERE IS THE TITLE",
-            "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
-            "SPIDERMON_BODY_HTML": "some html",
-            "SPIDERMON_BODY_TEXT": "some text",
-            "SPIDERMON_EMAIL_FAKE": False,
-        }
-    )
-    send_email = SendSmtpEmail.from_crawler(crawler)
-    message = send_email.get_message()
-
-    assert message["Bcc"] == expected_bcc
+def test_set_provided_smtp_settings(setting, attribute, smtp_action_settings):
+    crawler = get_crawler(settings_dict=smtp_action_settings)
+    send_smtp_email = SendSmtpEmail.from_crawler(crawler)
+    assert getattr(send_smtp_email, attribute) == smtp_action_settings[setting]
 
 
 @pytest.mark.parametrize(
