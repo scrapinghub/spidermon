@@ -4,6 +4,7 @@ from scrapy.utils.test import get_crawler
 from spidermon.contrib.actions.email.smtp import (
     SendSmtpEmail,
     DEFAULT_SMTP_PORT,
+    DEFAULT_SMTP_ENFORCE_TLS,
     DEFAULT_SMTP_ENFORCE_SSL,
 )
 from spidermon.exceptions import NotConfigured
@@ -27,6 +28,7 @@ def smtp_action_settings():
         "SPIDERMON_SMTP_USER": "smtp_user",
         "SPIDERMON_SMTP_PASSWORD": "smtp_password",
         "SPIDERMON_SMTP_PORT": DEFAULT_SMTP_PORT,
+        "SPIDERMON_SMTP_ENFORCE_TLS": DEFAULT_SMTP_ENFORCE_TLS,
         "SPIDERMON_SMTP_ENFORCE_SSL": DEFAULT_SMTP_ENFORCE_SSL,
         "SPIDERMON_EMAIL_SENDER": "from@example.com",
         "SPIDERMON_EMAIL_TO": "to@example.com",
@@ -52,6 +54,24 @@ def test_use_configured_smtp_port_when_provided(smtp_action_settings):
     send_smtp_email_action = SendSmtpEmail.from_crawler(crawler)
 
     assert send_smtp_email_action.smtp_port == 465
+
+
+def test_use_default_smtp_enforce_tls_if_not_provided(smtp_action_settings):
+    del smtp_action_settings["SPIDERMON_SMTP_ENFORCE_TLS"]
+    crawler = get_crawler(settings_dict=smtp_action_settings)
+    send_smtp_email_action = SendSmtpEmail.from_crawler(crawler)
+
+    assert send_smtp_email_action.smtp_enforce_tls == DEFAULT_SMTP_ENFORCE_TLS
+
+
+def test_use_configured_smtp_enforce_tls_when_provided(smtp_action_settings):
+    not_default_smtp_enforce_tls = not DEFAULT_SMTP_ENFORCE_TLS
+
+    smtp_action_settings["SPIDERMON_SMTP_ENFORCE_TLS"] = not_default_smtp_enforce_tls
+    crawler = get_crawler(settings_dict=smtp_action_settings)
+    send_smtp_email_action = SendSmtpEmail.from_crawler(crawler)
+
+    assert send_smtp_email_action.smtp_enforce_tls == not_default_smtp_enforce_tls
 
 
 def test_use_default_smtp_enforce_ssl_if_not_provided(smtp_action_settings):
