@@ -65,14 +65,6 @@ class SendSmtpEmail(SendEmail):
         return kwargs
 
     def send_message(self, message, **kwargs):
-        if not self.sender:
-            raise NotConfigured(
-                "You must provide a value for SPIDERMON_EMAIL_SENDER setting."
-            )
-
-        if not self.sender or not self.to:
-            return
-
         server = MailSender(
             self.smtp_host,
             self.sender,
