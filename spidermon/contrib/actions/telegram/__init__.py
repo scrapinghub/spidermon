@@ -31,7 +31,9 @@ class TelegramMessageManager:
     def __init__(self, sender_token=None, fake=False):
         sender_token = sender_token or self.sender_token
         if not sender_token:
-            raise NotConfigured("You must provide a telegram bot token.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_TELEGRAM_SENDER_TOKEN setting."
+            )
 
         self.fake = fake
         self._client = SimplyTelegramClient(sender_token)
@@ -71,7 +73,7 @@ class SendTelegramMessage(ActionWithTemplates):
         self.message_template = message_template or self.message_template
         if not self.recipients:
             raise NotConfigured(
-                "You must provide at least one recipient for the message."
+                "You must provide a value for SPIDERMON_TELEGRAM_RECIPIENTS setting."
             )
 
     @classmethod

@@ -10,7 +10,9 @@ class CreateReport(ActionWithTemplates):
         self.template = template or self.template
         self.report = ""
         if not self.template:
-            raise NotConfigured("You must define one template file.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_REPORT_TEMPLATE setting."
+            )
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):

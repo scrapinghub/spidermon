@@ -87,13 +87,21 @@ class CreateS3Report(CreateReport):
         self.make_public = make_public or self.make_public
         self.content_type = content_type or self.content_type
         if not self.aws_access_key:
-            raise NotConfigured("You must provide the AWS Access Key.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_AWS_ACCESS_KEY_ID setting."
+            )
         if not self.aws_secret_key:
-            raise NotConfigured("You must provide the AWS Secret Key.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_AWS_SECRET_ACCESS_KEY setting."
+            )
         if not self.s3_bucket:
-            raise NotConfigured("You must define the s3 bucket.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_REPORT_S3_BUCKET setting."
+            )
         if not self.s3_filename:
-            raise NotConfigured("You must define the s3 filename.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_REPORT_S3_FILENAME setting."
+            )
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):

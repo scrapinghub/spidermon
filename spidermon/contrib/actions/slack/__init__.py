@@ -18,11 +18,15 @@ class SlackMessageManager:
     def __init__(self, sender_token=None, sender_name=None, fake=False):
         sender_token = sender_token or self.sender_token
         if not sender_token:
-            raise NotConfigured("You must provide a slack token.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_SLACK_SENDER_TOKEN setting."
+            )
 
         self.sender_name = sender_name or self.sender_name
         if not self.sender_name:
-            raise NotConfigured("You must provide a slack sender name.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_SLACK_SENDER_NAME setting."
+            )
 
         self.fake = fake
         self._client = WebClient(sender_token)
@@ -205,7 +209,7 @@ class SendSlackMessage(ActionWithTemplates):
 
         if not self.fake and not self.recipients:
             raise NotConfigured(
-                "You must provide at least one recipient for the message."
+                "You must provide a value for SPIDERMON_SLACK_RECIPIENTS setting."
             )
 
     @classmethod
