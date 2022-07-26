@@ -1,5 +1,6 @@
 import sys
 import pytest
+from unittest.mock import MagicMock
 
 from spidermon.contrib.actions.slack import SlackMessageManager
 
@@ -58,3 +59,35 @@ def test_do_not_log_text_and_attach_when_fake_is_not_set(logger_info):
     )
 
     assert logger_info.call_count == 0
+
+def test_pass_arbitrary_kwargs_to_send_message():
+    manager = SlackMessageManager(
+        sender_token="anything", sender_name="@someone", 
+    )
+    manager.send_message = MagicMock()
+    manager.send_message(
+        to=[], text='some_text', reply_broadcast=True,
+        thread_ts='some_thread_ts_value',
+        unfurl_links=False,
+    )
+    manager.send_message.assert_called_once_with(
+        to=[], text='some_text', reply_broadcast=True,
+        thread_ts='some_thread_ts_value',
+        unfurl_links=False,
+    )
+
+def test_pass_arbitrary_kwargs_to_chat_postMessage():
+    manager = SlackMessageManager(
+        sender_token="anything", sender_name="@someone", 
+    )
+    manager._client.chat_postMessage = MagicMock()
+    manager._client.chat_postMessage(
+        to=[], text='some_text', reply_broadcast=True,
+        thread_ts='some_thread_ts_value',
+        unfurl_links=False,
+    )
+    manager._client.chat_postMessage.assert_called_once_with(
+        to=[], text='some_text', reply_broadcast=True,
+        thread_ts='some_thread_ts_value',
+        unfurl_links=False,
+    )
