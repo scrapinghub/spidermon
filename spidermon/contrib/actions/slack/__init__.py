@@ -14,8 +14,11 @@ logger = logging.getLogger(__name__)
 class SlackMessageManager:
     sender_token = None
     sender_name = None
+    thread_id = None
+    also_send_channel= None
+    mrkdwn = None
 
-    def __init__(self, sender_token=None, sender_name=None, fake=False):
+    def __init__(self, sender_token=None, sender_name=None, fake=False, thread_id=None, also_send_channel=None, mrkdwn=None):
         sender_token = sender_token or self.sender_token
         if not sender_token:
             raise NotConfigured(
@@ -29,6 +32,9 @@ class SlackMessageManager:
             )
 
         self.fake = fake
+        self.also_send_channel = also_send_channel
+        self.thread_id = thread_id
+        self.mrkdwn = mrkdwn
         self._client = WebClient(sender_token)
         self._users = None
 
@@ -110,7 +116,7 @@ class SlackMessageManager:
     def _send_channel_message(
         self, channel, text, parse="full", link_names=1, attachments=None
     ):
-        self._client.chat_postMessage(
+        result = self._client.chat_postMessage(
             channel=channel,
             text=text,
             parse=parse,
@@ -118,6 +124,14 @@ class SlackMessageManager:
             attachments=self._parse_attachments(attachments),
             username=self.sender_name,
             icon_url=self._get_icon_url(),
+            thread_ts=self.thread_id,
+            # thread_ts = "1659182317.958909",
+            reply_broadcast=self.also_send_channel,
+            mrkdwn=self.mrkdwn
+        )
+
+        self.thread_id = (
+            self.thread_id or result["ts"]
         )
 
     def _get_icon_url(self):
@@ -171,6 +185,9 @@ class SendSlackMessage(ActionWithTemplates):
     include_message = True
     include_attachments = True
     fake = False
+    thread_id = None
+    also_send_channel= None
+    mrkdwn= None
 
     def __init__(
         self,
@@ -184,6 +201,9 @@ class SendSlackMessage(ActionWithTemplates):
         attachments_template=None,
         include_attachments=None,
         fake=None,
+        thread_id=None,
+        also_send_channel=None,
+        mrkdwn=None
     ):
         super().__init__()
 
@@ -192,6 +212,9 @@ class SendSlackMessage(ActionWithTemplates):
             sender_token=sender_token or self.sender_token,
             sender_name=sender_name or self.sender_name,
             fake=self.fake,
+            thread_id = thread_id or self.thread_id,
+            also_send_channel = also_send_channel or self.also_send_channel,
+            mrkdwn = mrkdwn or self.mrkdwn
         )
 
         self.recipients = recipients or self.recipients
