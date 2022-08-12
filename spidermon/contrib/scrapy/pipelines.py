@@ -1,12 +1,9 @@
-import json
-from io import BytesIO
 from collections import defaultdict
+from itemadapter import ItemAdapter
 
 from scrapy.exceptions import DropItem, NotConfigured
 from scrapy.utils.misc import load_object
-from scrapy.exporters import JsonLinesItemExporter
 from scrapy import Field, Item
-from scrapy.utils.python import to_unicode
 
 from spidermon.contrib.validation import SchematicsValidator, JSONSchemaValidator
 from spidermon.contrib.validation.jsonschema.tools import get_schema_from
@@ -136,25 +133,16 @@ class ItemValidationPipeline:
         return find(item.__class__) or find(Item)
 
     def _convert_item_to_dict(self, item):
-        serialized_json = BytesIO()
-        exporter = JsonLinesItemExporter(serialized_json)
-        exporter.export_item(item)
-        data = json.loads(to_unicode(serialized_json.getvalue(), exporter.encoding))
-        serialized_json.close()
-        return data
+        data = ItemAdapter(item)
+        return data.asdict()
 
     def _add_errors_to_item(self, item, errors):
-        try:
-            if self.errors_field not in item.__class__.fields:
-                item.__class__.fields[self.errors_field] = Field()
-            if self.errors_field not in item._values:
-                item[self.errors_field] = defaultdict(list)
-        except AttributeError:
-            # The item is just a dict object instead of a Scrapy.Item object
-            if self.errors_field not in item:
-                item[self.errors_field] = defaultdict(list)
+        data = ItemAdapter(item)
+        if self.errors_field not in data.keys():
+            item[self.errors_field] = defaultdict(list)
+
         for field_name, messages in errors.items():
-            item[self.errors_field][field_name] += messages
+            data[self.errors_field][field_name] += messages
 
     def _drop_item(self, item, errors):
         """
