@@ -139,7 +139,7 @@ class Spidermon:
             self.crawler.stats.inc_value(item_count_stat)
 
         data = ItemAdapter(item)
-        for field_name, value in data.asdict().items():
+        for field_name, value in data.items():
             if skip_none_values and value is None:
                 continue
 
