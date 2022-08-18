@@ -142,6 +142,76 @@ field following this format:
       'spidermon_field_coverage/dict/field_1/nested_field_1_2': 0.5,
       'spidermon_item_scraped_count/dict/field_2': 0.5,
 
+SPIDERMON_LIMIT_FIELD_COVERAGE_BY_FIELD_COVERAGE_RULES
+----------------------------
+Default: ``False``
+
+When enabled, Spidermon will add statistics about the number of items scraped and coverage only for fields that
+exist in setting SPIDERMON_FIELD_COVERAGE_RULES in following format:
+
+``'spidermon_item_scraped_count/<item_type>/<field_name>': <item_count>``
+``'spidermon_field_coverage/<item_type>/<field_name>': <coverage>``
+
+Using this setting will help to limit number of records in statistic in case of huge number of fields (>500)
+in the item.
+
+.. note::
+
+   Nested fields are also supported. For example, if your spider returns these items:
+
+   .. code-block:: python
+
+      [
+        {
+          "field_1": {
+            "nested_field_1_1": "value",
+            "nested_field_1_2": "value",
+          },
+        },
+        {
+          "field_1": {
+            "nested_field_1_1": "value",
+          },
+          "field_2": "value"
+        },
+        {
+          "field_1": {
+            "nested_field_1_2": "value",
+          },
+          "field_2": "value"
+        },
+        {
+          "field_3": {
+            "nested_field_1_1": "value",
+          },
+        },
+      ]
+
+    and you have these rules:
+
+   .. code-block:: python
+
+    # project/settings.py
+    SPIDERMON_FIELD_COVERAGE_RULES = {
+        "dict/field_1": 0.75,
+        "dict/field_1/field_1_1": 0.5,
+        "dict/field_2": 1.0,
+    }
+
+
+   Statistics will be like the following (only includes fields from setting SPIDERMON_FIELD_COVERAGE_RULES):
+
+   .. code-block:: python
+
+      'spidermon_item_scraped_count/dict': 4,
+      'spidermon_item_scraped_count/dict/field_1': 3,
+      'spidermon_item_scraped_count/dict/field_1/nested_field_1_1': 2,
+      'spidermon_item_scraped_count/dict/field_2': 2,
+
+      'spidermon_field_coverage/dict/field_1': 0.75,
+      'spidermon_field_coverage/dict/field_1/nested_field_1_1': 0.5,
+      'spidermon_item_scraped_count/dict/field_2': 0.5,
+
 SPIDERMON_FIELD_COVERAGE_SKIP_NONE
 ----------------------------------
 Default: ``False``
