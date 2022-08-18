@@ -142,7 +142,7 @@ field following this format:
       'spidermon_field_coverage/dict/field_1/nested_field_1_2': 0.5,
       'spidermon_item_scraped_count/dict/field_2': 0.5,
 
-SPIDERMON_LIMIT_FIELD_COVERAGE_BY_FIELD_COVERAGE_RULES
+SPIDERMON_FIELD_COVERAGE_SKIP_WITHOUT_FIELD_COVERAGE_RULES
 ----------------------------
 Default: ``False``
 
