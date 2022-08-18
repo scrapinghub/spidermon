@@ -143,7 +143,7 @@ field following this format:
       'spidermon_item_scraped_count/dict/field_2': 0.5,
 
 SPIDERMON_FIELD_COVERAGE_SKIP_WITHOUT_FIELD_COVERAGE_RULES
-----------------------------
+----------------------------------------------------------
 Default: ``False``
 
 When enabled, Spidermon will add statistics about the number of items scraped and coverage only for fields that
