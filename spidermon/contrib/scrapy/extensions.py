@@ -177,7 +177,7 @@ class Spidermon:
         skip_fields_without_rules = spider.crawler.settings.getbool(
             "SPIDERMON_FIELD_COVERAGE_SKIP_WITHOUT_FIELD_COVERAGE_RULES", False
         )
-        field_coverage_rules = spider.crawler.spider.settings.get(
+        field_coverage_rules = spider.crawler.settings.get(
             "SPIDERMON_FIELD_COVERAGE_RULES", {}
         )
         self.crawler.stats.inc_value("spidermon_item_scraped_count")
