@@ -131,7 +131,9 @@ class Spidermon:
         spider = self.crawler.spider
         self._run_suites(spider, self.engine_stopped_suites)
 
-    def _count_item(self, item, skip_none_values, item_count_stat=None):
+    def _count_item(
+            self, item, skip_none_values, field_coverage_rules, skip_fields_without_rules, item_count_stat=None
+    ):
         if item_count_stat is None:
             item_type = type(item).__name__
             item_count_stat = f"spidermon_item_scraped_count/{item_type}"
@@ -141,11 +143,17 @@ class Spidermon:
             if skip_none_values and value is None:
                 continue
 
+            full_name = f"{type(item).__name__}/{field_name}"
+            if skip_fields_without_rules and full_name not in field_coverage_rules:
+                continue
+
             field_item_count_stat = f"{item_count_stat}/{field_name}"
             self.crawler.stats.inc_value(field_item_count_stat)
 
             if isinstance(value, dict):
-                self._count_item(value, skip_none_values, field_item_count_stat)
+                self._count_item(
+                    value, skip_none_values, field_coverage_rules, skip_fields_without_rules, field_item_count_stat
+                )
                 continue
 
     def _add_field_coverage_to_stats(self):
@@ -157,8 +165,18 @@ class Spidermon:
         skip_none_values = spider.crawler.settings.getbool(
             "SPIDERMON_FIELD_COVERAGE_SKIP_NONE", False
         )
+        skip_fields_without_rules = spider.crawler.settings.getbool(
+            "SPIDERMON_FIELD_COVERAGE_SKIP_WITHOUT_FIELD_COVERAGE_RULES", False
+        )
+        field_coverage_rules = spider.crawler.spider.settings.get(
+            "SPIDERMON_FIELD_COVERAGE_RULES", {}
+        )
         self.crawler.stats.inc_value("spidermon_item_scraped_count")
-        self._count_item(item, skip_none_values)
+
+        if skip_fields_without_rules and not field_coverage_rules:
+            return
+
+        self._count_item(item, skip_none_values, field_coverage_rules, skip_fields_without_rules)
 
     def _run_periodic_suites(self, spider, suites):
         suites = [self.load_suite(s) for s in suites]
