@@ -132,7 +132,12 @@ class Spidermon:
         self._run_suites(spider, self.engine_stopped_suites)
 
     def _count_item(
-            self, item, skip_none_values, field_coverage_rules, skip_fields_without_rules, item_count_stat=None
+        self,
+        item,
+        skip_none_values,
+        field_coverage_rules,
+        skip_fields_without_rules,
+        item_count_stat=None,
     ):
         if item_count_stat is None:
             item_type = type(item).__name__
@@ -152,7 +157,11 @@ class Spidermon:
 
             if isinstance(value, dict):
                 self._count_item(
-                    value, skip_none_values, field_coverage_rules, skip_fields_without_rules, field_item_count_stat
+                    value,
+                    skip_none_values,
+                    field_coverage_rules,
+                    skip_fields_without_rules,
+                    field_item_count_stat,
                 )
                 continue
 
@@ -176,7 +185,9 @@ class Spidermon:
         if skip_fields_without_rules and not field_coverage_rules:
             return
 
-        self._count_item(item, skip_none_values, field_coverage_rules, skip_fields_without_rules)
+        self._count_item(
+            item, skip_none_values, field_coverage_rules, skip_fields_without_rules
+        )
 
     def _run_periodic_suites(self, spider, suites):
         suites = [self.load_suite(s) for s in suites]
