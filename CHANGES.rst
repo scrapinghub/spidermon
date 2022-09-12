@@ -1,6 +1,16 @@
 Release notes
 =============
 
+1.17.0 (2022-09-12)
+-------------------
+
+- feature: Updated `DownloaderExceptionMonitor` and `ItemValidationMonitor` to inherit from `BaseStatMonitor` (`PR#334 <https://github.com/scrapinghub/spidermon/pull/334>`_, `PR#335 <https://github.com/scrapinghub/spidermon/pull/335>`_)
+- feature: Updated Slack action to use `slack-sdk <https://pypi.org/project/slack-sdk/>`_ as library in replacement of deprecated `slackclient <https://pypi.org/project/slackclient/>`_ (`PR#313 <https://github.com/scrapinghub/spidermon/issues/313>`_)
+- feature: Added new action to allow to send notification to Discord channels (`PR#348 <https://github.com/scrapinghub/spidermon/pull/348>`_)
+- feature: Added Python 3.10 support (`PR#349 <https://github.com/scrapinghub/spidermon/pull/349>`_)
+- feature: Added new action to allow to send email notifications using SMTP server (`PR#345 <https://github.com/scrapinghub/spidermon/pull/345>`_)
+- misc: small bug fixes and documentation improvements that can be checked in the `milestone summary <https://github.com/scrapinghub/spidermon/milestone/13?closed=1>`_.
+
 1.16.2 (2021-12-23)
 -------------------
 - feature: Create base class to aid the creation of custom monitors that only validates against a job stat value (`PR#325 <https://github.com/scrapinghub/spidermon/pull/325>`_)

@@ -58,7 +58,7 @@ class SendSESEmail(SendEmail):
                 recipients.extend(recipient_subset)
         return recipients
 
-    def send_message(self, message):
+    def send_message(self, message, **kwargs):
         client = boto3.client(
             service_name="ses",
             region_name=self.aws_region_name,
