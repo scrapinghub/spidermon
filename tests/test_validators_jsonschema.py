@@ -640,9 +640,7 @@ class Format(SchemaTest):
         ),
         DataTest(
             name="hostname. valid",
-            schema={
-                "$schema": "http://json-schema.org/draft-04/schema"
-            },
+            schema={"$schema": "http://json-schema.org/draft-04/schema"},
             data={
                 "hostnames": [
                     "localhost",
