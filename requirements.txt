@@ -14,3 +14,4 @@ black
 pytest-mock
 scrapinghub
 scrapinghub-entrypoint-scrapy
+itemadapter==0.7.0
