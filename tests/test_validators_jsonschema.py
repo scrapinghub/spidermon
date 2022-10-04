@@ -37,6 +37,8 @@ class DataTest:
         self.valid = valid
         self.expected_errors = expected_errors or {}
         self.schema = schema
+        if isinstance(self.schema, dict) and not self.schema.get("$schema"):
+            self.schema["$schema"] = "http://json-schema.org/draft-07/schema#"
 
 
 class AdditionalItems(SchemaTest):
@@ -638,6 +640,9 @@ class Format(SchemaTest):
         ),
         DataTest(
             name="hostname. valid",
+            schema={
+                "$schema": "http://json-schema.org/draft-04/schema"
+            },
             data={
                 "hostnames": [
                     "localhost",
