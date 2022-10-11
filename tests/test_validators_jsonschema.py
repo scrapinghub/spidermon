@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from spidermon.contrib.validation import JSONSchemaValidator
 from spidermon.contrib.validation import messages
+from spidermon.contrib.validation.jsonschema.formats import is_email, is_url
 
 from slugify import slugify
 
@@ -39,6 +40,19 @@ class DataTest:
         self.schema = schema
         if isinstance(self.schema, dict) and not self.schema.get("$schema"):
             self.schema["$schema"] = "http://json-schema.org/draft-07/schema#"
+
+
+class Formats(TestCase):
+    def test_is_email(self):
+        assert is_email(None)
+        assert is_email("mail@mail.com")
+        assert not is_email("not_mail")
+
+    def test_is_url(self):
+        assert is_url(None)
+        assert is_url("https://website.com")
+        assert not is_url("htttps://website.com")
+        assert not is_url("website.com")
 
 
 class AdditionalItems(SchemaTest):
