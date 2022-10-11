@@ -35,6 +35,7 @@ class JSONSchemaMessageTranslator(MessageTranslator):
         r"^.* is less than or equal to the minimum of .*$": messages.NUMBER_TOO_LOW,
         r"^.* is not a multiple of .*$": messages.NOT_MULTIPLE_OF,
         r"^.* should not be valid under .*$": messages.NOT_ALLOWED_VALUE,
+        r"^.* is not allowed for .*$": messages.NOT_ALLOWED_VALUE,
         r"^.+ is too short$": messages.FIELD_TOO_SHORT,
         r"^.+ is too long$": messages.FIELD_TOO_LONG,
         r"^.+ does not match .*$": messages.REGEX_NOT_MATCHED,
