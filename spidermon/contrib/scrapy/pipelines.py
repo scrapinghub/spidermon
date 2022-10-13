@@ -133,8 +133,7 @@ class ItemValidationPipeline:
         return find(item.__class__) or find(Item)
 
     def _convert_item_to_dict(self, item):
-        data = ItemAdapter(item)
-        return data.asdict()
+        return ItemAdapter(item).asdict()
 
     def _add_errors_to_item(self, item, errors):
         data = ItemAdapter(item)

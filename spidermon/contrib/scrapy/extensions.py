@@ -138,8 +138,7 @@ class Spidermon:
             item_count_stat = f"spidermon_item_scraped_count/{item_type}"
             self.crawler.stats.inc_value(item_count_stat)
 
-        data = ItemAdapter(item)
-        for field_name, value in data.items():
+        for field_name, value in ItemAdapter(item).items():
             if skip_none_values and value is None:
                 continue
 
