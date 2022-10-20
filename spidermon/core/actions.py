@@ -11,11 +11,10 @@ class Action(metaclass=ActionOptionsMetaclass):
     Base class for actions.
     """
 
-    fallback = None
-
     def __init__(self):
         self.result = None
         self.data = None
+        self.fallback = None
 
     @classmethod
     def from_crawler(cls, crawler):
