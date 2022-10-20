@@ -137,7 +137,7 @@ class ItemValidationPipeline:
 
     def _add_errors_to_item(self, item, errors):
         data = ItemAdapter(item)
-        if self.errors_field not in data.keys():
+        if self.errors_field not in data:
             item[self.errors_field] = defaultdict(list)
 
         for field_name, messages in errors.items():
