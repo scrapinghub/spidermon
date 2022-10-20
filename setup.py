@@ -12,6 +12,7 @@ test_requirements = [
     "scrapy",
     "slack-sdk",
     "twisted>=19.7.0",
+    "itemadapter",
 ]
 
 setup(

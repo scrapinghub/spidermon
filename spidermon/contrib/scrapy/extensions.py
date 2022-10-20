@@ -2,6 +2,7 @@ from scrapy import signals
 from scrapy.exceptions import NotConfigured
 from scrapy.utils.misc import load_object
 from twisted.internet.task import LoopingCall
+from itemadapter import ItemAdapter
 
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
@@ -137,7 +138,7 @@ class Spidermon:
             item_count_stat = f"spidermon_item_scraped_count/{item_type}"
             self.crawler.stats.inc_value(item_count_stat)
 
-        for field_name, value in item.items():
+        for field_name, value in ItemAdapter(item).items():
             if skip_none_values and value is None:
                 continue
 
