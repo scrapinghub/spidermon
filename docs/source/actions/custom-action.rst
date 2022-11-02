@@ -29,7 +29,7 @@ your custom action.
     class MyFallbackAction(Action):
         def run_action(self):
             # Include here the logic of your action
-            # Runs if run_action throws an unhandled exception
+            # Runs if MyCustomAction().run_action() throws an unhandled exception
             # (...)
 
     class MyCustomAction(Action):
