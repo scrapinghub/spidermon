@@ -16,7 +16,7 @@ the `run_action` method.
 
 
 Fallback Actions
-==============
+================
 
 When creating your own custom actions, you can also add a fallback action to run if
 an action throws an unhandled exception. To do this, add a fallback attribute to
