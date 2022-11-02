@@ -33,7 +33,7 @@ your custom action.
             # (...)
 
     class MyCustomAction(Action):
-        fallback = MyFallbackAction()
+        fallback = MyFallbackAction
         def run_action(self):
             # Include here the logic of your action
             # (...)
@@ -53,5 +53,5 @@ You can also add fallbacks to spidermon built-in actions by subclassing them.
             # (...)
 
     class MyCustomSentryAction(Sentry):
-        fallback = MyFallbackAction()
+        fallback = MyFallbackAction
 
