@@ -10,6 +10,7 @@ class Action(metaclass=ActionOptionsMetaclass):
     """
     Base class for actions.
     """
+
     fallback = None
 
     def __init__(self):
