@@ -39,19 +39,15 @@ your custom action.
             # (...)
 
 
-You can also add fallbacks to spidermon built-in actions by subclassing them.
+You can also add fallbacks to spidermon built-in actions by subclassing them. For
+example, send an email if a slack message could not be sent.
 
 .. code-block:: python
 
     from spidermon.core.actions import Action
-    from spdiermon.contrib.actions import Sentry
+    from spidermon.contrib.actions import Slack
+    from spidermon.contrib.actions.email.smtp import SendSmtpEmail
 
-    class MyFallbackAction(Action):
-        # Runs if MyCustomSentryAction fails
-        def run_action(self):
-            # Include here the logic of your action
-            # (...)
-
-    class MyCustomSentryAction(Sentry):
-        fallback = MyFallbackAction
+    class MyCustomSlackAction(Slack):
+        fallback = SendSmtpEmail
 
