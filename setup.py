@@ -36,7 +36,7 @@ setup(
             "scrapy",
             "Jinja2",
             "scrapinghub",
-            "slackclient",
+            "slack-sdk",
             "boto",
             "boto3",
             "premailer",
