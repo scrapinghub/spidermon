@@ -594,14 +594,21 @@ class JobsComparisonMonitor(BaseStatMonitor):
 
         jobs = []
         start = 0
-        while _jobs := zyte.client.spider.jobs.list(
+        _jobs = zyte.client.spider.jobs.list(
             start=start,
             state=states,
             count=number_of_jobs,
             filters=dict(has_tag=tags) if tags else None,
-        ):
+        )
+        while _jobs:
             jobs.extend(_jobs)
             start += 1000
+            _jobs = zyte.client.spider.jobs.list(
+                start=start,
+                state=states,
+                count=number_of_jobs,
+                filters=dict(has_tag=tags) if tags else None,
+            )
         return jobs
 
     def _get_tags_to_filter(self):
