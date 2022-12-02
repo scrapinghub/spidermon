@@ -2,8 +2,8 @@ import ast
 import json
 import logging
 
-from slack import WebClient
-from slack.errors import SlackApiError
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
@@ -18,11 +18,15 @@ class SlackMessageManager:
     def __init__(self, sender_token=None, sender_name=None, fake=False):
         sender_token = sender_token or self.sender_token
         if not sender_token:
-            raise NotConfigured("You must provide a slack token.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_SLACK_SENDER_TOKEN setting."
+            )
 
         self.sender_name = sender_name or self.sender_name
         if not self.sender_name:
-            raise NotConfigured("You must provide a slack sender name.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_SLACK_SENDER_NAME setting."
+            )
 
         self.fake = fake
         self._client = WebClient(sender_token)
@@ -193,13 +197,19 @@ class SendSlackMessage(ActionWithTemplates):
         self.recipients = recipients or self.recipients
         self.message = message or self.message
         self.message_template = message_template or self.message_template
-        self.include_message = include_message or self.include_message
+
+        if include_message is not None:
+            self.include_message = include_message
+
+        if include_attachments is not None:
+            self.include_attachments = include_attachments
+
         self.attachments = attachments or self.attachments
         self.attachments_template = attachments_template or self.attachments_template
-        self.include_attachments = include_attachments or self.include_attachments
+
         if not self.fake and not self.recipients:
             raise NotConfigured(
-                "You must provide at least one recipient for the message."
+                "You must provide a value for SPIDERMON_SLACK_RECIPIENTS setting."
             )
 
     @classmethod
@@ -216,10 +226,8 @@ class SendSlackMessage(ActionWithTemplates):
             "attachments_template": crawler.settings.get(
                 "SPIDERMON_SLACK_ATTACHMENTS_TEMPLATE"
             ),
-            "include_message": crawler.settings.getbool(
-                "SPIDERMON_SLACK_INCLUDE_MESSAGE"
-            ),
-            "include_attachments": crawler.settings.getbool(
+            "include_message": crawler.settings.get("SPIDERMON_SLACK_INCLUDE_MESSAGE"),
+            "include_attachments": crawler.settings.get(
                 "SPIDERMON_SLACK_INCLUDE_ATTACHMENTS"
             ),
             "fake": crawler.settings.getbool("SPIDERMON_SLACK_FAKE"),

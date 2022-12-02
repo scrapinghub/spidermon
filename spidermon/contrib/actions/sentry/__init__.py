@@ -35,10 +35,14 @@ class SendSentryMessage(Action):
         self.environment = environment or self.environment
 
         if not self.fake and not self.sentry_dsn:
-            raise NotConfigured("Missing SPIDERMON_SENTRY_DSN setting")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_SENTRY_DSN setting."
+            )
 
         if not self.project_name:
-            raise NotConfigured("Missing SPIDERMON_SENTRY_PROJECT_NAME setting")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_SENTRY_PROJECT_NAME setting."
+            )
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):

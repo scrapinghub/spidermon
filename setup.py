@@ -10,13 +10,14 @@ test_requirements = [
     "scrapinghub",
     "scrapinghub-entrypoint-scrapy",
     "scrapy",
-    "slackclient",
+    "slack-sdk",
     "twisted>=19.7.0",
+    "itemadapter",
 ]
 
 setup(
     name="spidermon",
-    version="1.16.2",
+    version="1.17.0",
     url="https://github.com/scrapinghub/spidermon",
     author="Zyte",
     author_email="opensource@zyte.com",
@@ -27,7 +28,7 @@ setup(
     package_data={"spidermon": ["VERSION"]},
     zip_safe=False,
     include_package_data=True,
-    install_requires=["jsonschema[format]==3.2.0", "python-slugify"],
+    install_requires=["jsonschema[format]>=3.2.0", "python-slugify"],
     tests_require=test_requirements,
     extras_require={
         # Specific monitors and tools to support notifications and reports
@@ -35,7 +36,7 @@ setup(
             "scrapy",
             "Jinja2",
             "scrapinghub",
-            "slackclient",
+            "slack-sdk",
             "boto",
             "boto3",
             "premailer",
@@ -61,6 +62,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: System :: Monitoring",
     ],

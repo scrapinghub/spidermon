@@ -24,9 +24,13 @@ class SendSESEmail(SendEmail):
         self.aws_secret_key = aws_secret_key or self.aws_secret_key
         self.aws_region_name = aws_region_name or self.aws_region_name
         if not self.fake and not self.aws_access_key:
-            raise NotConfigured("You must provide the AWS Access Key.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_AWS_ACCESS_KEY_ID setting."
+            )
         if not self.fake and not self.aws_secret_key:
-            raise NotConfigured("You must provide the AWS Secret Key.")
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_AWS_SECRET_ACCESS_KEY setting."
+            )
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
@@ -54,7 +58,7 @@ class SendSESEmail(SendEmail):
                 recipients.extend(recipient_subset)
         return recipients
 
-    def send_message(self, message):
+    def send_message(self, message, **kwargs):
         client = boto3.client(
             service_name="ses",
             region_name=self.aws_region_name,

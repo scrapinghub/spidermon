@@ -39,7 +39,7 @@ class SendEmail(ActionWithTemplates):
         body_html_template=None,
         fake=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.sender = sender or self.sender
@@ -56,14 +56,31 @@ class SendEmail(ActionWithTemplates):
         self.fake = fake or self.fake
         if not self.fake and not self.to:
             raise NotConfigured(
-                "You must provide at least one recipient for the message."
+                "You must provide a value for SPIDERMON_EMAIL_TO setting."
             )
         if not self.subject:
-            raise NotConfigured("You must provide a subject for the message.")
-        if not (
-            self.body_text or body_text_template or body_html or self.body_html_template
+            raise NotConfigured(
+                "You must provide a value for SPIDERMON_EMAIL_SUBJECT setting."
+            )
+        if not any(
+            [
+                self.body_text,
+                self.body_text_template,
+                self.body_html,
+                self.body_html_template,
+            ]
         ):
-            raise NotConfigured("You must provide a body for the message.")
+            body_settings = ", ".join(
+                [
+                    "SPIDERMON_BODY_TEXT",
+                    "SPIDERMON_BODY_TEXT_TEMPLATE",
+                    "SPIDERMON_BODY_HTML",
+                    "SPIDERMON_BODY_HTML_TEMPLATE",
+                ]
+            )
+            raise NotConfigured(
+                f"You must provide a value for one of these settings: {body_settings}"
+            )
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
@@ -144,5 +161,5 @@ class SendEmail(ActionWithTemplates):
 
         return message
 
-    def send_message(self, message):
+    def send_message(self, message, **kwargs):
         raise NotImplementedError

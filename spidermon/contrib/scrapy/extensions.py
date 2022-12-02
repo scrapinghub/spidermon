@@ -2,13 +2,13 @@ from scrapy import signals
 from scrapy.exceptions import NotConfigured
 from scrapy.utils.misc import load_object
 from twisted.internet.task import LoopingCall
+from itemadapter import ItemAdapter
 
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 from spidermon.python import factory
 from spidermon.python.monitors import ExpressionsMonitor
 from spidermon.utils.field_coverage import calculate_field_coverage
-from spidermon.utils.zyte import client as hs
 
 
 class Spidermon:
@@ -138,7 +138,7 @@ class Spidermon:
             item_count_stat = f"spidermon_item_scraped_count/{item_type}"
             self.crawler.stats.inc_value(item_count_stat)
 
-        for field_name, value in item.items():
+        for field_name, value in ItemAdapter(item).items():
             if skip_none_values and value is None:
                 continue
 
@@ -172,6 +172,8 @@ class Spidermon:
             runner.run(suite, **data)
 
     def _generate_data_for_spider(self, spider):
+        from spidermon.utils.zyte import client
+
         return {
             "stats": self.crawler.stats.get_stats(spider),
             "stats_history": spider.stats_history
@@ -179,5 +181,5 @@ class Spidermon:
             else [],
             "crawler": self.crawler,
             "spider": spider,
-            "job": hs.job if hs.available else None,
+            "job": client.job if client.available else None,
         }

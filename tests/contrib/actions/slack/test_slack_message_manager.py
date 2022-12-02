@@ -1,7 +1,7 @@
 import pytest
 
 from scrapy.utils.test import get_crawler
-from slack.errors import SlackApiError
+from slack_sdk.errors import SlackApiError
 
 from spidermon.contrib.actions.slack import SlackMessageManager, SendSlackMessage
 

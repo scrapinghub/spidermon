@@ -11,3 +11,4 @@ class TestItem(Item):
 
     url = Field()
     title = Field()
+    error_test = Field()

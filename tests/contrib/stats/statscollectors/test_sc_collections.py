@@ -6,7 +6,9 @@ import scrapinghub
 
 from scrapy import Spider
 from scrapy.utils.test import get_crawler
-from spidermon.contrib.stats.statscollectors import DashCollectionsStatsHistoryCollector
+from spidermon.contrib.stats.statscollectors.sc_collections import (
+    ScrapyCloudCollectionsStatsHistoryCollector,
+)
 
 
 class StoreMock:
@@ -27,7 +29,7 @@ class StoreMock:
 def stats_collection(monkeypatch):
     store = StoreMock()
     monkeypatch.setattr(
-        DashCollectionsStatsHistoryCollector,
+        ScrapyCloudCollectionsStatsHistoryCollector,
         "_open_collection",
         lambda *args: store,
     )
@@ -38,7 +40,7 @@ def stats_collection_not_exist(monkeypatch):
     store = StoreMock()
     store.raise_iter_error = True
     monkeypatch.setattr(
-        DashCollectionsStatsHistoryCollector,
+        ScrapyCloudCollectionsStatsHistoryCollector,
         "_open_collection",
         lambda *args: store,
     )
@@ -48,31 +50,31 @@ def stats_collection_not_exist(monkeypatch):
 def test_settings():
     return {
         "STATS_CLASS": (
-            "spidermon.contrib.stats.statscollectors.DashCollectionsStatsHistoryCollector"
+            "spidermon.contrib.stats.statscollectors.sc_collections.ScrapyCloudCollectionsStatsHistoryCollector"
         )
     }
 
 
-@patch("spidermon.contrib.stats.statscollectors.scrapinghub")
+@patch("spidermon.contrib.stats.statscollectors.sc_collections.scrapinghub")
 def test_open_spider_without_api(scrapinghub_mock, test_settings):
     mock_spider = MagicMock()
     crawler = get_crawler(Spider, test_settings)
-    pipe = DashCollectionsStatsHistoryCollector(crawler)
+    pipe = ScrapyCloudCollectionsStatsHistoryCollector(crawler)
 
     pipe.open_spider(mock_spider)
 
     assert pipe.store is None
 
 
-@patch("spidermon.contrib.stats.statscollectors.scrapinghub")
-@patch("spidermon.contrib.stats.statscollectors.os.environ.get")
-def test_open_collection_with_api(scrapinghub_mock, os_enviorn_mock, test_settings):
+@patch("spidermon.contrib.stats.statscollectors.sc_collections.scrapinghub")
+@patch("spidermon.contrib.stats.statscollectors.sc_collections.os.environ.get")
+def test_open_collection_with_api(scrapinghub_mock, os_environ_mock, test_settings):
     mock_spider = MagicMock()
     mock_spider.name = "test"
 
-    os_enviorn_mock.return_value = 1234
+    os_environ_mock.return_value = 1234
     crawler = get_crawler(Spider, test_settings)
-    pipe = DashCollectionsStatsHistoryCollector(crawler)
+    pipe = ScrapyCloudCollectionsStatsHistoryCollector(crawler)
 
     store = pipe._open_collection(mock_spider)
 
@@ -181,7 +183,7 @@ def test_spider_limit_number_of_stored_stats(test_settings, stats_collection):
     crawler.stop()
 
 
-@patch("spidermon.contrib.stats.statscollectors.os.environ.get")
+@patch("spidermon.contrib.stats.statscollectors.sc_collections.os.environ.get")
 def test_job_id_added(mock_os_enviorn_get, test_settings, stats_collection):
     mock_os_enviorn_get.return_value = "test/test/test"
     crawler = get_crawler(Spider, test_settings)
@@ -195,7 +197,7 @@ def test_job_id_added(mock_os_enviorn_get, test_settings, stats_collection):
     )
 
 
-@patch("spidermon.contrib.stats.statscollectors.os.environ.get")
+@patch("spidermon.contrib.stats.statscollectors.sc_collections.os.environ.get")
 def test_job_id_not_available(mock_os_enviorn_get, test_settings, stats_collection):
     mock_os_enviorn_get.return_value = None
     crawler = get_crawler(Spider, test_settings)
@@ -206,7 +208,7 @@ def test_job_id_not_available(mock_os_enviorn_get, test_settings, stats_collecti
     assert "job_url" not in crawler.spider.stats_history[0]
 
 
-@patch("spidermon.contrib.stats.statscollectors.os.environ.get")
+@patch("spidermon.contrib.stats.statscollectors.sc_collections.os.environ.get")
 def test_stats_history_when_no_collection(
     os_enviorn_mock, stats_collection_not_exist, test_settings
 ):
@@ -216,6 +218,6 @@ def test_stats_history_when_no_collection(
 
     os_enviorn_mock.return_value = 1234
     crawler = get_crawler(Spider, test_settings)
-    pipe = DashCollectionsStatsHistoryCollector(crawler)
+    pipe = ScrapyCloudCollectionsStatsHistoryCollector(crawler)
     pipe.open_spider(mock_spider)
     assert mock_spider.stats_history == deque([], maxlen=100)

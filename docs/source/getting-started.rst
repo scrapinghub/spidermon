@@ -233,7 +233,7 @@ Telegram notifications
 ----------------------
 
 Here we will configure a built-in Spidermon action that sends a pre-defined message to
-a Telegram use, group or channel using a bot when a monitor fails.
+a Telegram user, group or channel using a bot when a monitor fails.
 
 .. code-block:: python
 
@@ -268,6 +268,48 @@ If a monitor fails, the recipients provided will receive a message in Telegram:
    :scale: 50 %
    :alt: Telegram Notification
 
+Discord notifications
+---------------------
+
+Here we will configure a built-in Spidermon action that sends a pre-defined message to
+a Discord channel using a bot when a monitor fails.
+
+.. code-block:: python
+
+    # tutorial/monitors.py
+    from spidermon.contrib.actions.discord.notifiers import SendDiscordMessageSpiderFinished
+
+    # (...your monitors code...)
+
+    class SpiderCloseMonitorSuite(MonitorSuite):
+        monitors = [
+            ItemCountMonitor,
+        ]
+
+        monitors_failed_actions = [
+            SendDiscordMessageSpiderFinished,
+        ]
+
+After enabling the action, you need to provide the `Discord Webhook URL`_. You can
+learn more about how to create and configure a webhook :ref:`configuring-discord-bot`.
+Later, fill the required information in your `settings.py` as follows:
+
+.. code-block:: python
+
+    # tutorial/settings.py
+    (...)
+    SPIDERMON_DISCORD_WEBHOOK_URL = "<DISCORD_WEBHOOK_URL>"
+
+If a monitor fails, the recipients provided will receive a message in Discord:
+
+.. image:: /_static/discord_notification.png
+   :scale: 50 %
+   :alt: Discord Notification
+
+The target channel is configured during the webhook creation on Discord.
+
+In case you want to see the messages only in the terminal, set as `True` the environment
+variable `SPIDERMON_DISCORD_FAKE`.
 
 Item validation
 ---------------
@@ -438,3 +480,4 @@ The resulted item will look like this:
 .. _`Scrapy project`: https://doc.scrapy.org/en/latest/intro/tutorial.html?#creating-a-project
 .. _`Slack credentials`: https://api.slack.com/docs/token-types
 .. _`Telegram bot token`: https://core.telegram.org/bots
+.. _`Discord Webhook URL`: https://discord.com/developers/docs/resources/webhook
