@@ -536,19 +536,19 @@ class JobsComparisonMonitor(BaseStatMonitor):
     .. note::
        This monitor is useful when running jobs in
        `Zyte's Scrapy Cloud <https://www.zyte.com/scrapy-cloud/>`_.
-
+       
     Check for a drop in scraped item count compared to previous jobs.
-
+    
     You need to set the number of previous jobs to compare, using ``SPIDERMON_JOBS_COMPARISON``.
     The default is ``0`` which disables the monitor. We use the average of the scraped items count.
-
+    
     You can configure which percentage of the previous item count is the minimum acceptable, by
     using the setting ``SPIDERMON_JOBS_COMPARISON_THRESHOLD``. We expect a float number between
-    ``0.0`` and ``1.0``. The default is ``0.8``.
-
+    ``0.0`` (not inclusive) and ``1.0``. If not set, a NotConfigured error will be raised.
+    
     You can filter which jobs to compare based on their states using the
     ``SPIDERMON_JOBS_COMPARISON_STATES`` setting. The default value is ``("finished",)``.
-
+    
     You can also filter which jobs to compare based on their tags using the
     ``SPIDERMON_JOBS_COMPARISON_TAGS`` setting. Among the defined tags we consider only those
     that are also present in the current job.
@@ -557,12 +557,22 @@ class JobsComparisonMonitor(BaseStatMonitor):
     stat_name = "item_scraped_count"
     assert_type = ">="
 
-    def _get_jobs(self, states, number_of_jobs, tags=None):
-        return zyte.client.spider.jobs.list(
+    def _get_jobs(self, states, number_of_jobs):
+        
+        tags = self._get_tags_to_filter()
+        
+        jobs = []
+        start = 0
+        while _jobs := zyte.client.spider.jobs.list(
+            start=start,
             state=states,
             count=number_of_jobs,
-            filters=dict(has_tag=tags) if tags else None,
-        )
+            filters=dict(has_tag=tags) if tags else None):
+            
+            jobs.extend(_jobs)
+            start += 1000
+            
+        return jobs
 
     def _get_tags_to_filter(self):
         """
@@ -581,23 +591,37 @@ class JobsComparisonMonitor(BaseStatMonitor):
         return sorted(tags_to_filter)
 
     def get_threshold(self):
-        # 1. get the number of jobs and check if monitor is enabled
-        number_of_jobs = self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON, 0)
-        if not number_of_jobs:
-            self.skipTest("Jobs comparison monitor is disabled")
+        
+        if (
+            SPIDERMON_JOBS_COMPARISON not in self.crawler.settings.attributes
+            or self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON) == 0
+        ):
+            raise NotConfigured(
+                f"Configure SPIDERMON_JOBS_COMPARISON to your project "
+                f"settings to use {self.monitor_name}."
+            )
+            
+        if (
+            SPIDERMON_JOBS_COMPARISON_THRESHOLD not in self.crawler.settings.attributes
+            or self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON_THRESHOLD) == 0
+        ):
+            raise NotConfigured(
+                f"Configure SPIDERMON_JOBS_COMPARISON_THRESHOLD to your project "
+                f"settings to use {self.monitor_name}."
+            )
 
-        # 2. get the previous jobs meeting the defined states and tags
+        number_of_jobs = self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON)
+        
+        threshold = self.crawler.settings.getfloat(SPIDERMON_JOBS_COMPARISON_THRESHOLD)
+      
         states = self.crawler.settings.getlist(
             SPIDERMON_JOBS_COMPARISON_STATES, ("finished",)
         )
-        tags = self._get_tags_to_filter()
-        jobs = self._get_jobs(states, number_of_jobs, tags)
+        
+        jobs = self._get_jobs(states, number_of_jobs)
 
-        # 3. get the average item count and calculate the acceptable threshold
         previous_count = sum(job.get("items", 0) for job in jobs) / len(jobs)
-        threshold = self.crawler.settings.getfloat(
-            SPIDERMON_JOBS_COMPARISON_THRESHOLD, 0.8
-        )
+
         expected_item_extracted = math.ceil(previous_count * threshold)
         return expected_item_extracted
 
