@@ -417,6 +417,16 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
             raise NotConfigured(
                 "To enable field coverage monitor, set SPIDERMON_ADD_FIELD_COVERAGE=True in your project settings"
             )
+
+        skip_no_items = self.crawler.settings.get('SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM', False)
+        items_scraped = self.data.stats.get('item_scraped_count', 0)
+        if skip_no_items and int(items_scraped) == 0:
+            msg = "[Spidermon] Skipped FieldCoverageMonitor because no items were scraped. " \
+                  "To avoid this skip, set SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM=False"
+            self.crawler.spider.logger.info(msg)
+
+            return
+
         return super().run(result)
 
     def test_check_if_field_coverage_rules_are_met(self):
