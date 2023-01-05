@@ -4,11 +4,11 @@ Release notes
 1.17.1 (2023-01-05)
 -------------------
 
-bug: Adding the use of ItemAdapter to prevent assumptions of item nature (#358)
-bug: Fix Slack dependency name issue (#367)
-chore: Change the Ubuntu version on workflow settings (#373)
-docs: Adding PeriodicExecutionTimeMonitor to the batteries docs (#368)
-misc: Fix compatibility issues with jsonschema>=4 (#364)
+- bug: Fix Slack dependency name issue (`PR#367 <https://github.com/scrapinghub/spidermon/pull/367>`_)
+- chore: Change the Ubuntu version on workflow settings (`PR#373 <https://github.com/scrapinghub/spidermon/pull/373>`_)
+- docs: Adding PeriodicExecutionTimeMonitor to the batteries docs (`PR#368 <https://github.com/scrapinghub/spidermon/pull/368>`_)
+- feature: Adding the use of ItemAdapter to prevent assumptions of item nature (`PR#358 <https://github.com/scrapinghub/spidermon/pull/358>`_)
+- misc: Fix compatibility issues with jsonschema>=4 (`PR#364 <https://github.com/scrapinghub/spidermon/pull/364>`_)
 
 1.17.0 (2022-09-12)
 -------------------
