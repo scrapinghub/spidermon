@@ -1,6 +1,15 @@
 Release notes
 =============
 
+1.17.1 (2023-01-05)
+-------------------
+
+bug: Adding the use of ItemAdapter to prevent assumptions of item nature (#358)
+bug: Fix Slack dependency name issue (#367)
+chore: Change the Ubuntu version on workflow settings (#373)
+docs: Adding PeriodicExecutionTimeMonitor to the batteries docs (#368)
+misc: Fix compatibility issues with jsonschema>=4 (#364)
+
 1.17.0 (2022-09-12)
 -------------------
 
