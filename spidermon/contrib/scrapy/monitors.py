@@ -641,12 +641,6 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
 
         previous_count = sum(job.get("items", 0) for job in jobs) / len(jobs)
 
-        # math.ceil may give unexpected results because of floating point math error.
-        # Example:
-        # previous_count = 100.0
-        # threshold = 1.1
-        # previous_count * threshold = 110.00000000000001
-        # math.ceil(110.00000000000001) = 111.0
         expected_item_extracted = math.ceil(previous_count * threshold)
         return expected_item_extracted
 
