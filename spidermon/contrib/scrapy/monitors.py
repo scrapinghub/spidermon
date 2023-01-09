@@ -539,7 +539,7 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
 
 
 @monitors.name("Jobs Comparison Monitor")
-class JobsComparisonMonitor(BaseStatMonitor):
+class ZyteJobsComparisonMonitor(BaseStatMonitor):
     """
     .. note::
        This monitor is useful when running jobs in

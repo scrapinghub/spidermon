@@ -8,7 +8,7 @@ from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_JOBS_COMPARISON_STATES,
     SPIDERMON_JOBS_COMPARISON_TAGS,
     SPIDERMON_JOBS_COMPARISON_THRESHOLD,
-    JobsComparisonMonitor,
+    ZyteJobsComparisonMonitor,
 )
 from spidermon.exceptions import NotConfigured
 
@@ -20,8 +20,8 @@ def mock_jobs(previous_counts):
 
 @pytest.fixture
 def mock_suite(mock_jobs, monkeypatch):
-    monkeypatch.setattr(JobsComparisonMonitor, "_get_jobs", mock_jobs)
-    return MonitorSuite(monitors=[JobsComparisonMonitor])
+    monkeypatch.setattr(ZyteJobsComparisonMonitor, "_get_jobs", mock_jobs)
+    return MonitorSuite(monitors=[ZyteJobsComparisonMonitor])
 
 
 @pytest.fixture
@@ -41,7 +41,7 @@ def mock_suite_and_zyte_client(
     monkeypatch.setattr(monitors, "zyte", Mock())
     monitors.zyte.client.spider.jobs.list.side_effect = get_paginated_jobs
 
-    return MonitorSuite(monitors=[monitors.JobsComparisonMonitor]), monitors.zyte
+    return MonitorSuite(monitors=[monitors.ZyteJobsComparisonMonitor]), monitors.zyte
 
 
 @pytest.mark.parametrize(

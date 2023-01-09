@@ -154,7 +154,7 @@ Spidermon has some batteries included :)
     :members: ItemCountMonitor, ErrorCountMonitor, WarningCountMonitor, CriticalCountMonitor, FinishReasonMonitor,
               UnwantedHTTPCodesMonitor, ItemValidationMonitor, FieldCoverageMonitor,
               RetryCountMonitor, DownloaderExceptionMonitor, SuccessfulRequestsMonitor,
-              TotalRequestsMonitor, PeriodicExecutionTimeMonitor, JobsComparisonMonitor
+              TotalRequestsMonitor, PeriodicExecutionTimeMonitor, ZyteJobsComparisonMonitor
 
 Is there a **Basic Scrapy Suite** ready to use?
 ------------------------------------------------
