@@ -166,3 +166,34 @@ def test_skipped_if_stat_can_not_be_found_but_monitor_configured_to_be_ignore(
 
     runner.run(monitor_suite, **data)
     assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.SKIPPED
+
+
+def test_base_stat_monitor_correctly_converts_string_thresholds_float(make_data):
+    class TestBaseStatMonitor(BaseStatMonitor):
+        stat_name = "test_statistic"
+        threshold_setting = "THRESHOLD_SETTING"
+        assert_type = ">="
+
+    data = make_data({"THRESHOLD_SETTING": "50.4"})
+    runner = data.pop("runner")
+    data["stats"][TestBaseStatMonitor.stat_name] = 50.5
+    monitor_suite = MonitorSuite(monitors=[TestBaseStatMonitor])
+
+    runner.run(monitor_suite, **data)
+    assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.SUCCESS
+
+
+def test_base_stat_monitor_correctly_converts_string_thresholds_int(make_data):
+    class TestBaseStatMonitor(BaseStatMonitor):
+        stat_name = "test_statistic"
+        threshold_setting = "THRESHOLD_SETTING"
+        assert_type = ">="
+        threshold_datatype = int
+
+    data = make_data({"THRESHOLD_SETTING": "50"})
+    runner = data.pop("runner")
+    data["stats"][TestBaseStatMonitor.stat_name] = 51
+    monitor_suite = MonitorSuite(monitors=[TestBaseStatMonitor])
+
+    runner.run(monitor_suite, **data)
+    assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.SUCCESS
