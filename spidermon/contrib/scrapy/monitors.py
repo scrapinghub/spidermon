@@ -297,12 +297,31 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
                 code: errors_max_count for code in unwanted_http_codes
             }
 
+        requests = self.stats.get("downloader/request_count", 0)
         for code, max_errors in unwanted_http_codes.items():
             code = int(code)
             count = self.stats.get(f"downloader/response_status_count/{code}", 0)
+
+            if isinstance(max_errors, dict):
+                absolute_max_errors = max_errors.get("max_count")
+                percentual_max_errors = max_errors.get("percentage")
+
+                if not absolute_max_errors and not percentual_max_errors:
+                    max_errors = self.DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT
+
+                else:
+                    max_errors = min(
+                        absolute_max_errors if absolute_max_errors else requests,
+                        int(
+                            percentual_max_errors * requests
+                            if percentual_max_errors
+                            else requests
+                        ),
+                    )
+
             msg = (
                 "Found {} Responses with status code={} - "
-                "This exceed the limit of {}".format(count, code, max_errors)
+                "This exceeds the limit of {}".format(count, code, max_errors)
             )
             self.assertTrue(count <= max_errors, msg=msg)
 
