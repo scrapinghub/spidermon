@@ -38,7 +38,10 @@ class BaseStatMonitor(BaseScrapyMonitor):
 
     Create a monitor class inheriting from this class to have a custom
     monitor that validates numerical stats from your job execution
-    against a configurable threshold.
+    against a configurable threshold. If this threshold is set in Scrapy
+    Cloud (and not it the spider settings), the setting is read as a
+    string and converted to ``threshold_datatype`` type (default is
+    float).
 
     As an example, we will create a new monitor that will check if the
     value obtained in a job stat 'numerical_job_statistic' is greater than
@@ -100,6 +103,17 @@ class BaseStatMonitor(BaseScrapyMonitor):
     """
 
     fail_if_stat_missing = True
+    threshold_datatype = float
+
+    @property
+    def _get_threshold_setting(self):
+
+        datatype_to_function = {
+            int: self.crawler.settings.getint,
+            float: self.crawler.settings.getfloat,
+        }
+
+        return datatype_to_function[self.threshold_datatype]
 
     def run(self, result):
         has_threshold_config = any(
@@ -126,7 +140,7 @@ class BaseStatMonitor(BaseScrapyMonitor):
     def _get_threshold_value(self):
         if hasattr(self, "get_threshold"):
             return self.get_threshold()
-        return self.crawler.settings.get(self.threshold_setting)
+        return self._get_threshold_setting(self.threshold_setting)
 
     def test_stat_monitor(self):
         assertions = {
