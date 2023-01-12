@@ -274,6 +274,24 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
             500: 0,
         }
 
+    Furthermore, instead of being a numeric value, the code accepts a dictionary which can
+    contain any of two keys: ``max_count`` and ``percentage``. The former refers to an
+    absolute value and works the same way as setting an integer value. The latter refers
+    to a percentage of the total number of requests the spider made. If both are set, the
+    monitor will pick the smallest of the two values. If none are set, it will default to
+    ``DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT```.
+
+    With the following setting, the monitor will fail if it has at least one 500 error or
+    if there are more than ``min(100, 0.5 * total requests)`` 400 responses.
+
+    .. highlight:: python
+    .. code-block:: python
+
+        SPIDERMON_UNWANTED_HTTP_CODES = {
+            400: {"max_count": 100, "percentage": 0.5},
+            500: 0,
+        }
+
     """
 
     DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT = 10
