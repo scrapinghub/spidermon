@@ -38,8 +38,8 @@ class BaseStatMonitor(BaseScrapyMonitor):
 
     Create a monitor class inheriting from this class to have a custom
     monitor that validates numerical stats from your job execution
-    against a configurable threshold. If this threshold is set in Scrapy
-    Cloud (and not it the spider settings), the setting is read as a
+    against a configurable threshold. If this threshold is passed in
+    via command line arguments (and not it the spider settings), the setting is read as a
     string and converted to ``threshold_datatype`` type (default is
     float).
 
