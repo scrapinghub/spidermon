@@ -1,7 +1,11 @@
 import datetime
+import json
+import math
+import os
 
 from spidermon import Monitor, MonitorSuite, monitors
 from spidermon.exceptions import NotConfigured
+from spidermon.utils import zyte
 from spidermon.utils.settings import getdictorlist
 
 from ..monitors.mixins.spider import SpiderMonitorMixin, StatsMonitorMixin
@@ -13,6 +17,10 @@ SPIDERMON_MAX_EXECUTION_TIME = "SPIDERMON_MAX_EXECUTION_TIME"
 SPIDERMON_MAX_RETRIES = "SPIDERMON_MAX_RETRIES"
 SPIDERMON_MIN_SUCCESSFUL_REQUESTS = "SPIDERMON_MIN_SUCCESSFUL_REQUESTS"
 SPIDERMON_MAX_REQUESTS_ALLOWED = "SPIDERMON_MAX_REQUESTS_ALLOWED"
+SPIDERMON_JOBS_COMPARISON = "SPIDERMON_JOBS_COMPARISON"
+SPIDERMON_JOBS_COMPARISON_STATES = "SPIDERMON_JOBS_COMPARISON_STATES"
+SPIDERMON_JOBS_COMPARISON_TAGS = "SPIDERMON_JOBS_COMPARISON_TAGS"
+SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
@@ -30,7 +38,10 @@ class BaseStatMonitor(BaseScrapyMonitor):
 
     Create a monitor class inheriting from this class to have a custom
     monitor that validates numerical stats from your job execution
-    against a configurable threshold.
+    against a configurable threshold. If this threshold is passed in
+    via command line arguments (and not it the spider settings), the setting is read as a
+    string and converted to ``threshold_datatype`` type (default is
+    float).
 
     As an example, we will create a new monitor that will check if the
     value obtained in a job stat 'numerical_job_statistic' is greater than
@@ -92,6 +103,17 @@ class BaseStatMonitor(BaseScrapyMonitor):
     """
 
     fail_if_stat_missing = True
+    threshold_datatype = float
+
+    @property
+    def _get_threshold_setting(self):
+
+        datatype_to_function = {
+            int: self.crawler.settings.getint,
+            float: self.crawler.settings.getfloat,
+        }
+
+        return datatype_to_function[self.threshold_datatype]
 
     def run(self, result):
         has_threshold_config = any(
@@ -118,7 +140,7 @@ class BaseStatMonitor(BaseScrapyMonitor):
     def _get_threshold_value(self):
         if hasattr(self, "get_threshold"):
             return self.get_threshold()
-        return self.crawler.settings.get(self.threshold_setting)
+        return self._get_threshold_setting(self.threshold_setting)
 
     def test_stat_monitor(self):
         assertions = {
@@ -528,6 +550,113 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
 
         msg = "The job has exceeded the maximum execution time"
         self.assertLess(duration.total_seconds(), max_execution_time, msg=msg)
+
+
+@monitors.name("Jobs Comparison Monitor")
+class ZyteJobsComparisonMonitor(BaseStatMonitor):
+    """
+    .. note::
+       This monitor is useful when running jobs in
+       `Zyte's Scrapy Cloud <https://www.zyte.com/scrapy-cloud/>`_.
+
+    Check for a drop in scraped item count compared to previous jobs.
+
+    You need to set the number of previous jobs to compare, using ``SPIDERMON_JOBS_COMPARISON``.
+    The default is ``0`` which disables the monitor. We use the average of the scraped items count.
+
+    You can configure which percentage of the previous item count is the minimum acceptable, by
+    using the setting ``SPIDERMON_JOBS_COMPARISON_THRESHOLD``. We expect a float number between
+    ``0.0`` (not inclusive) and with no upper limit (meaning we can check if itemcount is increasing
+    at a certain rate). If not set, a NotConfigured error will be raised.
+
+    You can filter which jobs to compare based on their states using the
+    ``SPIDERMON_JOBS_COMPARISON_STATES`` setting. The default value is ``("finished",)``.
+
+    You can also filter which jobs to compare based on their tags using the
+    ``SPIDERMON_JOBS_COMPARISON_TAGS`` setting. Among the defined tags we consider only those
+    that are also present in the current job.
+    """
+
+    stat_name = "item_scraped_count"
+    assert_type = ">="
+
+    def run(self, result):
+
+        if (
+            SPIDERMON_JOBS_COMPARISON not in self.crawler.settings.attributes
+            or self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON) <= 0
+        ):
+            raise NotConfigured(
+                f"Configure SPIDERMON_JOBS_COMPARISON to your project "
+                f"settings to use {self.monitor_name}."
+            )
+
+        if (
+            SPIDERMON_JOBS_COMPARISON_THRESHOLD not in self.crawler.settings.attributes
+            or self.crawler.settings.getfloat(SPIDERMON_JOBS_COMPARISON_THRESHOLD) <= 0
+        ):
+            raise NotConfigured(
+                f"Configure SPIDERMON_JOBS_COMPARISON_THRESHOLD to your project "
+                f"settings to use {self.monitor_name}."
+            )
+
+        return super().run(result)
+
+    def _get_jobs(self, states, number_of_jobs):
+
+        tags = self._get_tags_to_filter()
+
+        jobs = []
+        start = 0
+        _jobs = zyte.client.spider.jobs.list(
+            start=start,
+            state=states,
+            count=number_of_jobs,
+            filters=dict(has_tag=tags) if tags else None,
+        )
+        while _jobs:
+            jobs.extend(_jobs)
+            start += 1000
+            _jobs = zyte.client.spider.jobs.list(
+                start=start,
+                state=states,
+                count=number_of_jobs,
+                filters=dict(has_tag=tags) if tags else None,
+            )
+        return jobs
+
+    def _get_tags_to_filter(self):
+        """
+        Return the intersect of the desired tags to filter and
+        the ones from the current job.
+        """
+        desired_tags = self.crawler.settings.getlist(SPIDERMON_JOBS_COMPARISON_TAGS)
+        if not desired_tags:
+            return {}
+
+        current_tags = json.loads(os.environ.get("SHUB_JOB_DATA", "{}")).get("tags")
+        if not current_tags:
+            return {}
+
+        tags_to_filter = set(desired_tags) & set(current_tags)
+        return sorted(tags_to_filter)
+
+    def get_threshold(self):
+
+        number_of_jobs = self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON)
+
+        threshold = self.crawler.settings.getfloat(SPIDERMON_JOBS_COMPARISON_THRESHOLD)
+
+        states = self.crawler.settings.getlist(
+            SPIDERMON_JOBS_COMPARISON_STATES, ("finished",)
+        )
+
+        jobs = self._get_jobs(states, number_of_jobs)
+
+        previous_count = sum(job.get("items", 0) for job in jobs) / len(jobs)
+
+        expected_item_extracted = math.ceil(previous_count * threshold)
+        return expected_item_extracted
 
 
 class SpiderCloseMonitorSuite(MonitorSuite):

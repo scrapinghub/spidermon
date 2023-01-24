@@ -228,6 +228,35 @@ def test_validator_from_url(mocker):
     assert stats.get("spidermon/validation/validators/testitem/jsonschema", False)
 
 
+class TestAddErrors:
+    def _run_pipeline(self, test_item):
+        settings = {
+            "SPIDERMON_ENABLED": True,
+            "SPIDERMON_VALIDATION_ERRORS_FIELD": "error_test",
+            SETTING_SCHEMAS: [test_schema],
+        }
+        test_errors = {"some_error": ["some_message"]}
+        crawler = get_crawler(settings_dict=settings)
+        pipe = ItemValidationPipeline.from_crawler(crawler)
+        pipe._add_errors_to_item(test_item, test_errors)
+        return test_item
+
+    def test_add_errors_to_item(self):
+        test_item = TestItem({"url": "http://example.com"})
+        self._run_pipeline(test_item)
+        assert test_item.get("error_test")["some_error"] == ["some_message"]
+
+    def test_add_errors_to_item_prefilled(self):
+        test_item = TestItem(
+            {"url": "http://example.com", "error_test": {"some_error": ["prefilled"]}}
+        )
+        self._run_pipeline(test_item)
+        assert test_item.get("error_test")["some_error"] == [
+            "prefilled",
+            "some_message",
+        ]
+
+
 class PipelineModelValidator(PipelineTest):
     assert_type_in_stats = partial(assert_type_in_stats, "schematics")
 
