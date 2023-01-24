@@ -27,7 +27,7 @@ def run_mailer(test_settings):
     mailer.send_message(MagicMock())
 
 
-@patch("spidermon.contrib.actions.email.ses.boto3")
+@patch("spidermon.contrib.actions.email.ses.boto")
 def test_ses_no_return_path(mock_boto3, test_settings):
     run_mailer(test_settings)
 
@@ -37,7 +37,7 @@ def test_ses_no_return_path(mock_boto3, test_settings):
     assert message.get("X-SES-RETURN-PATH-ARN") is None
 
 
-@patch("spidermon.contrib.actions.email.ses.boto3")
+@patch("spidermon.contrib.actions.email.ses.boto")
 def test_ses_return_path(mock_boto3, test_settings):
     test_settings["SPIDERMON_AWS_RETURN_PATH"] = "return@path.com"
     run_mailer(test_settings)
