@@ -1,4 +1,4 @@
-import boto3
+import boto
 
 from spidermon.exceptions import NotConfigured
 from spidermon.utils.settings import get_aws_credentials
@@ -63,7 +63,7 @@ class SendSESEmail(SendEmail):
         return recipients
 
     def send_message(self, message, **kwargs):
-        client = boto3.client(
+        client = boto.client(
             service_name="ses",
             region_name=self.aws_region_name,
             aws_access_key_id=self.aws_access_key,
