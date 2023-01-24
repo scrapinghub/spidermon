@@ -33,7 +33,8 @@ def test_ses_no_return_path(mock_boto3, test_settings):
 
     mock_boto3.client().send_raw_email.assert_called()
 
-    message = mock_boto3.client().send_raw_email.call_args.kwargs['RawMessage']
+    kwargs = mock_boto3.client().send_raw_email.call_args[1]
+    message = kwargs.get('RawMessage')
     assert message.get("X-SES-RETURN-PATH-ARN") is None
 
 
@@ -44,6 +45,7 @@ def test_ses_return_path(mock_boto3, test_settings):
 
     mock_boto3.client().send_raw_email.assert_called()
 
-    message = mock_boto3.client().send_raw_email.call_args.kwargs['RawMessage']
+    kwargs = mock_boto3.client().send_raw_email.call_args[1]
+    message = kwargs.get('RawMessage')
     assert message.get("X-SES-RETURN-PATH-ARN") == "return@path.com"
 
