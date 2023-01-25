@@ -14,7 +14,7 @@ def test_settings():
         "SPIDERMON_AWS_SECRET_KEY": "fake",
         "SPIDERMON_EMAIL_TO": "fake@test.com",
         "SPIDERMON_EMAIL_SUBJECT": "fake",
-        "SPIDERMON_BODY_TEXT_TEMPLATE": "fake"
+        "SPIDERMON_BODY_TEXT_TEMPLATE": "fake",
     }
 
 
@@ -48,4 +48,3 @@ def test_ses_return_path(mock_boto3, test_settings):
     kwargs = mock_boto3.client().send_raw_email.call_args[1]
     message = kwargs.get("RawMessage")
     assert message.get("X-SES-RETURN-PATH-ARN") == "return@path.com"
-
