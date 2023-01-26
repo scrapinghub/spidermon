@@ -98,7 +98,7 @@ def test_unwanted_httpcodes_should_fail(make_data):
 
     # Scenario # 7
     data = make_data(
-        {SPIDERMON_UNWANTED_HTTP_CODES: {500: {"percentage": 0.5}, 400: 2}}
+        {SPIDERMON_UNWANTED_HTTP_CODES: {500: {"max_percentage": 0.5}, 400: 2}}
     )
 
     runner = data.pop("runner")
@@ -117,7 +117,7 @@ def test_unwanted_httpcodes_should_fail(make_data):
     data = make_data(
         {
             SPIDERMON_UNWANTED_HTTP_CODES: {
-                500: {"percentage": 0.5, "max_count": 3},
+                500: {"max_percentage": 0.5, "max_count": 3},
                 400: 2,
             }
         }
@@ -139,7 +139,7 @@ def test_unwanted_httpcodes_should_fail(make_data):
     data = make_data(
         {
             SPIDERMON_UNWANTED_HTTP_CODES: {
-                500: {"percentage": 0.99, "max_count": 10},
+                500: {"max_percentage": 0.99, "max_count": 10},
                 400: 2,
             }
         }
@@ -161,7 +161,7 @@ def test_unwanted_httpcodes_should_fail(make_data):
     data = make_data(
         {
             SPIDERMON_UNWANTED_HTTP_CODES: {
-                500: {"percentage": 0.5, "max_count": 10},
+                500: {"max_percentage": 0.5, "max_count": 10},
                 400: 2,
             }
         }
@@ -240,7 +240,7 @@ def test_unwanted_httpcodes_should_pass(make_data):
     data = make_data(
         {
             SPIDERMON_UNWANTED_HTTP_CODES: {
-                500: {"percentage": 0.5},
+                500: {"max_percentage": 0.5},
                 400: 2,
             }
         }
@@ -258,7 +258,7 @@ def test_unwanted_httpcodes_should_pass(make_data):
     data = make_data(
         {
             SPIDERMON_UNWANTED_HTTP_CODES: {
-                500: {"max_count": 5, "percentage": 0.9},
+                500: {"max_count": 5, "max_percentage": 0.9},
                 400: 2,
             }
         }
