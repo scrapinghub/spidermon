@@ -2,6 +2,7 @@ import datetime
 import json
 import math
 import os
+import operator
 
 from spidermon import Monitor, MonitorSuite, monitors
 from spidermon.exceptions import NotConfigured
@@ -25,12 +26,23 @@ SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
     longMessage = False
+    ops = {"==": operator.eq, "<": operator.lt, ">": operator.gt}
 
     @property
     def monitor_description(self):
         if self.__class__.__doc__:
             return self.__class__.__doc__.split("\n")[0]
         return super().monitor_description
+
+    def run(self, result):
+        if getattr(self, "skip_rules") and self.skip_rules.get(self.name.split("/")[0]):
+            skip_rules = self.skip_rules[self.name.split('/')[0]]
+            for rule in skip_rules:
+                stats_value = self.data.stats.get(rule[0], 0)
+                if self.ops[rule[1]](stats_value, rule[2]):
+                    return
+
+        return super().run(result)
 
 
 class BaseStatMonitor(BaseScrapyMonitor):
@@ -680,6 +692,22 @@ class SpiderCloseMonitorSuite(MonitorSuite):
                 'spidermon.contrib.scrapy.monitors.SpiderCloseMonitorSuite',
             )
     """
+
+    def __init__(
+            self,
+            name=None,
+            monitors=None,
+            monitors_finished_actions=None,
+            monitors_passed_actions=None,
+            monitors_failed_actions=None,
+            order=None,
+            crawler=None,
+    ):
+        super().__init__(name, monitors, monitors_finished_actions, monitors_passed_actions, monitors_failed_actions, order, crawler)
+        if dict(crawler.settings).get("SPIDERMON_MONITOR_SKIPPING_RULES"):
+            skip_rules = crawler.settings.get("SPIDERMON_MONITOR_SKIPPING_RULES")
+            for monitor in self.monitors:
+                monitor.skip_rules = skip_rules
 
     monitors = [
         ItemCountMonitor,
