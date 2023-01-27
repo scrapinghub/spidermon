@@ -112,6 +112,7 @@ def test_unwanted_httpcodes_should_fail(make_data):
         in runner.result.monitor_results[0].error
     )
     assert "limit of 5" in runner.result.monitor_results[0].error
+    assert "50.0%" in runner.result.monitor_results[0].error
 
     # Scenario # 8
     data = make_data(
@@ -135,7 +136,7 @@ def test_unwanted_httpcodes_should_fail(make_data):
     )
     assert "limit of 3" in runner.result.monitor_results[0].error
 
-    # Scenario # 8
+    # Scenario # 9
     data = make_data(
         {
             SPIDERMON_UNWANTED_HTTP_CODES: {
@@ -157,7 +158,7 @@ def test_unwanted_httpcodes_should_fail(make_data):
     )
     assert "limit of 2" in runner.result.monitor_results[0].error
 
-    # Scenario # 8
+    # Scenario # 10
     data = make_data(
         {
             SPIDERMON_UNWANTED_HTTP_CODES: {
@@ -178,6 +179,7 @@ def test_unwanted_httpcodes_should_fail(make_data):
         in runner.result.monitor_results[0].error
     )
     assert "limit of 5" in runner.result.monitor_results[0].error
+    assert "50.0%" in runner.result.monitor_results[0].error
 
 
 def test_unwanted_httpcodes_should_pass(make_data):
