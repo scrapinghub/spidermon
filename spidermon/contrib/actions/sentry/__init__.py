@@ -115,7 +115,6 @@ class SendSentryMessage(Action):
         return tags
 
     def send_message(self, message):
-
         sentry_client = Client(dsn=self.sentry_dsn, environment=self.environment)
 
         with configure_scope() as scope:

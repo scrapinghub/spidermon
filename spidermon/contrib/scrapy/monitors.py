@@ -107,7 +107,6 @@ class BaseStatMonitor(BaseScrapyMonitor):
 
     @property
     def _get_threshold_setting(self):
-
         datatype_to_function = {
             int: self.crawler.settings.getint,
             float: self.crawler.settings.getfloat,
@@ -581,7 +580,6 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
     assert_type = ">="
 
     def run(self, result):
-
         if (
             SPIDERMON_JOBS_COMPARISON not in self.crawler.settings.attributes
             or self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON) <= 0
@@ -603,7 +601,6 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         return super().run(result)
 
     def _get_jobs(self, states, number_of_jobs):
-
         tags = self._get_tags_to_filter()
 
         jobs = []
@@ -642,7 +639,6 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         return sorted(tags_to_filter)
 
     def get_threshold(self):
-
         number_of_jobs = self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON)
 
         threshold = self.crawler.settings.getfloat(SPIDERMON_JOBS_COMPARISON_THRESHOLD)

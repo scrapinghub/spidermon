@@ -22,7 +22,6 @@ DOTS = {
 
 
 class TextMonitorResult(MonitorResult):
-
     SEPARATOR_BOLD = "="
     SEPARATOR_LIGHT = "-"
     LINE_LENGTH = 70

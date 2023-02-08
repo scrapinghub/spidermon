@@ -4,7 +4,6 @@ from spidermon.exceptions import InvalidExpression
 
 
 class Interpreter:
-
     ast_allowed_nodes = (
         "expr",
         "name",
