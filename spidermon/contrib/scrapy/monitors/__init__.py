@@ -1,4 +1,4 @@
-from .base import BaseScrapyMonitor, BaseMonitor
+from .base import BaseScrapyMonitor, BaseStatMonitor
 from .monitors import (
     CriticalCountMonitor,
     DownloaderExceptionMonitor,
