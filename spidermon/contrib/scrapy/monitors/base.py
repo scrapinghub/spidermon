@@ -88,7 +88,6 @@ class BaseStatMonitor(BaseScrapyMonitor):
 
     @property
     def _get_threshold_setting(self):
-
         datatype_to_function = {
             int: self.crawler.settings.getint,
             float: self.crawler.settings.getfloat,

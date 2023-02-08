@@ -3,13 +3,10 @@ import json
 import math
 import os
 
-from spidermon import Monitor, monitors
 from spidermon.exceptions import NotConfigured
 from spidermon.utils import zyte
 from spidermon.utils.settings import getdictorlist
 
-from .base import BaseStatMonitor, BaseScrapyMonitor
-from ...monitors.mixins.spider import StatsMonitorMixin
 
 SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
@@ -434,7 +431,6 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
     assert_type = ">="
 
     def run(self, result):
-
         if (
             SPIDERMON_JOBS_COMPARISON not in self.crawler.settings.attributes
             or self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON) <= 0
@@ -456,7 +452,6 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         return super().run(result)
 
     def _get_jobs(self, states, number_of_jobs):
-
         tags = self._get_tags_to_filter()
 
         jobs = []
@@ -495,7 +490,6 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         return sorted(tags_to_filter)
 
     def get_threshold(self):
-
         number_of_jobs = self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON)
 
         threshold = self.crawler.settings.getfloat(SPIDERMON_JOBS_COMPARISON_THRESHOLD)

@@ -2,13 +2,13 @@ from unittest.mock import Mock, call
 
 import pytest
 from spidermon import MonitorSuite
-from spidermon.contrib.scrapy import monitors
 from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_JOBS_COMPARISON,
     SPIDERMON_JOBS_COMPARISON_STATES,
     SPIDERMON_JOBS_COMPARISON_TAGS,
     SPIDERMON_JOBS_COMPARISON_THRESHOLD,
     ZyteJobsComparisonMonitor,
+    monitors,
 )
 from spidermon.exceptions import NotConfigured
 
@@ -38,10 +38,11 @@ def mock_suite_and_zyte_client(
         return []
 
     monkeypatch.setenv("SHUB_JOB_DATA", '{"tags":["tag1","tag2","tag3"]}')
-    monkeypatch.setattr(monitors.monitors, "zyte", Mock())
-    monitors.monitors.zyte.client.spider.jobs.list.side_effect = get_paginated_jobs
 
-    return MonitorSuite(monitors=[monitors.ZyteJobsComparisonMonitor]), monitors.monitors.zyte
+    monkeypatch.setattr(monitors, "zyte", Mock())
+    monitors.zyte.client.spider.jobs.list.side_effect = get_paginated_jobs
+
+    return MonitorSuite(monitors=[monitors.ZyteJobsComparisonMonitor]), monitors.zyte
 
 
 @pytest.mark.parametrize(

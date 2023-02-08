@@ -27,7 +27,9 @@ def mock_spider():
 
 @pytest.fixture
 def mock_datetime(mocker):
-    mocked_datetime = mocker.patch("spidermon.contrib.scrapy.monitors.monitors.datetime")
+    mocked_datetime = mocker.patch(
+        "spidermon.contrib.scrapy.monitors.monitors.datetime"
+    )
     fake_now_dt = datetime.datetime.fromtimestamp(FAKE_START_TS + FAKE_EXECUTION_TIME)
 
     mocked_datetime.datetime.utcnow.return_value = fake_now_dt
