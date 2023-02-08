@@ -19,17 +19,17 @@ from .monitors import (
 class SpiderCloseMonitorSuite(MonitorSuite):
     """This Monitor Suite implements the following monitors:
 
-    * :class:`ItemCountMonitor`
-    * :class:`ItemValidationMonitor`
-    * :class:`ErrorCountMonitor`
-    * :class:`WarningCountMonitor`
-    * :class:`FinishReasonMonitor`
-    * :class:`UnwantedHTTPCodesMonitor`
-    * :class:`FieldCoverageMonitor`
-    * :class:`RetryCountMonitor`
-    * :class:`DownloaderExceptionMonitor`
-    * :class:`SuccessfulRequestsMonitor`
-    * :class:`TotalRequestsMonitor`
+    * :class:`.monitors.ItemCountMonitor`
+    * :class:`.monitors.ItemValidationMonitor`
+    * :class:`.monitors.ErrorCountMonitor`
+    * :class:`.monitors.WarningCountMonitor`
+    * :class:`.monitors.FinishReasonMonitor`
+    * :class:`.monitors.UnwantedHTTPCodesMonitor`
+    * :class:`.monitors.FieldCoverageMonitor`
+    * :class:`.monitors.RetryCountMonitor`
+    * :class:`.monitors.DownloaderExceptionMonitor`
+    * :class:`.monitors.SuccessfulRequestsMonitor`
+    * :class:`.monitors.TotalRequestsMonitor`
 
     You can easily enable this monitor *after* enabling Spidermon::
 
@@ -56,7 +56,7 @@ class SpiderCloseMonitorSuite(MonitorSuite):
 class PeriodicMonitorSuite(MonitorSuite):
     """This Monitor Suite implements the following monitors:
 
-    * :class:`PeriodicExecutionTimeMonitor`
+    * :class:`.monitors.PeriodicExecutionTimeMonitor`
 
     You can easily enable this monitor *after* enabling Spidermon::
 
