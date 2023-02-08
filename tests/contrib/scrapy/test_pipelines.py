@@ -345,7 +345,6 @@ class PipelineModelValidator(PipelineTest):
 
 
 class PipelineValidators(PipelineTest):
-
     data_tests = [
         DataTest(
             name=f"there are both validators per {Item.__name__} type",
