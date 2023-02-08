@@ -3,10 +3,13 @@ import json
 import math
 import os
 
+from spidermon import Monitor, monitors
 from spidermon.exceptions import NotConfigured
 from spidermon.utils import zyte
 from spidermon.utils.settings import getdictorlist
+from spidermon.contrib.monitors.mixins.stats import StatsMonitorMixin
 
+from .base import BaseScrapyMonitor, BaseStatMonitor
 
 SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
