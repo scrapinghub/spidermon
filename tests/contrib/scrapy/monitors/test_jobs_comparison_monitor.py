@@ -38,10 +38,10 @@ def mock_suite_and_zyte_client(
         return []
 
     monkeypatch.setenv("SHUB_JOB_DATA", '{"tags":["tag1","tag2","tag3"]}')
-    monkeypatch.setattr(monitors, "zyte", Mock())
-    monitors.zyte.client.spider.jobs.list.side_effect = get_paginated_jobs
+    monkeypatch.setattr(monitors.monitors, "zyte", Mock())
+    monitors.monitors.zyte.client.spider.jobs.list.side_effect = get_paginated_jobs
 
-    return MonitorSuite(monitors=[monitors.ZyteJobsComparisonMonitor]), monitors.zyte
+    return MonitorSuite(monitors=[monitors.ZyteJobsComparisonMonitor]), monitors.monitors.zyte
 
 
 @pytest.mark.parametrize(
