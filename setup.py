@@ -5,6 +5,7 @@ test_requirements = [
     "pytest-cov",
     "pytest-mock",
     "jinja2",
+    "boto3",
     "lxml",
     "premailer",
     "scrapinghub",

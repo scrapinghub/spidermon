@@ -176,6 +176,14 @@ AWS Region.
 
 Default: ``us-east-1``
 
+
+SPIDERMON_AWS_RETURN_PATH
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Reply-To email address.
+
+Default: ``None`` (replies will go to sender email address)
+
 SMTP action settings
 --------------------
 
