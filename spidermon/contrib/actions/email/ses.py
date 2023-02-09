@@ -10,12 +10,14 @@ class SendSESEmail(SendEmail):
     aws_access_key = None
     aws_secret_key = None
     aws_region_name = "us-east-1"
+    aws_return_path = None
 
     def __init__(
         self,
         aws_access_key=None,
         aws_secret_key=None,
         aws_region_name=None,
+        aws_return_path=None,
         *args,
         **kwargs
     ):
@@ -23,6 +25,7 @@ class SendSESEmail(SendEmail):
         self.aws_access_key = aws_access_key or self.aws_access_key
         self.aws_secret_key = aws_secret_key or self.aws_secret_key
         self.aws_region_name = aws_region_name or self.aws_region_name
+        self.aws_return_path = aws_return_path or self.aws_return_path
         if not self.fake and not self.aws_access_key:
             raise NotConfigured(
                 "You must provide a value for SPIDERMON_AWS_ACCESS_KEY_ID setting."
@@ -43,6 +46,7 @@ class SendSESEmail(SendEmail):
                 "aws_access_key": aws_access_key_id,
                 "aws_secret_key": aws_secret_access_key,
                 "aws_region_name": crawler.settings.get("SPIDERMON_AWS_REGION_NAME"),
+                "aws_return_path": crawler.settings.get("SPIDERMON_AWS_RETURN_PATH"),
             }
         )
         return kwargs
@@ -65,8 +69,13 @@ class SendSESEmail(SendEmail):
             aws_access_key_id=self.aws_access_key,
             aws_secret_access_key=self.aws_secret_key,
         )
+
+        raw_message = {"Data": message.as_string()}
+        if self.aws_return_path:
+            raw_message["X-SES-RETURN-PATH-ARN"] = self.aws_return_path
+
         client.send_raw_email(
             Source=self.sender,
             Destinations=self._get_recipients(),
-            RawMessage={"Data": message.as_string()},
+            RawMessage=raw_message,
         )
