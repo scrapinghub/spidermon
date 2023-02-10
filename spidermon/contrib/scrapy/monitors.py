@@ -340,21 +340,30 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
                 absolute_max_errors = max_errors.get("max_count")
                 percentual_max_errors = max_errors.get("max_percentage")
 
+                # if the user passed an empty dict, use the default count
                 if not absolute_max_errors and not percentual_max_errors:
                     max_errors = self.DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT
 
                 else:
+                    # calculate the max errors based on percentage
+                    # if there's no percentage set, take the number
+                    # of requests as this is the same as disabling the check
                     calculated_percentage_errors = int(
                         percentual_max_errors * requests
                         if percentual_max_errors
                         else requests
                     )
 
+                    # takes the minimum of the two values.
+                    # if no absolute max errors were set, take the number
+                    # of requests as this effectively disables this check
                     max_errors = min(
                         absolute_max_errors if absolute_max_errors else requests,
                         calculated_percentage_errors,
                     )
 
+                    # if the max errors were defined by the percentage, remember it
+                    # so we can properly format the error message.
                     percentage_trigger = max_errors == calculated_percentage_errors
 
             stat_message = (
