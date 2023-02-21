@@ -141,6 +141,24 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
             500: 0,
         }
 
+    Furthermore, instead of being a numeric value, the code accepts a dictionary which can
+    contain any of two keys: ``max_count`` and ``max_percentage``. The former refers to an
+    absolute value and works the same way as setting an integer value. The latter refers
+    to a max_percentage of the total number of requests the spider made. If both are set, the
+    monitor will fail if any of the conditions are met. If none are set, it will default to
+    ``DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT```.
+
+    With the following setting, the monitor will fail if it has at least one 500 error or
+    if there are more than ``min(100, 0.5 * total requests)`` 400 responses.
+
+    .. highlight:: python
+    .. code-block:: python
+
+        SPIDERMON_UNWANTED_HTTP_CODES = {
+            400: {"max_count": 100, "max_percentage": 0.5},
+            500: 0,
+        }
+
     """
 
     DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT = 10
@@ -164,12 +182,54 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
                 code: errors_max_count for code in unwanted_http_codes
             }
 
+        requests = self.stats.get("downloader/request_count", 0)
         for code, max_errors in unwanted_http_codes.items():
             code = int(code)
             count = self.stats.get(f"downloader/response_status_count/{code}", 0)
+
+            percentage_trigger = False
+
+            if isinstance(max_errors, dict):
+                absolute_max_errors = max_errors.get("max_count")
+                percentual_max_errors = max_errors.get("max_percentage")
+
+                # if the user passed an empty dict, use the default count
+                if not absolute_max_errors and not percentual_max_errors:
+                    max_errors = self.DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT
+
+                else:
+                    # calculate the max errors based on percentage
+                    # if there's no percentage set, take the number
+                    # of requests as this is the same as disabling the check
+                    calculated_percentage_errors = int(
+                        percentual_max_errors * requests
+                        if percentual_max_errors
+                        else requests
+                    )
+
+                    # takes the minimum of the two values.
+                    # if no absolute max errors were set, take the number
+                    # of requests as this effectively disables this check
+                    max_errors = min(
+                        absolute_max_errors if absolute_max_errors else requests,
+                        calculated_percentage_errors,
+                    )
+
+                    # if the max errors were defined by the percentage, remember it
+                    # so we can properly format the error message.
+                    percentage_trigger = max_errors == calculated_percentage_errors
+
+            stat_message = (
+                "This exceeds the limit of {} ({}% of {} total requests)".format(
+                    max_errors, percentual_max_errors * 100, requests
+                )
+                if percentage_trigger
+                else "This exceeds the limit of {}".format(max_errors)
+            )
+
             msg = (
-                "Found {} Responses with status code={} - "
-                "This exceed the limit of {}".format(count, code, max_errors)
+                "Found {} Responses with status code={} - ".format(count, code)
+                + stat_message
             )
             self.assertTrue(count <= max_errors, msg=msg)
 
