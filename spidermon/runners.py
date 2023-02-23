@@ -85,7 +85,7 @@ class MonitorRunner:
         self.result.finish_step()
 
     def run_declare_settings(self):
-        settings = [(k, v) for k, v in self.spider.settings.items() if "SPIDERMON" in k]
+        settings = [(k, v) for k, v in self.spider.crawler.settings.items() if "SPIDERMON" in k]
         for key, value in settings:
             self.spider.log(f"[Spidermon] {key}: {value}", level=logging.INFO)
 
