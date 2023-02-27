@@ -2,7 +2,6 @@ import re
 
 
 class MessageTranslator:
-
     messages = {}
 
     def __init__(self):
