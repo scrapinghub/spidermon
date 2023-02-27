@@ -47,7 +47,6 @@ setup(
         "validation": ["schematics"],
         # Tools to run the tests
         "tests": test_requirements,
-        "pep8": ["black>=23.1.0"],
         # Tools to build and publish the documentation
         "docs": ["sphinx", "sphinx-rtd-theme", "s3cmd"],
     },
