@@ -73,6 +73,11 @@ class SpiderMonitorResult(MonitorResult):
         super().add_action_error(action, error)
         self.write_item_result(action)
 
+    def declare_settings(self):
+        settings = [(k, v) for k, v in self.spider.crawler.settings.items() if "SPIDERMON" in k]
+        for key, value in settings:
+            self.log_info(f"{key}: {value}")
+
     def write_title(self):
         self.log_info(line_title(self.step.name))
 

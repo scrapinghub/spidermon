@@ -50,7 +50,7 @@ class MonitorRunner:
 
     def run_settings(self):
         self.result.next_step()
-        self.run_declare_settings()
+        self.result.declare_settings()
         self.result.finish_step()
 
     def run_monitors(self):
@@ -83,11 +83,6 @@ class MonitorRunner:
                 actions=self.suite.monitors_failed_actions, reason="No Monitors failed"
             )
         self.result.finish_step()
-
-    def run_declare_settings(self):
-        settings = [(k, v) for k, v in self.spider.crawler.settings.items() if "SPIDERMON" in k]
-        for key, value in settings:
-            self.spider.log(f"[Spidermon] {key}: {value}", level=logging.INFO)
 
     def run_monitors_finished(self):
         self.suite.on_monitors_finished(self.result)
