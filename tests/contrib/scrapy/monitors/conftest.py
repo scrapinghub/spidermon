@@ -9,7 +9,7 @@ from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 def make_data(request):
     def _make_data(settings=None):
         crawler = Crawler(Spider, settings=settings)
-        spider = Spider("dummy")
+        spider = Spider.from_crawler(crawler, name="dummy")
         return {
             "stats": crawler.stats.get_stats(),
             "crawler": crawler,

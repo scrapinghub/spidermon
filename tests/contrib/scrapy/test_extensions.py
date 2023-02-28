@@ -71,7 +71,7 @@ class ExpressionMonitorsTesting(TestCase):
         crawler = get_crawler(settings_dict=settings)
         crawler.stats.get_stats = lambda _: dt.stats
         spidermon = Spidermon.from_crawler(crawler)
-        spider = Spider(name=self.spider_name)
+        spider = Spider.from_crawler(crawler, name=self.spider_name)
 
         # mocking, to see test results via raising AssertionError exception
         # with failures and errors as results

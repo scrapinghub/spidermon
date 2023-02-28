@@ -1,5 +1,6 @@
 import datetime
 import pytest
+from unittest.mock import MagicMock
 
 from spidermon.contrib.scrapy.monitors import (
     PeriodicExecutionTimeMonitor,
@@ -20,7 +21,8 @@ def monitor_suite():
 @pytest.fixture
 def mock_spider():
     class MockSpider:
-        pass
+        def __init__(self, *args, **kwargs):
+            self.crawler = MagicMock()
 
     return MockSpider()
 

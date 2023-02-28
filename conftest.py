@@ -16,7 +16,7 @@ def get_crawler():
         }
         settings.update(extended_settings)
         crawler = Crawler(Spider, settings=settings)
-        crawler.spider = Spider("dummy")
+        crawler.spider = Spider.from_crawler(crawler, name="dummy")
         return crawler
 
     return _crawler
