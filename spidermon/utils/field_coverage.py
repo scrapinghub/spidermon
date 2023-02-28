@@ -3,7 +3,6 @@ import re
 
 def calculate_field_coverage(stats):
     def handle_list_fields(stats, coverage, base_path):
-
         root_field, _, nested_key = item_key.split("/", 2)
 
     coverage = {}
@@ -21,7 +20,6 @@ def calculate_field_coverage(stats):
             item_type_total = stats.get(f"spidermon_item_scraped_count/{item_type}")
 
             if "_items" in item_key:
-
                 if item_key.endswith("_items"):
                     continue
 
@@ -43,7 +41,6 @@ def calculate_field_coverage(stats):
                 ] = item_field_coverage
 
             else:
-
                 field_coverage = value / item_type_total
 
                 coverage[
