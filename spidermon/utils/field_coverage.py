@@ -15,10 +15,35 @@ def calculate_field_coverage(stats):
             item_key = item_type_m.group(2)
 
             item_type_total = stats.get(f"spidermon_item_scraped_count/{item_type}")
-            field_coverage = value / item_type_total
 
-            coverage[
-                f"spidermon_field_coverage/{item_type}/{item_key}"
-            ] = field_coverage
+            if "_items" in item_key:
+
+                if item_key.endswith("_items"):
+                    continue
+
+                root_field, _, nested_key = item_key.split("/", 2)
+
+                root_field_type_total = stats.get(
+                    f"spidermon_item_scraped_count/{item_type}/{root_field}/_items"
+                )
+
+                item_field_coverage = value / root_field_type_total
+                global_field_coverage = value / item_type_total
+
+                coverage[
+                    f"spidermon_field_coverage/{item_type}/{root_field}/{nested_key}"
+                ] = global_field_coverage
+
+                coverage[
+                    f"spidermon_field_coverage/{item_type}/{item_key}"
+                ] = item_field_coverage
+
+            else:
+
+                field_coverage = value / item_type_total
+
+                coverage[
+                    f"spidermon_field_coverage/{item_type}/{item_key}"
+                ] = field_coverage
 
     return coverage

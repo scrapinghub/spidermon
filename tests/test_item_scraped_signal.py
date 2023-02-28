@@ -306,3 +306,88 @@ def test_item_scraped_count_do_not_ignore_none_values_by_default(spider):
 
     assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
     assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
+
+
+def test_item_scraped_count_list_of_dicts(spider):
+    returned_items = [
+        {
+            "field1": 1,
+            "field2": [
+                {
+                    "nested_field1": 1,
+                    "nested_field2": 1,
+                    "nested_field3": [
+                        {"deep_field1": 1},
+                        {"deep_field1": 1},
+                        {"deep_field2": 1},
+                    ],
+                },
+                {"nested_field2": 1},
+            ],
+        },
+        {
+            "field1": 1,
+            "field2": [
+                {"nested_field1": 1},
+                {
+                    "nested_field1": 1,
+                    "nested_field4": {"deep_field1": 1, "deep_field2": 1},
+                },
+                {"nested_field1": 1, "nested_field2": 1},
+            ],
+        },
+    ]
+
+    for item in returned_items:
+        spider.crawler.signals.send_catch_log_deferred(
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
+        )
+
+    stats = spider.crawler.stats.get_stats()
+
+    assert stats.get("spidermon_item_scraped_count/dict/field2/_items") == 5
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field2/_items/nested_field1") == 4
+    )
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field2/_items/nested_field2") == 3
+    )
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field2/_items/nested_field3") == 1
+    )
+    assert (
+        stats.get(
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items"
+        )
+        == 3
+    )
+    assert (
+        stats.get(
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items/deep_field1"
+        )
+        == 2
+    )
+    assert (
+        stats.get(
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items/deep_field2"
+        )
+        == 1
+    )
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field2/_items/nested_field4") == 1
+    )
+    assert (
+        stats.get(
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field4/deep_field1"
+        )
+        == 1
+    )
+    assert (
+        stats.get(
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field4/deep_field2"
+        )
+        == 1
+    )

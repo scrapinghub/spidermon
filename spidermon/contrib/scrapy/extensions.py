@@ -149,6 +149,14 @@ class Spidermon:
                 self._count_item(value, skip_none_values, field_item_count_stat)
                 continue
 
+            if isinstance(value, list):
+                items_count_stat = f"{field_item_count_stat}/_items"
+                for list_item in value:
+                    self.crawler.stats.inc_value(items_count_stat)
+                    if isinstance(list_item, dict):
+                        self._count_item(list_item, skip_none_values, items_count_stat)
+                        continue
+
     def _add_field_coverage_to_stats(self):
         stats = self.crawler.stats.get_stats()
         coverage_stats = calculate_field_coverage(stats)
