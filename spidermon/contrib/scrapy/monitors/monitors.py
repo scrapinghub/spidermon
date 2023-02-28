@@ -380,6 +380,24 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
     You are not obligated to set rules for every field, just for the ones in which you are interested.
     Also, you can monitor nested fields if available in your returned items.
 
+    If a field returned by your spider is a list of dicts (or objects) and you want to check their
+    coverage, that is also possible. The coverage for list fields is computed in two ways: with
+    respect to the total items scraped (these values can be greater than 1) and with respect to the
+    total of items in the list. The stats are in the following form:
+
+    .. code-block:: python
+
+        {
+            "spidermon_field_coverage/dict/field2/_items/nested_field1": "some_value",
+            "spidermon_field_coverage/dict/field2/nested_field1": "other_value",
+        }
+
+    The stat containing `_items` means it is calculated based on the total list items, while the
+    other, based on the total number of scraped items.
+
+    If the objects in the list also contain another list field, that coverage is also computed in
+    both ways, with the total list items considered for the `_items` stat that of the innermost list.
+
     .. warning::
 
        Rules for nested fields will be validated against the total number of items returned.

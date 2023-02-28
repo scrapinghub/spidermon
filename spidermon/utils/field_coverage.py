@@ -2,6 +2,10 @@ import re
 
 
 def calculate_field_coverage(stats):
+    def handle_list_fields(stats, coverage, base_path):
+
+        root_field, _, nested_key = item_key.split("/", 2)
+
     coverage = {}
     for key, value in stats.items():
         if not key.startswith("spidermon_item_scraped_count"):
@@ -21,21 +25,21 @@ def calculate_field_coverage(stats):
                 if item_key.endswith("_items"):
                     continue
 
-                root_field, _, nested_key = item_key.split("/", 2)
+                levels = item_key.split("/_items/")
 
                 root_field_type_total = stats.get(
-                    f"spidermon_item_scraped_count/{item_type}/{root_field}/_items"
+                    f"spidermon_item_scraped_count/{item_type}/{'/_items/'.join(levels[:-1])}/_items"
                 )
 
                 item_field_coverage = value / root_field_type_total
                 global_field_coverage = value / item_type_total
 
                 coverage[
-                    f"spidermon_field_coverage/{item_type}/{root_field}/{nested_key}"
+                    f"spidermon_field_coverage/{item_type}/{'/'.join(levels)}"
                 ] = global_field_coverage
 
                 coverage[
-                    f"spidermon_field_coverage/{item_type}/{item_key}"
+                    f"spidermon_field_coverage/{item_type}/{'/_items/'.join(levels)}"
                 ] = item_field_coverage
 
             else:
