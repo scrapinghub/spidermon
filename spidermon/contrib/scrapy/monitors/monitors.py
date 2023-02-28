@@ -424,8 +424,10 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
         return super().run(result)
 
     def test_check_if_field_coverage_rules_are_met(self):
-        skip_no_items = self.crawler.settings.get('SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM', False)
-        items_scraped = self.data.stats.get('item_scraped_count', 0)
+        skip_no_items = self.crawler.settings.get(
+            "SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM", False
+        )
+        items_scraped = self.data.stats.get("item_scraped_count", 0)
         if skip_no_items and int(items_scraped) == 0:
             self.skipTest("No items were scraped.")
 
