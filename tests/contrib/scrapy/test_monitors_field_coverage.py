@@ -120,7 +120,7 @@ def test_monitor_skip_if_no_items_set_true(field_coverage_monitor_suite):
         "SPIDERMON_FIELD_COVERAGE_RULES": {
             "dict/field": 0.8,
         },
-        "SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM": True
+        "SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM": True,
     }
     stats = {"item_scraped_count": 0}
     data = make_data_for_monitor(settings=settings, stats=stats)
