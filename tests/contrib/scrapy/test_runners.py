@@ -39,4 +39,3 @@ def test_declare_settings_true(caplog):
 
     assert "SPIDERMON_LOG_SETTINGS: True" in caplog.text
     assert "SPIDERMON_DUMMY_SETTING: DUMMY VALUE" in caplog.text
-
