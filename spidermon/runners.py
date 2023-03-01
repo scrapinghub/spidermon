@@ -5,7 +5,6 @@ from spidermon.results.monitor import MonitorResult
 from spidermon.results.text import TextMonitorResult
 from spidermon.exceptions import InvalidMonitor, InvalidResult
 from spidermon.data import Data
-import logging
 
 
 class MonitorRunner:
