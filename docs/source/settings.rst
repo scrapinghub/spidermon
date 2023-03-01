@@ -42,6 +42,17 @@ This class will be used to generate :ref:`expression monitors<topics-expression-
     needs to change how the context data is build or how the on-the-fly ``MonitorSuite``
     are generated. Otherwise the default should be enough.
 
+SPIDERMON_LOG_SETTINGS
+----------------------
+
+Default: ``False``
+
+Includes a SETTINGS section in the log for each test suite that displays settings related
+to spidermon.
+
+.. note::
+    This displays any spider settings that have SPIDERMON as a prefix.
+
 SPIDERMON_PERIODIC_MONITORS
 ---------------------------
 

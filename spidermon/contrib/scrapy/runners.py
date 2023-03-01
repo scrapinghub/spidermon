@@ -74,9 +74,12 @@ class SpiderMonitorResult(MonitorResult):
         self.write_item_result(action)
 
     def declare_settings(self):
-        for key, value in self.spider.crawler.settings.items():
-            if "SPIDERMON" in key:
-                self.log_info(f"{key}: {value}")
+        if self.spider.crawler.settings.getbool("SPIDERMON_LOG_SETTINGS", False):
+            for key, value in self.spider.crawler.settings.items():
+                if key.startswith("SPIDERMON"):
+                    self.log_info(f"{key}: {value}")
+        else:
+            self.log_info(f"SPIDERMON_LOG_SETTINGS: False")
 
     def write_title(self):
         self.log_info(line_title(self.step.name))
