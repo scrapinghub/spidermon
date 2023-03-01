@@ -2,7 +2,6 @@ import re
 
 
 def calculate_field_coverage(stats):
-
     coverage = {}
     for key, value in stats.items():
         if not key.startswith("spidermon_item_scraped_count"):
