@@ -2,8 +2,6 @@ import re
 
 
 def calculate_field_coverage(stats):
-    def handle_list_fields(stats, coverage, base_path):
-        root_field, _, nested_key = item_key.split("/", 2)
 
     coverage = {}
     for key, value in stats.items():
