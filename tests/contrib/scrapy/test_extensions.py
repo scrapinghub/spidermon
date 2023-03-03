@@ -25,7 +25,6 @@ def _test_run_suites(self, spider, suites):
 
 
 class TestData:
-
     __test__ = False
 
     def __init__(self, expression, stats={}, settings={}, expected_error=None):

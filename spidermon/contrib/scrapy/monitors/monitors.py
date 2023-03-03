@@ -1,10 +1,15 @@
 import datetime
+import json
+import math
+import os
 
-from spidermon import Monitor, MonitorSuite, monitors
+from spidermon import Monitor, monitors
 from spidermon.exceptions import NotConfigured
+from spidermon.utils import zyte
 from spidermon.utils.settings import getdictorlist
+from spidermon.contrib.monitors.mixins.stats import StatsMonitorMixin
 
-from ..monitors.mixins.spider import SpiderMonitorMixin, StatsMonitorMixin
+from .base import BaseScrapyMonitor, BaseStatMonitor
 
 SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
@@ -13,140 +18,10 @@ SPIDERMON_MAX_EXECUTION_TIME = "SPIDERMON_MAX_EXECUTION_TIME"
 SPIDERMON_MAX_RETRIES = "SPIDERMON_MAX_RETRIES"
 SPIDERMON_MIN_SUCCESSFUL_REQUESTS = "SPIDERMON_MIN_SUCCESSFUL_REQUESTS"
 SPIDERMON_MAX_REQUESTS_ALLOWED = "SPIDERMON_MAX_REQUESTS_ALLOWED"
-
-
-class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
-    longMessage = False
-
-    @property
-    def monitor_description(self):
-        if self.__class__.__doc__:
-            return self.__class__.__doc__.split("\n")[0]
-        return super().monitor_description
-
-
-class BaseStatMonitor(BaseScrapyMonitor):
-    """Base Monitor class for stat-related monitors.
-
-    Create a monitor class inheriting from this class to have a custom
-    monitor that validates numerical stats from your job execution
-    against a configurable threshold.
-
-    As an example, we will create a new monitor that will check if the
-    value obtained in a job stat 'numerical_job_statistic' is greater than
-    or equal to the value configured in ``CUSTOM_STAT_THRESHOLD`` project
-    setting:
-
-    .. code-block:: python
-
-        class MyCustomStatMonitor(BaseStatMonitor):
-            stat_name = "numerical_job_statistic"
-            threshold_setting = "CUSTOM_STAT_THRESHOLD"
-            assert_type = ">="
-
-    For the ``assert_type`` property you can select one of the following:
-
-    ==  =====================
-    >   Greater than
-    >=  Greater than or equal
-    <   Less than
-    <=  Less than or equal
-    ==  Equal
-    !=  Not equal
-    ==  =====================
-
-    Sometimes, we don't want a fixed threshold, but a dynamic based on more than
-    one stat or getting data external from the job execution (e.g., you want the
-    threshold to be related to another stat, or you want to get the value
-    of a stat from a previous job).
-
-    As an example, the following monitor will use as threshold the a variable number
-    of errors allowed based on the number of items scraped. So this monitor will pass
-    only if the number of errors is less than 1% of the number of items scraped:
-
-    .. code-block:: python
-
-        class MyCustomStatMonitor(BaseStatMonitor):
-            stat_name = "log_count/ERROR"
-            assert_type = "<"
-
-            def get_threshold(self):
-                item_scraped_count = self.stats.get("item_scraped_count")
-                return item_scraped_count * 0.01
-
-    By default, if the stat can't be found in job statistics, the monitor will fail.
-    If you want the monitor to be skipped in that case, you should set ``fail_if_stat_missing``
-    attribute as ``False``.
-
-
-    The following monitor will not fail if the job doesn't have a ``numerical_job_statistic``
-    value in its statistics:
-
-    .. code-block:: python
-
-        class MyCustomStatMonitor(BaseStatMonitor):
-            stat_name = "numerical_job_statistic"
-            threshold_setting = "CUSTOM_STAT_THRESHOLD"
-            assert_type = ">="
-            fail_if_stat_missing = False
-    """
-
-    fail_if_stat_missing = True
-
-    def run(self, result):
-        has_threshold_config = any(
-            [hasattr(self, "threshold_setting"), hasattr(self, "get_threshold")]
-        )
-        if not has_threshold_config:
-            raise NotConfigured(
-                f"{self.__class__.__name__} should include a a `threshold_setting` attribute "
-                "to be configured in your project settings with the desired threshold "
-                "or a `get_threshold` method that returns the desired threshold."
-            )
-
-        if (
-            hasattr(self, "threshold_setting")
-            and self.threshold_setting not in self.crawler.settings.attributes
-        ):
-            raise NotConfigured(
-                f"Configure {self.threshold_setting} to your project "
-                f"settings to use {self.monitor_name}."
-            )
-
-        return super().run(result)
-
-    def _get_threshold_value(self):
-        if hasattr(self, "get_threshold"):
-            return self.get_threshold()
-        return self.crawler.settings.get(self.threshold_setting)
-
-    def test_stat_monitor(self):
-        assertions = {
-            ">": self.assertGreater,
-            ">=": self.assertGreaterEqual,
-            "<": self.assertLess,
-            "<=": self.assertLessEqual,
-            "==": self.assertEqual,
-            "!=": self.assertNotEqual,
-        }
-        threshold = self._get_threshold_value()
-
-        if self.stat_name not in self.stats:
-            message = f"Unable to find '{self.stat_name}' in job stats."
-            if self.fail_if_stat_missing:
-                self.fail(message)
-            else:
-                self.skipTest(message)
-
-        value = self.stats.get(self.stat_name)
-
-        assertion_method = assertions.get(self.assert_type)
-        assertion_method(
-            value,
-            threshold,
-            msg=f"Expecting '{self.stat_name}' to be '{self.assert_type}' "
-            f"to '{threshold}'. Current value: '{value}'",
-        )
+SPIDERMON_JOBS_COMPARISON = "SPIDERMON_JOBS_COMPARISON"
+SPIDERMON_JOBS_COMPARISON_STATES = "SPIDERMON_JOBS_COMPARISON_STATES"
+SPIDERMON_JOBS_COMPARISON_TAGS = "SPIDERMON_JOBS_COMPARISON_TAGS"
+SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
 
 
 @monitors.name("Extracted Items Monitor")
@@ -266,6 +141,24 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
             500: 0,
         }
 
+    Furthermore, instead of being a numeric value, the code accepts a dictionary which can
+    contain any of two keys: ``max_count`` and ``max_percentage``. The former refers to an
+    absolute value and works the same way as setting an integer value. The latter refers
+    to a max_percentage of the total number of requests the spider made. If both are set, the
+    monitor will fail if any of the conditions are met. If none are set, it will default to
+    ``DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT```.
+
+    With the following setting, the monitor will fail if it has at least one 500 error or
+    if there are more than ``min(100, 0.5 * total requests)`` 400 responses.
+
+    .. highlight:: python
+    .. code-block:: python
+
+        SPIDERMON_UNWANTED_HTTP_CODES = {
+            400: {"max_count": 100, "max_percentage": 0.5},
+            500: 0,
+        }
+
     """
 
     DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT = 10
@@ -289,12 +182,54 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
                 code: errors_max_count for code in unwanted_http_codes
             }
 
+        requests = self.stats.get("downloader/request_count", 0)
         for code, max_errors in unwanted_http_codes.items():
             code = int(code)
             count = self.stats.get(f"downloader/response_status_count/{code}", 0)
+
+            percentage_trigger = False
+
+            if isinstance(max_errors, dict):
+                absolute_max_errors = max_errors.get("max_count")
+                percentual_max_errors = max_errors.get("max_percentage")
+
+                # if the user passed an empty dict, use the default count
+                if not absolute_max_errors and not percentual_max_errors:
+                    max_errors = self.DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT
+
+                else:
+                    # calculate the max errors based on percentage
+                    # if there's no percentage set, take the number
+                    # of requests as this is the same as disabling the check
+                    calculated_percentage_errors = int(
+                        percentual_max_errors * requests
+                        if percentual_max_errors
+                        else requests
+                    )
+
+                    # takes the minimum of the two values.
+                    # if no absolute max errors were set, take the number
+                    # of requests as this effectively disables this check
+                    max_errors = min(
+                        absolute_max_errors if absolute_max_errors else requests,
+                        calculated_percentage_errors,
+                    )
+
+                    # if the max errors were defined by the percentage, remember it
+                    # so we can properly format the error message.
+                    percentage_trigger = max_errors == calculated_percentage_errors
+
+            stat_message = (
+                "This exceeds the limit of {} ({}% of {} total requests)".format(
+                    max_errors, percentual_max_errors * 100, requests
+                )
+                if percentage_trigger
+                else "This exceeds the limit of {}".format(max_errors)
+            )
+
             msg = (
-                "Found {} Responses with status code={} - "
-                "This exceed the limit of {}".format(count, code, max_errors)
+                "Found {} Responses with status code={} - ".format(count, code)
+                + stat_message
             )
             self.assertTrue(count <= max_errors, msg=msg)
 
@@ -530,53 +465,105 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
         self.assertLess(duration.total_seconds(), max_execution_time, msg=msg)
 
 
-class SpiderCloseMonitorSuite(MonitorSuite):
-    """This Monitor Suite implements the following monitors:
+@monitors.name("Jobs Comparison Monitor")
+class ZyteJobsComparisonMonitor(BaseStatMonitor):
+    """
+    .. note::
+       This monitor is useful when running jobs in
+       `Zyte's Scrapy Cloud <https://www.zyte.com/scrapy-cloud/>`_.
 
-    * :class:`ItemCountMonitor`
-    * :class:`ItemValidationMonitor`
-    * :class:`ErrorCountMonitor`
-    * :class:`WarningCountMonitor`
-    * :class:`FinishReasonMonitor`
-    * :class:`UnwantedHTTPCodesMonitor`
-    * :class:`FieldCoverageMonitor`
-    * :class:`RetryCountMonitor`
-    * :class:`DownloaderExceptionMonitor`
-    * :class:`SuccessfulRequestsMonitor`
-    * :class:`TotalRequestsMonitor`
+    Check for a drop in scraped item count compared to previous jobs.
 
-    You can easily enable this monitor *after* enabling Spidermon::
+    You need to set the number of previous jobs to compare, using ``SPIDERMON_JOBS_COMPARISON``.
+    The default is ``0`` which disables the monitor. We use the average of the scraped items count.
 
-            SPIDERMON_SPIDER_CLOSE_MONITORS = (
-                'spidermon.contrib.scrapy.monitors.SpiderCloseMonitorSuite',
+    You can configure which percentage of the previous item count is the minimum acceptable, by
+    using the setting ``SPIDERMON_JOBS_COMPARISON_THRESHOLD``. We expect a float number between
+    ``0.0`` (not inclusive) and with no upper limit (meaning we can check if itemcount is increasing
+    at a certain rate). If not set, a NotConfigured error will be raised.
+
+    You can filter which jobs to compare based on their states using the
+    ``SPIDERMON_JOBS_COMPARISON_STATES`` setting. The default value is ``("finished",)``.
+
+    You can also filter which jobs to compare based on their tags using the
+    ``SPIDERMON_JOBS_COMPARISON_TAGS`` setting. Among the defined tags we consider only those
+    that are also present in the current job.
+    """
+
+    stat_name = "item_scraped_count"
+    assert_type = ">="
+
+    def run(self, result):
+        if (
+            SPIDERMON_JOBS_COMPARISON not in self.crawler.settings.attributes
+            or self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON) <= 0
+        ):
+            raise NotConfigured(
+                f"Configure SPIDERMON_JOBS_COMPARISON to your project "
+                f"settings to use {self.monitor_name}."
             )
-    """
 
-    monitors = [
-        ItemCountMonitor,
-        ItemValidationMonitor,
-        ErrorCountMonitor,
-        WarningCountMonitor,
-        FinishReasonMonitor,
-        UnwantedHTTPCodesMonitor,
-        FieldCoverageMonitor,
-        RetryCountMonitor,
-        DownloaderExceptionMonitor,
-        SuccessfulRequestsMonitor,
-        TotalRequestsMonitor,
-    ]
+        if (
+            SPIDERMON_JOBS_COMPARISON_THRESHOLD not in self.crawler.settings.attributes
+            or self.crawler.settings.getfloat(SPIDERMON_JOBS_COMPARISON_THRESHOLD) <= 0
+        ):
+            raise NotConfigured(
+                f"Configure SPIDERMON_JOBS_COMPARISON_THRESHOLD to your project "
+                f"settings to use {self.monitor_name}."
+            )
 
+        return super().run(result)
 
-class PeriodicMonitorSuite(MonitorSuite):
-    """This Monitor Suite implements the following monitors:
+    def _get_jobs(self, states, number_of_jobs):
+        tags = self._get_tags_to_filter()
 
-    * :class:`PeriodicExecutionTimeMonitor`
+        jobs = []
+        start = 0
+        _jobs = zyte.client.spider.jobs.list(
+            start=start,
+            state=states,
+            count=number_of_jobs,
+            filters=dict(has_tag=tags) if tags else None,
+        )
+        while _jobs:
+            jobs.extend(_jobs)
+            start += 1000
+            _jobs = zyte.client.spider.jobs.list(
+                start=start,
+                state=states,
+                count=number_of_jobs,
+                filters=dict(has_tag=tags) if tags else None,
+            )
+        return jobs
 
-    You can easily enable this monitor *after* enabling Spidermon::
+    def _get_tags_to_filter(self):
+        """
+        Return the intersect of the desired tags to filter and
+        the ones from the current job.
+        """
+        desired_tags = self.crawler.settings.getlist(SPIDERMON_JOBS_COMPARISON_TAGS)
+        if not desired_tags:
+            return {}
 
-            SPIDERMON_PERIODIC_MONITORS = {
-                'spidermon.contrib.scrapy.monitors.PeriodicMonitorSuite': # check time in seconds,
-            }
-    """
+        current_tags = json.loads(os.environ.get("SHUB_JOB_DATA", "{}")).get("tags")
+        if not current_tags:
+            return {}
 
-    monitors = [PeriodicExecutionTimeMonitor]
+        tags_to_filter = set(desired_tags) & set(current_tags)
+        return sorted(tags_to_filter)
+
+    def get_threshold(self):
+        number_of_jobs = self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON)
+
+        threshold = self.crawler.settings.getfloat(SPIDERMON_JOBS_COMPARISON_THRESHOLD)
+
+        states = self.crawler.settings.getlist(
+            SPIDERMON_JOBS_COMPARISON_STATES, ("finished",)
+        )
+
+        jobs = self._get_jobs(states, number_of_jobs)
+
+        previous_count = sum(job.get("items", 0) for job in jobs) / len(jobs)
+
+        expected_item_extracted = math.ceil(previous_count * threshold)
+        return expected_item_extracted

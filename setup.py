@@ -5,6 +5,7 @@ test_requirements = [
     "pytest-cov",
     "pytest-mock",
     "jinja2",
+    "boto3",
     "lxml",
     "premailer",
     "scrapinghub",
@@ -17,7 +18,7 @@ test_requirements = [
 
 setup(
     name="spidermon",
-    version="1.17.0",
+    version="1.17.1",
     url="https://github.com/scrapinghub/spidermon",
     author="Zyte",
     author_email="opensource@zyte.com",
@@ -36,7 +37,7 @@ setup(
             "scrapy",
             "Jinja2",
             "scrapinghub",
-            "slackclient",
+            "slack-sdk",
             "boto",
             "boto3",
             "premailer",
@@ -46,7 +47,6 @@ setup(
         "validation": ["schematics"],
         # Tools to run the tests
         "tests": test_requirements,
-        "pep8": ["black"],
         # Tools to build and publish the documentation
         "docs": ["sphinx", "sphinx-rtd-theme", "s3cmd"],
     },

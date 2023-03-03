@@ -141,7 +141,7 @@ To reduce the amount of boilerplate code, we have this base class that your cust
 inherit from and with a few attributes you end with a full functional monitor that just needs
 to be added to your Monitor Suite to be used.
 
-.. automodule:: spidermon.contrib.scrapy.monitors
+.. automodule:: spidermon.contrib.scrapy.monitors.base
     :members: BaseStatMonitor
     :noindex:
 
@@ -150,18 +150,15 @@ The Basic Monitors
 
 Spidermon has some batteries included :)
 
-.. automodule:: spidermon.contrib.scrapy.monitors
-    :members: ItemCountMonitor, ErrorCountMonitor, WarningCountMonitor, FinishReasonMonitor,
-              UnwantedHTTPCodesMonitor, ItemValidationMonitor, FieldCoverageMonitor,
-              RetryCountMonitor, DownloaderExceptionMonitor, SuccessfulRequestsMonitor,
-              TotalRequestsMonitor
+.. automodule:: spidermon.contrib.scrapy.monitors.monitors
+    :members:
 
 Is there a **Basic Scrapy Suite** ready to use?
 ------------------------------------------------
 
 Of course, there is! We really want to make it easy for you to monitor your spiders ;)
 
-.. automodule:: spidermon.contrib.scrapy.monitors
+.. automodule:: spidermon.contrib.scrapy.monitors.suites
     :members: SpiderCloseMonitorSuite
     :noindex:
 

@@ -85,7 +85,6 @@ class ValidationInfo:
 
 
 class ValidationMonitorMixin(StatsMonitorMixin):
-
     correct_field_list_handling = False
 
     @property

@@ -6,7 +6,6 @@ class TreeItem(Item):
 
 
 class TestItem(Item):
-
     __test__ = False
 
     url = Field()
