@@ -85,14 +85,14 @@ Ready to contribute? Here's how to set up `spidermon` for local development.
     $ pip install -r requirements-docs.txt
     $ tox
 
-#. Install the git hook scripts from pre-commit:
+#. Install the git hook scripts from pre-commit::
 
-   $ pre-commit install
+    $ pre-commit install
 
 #. Make sure that your code is correctly formatted using `black`_ . No code will
    be merged without this step::
 
-  $ black .
+    $ black .
 
 #. If you changed something related to docs, **make sure it compiles properly**::
 
