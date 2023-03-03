@@ -89,11 +89,6 @@ Ready to contribute? Here's how to set up `spidermon` for local development.
 
     $ pre-commit install
 
-#. Make sure that your code is correctly formatted using `black`_ . No code will
-   be merged without this step::
-
-    $ black .
-
 #. If you changed something related to docs, **make sure it compiles properly**::
 
     $ cd docs
