@@ -380,6 +380,9 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
     You are not obligated to set rules for every field, just for the ones in which you are interested.
     Also, you can monitor nested fields if available in your returned items.
 
+    In case you have a job without items scraped, and you want to skip this test, you have to enable the
+    ``SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM`` setting to avoid the field coverage monitor error.
+
     .. warning::
 
        Rules for nested fields will be validated against the total number of items returned.
@@ -417,9 +420,17 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
             raise NotConfigured(
                 "To enable field coverage monitor, set SPIDERMON_ADD_FIELD_COVERAGE=True in your project settings"
             )
+
         return super().run(result)
 
     def test_check_if_field_coverage_rules_are_met(self):
+        skip_no_items = self.crawler.settings.getbool(
+            "SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM", False
+        )
+        items_scraped = self.data.stats.get("item_scraped_count", 0)
+        if skip_no_items and int(items_scraped) == 0:
+            self.skipTest("No items were scraped.")
+
         failures = []
         field_coverage_rules = self.crawler.settings.getdict(
             "SPIDERMON_FIELD_COVERAGE_RULES"
