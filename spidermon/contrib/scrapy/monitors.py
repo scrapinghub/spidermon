@@ -38,6 +38,10 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
         if getattr(self, "skip_rules") and self.skip_rules.get(self.name.split("/")[0]):
             skip_rules = self.skip_rules[self.name.split('/')[0]]
             for rule in skip_rules:
+                if hasattr(rule, '__call__'):
+                    if rule(self):
+                        return
+                    continue
                 stats_value = self.data.stats.get(rule[0], 0)
                 if self.ops[rule[1]](stats_value, rule[2]):
                     return
