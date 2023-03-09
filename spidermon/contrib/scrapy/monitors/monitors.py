@@ -381,7 +381,10 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
     Also, you can monitor nested fields if available in your returned items.
 
     If a field returned by your spider is a list of dicts (or objects) and you want to check their
-    coverage, that is also possible. The coverage for list fields is computed in two ways: with
+    coverage, that is also possible. You need to set the ``SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS``
+    setting. This value represents for how many levels inside the list the coverage will be computed
+    (if the objects inside the list also have fields that are objects/lists).
+    The coverage for list fields is computed in two ways: with
     respect to the total items scraped (these values can be greater than 1) and with respect to the
     total of items in the list. The stats are in the following form:
 
@@ -397,6 +400,9 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
 
     If the objects in the list also contain another list field, that coverage is also computed in
     both ways, with the total list items considered for the `_items` stat that of the innermost list.
+
+    In case you have a job without items scraped, and you want to skip this test, you have to enable the
+    ``SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM`` setting to avoid the field coverage monitor error.
 
     .. warning::
 
@@ -425,7 +431,9 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
            SPIDERMON_FIELD_COVERAGE_RULES = {
                "MyCustomItem/field_1": 0.4,
                "MyCustomItem/field_2": 1.0,
-           }"""
+           }
+
+    """
 
     def run(self, result):
         add_field_coverage_set = self.crawler.settings.getbool(
@@ -435,9 +443,17 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
             raise NotConfigured(
                 "To enable field coverage monitor, set SPIDERMON_ADD_FIELD_COVERAGE=True in your project settings"
             )
+
         return super().run(result)
 
     def test_check_if_field_coverage_rules_are_met(self):
+        skip_no_items = self.crawler.settings.getbool(
+            "SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM", False
+        )
+        items_scraped = self.data.stats.get("item_scraped_count", 0)
+        if skip_no_items and int(items_scraped) == 0:
+            self.skipTest("No items were scraped.")
+
         failures = []
         field_coverage_rules = self.crawler.settings.getdict(
             "SPIDERMON_FIELD_COVERAGE_RULES"

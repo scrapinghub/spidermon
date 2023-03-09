@@ -11,9 +11,13 @@ class Action(metaclass=ActionOptionsMetaclass):
     Base class for actions.
     """
 
+    fallback = None
+
     def __init__(self):
         self.result = None
         self.data = None
+        if self.fallback is not None:
+            self.fallback = self.fallback()
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -37,6 +41,8 @@ class Action(metaclass=ActionOptionsMetaclass):
             result.add_action_skip(self, e.args[0])
         except:
             result.add_action_error(self, traceback.format_exc())
+            if self.fallback is not None:
+                self.fallback.run(self.result, self.data)
         else:
             result.add_action_success(self)
         data.meta.update(self.get_meta())
