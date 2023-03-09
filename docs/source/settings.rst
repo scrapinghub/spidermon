@@ -184,7 +184,7 @@ If this setting is not provided or set to ``False``, spider statistics will be:
    'spidermon_item_scraped_count/dict/field_2': 1,
 
 SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS
-----------------------------------
+-------------------------------------
 Default: ``0``
 
 If larger than 0, field coverage will be computed for items inside fields that are lists.
