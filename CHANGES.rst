@@ -1,7 +1,7 @@
 Release notes
 =============
 
-1.18.0 (2023-03-03)
+1.18.0 (2023-03-13)
 -------------------
 
 - feature: Support setting the ``Return-Path`` for Amazon SES emails (`PR#381 <https://github.com/scrapinghub/spidermon/pull/381>`_)
