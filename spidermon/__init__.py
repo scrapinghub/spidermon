@@ -1,4 +1,4 @@
-__version__ = "1.17.1"
+__version__ = "1.18.0"
 
 from .core.monitors import Monitor
 from .core.suites import MonitorSuite
