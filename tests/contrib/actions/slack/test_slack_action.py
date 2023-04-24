@@ -63,7 +63,6 @@ def test_do_not_log_text_and_attach_when_fake_is_not_set(logger_info):
 
 @patch("spidermon.contrib.actions.slack.WebClient")
 def test_pass_arbitrary_args_to_manager_send_message_channel(_slack_mock):
-
     manager = SlackMessageManager(
         sender_token="anything",
         sender_name="@someone",
@@ -79,7 +78,6 @@ def test_pass_arbitrary_args_to_manager_send_message_channel(_slack_mock):
 
 @patch("spidermon.contrib.actions.slack.WebClient")
 def test_pass_arbitrary_args_to_manager_send_message_user(_slack_mock):
-
     manager = SlackMessageManager(
         sender_token="anything",
         sender_name="@someone",
@@ -96,7 +94,6 @@ def test_pass_arbitrary_args_to_manager_send_message_user(_slack_mock):
 
 
 def test_message_sender_pass_kwargs():
-
     sender = SendSlackMessage(
         sender_token="anything",
         sender_name="@someone",
