@@ -183,7 +183,6 @@ class SendSlackMessage(ActionWithTemplates):
     include_message = True
     include_attachments = True
     fake = False
-    kwargs = {}
 
     def __init__(
         self,
@@ -221,7 +220,7 @@ class SendSlackMessage(ActionWithTemplates):
         self.attachments = attachments or self.attachments
         self.attachments_template = attachments_template or self.attachments_template
 
-        self.kwargs = kwargs
+        self.kwargs = kwargs or {}
 
         if not self.fake and not self.recipients:
             raise NotConfigured(
