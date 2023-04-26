@@ -182,3 +182,85 @@ If this setting is not provided or set to ``False``, spider statistics will be:
    'spidermon_item_scraped_count/dict/field_2': 2,
    'spidermon_field_coverage/dict/field_1': 1,  # Did not ignore None value
    'spidermon_item_scraped_count/dict/field_2': 1,
+
+SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS
+-------------------------------------
+Default: ``0``
+
+If larger than 0, field coverage will be computed for items inside fields that are lists.
+The number represents how deep in the objects tree the coverage is computed.
+Be aware that enabling this might have a significant impact in performance.
+
+Considering your spider returns the following items:
+
+.. code-block:: python
+
+   [
+      {
+          "field_1": None,
+          "field_2": [{"nested_field1": "value", "nested_field2": "value"}],
+      },
+      {
+          "field_1": "value",
+          "field_2": [
+              {"nested_field2": "value", "nested_field3": {"deeper_field1": "value"}}
+          ],
+      },
+      {
+          "field_1": "value",
+          "field_2": [
+              {
+                  "nested_field2": "value",
+                  "nested_field4": [
+                      {"deeper_field41": "value"},
+                      {"deeper_field41": "value"},
+                  ],
+              }
+          ],
+      },
+   ]
+
+If this setting is not provided or set to ``0``, spider statistics will be:
+
+.. code-block:: python
+
+  'item_scraped_count': 3,
+  'spidermon_item_scraped_count': 3,
+  'spidermon_item_scraped_count/dict': 3,
+  'spidermon_item_scraped_count/dict/field_1': 3,
+  'spidermon_item_scraped_count/dict/field_2': 3
+
+If set to ``1``, spider statistics will be:
+
+.. code-block:: python
+
+  'item_scraped_count': 3,
+  'spidermon_item_scraped_count': 3,
+  'spidermon_item_scraped_count/dict': 3,
+  'spidermon_item_scraped_count/dict/field_1': 3,
+  'spidermon_item_scraped_count/dict/field_2': 3,
+  'spidermon_item_scraped_count/dict/field_2/_items': 3,
+  'spidermon_item_scraped_count/dict/field_2/_items/nested_field1': 1,
+  'spidermon_item_scraped_count/dict/field_2/_items/nested_field2': 3,
+  'spidermon_item_scraped_count/dict/field_2/_items/nested_field3': 1,
+  'spidermon_item_scraped_count/dict/field_2/_items/nested_field3/deeper_field1': 1,
+  'spidermon_item_scraped_count/dict/field_2/_items/nested_field4': 1
+
+If set to ``2``, spider statistics will be:
+
+.. code-block:: python
+
+  'item_scraped_count': 3,
+  'spidermon_item_scraped_count': 3,
+  'spidermon_item_scraped_count/dict': 3,
+  'spidermon_item_scraped_count/dict/field_1': 3,
+  'spidermon_item_scraped_count/dict/field_2': 3,
+  'spidermon_item_scraped_count/dict/field_2/_items': 3,
+  'spidermon_item_scraped_count/dict/field_2/_items/nested_field1': 1,
+  'spidermon_item_scraped_count/dict/field_2/_items/nested_field2': 3,
+  'spidermon_item_scraped_count/dict/field_2/_items/nested_field3': 1,
+  'spidermon_item_scraped_count/dict/field_2/_items/nested_field3/deeper_field1': 1,
+  'spidermon_item_scraped_count/dict/field_2/_items/nested_field4': 1,
+  'spidermon_item_scraped_count/dict/field_2/_items/nested_field4/_items': 2,
+  'spidermon_item_scraped_count/dict/field_2/_items/nested_field4/_items/deeper_field41': 2
+
