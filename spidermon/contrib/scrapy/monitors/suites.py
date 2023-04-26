@@ -8,6 +8,7 @@ from .monitors import (
     ItemCountMonitor,
     ItemValidationMonitor,
     PeriodicExecutionTimeMonitor,
+    PeriodicItemIncreaseMonitor,
     RetryCountMonitor,
     SuccessfulRequestsMonitor,
     TotalRequestsMonitor,
@@ -65,4 +66,4 @@ class PeriodicMonitorSuite(MonitorSuite):
             }
     """
 
-    monitors = [PeriodicExecutionTimeMonitor]
+    monitors = [PeriodicExecutionTimeMonitor, PeriodicItemIncreaseMonitor]
