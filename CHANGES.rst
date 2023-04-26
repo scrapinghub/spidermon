@@ -1,6 +1,18 @@
 Release notes
 =============
 
+1.18.0 (2023-03-13)
+-------------------
+
+- feature: Support setting the ``Return-Path`` for Amazon SES emails (`PR#381 <https://github.com/scrapinghub/spidermon/pull/381>`_)
+- bug: Fix ``BaseStatMonitor`` failing in Scrapy Cloud when settings were provided as strings (`PR#378 <https://github.com/scrapinghub/spidermon/pull/378>`_)
+- feature: Add setting ``SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM`` to allow skipping ``FieldCoverageMonitor`` if no items were scraped (`PR#372 <https://github.com/scrapinghub/spidermon/pull/372>`_)
+- feature: Add ``Fallback Actions``. ``Action`` now allows to define ``fallback`` field that may contain an additional ``Action`` to be executed if an exception is raised during the main action (`PR#365 <https://github.com/scrapinghub/spidermon/pull/365>`_)
+- feature: Use ``ItemAdapter`` when working with items to support the same types of item as Scrapy (`PR#358 <https://github.com/scrapinghub/spidermon/pull/358>`_)
+- chore: Refactor code from ``spider.contrib.scrapy`` into ``base``, ``monitors`` and ``suites`` subpackages (`PR#386 <https://github.com/scrapinghub/spidermon/pull/386>`_)
+- chore: Replace ``tox pep8`` functionality with ``pre-commit`` git hooks (`PR#387 <https://github.com/scrapinghub/spidermon/pull/387>`_)
+- chore: Update contributing guidelines to include reference to ``pre-commit`` tool (`PR#392 <https://github.com/scrapinghub/spidermon/pull/392>`_)
+
 1.17.1 (2023-01-05)
 -------------------
 
