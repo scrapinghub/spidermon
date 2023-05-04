@@ -141,7 +141,6 @@ class BaseStatMonitor(BaseScrapyMonitor):
                 self.skipTest(message)
 
         value = self.stats.get(self.stat_name)
-
         assertion_method = assertions.get(self.assert_type)
         assertion_method(
             value,
@@ -149,3 +148,4 @@ class BaseStatMonitor(BaseScrapyMonitor):
             msg=f"Expecting '{self.stat_name}' to be '{self.assert_type}' "
             f"to '{threshold}'. Current value: '{value}'",
         )
+        import ipdb;ipdb.set_trace()

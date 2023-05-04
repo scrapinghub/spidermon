@@ -8,7 +8,7 @@ from .monitors import (
     ItemCountMonitor,
     ItemValidationMonitor,
     PeriodicExecutionTimeMonitor,
-    PeriodicItemIncreaseMonitor,
+    PeriodicItemCountMonitor,
     RetryCountMonitor,
     SuccessfulRequestsMonitor,
     TotalRequestsMonitor,
@@ -65,5 +65,8 @@ class PeriodicMonitorSuite(MonitorSuite):
                 'spidermon.contrib.scrapy.monitors.PeriodicMonitorSuite': # check time in seconds,
             }
     """
+    monitors = [PeriodicExecutionTimeMonitor]
 
-    monitors = [PeriodicExecutionTimeMonitor, PeriodicItemIncreaseMonitor]
+
+class PeriodicItemCountMonitorSuite(MonitorSuite):
+    monitors = [PeriodicItemCountMonitor]

@@ -580,41 +580,19 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         return expected_item_extracted
 
 
-@monitors.name("Periodic item increase monitor")
-class PeriodicItemIncreaseMonitor(Monitor, StatsMonitorMixin):
-    """Periodic job that will check for the number of increased items.
+@monitors.name("Periodic item count increase Monitor")
+class PeriodicItemCountMonitor(BaseStatMonitor):
+    stat_name = "item_scraped_count"
+    threshold_setting = "SPIDERMON_ITEM_COUNT_INCREASE"
+    assert_type = ">="
 
-    Set ``SPIDERMON_ITEM_COUNT_INCREASE`` to check that there's a least X new
-    items after every check.
-
-    Set ``SPIDERMON_ITEM_COUNT_PERCENT_INCREASE`` to check the item increase is
-    at least X percent."""
-
-    @monitors.name("New items count increase check")
-    def test_item_increase(self):
+    def get_threshold(self):
         crawler = self.data.crawler
-        item_count_increase = crawler.settings.getint("SPIDERMON_ITEM_COUNT_INCREASE")
-        item_count_percent_increase = crawler.settings.getint("SPIDERMON_ITEM_COUNT_PERCENT_INCREASE")
-        if not not any([item_count_increase, item_count_percent_increase]):
-            return
-
-        if item_count_increase:
-            items = self.stats.get("item_scraped_count", 0)
-            items_in_prev_periodic_check = self.stats.get("items_in_prev_periodic_check", 0)
-            self.assertGreaterEqual(
-                (items-items_in_prev_periodic_check),
-                item_count_increase,
-                msg=f"Number of new items is less than {item_count_increase} since last periodic check",
-            )
-
-        if item_count_percent_increase:
-            items = self.stats.get("item_scraped_count", 0)
-            items_in_prev_periodic_check = self.stats.get("items_in_prev_periodic_check")
-            if items_in_prev_periodic_check:
-                self.assertGreaterEqual(
-                    (items-items_in_prev_periodic_check),
-                    (items_in_prev_periodic_check * item_count_percent_increase) / 100,
-                    msg=f"Number of new items is less than {item_count_percent_increase} % since last periodic check",
-                )
-
-        crawler.stats.set_value("items_in_prev_periodic_check", items)
+        prev_item_scraped_count = self.stats.get("prev_item_scraped_count", 0)
+        item_scraped_count = self.stats.get(self.stat_name)
+        crawler.stats.set_value("prev_item_scraped_count", item_scraped_count)
+        threshold_increase = crawler.settings.get(self.threshold_setting)
+        if isinstance(threshold_increase, int):
+            return prev_item_scraped_count + threshold_increase
+        elif isinstance(threshold_increase, float):
+            return prev_item_scraped_count + (prev_item_scraped_count * threshold_increase)
