@@ -68,9 +68,9 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
 
     def check_if_skip_rule_met(self):
         if hasattr(self, "skip_rules") and self.skip_rules.get(self.name.split("/")[0]):
-            skip_rules = self.skip_rules[self.name.split('/')[0]]
+            skip_rules = self.skip_rules[self.name.split("/")[0]]
             for rule in skip_rules:
-                if hasattr(rule, '__call__'):
+                if hasattr(rule, "__call__"):
                     if rule(self):
                         return True
                     continue
