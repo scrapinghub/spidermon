@@ -8,6 +8,7 @@ from ...monitors.mixins.spider import SpiderMonitorMixin
 
 logger = logging.getLogger(__name__)
 
+
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
     longMessage = False
     ops = {"==": operator.eq, "<": operator.lt, ">": operator.gt}
