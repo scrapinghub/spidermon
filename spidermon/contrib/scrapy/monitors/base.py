@@ -11,7 +11,14 @@ logger = logging.getLogger(__name__)
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
     longMessage = False
-    ops = {"==": operator.eq, "<": operator.lt, ">": operator.gt}
+    ops = {
+        ">": operator.gt,
+        ">=": operator.ge,
+        "<": operator.lt,
+        "<=": operator.le,
+        "==": operator.eq,
+        "!=": operator.ne,
+    }
 
     @property
     def monitor_description(self):
@@ -19,53 +26,53 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
             return self.__class__.__doc__.split("\n")[0]
         return super().monitor_description
 
-    """ 
-        The montior inherited by BaseScrapyMonitor can be skipped based on
-        conditions given in the settings. The purpose is to skip monitor 
-        based on stats value or any custom function. A scenario could be skipping
-        the Field Coverage Monitor when spider produced no items. Following is the
-        code block of examples of how we can configure the skip rules in settings.  
-
-        Example#1: skip rules based on stats value
-        .. code-block:: python
-            class QuotesSpider(scrapy.Spider):
-                name = "quotes"
-                custom_settings = {
-                    "SPIDERMON_FIELD_COVERAGE_RULES": {
-                        "dict/quote": 1,
-                        "dict/author": 1,
-                    },
-                    "SPIDERMON_MONITOR_SKIPPING_RULES": {
-                        "Field Coverage Monitor": [["item_scraped_count", "==", 0]],
-                    }
-                }
-
-        Example#2: skip rules based on custom function
-        .. code-block:: python
-
-            def skip_function(monitor):
-                return "item_scraped_count" not in monitor.data.stats
-
-            class QuotesSpider(scrapy.Spider):
-                name = "quotes"
-
-                custom_settings = {
-                    "SPIDERMON_FIELD_COVERAGE_RULES": {
-                        "dict/quote": 1,
-                        "dict/author": 1,
-                    },
-                    "SPIDERMON_MONITOR_SKIPPING_RULES": {
-                        "Field Coverage Monitor": [skip_function],
-                    }
-                }
-        """
-
     def run(self, result):
         if self.check_if_skip_rule_met():
             logger.info(f"Skipping {self.name} monitor")
             return
 
         return super().run(result)
+
+    """ 
+    The montior inherited by BaseScrapyMonitor can be skipped based on
+    conditions given in the settings. The purpose is to skip monitor 
+    based on stats value or any custom function. A scenario could be skipping
+    the Field Coverage Monitor when spider produced no items. Following is the
+    code block of examples of how we can configure the skip rules in settings.  
+    
+    Example#1: skip rules based on stats value
+    .. code-block:: python
+        class QuotesSpider(scrapy.Spider):
+            name = "quotes"
+            custom_settings = {
+                "SPIDERMON_FIELD_COVERAGE_RULES": {
+                    "dict/quote": 1,
+                    "dict/author": 1,
+                },
+                "SPIDERMON_MONITOR_SKIPPING_RULES": {
+                    "Field Coverage Monitor": [["item_scraped_count", "==", 0]],
+                }
+            }
+
+    Example#2: skip rules based on custom function
+    .. code-block:: python
+
+        def skip_function(monitor):
+            return "item_scraped_count" not in monitor.data.stats
+
+        class QuotesSpider(scrapy.Spider):
+            name = "quotes"
+
+            custom_settings = {
+                "SPIDERMON_FIELD_COVERAGE_RULES": {
+                    "dict/quote": 1,
+                    "dict/author": 1,
+                },
+                "SPIDERMON_MONITOR_SKIPPING_RULES": {
+                    "Field Coverage Monitor": [skip_function],
+                }
+            }
+    """
 
     def check_if_skip_rule_met(self):
         if hasattr(self, "skip_rules") and self.skip_rules.get(self.name.split("/")[0]):
