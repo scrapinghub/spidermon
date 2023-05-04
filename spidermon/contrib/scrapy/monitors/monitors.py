@@ -2,14 +2,14 @@ import datetime
 import json
 import math
 import os
-import operator
 
-from spidermon import Monitor, MonitorSuite, monitors
+from spidermon import Monitor, monitors
 from spidermon.exceptions import NotConfigured
 from spidermon.utils import zyte
 from spidermon.utils.settings import getdictorlist
+from spidermon.contrib.monitors.mixins.stats import StatsMonitorMixin
 
-from ..monitors.mixins.spider import SpiderMonitorMixin, StatsMonitorMixin
+from .base import BaseScrapyMonitor, BaseStatMonitor
 
 SPIDERMON_EXPECTED_FINISH_REASONS = "SPIDERMON_EXPECTED_FINISH_REASONS"
 SPIDERMON_UNWANTED_HTTP_CODES = "SPIDERMON_UNWANTED_HTTP_CODES"
@@ -22,211 +22,6 @@ SPIDERMON_JOBS_COMPARISON = "SPIDERMON_JOBS_COMPARISON"
 SPIDERMON_JOBS_COMPARISON_STATES = "SPIDERMON_JOBS_COMPARISON_STATES"
 SPIDERMON_JOBS_COMPARISON_TAGS = "SPIDERMON_JOBS_COMPARISON_TAGS"
 SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
-
-
-class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
-    longMessage = False
-    ops = {"==": operator.eq, "<": operator.lt, ">": operator.gt}
-
-    @property
-    def monitor_description(self):
-        if self.__class__.__doc__:
-            return self.__class__.__doc__.split("\n")[0]
-        return super().monitor_description
-
-    """ 
-    The montior inherited by BaseScrapyMonitor can be skipped based on
-    conditions given in the settings. The purpose is to skip monitor 
-    based on stats value or any custom function. A scenario could be skipping
-    the Field Coverage Monitor when spider produced no items. Following is the
-    code block of examples of how we can configure the skip rules in settings.  
-    
-    Example#1: skip rules based on stats value
-    .. code-block:: python
-
-        class QuotesSpider(scrapy.Spider):
-            name = "quotes"
-
-            custom_settings = {
-                "SPIDERMON_FIELD_COVERAGE_RULES": {
-                    "dict/quote": 1,
-                    "dict/author": 1,
-                },
-                "SPIDERMON_MONITOR_SKIPPING_RULES": {
-                    "Field Coverage Monitor": [["item_scraped_count", "==", 0]],
-                }
-            }
-    
-    Example#2: skip rules based on custom function
-    .. code-block:: python
-    
-        def skip_function(monitor):
-            return "item_scraped_count" not in monitor.data.stats
-        
-        class QuotesSpider(scrapy.Spider):
-            name = "quotes"
-        
-            custom_settings = {
-                "SPIDERMON_FIELD_COVERAGE_RULES": {
-                    "dict/quote": 1,
-                    "dict/author": 1,
-                },
-                "SPIDERMON_MONITOR_SKIPPING_RULES": {
-                    "Field Coverage Monitor": [skip_function],
-                }
-            }
-    """
-    def run(self, result):
-        if getattr(self, "skip_rules") and self.skip_rules.get(self.name.split("/")[0]):
-            skip_rules = self.skip_rules[self.name.split('/')[0]]
-            for rule in skip_rules:
-                if hasattr(rule, '__call__'):
-                    if rule(self):
-                        return
-                    continue
-                stats_value = self.data.stats.get(rule[0], 0)
-                if self.ops[rule[1]](stats_value, rule[2]):
-                    return
-
-        return super().run(result)
-
-
-class BaseStatMonitor(BaseScrapyMonitor):
-    """Base Monitor class for stat-related monitors.
-
-    Create a monitor class inheriting from this class to have a custom
-    monitor that validates numerical stats from your job execution
-    against a configurable threshold. If this threshold is passed in
-    via command line arguments (and not it the spider settings), the setting is read as a
-    string and converted to ``threshold_datatype`` type (default is
-    float).
-
-    As an example, we will create a new monitor that will check if the
-    value obtained in a job stat 'numerical_job_statistic' is greater than
-    or equal to the value configured in ``CUSTOM_STAT_THRESHOLD`` project
-    setting:
-
-    .. code-block:: python
-
-        class MyCustomStatMonitor(BaseStatMonitor):
-            stat_name = "numerical_job_statistic"
-            threshold_setting = "CUSTOM_STAT_THRESHOLD"
-            assert_type = ">="
-
-    For the ``assert_type`` property you can select one of the following:
-
-    ==  =====================
-    >   Greater than
-    >=  Greater than or equal
-    <   Less than
-    <=  Less than or equal
-    ==  Equal
-    !=  Not equal
-    ==  =====================
-
-    Sometimes, we don't want a fixed threshold, but a dynamic based on more than
-    one stat or getting data external from the job execution (e.g., you want the
-    threshold to be related to another stat, or you want to get the value
-    of a stat from a previous job).
-
-    As an example, the following monitor will use as threshold the a variable number
-    of errors allowed based on the number of items scraped. So this monitor will pass
-    only if the number of errors is less than 1% of the number of items scraped:
-
-    .. code-block:: python
-
-        class MyCustomStatMonitor(BaseStatMonitor):
-            stat_name = "log_count/ERROR"
-            assert_type = "<"
-
-            def get_threshold(self):
-                item_scraped_count = self.stats.get("item_scraped_count")
-                return item_scraped_count * 0.01
-
-    By default, if the stat can't be found in job statistics, the monitor will fail.
-    If you want the monitor to be skipped in that case, you should set ``fail_if_stat_missing``
-    attribute as ``False``.
-
-
-    The following monitor will not fail if the job doesn't have a ``numerical_job_statistic``
-    value in its statistics:
-
-    .. code-block:: python
-
-        class MyCustomStatMonitor(BaseStatMonitor):
-            stat_name = "numerical_job_statistic"
-            threshold_setting = "CUSTOM_STAT_THRESHOLD"
-            assert_type = ">="
-            fail_if_stat_missing = False
-    """
-
-    fail_if_stat_missing = True
-    threshold_datatype = float
-
-    @property
-    def _get_threshold_setting(self):
-
-        datatype_to_function = {
-            int: self.crawler.settings.getint,
-            float: self.crawler.settings.getfloat,
-        }
-
-        return datatype_to_function[self.threshold_datatype]
-
-    def run(self, result):
-        has_threshold_config = any(
-            [hasattr(self, "threshold_setting"), hasattr(self, "get_threshold")]
-        )
-        if not has_threshold_config:
-            raise NotConfigured(
-                f"{self.__class__.__name__} should include a a `threshold_setting` attribute "
-                "to be configured in your project settings with the desired threshold "
-                "or a `get_threshold` method that returns the desired threshold."
-            )
-
-        if (
-            hasattr(self, "threshold_setting")
-            and self.threshold_setting not in self.crawler.settings.attributes
-        ):
-            raise NotConfigured(
-                f"Configure {self.threshold_setting} to your project "
-                f"settings to use {self.monitor_name}."
-            )
-
-        return super().run(result)
-
-    def _get_threshold_value(self):
-        if hasattr(self, "get_threshold"):
-            return self.get_threshold()
-        return self._get_threshold_setting(self.threshold_setting)
-
-    def test_stat_monitor(self):
-        assertions = {
-            ">": self.assertGreater,
-            ">=": self.assertGreaterEqual,
-            "<": self.assertLess,
-            "<=": self.assertLessEqual,
-            "==": self.assertEqual,
-            "!=": self.assertNotEqual,
-        }
-        threshold = self._get_threshold_value()
-
-        if self.stat_name not in self.stats:
-            message = f"Unable to find '{self.stat_name}' in job stats."
-            if self.fail_if_stat_missing:
-                self.fail(message)
-            else:
-                self.skipTest(message)
-
-        value = self.stats.get(self.stat_name)
-
-        assertion_method = assertions.get(self.assert_type)
-        assertion_method(
-            value,
-            threshold,
-            msg=f"Expecting '{self.stat_name}' to be '{self.assert_type}' "
-            f"to '{threshold}'. Current value: '{value}'",
-        )
 
 
 @monitors.name("Extracted Items Monitor")
@@ -346,6 +141,24 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
             500: 0,
         }
 
+    Furthermore, instead of being a numeric value, the code accepts a dictionary which can
+    contain any of two keys: ``max_count`` and ``max_percentage``. The former refers to an
+    absolute value and works the same way as setting an integer value. The latter refers
+    to a max_percentage of the total number of requests the spider made. If both are set, the
+    monitor will fail if any of the conditions are met. If none are set, it will default to
+    ``DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT```.
+
+    With the following setting, the monitor will fail if it has at least one 500 error or
+    if there are more than ``min(100, 0.5 * total requests)`` 400 responses.
+
+    .. highlight:: python
+    .. code-block:: python
+
+        SPIDERMON_UNWANTED_HTTP_CODES = {
+            400: {"max_count": 100, "max_percentage": 0.5},
+            500: 0,
+        }
+
     """
 
     DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT = 10
@@ -369,12 +182,54 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
                 code: errors_max_count for code in unwanted_http_codes
             }
 
+        requests = self.stats.get("downloader/request_count", 0)
         for code, max_errors in unwanted_http_codes.items():
             code = int(code)
             count = self.stats.get(f"downloader/response_status_count/{code}", 0)
+
+            percentage_trigger = False
+
+            if isinstance(max_errors, dict):
+                absolute_max_errors = max_errors.get("max_count")
+                percentual_max_errors = max_errors.get("max_percentage")
+
+                # if the user passed an empty dict, use the default count
+                if not absolute_max_errors and not percentual_max_errors:
+                    max_errors = self.DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT
+
+                else:
+                    # calculate the max errors based on percentage
+                    # if there's no percentage set, take the number
+                    # of requests as this is the same as disabling the check
+                    calculated_percentage_errors = int(
+                        percentual_max_errors * requests
+                        if percentual_max_errors
+                        else requests
+                    )
+
+                    # takes the minimum of the two values.
+                    # if no absolute max errors were set, take the number
+                    # of requests as this effectively disables this check
+                    max_errors = min(
+                        absolute_max_errors if absolute_max_errors else requests,
+                        calculated_percentage_errors,
+                    )
+
+                    # if the max errors were defined by the percentage, remember it
+                    # so we can properly format the error message.
+                    percentage_trigger = max_errors == calculated_percentage_errors
+
+            stat_message = (
+                "This exceeds the limit of {} ({}% of {} total requests)".format(
+                    max_errors, percentual_max_errors * 100, requests
+                )
+                if percentage_trigger
+                else "This exceeds the limit of {}".format(max_errors)
+            )
+
             msg = (
-                "Found {} Responses with status code={} - "
-                "This exceed the limit of {}".format(count, code, max_errors)
+                "Found {} Responses with status code={} - ".format(count, code)
+                + stat_message
             )
             self.assertTrue(count <= max_errors, msg=msg)
 
@@ -525,6 +380,30 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
     You are not obligated to set rules for every field, just for the ones in which you are interested.
     Also, you can monitor nested fields if available in your returned items.
 
+    If a field returned by your spider is a list of dicts (or objects) and you want to check their
+    coverage, that is also possible. You need to set the ``SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS``
+    setting. This value represents for how many levels inside the list the coverage will be computed
+    (if the objects inside the list also have fields that are objects/lists).
+    The coverage for list fields is computed in two ways: with
+    respect to the total items scraped (these values can be greater than 1) and with respect to the
+    total of items in the list. The stats are in the following form:
+
+    .. code-block:: python
+
+        {
+            "spidermon_field_coverage/dict/field2/_items/nested_field1": "some_value",
+            "spidermon_field_coverage/dict/field2/nested_field1": "other_value",
+        }
+
+    The stat containing `_items` means it is calculated based on the total list items, while the
+    other, based on the total number of scraped items.
+
+    If the objects in the list also contain another list field, that coverage is also computed in
+    both ways, with the total list items considered for the `_items` stat that of the innermost list.
+
+    In case you have a job without items scraped, and you want to skip this test, you have to enable the
+    ``SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM`` setting to avoid the field coverage monitor error.
+
     .. warning::
 
        Rules for nested fields will be validated against the total number of items returned.
@@ -552,7 +431,9 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
            SPIDERMON_FIELD_COVERAGE_RULES = {
                "MyCustomItem/field_1": 0.4,
                "MyCustomItem/field_2": 1.0,
-           }"""
+           }
+
+    """
 
     def run(self, result):
         add_field_coverage_set = self.crawler.settings.getbool(
@@ -562,9 +443,17 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
             raise NotConfigured(
                 "To enable field coverage monitor, set SPIDERMON_ADD_FIELD_COVERAGE=True in your project settings"
             )
+
         return super().run(result)
 
     def test_check_if_field_coverage_rules_are_met(self):
+        skip_no_items = self.crawler.settings.getbool(
+            "SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM", False
+        )
+        items_scraped = self.data.stats.get("item_scraped_count", 0)
+        if skip_no_items and int(items_scraped) == 0:
+            self.skipTest("No items were scraped.")
+
         failures = []
         field_coverage_rules = self.crawler.settings.getdict(
             "SPIDERMON_FIELD_COVERAGE_RULES"
@@ -639,7 +528,6 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
     assert_type = ">="
 
     def run(self, result):
-
         if (
             SPIDERMON_JOBS_COMPARISON not in self.crawler.settings.attributes
             or self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON) <= 0
@@ -661,7 +549,6 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         return super().run(result)
 
     def _get_jobs(self, states, number_of_jobs):
-
         tags = self._get_tags_to_filter()
 
         jobs = []
@@ -700,7 +587,6 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         return sorted(tags_to_filter)
 
     def get_threshold(self):
-
         number_of_jobs = self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON)
 
         threshold = self.crawler.settings.getfloat(SPIDERMON_JOBS_COMPARISON_THRESHOLD)
@@ -715,71 +601,3 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
 
         expected_item_extracted = math.ceil(previous_count * threshold)
         return expected_item_extracted
-
-
-class SpiderCloseMonitorSuite(MonitorSuite):
-    """This Monitor Suite implements the following monitors:
-
-    * :class:`ItemCountMonitor`
-    * :class:`ItemValidationMonitor`
-    * :class:`ErrorCountMonitor`
-    * :class:`WarningCountMonitor`
-    * :class:`FinishReasonMonitor`
-    * :class:`UnwantedHTTPCodesMonitor`
-    * :class:`FieldCoverageMonitor`
-    * :class:`RetryCountMonitor`
-    * :class:`DownloaderExceptionMonitor`
-    * :class:`SuccessfulRequestsMonitor`
-    * :class:`TotalRequestsMonitor`
-
-    You can easily enable this monitor *after* enabling Spidermon::
-
-            SPIDERMON_SPIDER_CLOSE_MONITORS = (
-                'spidermon.contrib.scrapy.monitors.SpiderCloseMonitorSuite',
-            )
-    """
-
-    def __init__(
-            self,
-            name=None,
-            monitors=None,
-            monitors_finished_actions=None,
-            monitors_passed_actions=None,
-            monitors_failed_actions=None,
-            order=None,
-            crawler=None,
-    ):
-        super().__init__(name, monitors, monitors_finished_actions, monitors_passed_actions, monitors_failed_actions, order, crawler)
-        if dict(crawler.settings).get("SPIDERMON_MONITOR_SKIPPING_RULES"):
-            skip_rules = crawler.settings.get("SPIDERMON_MONITOR_SKIPPING_RULES")
-            for monitor in self.monitors:
-                monitor.skip_rules = skip_rules
-
-    monitors = [
-        ItemCountMonitor,
-        ItemValidationMonitor,
-        ErrorCountMonitor,
-        WarningCountMonitor,
-        FinishReasonMonitor,
-        UnwantedHTTPCodesMonitor,
-        FieldCoverageMonitor,
-        RetryCountMonitor,
-        DownloaderExceptionMonitor,
-        SuccessfulRequestsMonitor,
-        TotalRequestsMonitor,
-    ]
-
-
-class PeriodicMonitorSuite(MonitorSuite):
-    """This Monitor Suite implements the following monitors:
-
-    * :class:`PeriodicExecutionTimeMonitor`
-
-    You can easily enable this monitor *after* enabling Spidermon::
-
-            SPIDERMON_PERIODIC_MONITORS = {
-                'spidermon.contrib.scrapy.monitors.PeriodicMonitorSuite': # check time in seconds,
-            }
-    """
-
-    monitors = [PeriodicExecutionTimeMonitor]
