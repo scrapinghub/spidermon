@@ -1,15 +1,4 @@
 import json
-from schematics.models import Model
-from schematics.types import URLType, StringType, BaseType
-
-
-class TestValidator(Model):
-    url = URLType(required=True)
-    title = StringType()
-
-
-class TreeValidator(Model):
-    child = BaseType(required=True)
 
 
 tree_schema = {

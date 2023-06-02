@@ -15,7 +15,7 @@ SPIDERMON_SLACK_SENDER_NAME = "your_sender_name"
 SPIDERMON_SLACK_RECIPIENTS = ["@yourself", "#yourprojectchannel"]
 
 ITEM_PIPELINES = {"spidermon.contrib.scrapy.pipelines.ItemValidationPipeline": 800}
-SPIDERMON_VALIDATION_MODELS = ("tutorial.validators.QuoteItem",)
+SPIDERMON_VALIDATION_SCHEMAS = ("../schemas/quote_item.json",)
 
 SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS = True
 

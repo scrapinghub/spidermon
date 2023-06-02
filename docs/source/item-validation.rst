@@ -21,36 +21,7 @@ the first step is to enable the built-in item pipeline in your project settings:
   subsequent pipeline changes the content of the item, ignoring the
   validation already performed.
 
-After that, you need to choose which validation library will be used. Spidermon
-accepts schemas defined using schematics_ or `JSON Schema`_.
-
-With schematics
----------------
-
-Schematics_ is a validation library based on ORM-like models. These models include
-some common data types and validators, but they can also be extended to define
-custom validation rules.
-
-.. warning::
-
-   You need to install `schematics`_ to use this feature.
-
-.. code-block:: python
-
-    # Usually placed in validators.py file
-    from schematics.models import Model
-    from schematics.types import URLType, StringType, ListType
-
-    class QuoteItem(Model):
-        quote = StringType(required=True)
-        author = StringType(required=True)
-        author_url = URLType(required=True)
-        tags = ListType(StringType)
-
-Check `schematics documentation`_ to learn how to define a model and how to extend the
-built-in data types.
-
-With JSON Schema
+Using JSON Schema
 ----------------
 
 `JSON Schema`_ is a powerful tool for validating the structure of JSON data. You can
@@ -133,36 +104,6 @@ Default: ``_validation``
 The name of the field added to the item when a validation error happens and
 `SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS`_ is enabled.
 
-SPIDERMON_VALIDATION_MODELS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Default: ``None``
-
-A `list` containing the `schematics models`_ that contain the definition of the items
-that need to be validated.
-
-.. code-block:: python
-
-    # settings.py
-
-    SPIDERMON_VALIDATION_MODELS = [
-        'tutorial.validators.DummyItemModel'
-    ]
-
-If you are working on a spider that produces multiple items types, you can define it
-as a `dict`:
-
-.. code-block:: python
-
-    # settings.py
-
-    from tutorial.items import DummyItem, OtherItem
-
-    SPIDERMON_VALIDATION_MODELS = {
-        DummyItem: 'tutorial.validators.DummyItemModel',
-        OtherItem: 'tutorial.validators.OtherItemModel',
-    }
-
 SPIDERMON_VALIDATION_SCHEMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -235,9 +176,6 @@ Some examples:
     # checks that no errors is present in any fields
     self.check_field_errors_percent()
 
-.. _`schematics`: https://schematics.readthedocs.io/en/latest/
-.. _`schematics documentation`: https://schematics.readthedocs.io/en/latest/
 .. _`JSON Schema`: https://json-schema.org/
 .. _`guide`: http://json-schema.org/learn/getting-started-step-by-step.html
-.. _`schematics models`: https://schematics.readthedocs.io/en/latest/usage/models.html
 .. _`jsonschema`: https://pypi.org/project/jsonschema/
