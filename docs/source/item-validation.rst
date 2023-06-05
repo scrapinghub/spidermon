@@ -22,7 +22,7 @@ the first step is to enable the built-in item pipeline in your project settings:
   validation already performed.
 
 Using JSON Schema
-----------------
+-----------------
 
 `JSON Schema`_ is a powerful tool for validating the structure of JSON data. You can
 define which fields are required, the type assigned to each field, a regular expression
