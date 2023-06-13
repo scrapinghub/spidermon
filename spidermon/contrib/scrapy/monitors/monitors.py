@@ -459,9 +459,9 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
             "SPIDERMON_FIELD_COVERAGE_RULES"
         )
         for field, expected_coverage in field_coverage_rules.items():
-            actual_coverage = round(self.data.stats.get(
-                f"spidermon_field_coverage/{field}", 0
-            ),2)
+            actual_coverage = round(
+                self.data.stats.get(f"spidermon_field_coverage/{field}", 0), 2
+            )
             if actual_coverage < expected_coverage:
                 failures.append(
                     "{} (expected {}, got {})".format(
