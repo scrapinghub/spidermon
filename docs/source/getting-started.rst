@@ -315,12 +315,8 @@ Item validation
 ---------------
 
 Item validators allows you to match your returned items with predetermined structure
-ensuring that all fields contains data in the expected format. Spidermon allows
-you to choose between schematics_ or `JSON Schema`_ to define the structure
-of your item.
-
-In this tutorial, we will use a schematics_ model to make sure that all required
-fields are populated and they are all of the correct format.
+ensuring that all fields contains data in the expected format. supports `JSON Schema`_ 
+to define the structure of your item.
 
 First step is to change our actual spider code to use `Scrapy items`_. Create a
 new file called `items.py`:
@@ -367,25 +363,43 @@ And then modify the spider code to use the newly defined item:
                 )
             )
 
-Now we need to create our schematics model in `validators.py` file that will contain
+Now we need to create our jsonschema model in the `schemas/quote_item.json` file that will contain
 all the validation rules:
 
 .. _quote-item-validation-schema:
 
-.. code-block:: python
+.. code-block:: json
 
-    # tutorial/validators.py
-    from schematics.models import Model
-    from schematics.types import URLType, StringType, ListType
-
-    class QuoteItem(Model):
-        quote = StringType(required=True)
-        author = StringType(required=True)
-        author_url = URLType(required=True)
-        tags = ListType(StringType)
+  {
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "properties": {
+      "quote": {
+        "type": "string"
+      },
+      "author": {
+        "type": "string"
+      },
+      "author_url": {
+        "type": "string",
+        "pattern": ""
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "type":"string"
+        }
+      }
+    },
+    "required": [
+      "quote",
+      "author",
+      "author_url"
+    ]
+  }
 
 To allow Spidermon to validate your items, you need to include an item pipeline and
-inform the name of the model class used for validation:
+inform the path of the json schema used for validation:
 
 .. code-block:: python
 
@@ -394,8 +408,8 @@ inform the name of the model class used for validation:
         'spidermon.contrib.scrapy.pipelines.ItemValidationPipeline': 800,
     }
 
-    SPIDERMON_VALIDATION_MODELS = (
-        'tutorial.validators.QuoteItem',
+    SPIDERMON_VALIDATION_SCHEMAS = (
+        './schemas/quote_item.json',
     )
 
 After that, every time you run your spider you will have a new set of stats in
@@ -408,7 +422,7 @@ your spider log providing information about the results of the validations:
      'spidermon/validation/fields': 400,
      'spidermon/validation/items': 100,
      'spidermon/validation/validators': 1,
-     'spidermon/validation/validators/item/schematics': True,
+     'spidermon/validation/validators/item/jsonschema': True,
     [scrapy.core.engine] INFO: Spider closed (finished)
 
 You can then create a new monitor that will check these new statistics and raise
@@ -473,7 +487,6 @@ The resulted item will look like this:
     }
 
 .. _`JSON Schema`: https://json-schema.org/
-.. _`schematics`: https://schematics.readthedocs.io/en/latest/
 .. _`Scrapy`: https://scrapy.org/
 .. _`Scrapy items`: https://docs.scrapy.org/en/latest/topics/items.html
 .. _`Scrapy Tutorial`: https://doc.scrapy.org/en/latest/intro/tutorial.html

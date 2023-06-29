@@ -2,12 +2,10 @@ from collections import defaultdict
 from itemadapter import ItemAdapter
 
 from scrapy.exceptions import DropItem, NotConfigured
-from scrapy.utils.misc import load_object
-from scrapy import Field, Item
+from scrapy import Item
 
-from spidermon.contrib.validation import SchematicsValidator, JSONSchemaValidator
+from spidermon.contrib.validation import JSONSchemaValidator
 from spidermon.contrib.validation.jsonschema.tools import get_schema_from
-from schematics.models import Model
 
 from .stats import ValidationStatsManager
 
@@ -59,7 +57,6 @@ class ItemValidationPipeline:
 
         for loader, name in [
             (cls._load_jsonschema_validator, "SPIDERMON_VALIDATION_SCHEMAS"),
-            (cls._load_schematics_validator, "SPIDERMON_VALIDATION_MODELS"),
         ]:
             res = crawler.settings.get(name)
             if not res:
@@ -99,15 +96,6 @@ class ItemValidationPipeline:
                 "- a path to a JSON file."
             )
         return JSONSchemaValidator(schema)
-
-    @classmethod
-    def _load_schematics_validator(cls, model_path):
-        model_class = load_object(model_path)
-        if not issubclass(model_class, Model):
-            raise NotConfigured(
-                "Invalid model, models must subclass schematics.models.Model"
-            )
-        return SchematicsValidator(model_class)
 
     def process_item(self, item, _):
         validators = self.find_validators(item)
