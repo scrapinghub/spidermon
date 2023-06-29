@@ -22,7 +22,7 @@ SPIDERMON_JOBS_COMPARISON = "SPIDERMON_JOBS_COMPARISON"
 SPIDERMON_JOBS_COMPARISON_STATES = "SPIDERMON_JOBS_COMPARISON_STATES"
 SPIDERMON_JOBS_COMPARISON_TAGS = "SPIDERMON_JOBS_COMPARISON_TAGS"
 SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
-
+SPIDERMON_ITEM_COUNT_INCREASE = "SPIDERMON_ITEM_COUNT_INCREASE"
 
 @monitors.name("Extracted Items Monitor")
 class ItemCountMonitor(BaseStatMonitor):
@@ -580,8 +580,16 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         return expected_item_extracted
 
 
-@monitors.name("Periodic item count increase Monitor")
+@monitors.name("Periodic Item Count Increase Monitor")
 class PeriodicItemCountMonitor(BaseStatMonitor):
+    """Check for increase in item count.
+
+    You can configure the threshold for increase using
+    ``SPIDERMON_ITEM_COUNT_INCREASE`` as a project setting or spider attribute.
+    Use int value to check for x new items every check or float value to check
+    in percentage increase of items.
+    """
+
     stat_name = "item_scraped_count"
     threshold_setting = "SPIDERMON_ITEM_COUNT_INCREASE"
     assert_type = ">="
