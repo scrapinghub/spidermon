@@ -24,6 +24,7 @@ SPIDERMON_JOBS_COMPARISON_TAGS = "SPIDERMON_JOBS_COMPARISON_TAGS"
 SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
 SPIDERMON_ITEM_COUNT_INCREASE = "SPIDERMON_ITEM_COUNT_INCREASE"
 
+
 @monitors.name("Extracted Items Monitor")
 class ItemCountMonitor(BaseStatMonitor):
     """Check if spider extracted the minimum number of items.

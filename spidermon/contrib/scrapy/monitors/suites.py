@@ -69,4 +69,14 @@ class PeriodicMonitorSuite(MonitorSuite):
 
 
 class PeriodicItemCountMonitorSuite(MonitorSuite):
+    """This Monitor Suite implements the following monitors:
+
+    * :class:`.monitors.PeriodicExecutionTimeMonitor`
+
+    You can easily enable this monitor *after* enabling Spidermon::
+
+            SPIDERMON_PERIODIC_MONITORS = {
+                'spidermon.contrib.scrapy.monitors.PeriodicItemCountMonitorSuite': # check time in seconds,
+            }
+    """
     monitors = [PeriodicItemCountMonitor]
