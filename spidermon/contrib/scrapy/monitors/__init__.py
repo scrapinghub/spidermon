@@ -28,4 +28,8 @@ from .monitors import (
     SPIDERMON_JOBS_COMPARISON_THRESHOLD,
     SPIDERMON_ITEM_COUNT_INCREASE,
 )
-from .suites import SpiderCloseMonitorSuite, PeriodicMonitorSuite, PeriodicItemCountMonitorSuite
+from .suites import (
+    SpiderCloseMonitorSuite,
+    PeriodicMonitorSuite,
+    PeriodicItemCountMonitorSuite,
+)

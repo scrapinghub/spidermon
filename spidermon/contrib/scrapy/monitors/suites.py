@@ -65,6 +65,7 @@ class PeriodicMonitorSuite(MonitorSuite):
                 'spidermon.contrib.scrapy.monitors.PeriodicMonitorSuite': # check time in seconds,
             }
     """
+
     monitors = [PeriodicExecutionTimeMonitor]
 
 
@@ -79,4 +80,5 @@ class PeriodicItemCountMonitorSuite(MonitorSuite):
                 'spidermon.contrib.scrapy.monitors.PeriodicItemCountMonitorSuite': # check time in seconds,
             }
     """
+
     monitors = [PeriodicItemCountMonitor]

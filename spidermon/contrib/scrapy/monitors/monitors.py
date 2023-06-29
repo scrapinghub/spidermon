@@ -604,4 +604,6 @@ class PeriodicItemCountMonitor(BaseStatMonitor):
         if isinstance(threshold_increase, int):
             return prev_item_scraped_count + threshold_increase
         elif isinstance(threshold_increase, float):
-            return prev_item_scraped_count + (prev_item_scraped_count * threshold_increase)
+            return prev_item_scraped_count + (
+                prev_item_scraped_count * threshold_increase
+            )
