@@ -43,8 +43,6 @@ setup(
             "premailer",
             "sentry-sdk",
         ],
-        # Data validation
-        "validation": ["schematics"],
         # Tools to run the tests
         "tests": test_requirements,
         # Tools to build and publish the documentation
