@@ -23,8 +23,9 @@ class JobTagsAction(Action):
             if not self.data.job:
                 raise NotConfigured("Job not available!")
             job_metadata = self.data.job.metadata
-            self.process_tags(job_metadata)
-            job_metadata.save()
+            job_tags = job_metadata.get("tags")
+            self.process_tags(job_tags)
+            job_metadata.set("tags", job_tags)
 
     def process_tags(self, job_metadata):
         raise NotImplementedError
@@ -33,16 +34,13 @@ class JobTagsAction(Action):
 class AddJobTags(JobTagsAction):
     tag_settings = "SPIDERMON_JOB_TAGS_TO_ADD"
 
-    def process_tags(self, job_metadata):
-        for tag in self.tags:
-            if tag not in job_metadata["tags"]:
-                job_metadata["tags"].append(tag)
+    def process_tags(self, job_tags):
+        tags_to_add = [tag for tag in self.tags if tag not in job_tags]
+        job_tags += tags_to_add
 
 
 class RemoveJobTags(JobTagsAction):
     tag_settings = "SPIDERMON_JOB_TAGS_TO_REMOVE"
 
-    def process_tags(self, job_metadata):
-        for tag in self.tags:
-            if tag in job_metadata["tags"]:
-                job_metadata["tags"].remove(tag)
+    def process_tags(self, job_tags):
+        job_tags[:] = [tag for tag in job_tags if tag not in self.tags]
