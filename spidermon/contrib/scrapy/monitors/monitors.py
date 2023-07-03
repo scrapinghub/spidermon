@@ -595,6 +595,15 @@ class PeriodicItemCountMonitor(BaseStatMonitor):
     threshold_setting = "SPIDERMON_ITEM_COUNT_INCREASE"
     assert_type = ">="
 
+    def run(self, result):
+        if SPIDERMON_ITEM_COUNT_INCREASE not in self.crawler.settings.attributes:
+            raise NotConfigured(
+                f"Configure {SPIDERMON_ITEM_COUNT_INCREASE} to your project "
+                f"settings to use {self.monitor_name}."
+            )
+
+        return super().run(result)
+
     def get_threshold(self):
         crawler = self.data.crawler
         prev_item_scraped_count = self.stats.get("prev_item_scraped_count", 0)
