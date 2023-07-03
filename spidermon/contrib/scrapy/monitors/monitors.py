@@ -381,6 +381,27 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
     You are not obligated to set rules for every field, just for the ones in which you are interested.
     Also, you can monitor nested fields if available in your returned items.
 
+    If a field returned by your spider is a list of dicts (or objects) and you want to check their
+    coverage, that is also possible. You need to set the ``SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS``
+    setting. This value represents for how many levels inside the list the coverage will be computed
+    (if the objects inside the list also have fields that are objects/lists).
+    The coverage for list fields is computed in two ways: with
+    respect to the total items scraped (these values can be greater than 1) and with respect to the
+    total of items in the list. The stats are in the following form:
+
+    .. code-block:: python
+
+        {
+            "spidermon_field_coverage/dict/field2/_items/nested_field1": "some_value",
+            "spidermon_field_coverage/dict/field2/nested_field1": "other_value",
+        }
+
+    The stat containing `_items` means it is calculated based on the total list items, while the
+    other, based on the total number of scraped items.
+
+    If the objects in the list also contain another list field, that coverage is also computed in
+    both ways, with the total list items considered for the `_items` stat that of the innermost list.
+
     In case you have a job without items scraped, and you want to skip this test, you have to enable the
     ``SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM`` setting to avoid the field coverage monitor error.
 
@@ -411,7 +432,9 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
            SPIDERMON_FIELD_COVERAGE_RULES = {
                "MyCustomItem/field_1": 0.4,
                "MyCustomItem/field_2": 1.0,
-           }"""
+           }
+
+    """
 
     def run(self, result):
         add_field_coverage_set = self.crawler.settings.getbool(

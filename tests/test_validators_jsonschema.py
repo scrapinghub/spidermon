@@ -744,7 +744,7 @@ class Format(SchemaTest):
         DataTest(name="regexes. valid", data={"regexes": ["[0-9]+"]}, valid=True),
         DataTest(
             name="regexes. invalid",
-            data={"regexes": ["[0-9]++"]},
+            data={"regexes": ["[0-9]+++"]},
             valid=False,
             expected_errors={"regexes.0": [messages.INVALID_REGEX]},
         ),
