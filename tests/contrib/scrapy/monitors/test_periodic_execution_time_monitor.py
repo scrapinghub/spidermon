@@ -1,9 +1,14 @@
 import datetime
 import pytest
+from spidermon import settings
+
 
 from spidermon.contrib.scrapy.monitors import (
     PeriodicExecutionTimeMonitor,
+    ItemCountMonitor,
+    PeriodicItemCountMonitor,
     SPIDERMON_MAX_EXECUTION_TIME,
+    SPIDERMON_ITEM_COUNT_INCREASE,
 )
 from spidermon import MonitorSuite
 
@@ -94,3 +99,40 @@ def test_periodic_execution_monitor_no_start_time(
     runner.run(monitor_suite, **data)
     for r in runner.result.monitor_results:
         assert r.error is None
+
+
+@pytest.fixture
+def item_count_suite():
+    return MonitorSuite(monitors=[PeriodicItemCountMonitor])
+
+
+@pytest.mark.parametrize(
+    "item_scraped_count,prev_item_scraped_count,spidermon_item_count_increase,expected_status",
+    [
+        # Failure since item should increase by 100
+        (109, 10, 100, settings.MONITOR.STATUS.FAILURE),
+        # Success since item increase by at least 100
+        (110, 10, 100, settings.MONITOR.STATUS.SUCCESS),
+        # Success because item should increase by more than 25
+        # 50 percent of prev_item_scraped_count is 25
+        (99, 50, 0.5, settings.MONITOR.STATUS.SUCCESS),
+        # Failure because item increase only by 4, expected
+        # increase is 5 which is 10 percent of 50
+        (54, 50, 0.1, settings.MONITOR.STATUS.FAILURE),
+    ],
+)
+def test_item_count_monitor_validation(
+    make_data,
+    item_count_suite,
+    item_scraped_count,
+    prev_item_scraped_count,
+    spidermon_item_count_increase,
+    expected_status,
+):
+    data = make_data({SPIDERMON_ITEM_COUNT_INCREASE: spidermon_item_count_increase})
+    runner = data.pop("runner")
+    data["stats"]["item_scraped_count"] = item_scraped_count
+    data["stats"]["prev_item_scraped_count"] = prev_item_scraped_count
+    runner.run(item_count_suite, **data)
+    assert len(runner.result.monitor_results) == 1
+    assert runner.result.monitor_results[0].status == expected_status
