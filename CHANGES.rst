@@ -1,6 +1,15 @@
 Release notes
 =============
 
+1.19.0 (2023-07-07)
+-------------------
+
+- bug: Fix ``JobTagsAction`` failing due to ``JobMetadata`` not longer supporting ``__setitem__`` method (`PR#404 <https://github.com/scrapinghub/spidermon/pull/404>`_)
+- feature: Add ``PeriodicItemCountMonitor`` to check for increase in item count. Also included ``PeriodicItemCountMonitorSuite`` suite (`PR#402 <https://github.com/scrapinghub/spidermon/pull/402>`_)
+- chore: Deprecate  support for data validation using ``schematics`` (`PR#399 <https://github.com/scrapinghub/spidermon/pull/399>`_)
+- chore: Drop support for Python 3.6 and Python 3.7. Added support for Python 3.11 (`PR#398 <https://github.com/scrapinghub/spidermon/pull/398>`_)
+- feature: Add ability to pass kwargs to Slack APIs (`PR#397 <https://github.com/scrapinghub/spidermon/pull/397>`_)
+
 1.18.0 (2023-03-13)
 -------------------
 
