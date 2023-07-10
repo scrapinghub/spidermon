@@ -1,3 +1,0 @@
-s3cmd
-sphinx-rtd-theme==0.4.2
-Sphinx==1.8.2
