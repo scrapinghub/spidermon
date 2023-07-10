@@ -1,0 +1,7 @@
+-r requirements.txt
+black
+pre-commit
+pytest
+pytest-cov
+pytest-mock
+tox

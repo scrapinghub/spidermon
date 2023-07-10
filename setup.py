@@ -1,19 +1,24 @@
 from setuptools import find_packages, setup
 
 test_requirements = [
-    "pytest>=2.7.0",
-    "pytest-cov",
-    "pytest-mock",
-    "jinja2",
+    "boto",
     "boto3",
-    "lxml",
+    "itemadapter",
+    "Jinja2",
+    "jsonschema[format]",
     "premailer",
+    "python-slugify",
     "scrapinghub",
     "scrapinghub-entrypoint-scrapy",
     "scrapy",
+    "sentry-sdk",
     "slack-sdk",
-    "twisted>=19.7.0",
-    "itemadapter",
+    "black",
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "tox",
 ]
 
 setup(
@@ -34,14 +39,18 @@ setup(
     extras_require={
         # Specific monitors and tools to support notifications and reports
         "monitoring": [
-            "scrapy",
-            "Jinja2",
-            "scrapinghub",
-            "slack-sdk",
             "boto",
             "boto3",
+            "itemadapter",
+            "Jinja2",
+            "jsonschema[format]",
             "premailer",
+            "python-slugify",
+            "scrapinghub",
+            "scrapinghub-entrypoint-scrapy",
+            "scrapy",
             "sentry-sdk",
+            "slack-sdk",
         ],
         # Tools to run the tests
         "tests": test_requirements,
