@@ -1,25 +1,5 @@
 from setuptools import find_packages, setup
 
-test_requirements = [
-    "boto",
-    "boto3",
-    "itemadapter",
-    "Jinja2",
-    "jsonschema[format]",
-    "premailer",
-    "python-slugify",
-    "scrapinghub",
-    "scrapinghub-entrypoint-scrapy",
-    "scrapy",
-    "sentry-sdk",
-    "slack-sdk",
-    "black",
-    "pre-commit",
-    "pytest",
-    "pytest-cov",
-    "pytest-mock",
-    "tox",
-]
 
 setup(
     name="spidermon",
@@ -34,28 +14,24 @@ setup(
     package_data={"spidermon": ["VERSION"]},
     zip_safe=False,
     include_package_data=True,
-    install_requires=["jsonschema[format]>=3.2.0", "python-slugify"],
-    tests_require=test_requirements,
+    install_requires=[
+        "boto",
+        "boto3",
+        "itemadapter",
+        "Jinja2",
+        "jsonschema[format]",
+        "premailer",
+        "python-slugify",
+        "Requests",
+        "scrapinghub",
+        "scrapinghub-entrypoint-scrapy",
+        "scrapy",
+        "sentry_sdk",
+        "slack_sdk",
+        "Twisted",
+    ],
     extras_require={
-        # Specific monitors and tools to support notifications and reports
-        "monitoring": [
-            "boto",
-            "boto3",
-            "itemadapter",
-            "Jinja2",
-            "jsonschema[format]",
-            "premailer",
-            "python-slugify",
-            "scrapinghub",
-            "scrapinghub-entrypoint-scrapy",
-            "scrapy",
-            "sentry-sdk",
-            "slack-sdk",
-        ],
-        # Tools to run the tests
-        "tests": test_requirements,
-        # Tools to build and publish the documentation
-        "docs": ["sphinx", "sphinx-rtd-theme", "s3cmd"],
+        "monitoring": [],
     },
     classifiers=[
         "Development Status :: 5 - Production/Stable",

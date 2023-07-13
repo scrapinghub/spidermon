@@ -1,0 +1,13 @@
+boto==2.49.0
+boto3==1.28.3
+itemadapter==0.7.0
+Jinja2==3.1.2
+premailer==3.10.0
+python-slugify==8.0.1
+Requests==2.31.0
+scrapinghub==2.4.0
+sentry_sdk==1.28.1
+setuptools==67.2.0
+slack_sdk==3.21.3
+sphinx_rtd_theme==1.2.2
+Twisted==22.10.0
