@@ -19,7 +19,7 @@ setup(
         "boto3",
         "itemadapter",
         "Jinja2",
-        "jsonschema[format]",
+        "jsonschema[format]>=3.2.0",
         "premailer",
         "python-slugify",
         "Requests",
