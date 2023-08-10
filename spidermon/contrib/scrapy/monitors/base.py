@@ -1,17 +1,96 @@
+import operator
+import logging
+
 from spidermon import Monitor
 from spidermon.exceptions import NotConfigured
 
 from ...monitors.mixins.spider import SpiderMonitorMixin
 
+logger = logging.getLogger(__name__)
+
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
+    """
+    Monitor can be skipped based on conditions given in the settings.
+    The purpose is to skip a monitor based on stat value or any custom
+    function. A scenario could be skipping the Field Coverage Monitor
+    when a spider produced no items. Following is a code block of
+    examples of how we can configure the skip rules in settings.
+
+    Example #1: skip rules based on stat values
+    .. code-block:: python
+        class QuotesSpider(scrapy.Spider):
+            name = "quotes"
+            custom_settings = {
+                "SPIDERMON_FIELD_COVERAGE_RULES": {
+                    "dict/quote": 1,
+                    "dict/author": 1,
+                },
+                "SPIDERMON_MONITOR_SKIPPING_RULES": {
+                    "Field Coverage Monitor": [["item_scraped_count", "==", 0]],
+                }
+            }
+
+    Example #2: skip rules based on a custom function
+    .. code-block:: python
+
+        def skip_function(monitor):
+            return "item_scraped_count" not in monitor.data.stats
+
+        class QuotesSpider(scrapy.Spider):
+            name = "quotes"
+
+            custom_settings = {
+                "SPIDERMON_FIELD_COVERAGE_RULES": {
+                    "dict/quote": 1,
+                    "dict/author": 1,
+                },
+                "SPIDERMON_MONITOR_SKIPPING_RULES": {
+                    "Field Coverage Monitor": [skip_function],
+                }
+            }
+    """
+
     longMessage = False
+    ops = {
+        ">": operator.gt,
+        ">=": operator.ge,
+        "<": operator.lt,
+        "<=": operator.le,
+        "==": operator.eq,
+        "!=": operator.ne,
+    }
 
     @property
     def monitor_description(self):
         if self.__class__.__doc__:
             return self.__class__.__doc__.split("\n")[0]
         return super().monitor_description
+
+    def run(self, result):
+        if self.check_if_skip_rule_met():
+            logger.info(f"Skipping {self.monitor_name} monitor")
+            return
+
+        return super().run(result)
+
+    def check_if_skip_rule_met(self):
+        if (
+            hasattr(self, "skip_rules")
+            and getattr(self, "monitor_name")
+            and self.skip_rules.get(self.monitor_name)
+        ):
+            skip_rules = self.skip_rules[self.monitor_name]
+            for rule in skip_rules:
+                if hasattr(rule, "__call__"):
+                    if rule(self):
+                        return True
+                    continue
+                stats_value = self.data.stats.get(rule[0], 0)
+                if self.ops[rule[1]](stats_value, rule[2]):
+                    return True
+
+        return False
 
 
 class BaseStatMonitor(BaseScrapyMonitor):
