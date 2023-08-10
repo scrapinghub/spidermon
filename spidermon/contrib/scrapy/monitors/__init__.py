@@ -8,6 +8,7 @@ from .monitors import (
     ItemCountMonitor,
     ItemValidationMonitor,
     PeriodicExecutionTimeMonitor,
+    PeriodicItemCountMonitor,
     RetryCountMonitor,
     SuccessfulRequestsMonitor,
     TotalRequestsMonitor,
@@ -25,5 +26,10 @@ from .monitors import (
     SPIDERMON_JOBS_COMPARISON_STATES,
     SPIDERMON_JOBS_COMPARISON_TAGS,
     SPIDERMON_JOBS_COMPARISON_THRESHOLD,
+    SPIDERMON_ITEM_COUNT_INCREASE,
 )
-from .suites import SpiderCloseMonitorSuite, PeriodicMonitorSuite
+from .suites import (
+    SpiderCloseMonitorSuite,
+    PeriodicMonitorSuite,
+    PeriodicItemCountMonitorSuite,
+)

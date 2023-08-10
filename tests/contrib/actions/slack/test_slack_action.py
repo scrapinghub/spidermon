@@ -1,7 +1,8 @@
 import sys
 import pytest
 
-from spidermon.contrib.actions.slack import SlackMessageManager
+from unittest.mock import MagicMock, patch
+from spidermon.contrib.actions.slack import SendSlackMessage, SlackMessageManager
 
 
 @pytest.fixture
@@ -58,3 +59,56 @@ def test_do_not_log_text_and_attach_when_fake_is_not_set(logger_info):
     )
 
     assert logger_info.call_count == 0
+
+
+@patch("spidermon.contrib.actions.slack.WebClient")
+def test_pass_arbitrary_args_to_manager_send_message_channel(_slack_mock):
+    manager = SlackMessageManager(
+        sender_token="anything",
+        sender_name="@someone",
+    )
+
+    manager.send_message(
+        to=["channel"], text="a message", use_mention=True, arbitrary_arg=True
+    )
+
+    _, kwargs = manager._client.chat_postMessage.call_args_list[0]
+    assert "arbitrary_arg" in kwargs
+
+
+@patch("spidermon.contrib.actions.slack.WebClient")
+def test_pass_arbitrary_args_to_manager_send_message_user(_slack_mock):
+    manager = SlackMessageManager(
+        sender_token="anything",
+        sender_name="@someone",
+    )
+
+    manager._users = {"user": {"id": 10}}
+
+    manager.send_message(
+        to=["@user"], text="a message", use_mention=True, arbitrary_arg=True
+    )
+
+    _, kwargs = manager._client.chat_postMessage.call_args_list[0]
+    assert "arbitrary_arg" in kwargs
+
+
+def test_message_sender_pass_kwargs():
+    sender = SendSlackMessage(
+        sender_token="anything",
+        sender_name="@someone",
+        recipients=["user"],
+        a_new_arg="hello",
+    )
+
+    sender.manager._client = MagicMock()
+    sender.get_message = MagicMock()
+    sender.get_attachments = MagicMock()
+
+    sender.get_message.return_value = "a message"
+    sender.get_attachments.return_value = None
+
+    sender.run_action()
+
+    _, kwargs = sender.manager._client.chat_postMessage.call_args_list[0]
+    assert "a_new_arg" in kwargs

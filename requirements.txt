@@ -3,7 +3,6 @@ slack-sdk
 boto
 premailer
 jsonschema[format]
-schematics==2.1.0
 python-slugify
 scrapy
 pytest

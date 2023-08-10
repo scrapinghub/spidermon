@@ -1,0 +1,27 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "properties": {
+        "quote": {
+            "type": "string"
+        },
+        "author": {
+            "type": "string"
+        },
+        "author_url": {
+            "type": "string",
+            "pattern": ""
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    },
+    "required": [
+        "quote",
+        "author",
+        "author_url"
+    ]
+}

@@ -18,7 +18,7 @@ test_requirements = [
 
 setup(
     name="spidermon",
-    version="1.18.0",
+    version="1.19.0",
     url="https://github.com/scrapinghub/spidermon",
     author="Zyte",
     author_email="opensource@zyte.com",
@@ -43,8 +43,6 @@ setup(
             "premailer",
             "sentry-sdk",
         ],
-        # Data validation
-        "validation": ["schematics"],
         # Tools to run the tests
         "tests": test_requirements,
         # Tools to build and publish the documentation
@@ -58,13 +56,12 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: System :: Monitoring",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
 )
