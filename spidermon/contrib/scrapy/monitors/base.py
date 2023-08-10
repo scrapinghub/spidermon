@@ -10,37 +10,14 @@ logger = logging.getLogger(__name__)
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
-    longMessage = False
-    ops = {
-        ">": operator.gt,
-        ">=": operator.ge,
-        "<": operator.lt,
-        "<=": operator.le,
-        "==": operator.eq,
-        "!=": operator.ne,
-    }
+    """
+    Monitor can be skipped based on conditions given in the settings.
+    The purpose is to skip a monitor based on stat value or any custom
+    function. A scenario could be skipping the Field Coverage Monitor
+    when a spider produced no items. Following is a code block of
+    examples of how we can configure the skip rules in settings.
 
-    @property
-    def monitor_description(self):
-        if self.__class__.__doc__:
-            return self.__class__.__doc__.split("\n")[0]
-        return super().monitor_description
-
-    def run(self, result):
-        if self.check_if_skip_rule_met():
-            logger.info(f"Skipping {self.name} monitor")
-            return
-
-        return super().run(result)
-
-    """ 
-    The montior inherited by BaseScrapyMonitor can be skipped based on
-    conditions given in the settings. The purpose is to skip monitor 
-    based on stats value or any custom function. A scenario could be skipping
-    the Field Coverage Monitor when spider produced no items. Following is the
-    code block of examples of how we can configure the skip rules in settings.  
-    
-    Example#1: skip rules based on stats value
+    Example #1: skip rules based on stat values
     .. code-block:: python
         class QuotesSpider(scrapy.Spider):
             name = "quotes"
@@ -54,7 +31,7 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
                 }
             }
 
-    Example#2: skip rules based on custom function
+    Example #2: skip rules based on a custom function
     .. code-block:: python
 
         def skip_function(monitor):
@@ -74,9 +51,36 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
             }
     """
 
+    longMessage = False
+    ops = {
+        ">": operator.gt,
+        ">=": operator.ge,
+        "<": operator.lt,
+        "<=": operator.le,
+        "==": operator.eq,
+        "!=": operator.ne,
+    }
+
+    @property
+    def monitor_description(self):
+        if self.__class__.__doc__:
+            return self.__class__.__doc__.split("\n")[0]
+        return super().monitor_description
+
+    def run(self, result):
+        if self.check_if_skip_rule_met():
+            logger.info(f"Skipping {self.monitor_name} monitor")
+            return
+
+        return super().run(result)
+
     def check_if_skip_rule_met(self):
-        if hasattr(self, "skip_rules") and self.skip_rules.get(self.name.split("/")[0]):
-            skip_rules = self.skip_rules[self.name.split("/")[0]]
+        if (
+            hasattr(self, "skip_rules")
+            and getattr(self, "monitor_name")
+            and self.skip_rules.get(self.monitor_name)
+        ):
+            skip_rules = self.skip_rules[self.monitor_name]
             for rule in skip_rules:
                 if hasattr(rule, "__call__"):
                     if rule(self):
