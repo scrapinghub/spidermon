@@ -39,10 +39,11 @@ def mock_suite_and_zyte_client(
 
     monkeypatch.setenv("SHUB_JOB_DATA", '{"tags":["tag1","tag2","tag3"]}')
 
-    monkeypatch.setattr(monitors, "zyte", Mock())
-    monitors.zyte.client.spider.jobs.list.side_effect = get_paginated_jobs
+    mock_client = Mock()
+    mock_client.spider.jobs.list.side_effect = get_paginated_jobs
 
-    return MonitorSuite(monitors=[monitors.ZyteJobsComparisonMonitor]), monitors.zyte
+    monkeypatch.setattr(monitors, "Client", Mock(side_effect=[mock_client]))
+    return MonitorSuite(monitors=[monitors.ZyteJobsComparisonMonitor]), mock_client
 
 
 @pytest.mark.parametrize(
@@ -137,12 +138,12 @@ def test_arguments_passed_to_zyte_client(
             SPIDERMON_JOBS_COMPARISON_THRESHOLD: threshold,
         }
     )
-    suite, zyte_module = mock_suite_and_zyte_client
+    suite, mock_client = mock_suite_and_zyte_client
     runner = data.pop("runner")
     runner.run(suite, **data)
 
     calls = [
-        call.zyte_module.client.spider.jobs.list(
+        call.mock_client.spider.jobs.list(
             start=n,
             state=list(states),
             count=number_of_jobs,
@@ -151,4 +152,4 @@ def test_arguments_passed_to_zyte_client(
         for n in range(0, number_of_jobs + 1000, 1000)
     ]
 
-    zyte_module.client.spider.jobs.list.assert_has_calls(calls)
+    mock_client.spider.jobs.list.assert_has_calls(calls)

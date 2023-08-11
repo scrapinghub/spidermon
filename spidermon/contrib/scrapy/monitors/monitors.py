@@ -5,7 +5,7 @@ import os
 
 from spidermon import Monitor, monitors
 from spidermon.exceptions import NotConfigured
-from spidermon.utils import zyte
+from spidermon.utils.zyte import Client
 from spidermon.utils.settings import getdictorlist
 from spidermon.contrib.monitors.mixins.stats import StatsMonitorMixin
 
@@ -554,7 +554,8 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
 
         jobs = []
         start = 0
-        client = zyte.Client(self.crawler.settings)
+        client = Client(self.crawler.settings)
+
         _jobs = client.spider.jobs.list(
             start=start,
             state=states,
