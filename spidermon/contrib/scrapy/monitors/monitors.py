@@ -554,7 +554,8 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
 
         jobs = []
         start = 0
-        _jobs = zyte.client.spider.jobs.list(
+        client = zyte.Client(self.crawler.settings)
+        _jobs = client.spider.jobs.list(
             start=start,
             state=states,
             count=number_of_jobs,
@@ -563,7 +564,7 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         while _jobs:
             jobs.extend(_jobs)
             start += 1000
-            _jobs = zyte.client.spider.jobs.list(
+            _jobs = client.spider.jobs.list(
                 start=start,
                 state=states,
                 count=number_of_jobs,
