@@ -1,11 +1,3 @@
-"""
-Module to hold a singleton to Zyte's Scrapy Cloud client.
-
-It expects that "SHUB_JOBKEY" be present as environment variable.
-Also, it will look up for Scrapy Cloud API key in `SHUB_APIKEY` Scrapy
-setting, then for the environment variables `SH_APIKEY` and `SHUB_JOBAUTH`.
-Note that "SHUB_JOBAUTH" can't access all API endpoints.
-"""
 import os
 
 try:
@@ -17,12 +9,23 @@ except ImportError:
 
 
 class Client:
-    def __init__(self):
+    """
+    Wrapper over ScrapinghubClient that indicates with its available
+    attribute if it can be used to fetch data from Scrapy Cloud API.
+
+    It expects that "SHUB_JOBKEY" be present as environment variable.
+    Also, it will look up for Scrapy Cloud API key in `SHUB_APIKEY` Scrapy
+    setting, then for the environment variables `SH_APIKEY` and `SHUB_JOBAUTH`.
+    Note that "SHUB_JOBAUTH" can't access all API endpoints.
+    """
+
+    def __init__(self, settings):
         self.available = HAS_CLIENT and "SHUB_JOBKEY" in os.environ
         self._client = None
         self._project = None
         self._spider = None
         self._job = None
+        self._settings = settings
         if self.available:
             self.job_key = os.environ["SHUB_JOBKEY"]
             self.project_id, self.spider_id, self.job_id = map(
@@ -40,10 +43,8 @@ class Client:
         return self._client
 
     def _apikey(self):
-        from scrapy.utils.project import get_project_settings
-
         apikey = (
-            get_project_settings().get("SHUB_APIKEY")
+            self._settings.get("SHUB_APIKEY")
             or os.environ.get("SH_APIKEY")
             or os.environ.get("SHUB_JOBAUTH")
         )
@@ -76,6 +77,3 @@ class Client:
     def close(self):
         if self._client:
             self._client.close()
-
-
-client = Client()
