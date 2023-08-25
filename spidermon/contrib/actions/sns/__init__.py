@@ -28,20 +28,20 @@ class BaseSNSNotification(ActionWithTemplates):
             raise NotConfigured("You must provide a value for SPIDERMON_AWS_SECRET_ACCESS_KEY setting.")
 
     def run_action(self):
-        subject = "Spidermon Notification"
-        body = "Monitor failed!"  # You can include more details if needed
-        self.send_message(subject, body)
+        self.send_message()
 
-    def send_message(self, subject, body):
+    def send_message(self, subject, attributes):
         client = boto3.client(
             service_name="sns",
             region_name=self.aws_region_name,
             aws_access_key_id=self.aws_access_key,
             aws_secret_access_key=self.aws_secret_key,
         )
-        logger.info(f"Sending SNS message with subject: {subject} and body: {body}")
-        response = client.publish(TopicArn=self.topic_arn, Message=body, Subject=subject)
-        logger.info(f"SNS response: {response}")
+        client.publish(
+            TopicArn=self.topic_arn,
+            Message=subject,
+            MessageAttributes=attributes
+        )
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
@@ -60,6 +60,4 @@ class SendSNSNotification(BaseSNSNotification):
             aws_access_key_id=self.aws_access_key,
             aws_secret_access_key=self.aws_secret_key,
         )
-        logger.info(f"Sending SNS message with subject: {subject} and body: {body}")
-        response = client.publish(TopicArn=self.topic_arn, Message=body, Subject=subject)
-        logger.info(f"SNS response: {response}")
+        client.publish(TopicArn=self.topic_arn, Message=body, Subject=subject)
