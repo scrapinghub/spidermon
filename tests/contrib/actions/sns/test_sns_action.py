@@ -6,19 +6,16 @@ from spidermon.exceptions import NotConfigured
 from spidermon.contrib.actions.sns import BaseSNSNotification
 
 
-# Mocking boto3 client
 @pytest.fixture
 def boto3_client(mocker):
     return mocker.patch("spidermon.contrib.actions.sns.boto3.client")
 
 
-# Mocking logger.info
 @pytest.fixture
 def logger_info(mocker):
     return mocker.patch("spidermon.contrib.actions.sns.logger.info")
 
 
-# Mocking logger.error
 @pytest.fixture
 def logger_error(mocker):
     return mocker.patch("spidermon.contrib.actions.sns.logger.error")
