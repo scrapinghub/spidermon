@@ -20,7 +20,7 @@ class BaseSNSNotification(ActionWithTemplates):
         aws_secret_key=None,
         aws_region_name=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
 
@@ -52,9 +52,17 @@ class BaseSNSNotification(ActionWithTemplates):
             aws_access_key_id=self.aws_access_key,
             aws_secret_access_key=self.aws_secret_key,
         )
-        client.publish(
-            TopicArn=self.topic_arn, Message=subject, MessageAttributes=attributes
+        logger.info(
+            f"Sending SNS message with subject: {subject} and attributes: {attributes}"
         )
+        try:
+            client.publish(
+                TopicArn=self.topic_arn, Message=subject, MessageAttributes=attributes
+            )
+        except Exception as e:
+            logger.error(f"Failed to send SNS message: {e}")
+            raise
+        logger.info(f"SNS message sent successfully!")
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
