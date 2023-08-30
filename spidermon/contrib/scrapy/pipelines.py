@@ -108,7 +108,7 @@ class ItemValidationPipeline:
         item_adapter = ItemAdapter(item)
         item_dict = item_adapter.asdict()
         self.stats.add_item()
-        self.stats.add_fields(len(list(item_dict.keys())))
+        self.stats.add_fields(len(item_dict.keys()))
         for validator in validators:
             ok, errors = validator.validate(item_dict)
             if not ok:
