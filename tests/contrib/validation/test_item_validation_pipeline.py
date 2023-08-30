@@ -98,12 +98,18 @@ def test_validation_errors_field(dummy_schema):
         "SPIDERMON_VALIDATION_ERRORS_FIELD": "custom_validation_field",
     }
 
-    item = {"no": "schema"}
-
     crawler = get_crawler(settings_dict=settings)
     pipeline = ItemValidationPipeline.from_crawler(crawler)
+
+    # Instantiate validation field if not defined
+    item = {"no": "schema"}
     item = pipeline.process_item(item, None)
     assert "custom_validation_field" in item
+
+    # Instantiate validation field if None
+    item = {"no": "schema", "custom_validation_field": None}
+    item = pipeline.process_item(item, None)
+    assert item["custom_validation_field"] is not None
 
 
 def test_add_error_to_items_undefined_validation_field(dummy_schema):
