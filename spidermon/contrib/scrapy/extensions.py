@@ -9,6 +9,7 @@ from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 from spidermon.python import factory
 from spidermon.python.monitors import ExpressionsMonitor
 from spidermon.utils.field_coverage import calculate_field_coverage
+from spidermon.utils.zyte import Client
 
 
 class Spidermon:
@@ -54,6 +55,7 @@ class Spidermon:
 
         self.periodic_suites = periodic_suites or {}
         self.periodic_tasks = {}
+        self.client = Client(self.crawler.settings)
 
     def load_suite(self, suite_to_load):
         try:
@@ -204,8 +206,6 @@ class Spidermon:
             runner.run(suite, **data)
 
     def _generate_data_for_spider(self, spider):
-        from spidermon.utils.zyte import client
-
         return {
             "stats": self.crawler.stats.get_stats(spider),
             "stats_history": spider.stats_history
@@ -213,5 +213,5 @@ class Spidermon:
             else [],
             "crawler": self.crawler,
             "spider": spider,
-            "job": client.job if client.available else None,
+            "job": self.client.job if self.client.available else None,
         }
