@@ -138,20 +138,6 @@ def test_add_error_to_items_undefined_validation_field(dummy_schema):
         foo: str
 
     item = DataclassItem(foo="invalid")
-    # Does not support item assignment
-    with pytest.raises(
-        TypeError, match="'DataclassItem' object does not support item assignment"
-    ):
-        item = pipeline.process_item(item, None)
-
-    @dataclass
-    class DataclassItemWithItemAssignment:
-        foo: str
-
-        def __setitem__(self, key, value):
-            setattr(self, key, value)
-
-    item = DataclassItemWithItemAssignment(foo="invalid")
     # Supports item assignment but does not support field
     with pytest.raises(KeyError, match="custom_validation_field"):
         item = pipeline.process_item(item, None)

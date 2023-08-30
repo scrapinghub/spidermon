@@ -103,15 +103,16 @@ class ItemValidationPipeline:
             # No validators match this specific item type
             return item
 
-        data = self._convert_item_to_dict(item)
+        item_adapter = ItemAdapter(item)
+        item_dict = item_adapter.asdict()
         self.stats.add_item()
-        self.stats.add_fields(len(list(data.keys())))
+        self.stats.add_fields(len(list(item_dict.keys())))
         for validator in validators:
-            ok, errors = validator.validate(data)
+            ok, errors = validator.validate(item_dict)
             if not ok:
                 self._add_error_stats(errors)
                 if self.add_errors_to_items:
-                    self._add_errors_to_item(item, errors)
+                    self._add_errors_to_item(item_adapter, errors)
                 if self.drop_items_with_errors:
                     self._drop_item(item, errors)
         return item
@@ -120,16 +121,12 @@ class ItemValidationPipeline:
         find = lambda x: self.validators.get(x.__name__, [])
         return find(item.__class__) or find(Item)
 
-    def _convert_item_to_dict(self, item):
-        return ItemAdapter(item).asdict()
-
-    def _add_errors_to_item(self, item, errors):
-        data = ItemAdapter(item)
-        if self.errors_field not in data:
+    def _add_errors_to_item(self, item: ItemAdapter, errors: dict[str, str]):
+        if self.errors_field not in item or item[self.errors_field] is None:
             item[self.errors_field] = defaultdict(list)
 
         for field_name, messages in errors.items():
-            data[self.errors_field][field_name] += messages
+            item[self.errors_field][field_name] += messages
 
     def _drop_item(self, item, errors):
         """
