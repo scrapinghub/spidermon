@@ -1,4 +1,6 @@
 from collections import defaultdict
+from typing import Dict
+
 from itemadapter import ItemAdapter
 
 from scrapy.exceptions import DropItem, NotConfigured
@@ -121,7 +123,7 @@ class ItemValidationPipeline:
         find = lambda x: self.validators.get(x.__name__, [])
         return find(item.__class__) or find(Item)
 
-    def _add_errors_to_item(self, item: ItemAdapter, errors: dict[str, str]):
+    def _add_errors_to_item(self, item: ItemAdapter, errors: Dict[str, str]):
         if self.errors_field not in item or item[self.errors_field] is None:
             item[self.errors_field] = defaultdict(list)
 
