@@ -1,6 +1,5 @@
 from setuptools import find_packages, setup
 
-
 setup(
     name="spidermon",
     version="1.19.0",
@@ -15,23 +14,24 @@ setup(
     zip_safe=False,
     include_package_data=True,
     install_requires=[
-        "boto",
-        "boto3",
-        "itemadapter",
-        "Jinja2",
         "jsonschema[format]>=3.2.0",
-        "premailer",
         "python-slugify",
-        "Requests",
-        "scrapinghub",
-        "scrapinghub-entrypoint-scrapy",
-        "scrapy",
-        "sentry_sdk",
-        "slack_sdk",
-        "Twisted",
     ],
     extras_require={
-        "monitoring": [],
+        # Specific monitors and tools to support notifications and reports
+        "monitoring": [
+            "Jinja2",
+            "boto",
+            "boto3",
+            "itemadapter",
+            "premailer",
+            "requests",
+            "scrapinghub",
+            "scrapinghub-entrypoint-scrapy",
+            "scrapy",
+            "sentry_sdk",
+            "slack_sdk",
+        ]
     },
     classifiers=[
         "Development Status :: 5 - Production/Stable",
