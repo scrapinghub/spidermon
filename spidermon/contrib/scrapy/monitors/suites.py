@@ -39,6 +39,30 @@ class SpiderCloseMonitorSuite(MonitorSuite):
             )
     """
 
+    def __init__(
+        self,
+        name=None,
+        monitors=None,
+        monitors_finished_actions=None,
+        monitors_passed_actions=None,
+        monitors_failed_actions=None,
+        order=None,
+        crawler=None,
+    ):
+        super().__init__(
+            name,
+            monitors,
+            monitors_finished_actions,
+            monitors_passed_actions,
+            monitors_failed_actions,
+            order,
+            crawler,
+        )
+        if dict(crawler.settings).get("SPIDERMON_MONITOR_SKIPPING_RULES"):
+            skip_rules = crawler.settings.get("SPIDERMON_MONITOR_SKIPPING_RULES")
+            for monitor in self.monitors:
+                monitor.skip_rules = skip_rules
+
     monitors = [
         ItemCountMonitor,
         ItemValidationMonitor,
