@@ -1,11 +1,12 @@
-from typing import Any, List, Union
+from typing import Any, List
 from itemadapter import ItemAdapter
 
 
 def traverse_nested(obj: ItemAdapter, keys: List[str]) -> ItemAdapter:
     """
-    Get a nested attribute within an dictionary or ItemAdapter object.
-    Raises KeyError if any of the keys in the path is not defined
+    Get the last nested attribute from a list of keys within an ItemAdapter object.
+    Raises:
+        KeyError: if any of the keys in the path is not defined.
     """
     current_obj = obj
     while keys:
@@ -22,7 +23,9 @@ def traverse_nested(obj: ItemAdapter, keys: List[str]) -> ItemAdapter:
 def get_nested_attribute(item: ItemAdapter, attribute_path: str):
     """
     Get the value of a nested attribute within an ItemAdapter.
-    Raises KeyError if any of the keys in the path is not defined
+
+    Raises:
+        KeyError: if any of the keys in the path is not defined.
     """
     *keys, last_key = attribute_path.split(".")
     nested_obj = traverse_nested(item, keys)
@@ -33,8 +36,9 @@ def set_nested_attribute(item: ItemAdapter, attribute_path: str, value: Any):
     """
     Set the value of a nested attribute within an ItemAdapter.
 
-    Raises KeyError if any of the keys in the path is not defined or
-        if the last key in the path is not supported by its parent field
+    Raises:
+        KeyError:  if any of the keys in the path is not defined or
+            if the last key in the path is not supported by its parent field.
     """
     *keys, last_key = attribute_path.split(".")
     nested_obj = traverse_nested(item, keys)
