@@ -98,12 +98,18 @@ def test_validation_errors_field(dummy_schema):
         "SPIDERMON_VALIDATION_ERRORS_FIELD": "custom_validation_field",
     }
 
-    item = {"no": "schema"}
-
     crawler = get_crawler(settings_dict=settings)
     pipeline = ItemValidationPipeline.from_crawler(crawler)
+
+    # Instantiate validation field if not defined
+    item = {"no": "schema"}
     item = pipeline.process_item(item, None)
     assert "custom_validation_field" in item
+
+    # Instantiate validation field if None
+    item = {"no": "schema", "custom_validation_field": None}
+    item = pipeline.process_item(item, None)
+    assert item["custom_validation_field"] is not None
 
 
 def test_add_error_to_items_undefined_validation_field(dummy_schema):
@@ -138,20 +144,84 @@ def test_add_error_to_items_undefined_validation_field(dummy_schema):
         foo: str
 
     item = DataclassItem(foo="invalid")
-    # Does not support item assignment
-    with pytest.raises(
-        TypeError, match="'DataclassItem' object does not support item assignment"
-    ):
-        item = pipeline.process_item(item, None)
-
-    @dataclass
-    class DataclassItemWithItemAssignment:
-        foo: str
-
-        def __setitem__(self, key, value):
-            setattr(self, key, value)
-
-    item = DataclassItemWithItemAssignment(foo="invalid")
     # Supports item assignment but does not support field
     with pytest.raises(KeyError, match="custom_validation_field"):
         item = pipeline.process_item(item, None)
+
+
+def test_not_configured():
+    # No validators
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS": True,
+        "SPIDERMON_VALIDATION_ERRORS_FIELD": "custom_validation_field",
+    }
+    crawler = get_crawler(settings_dict=settings)
+    with pytest.raises(
+        scrapy.exceptions.NotConfigured, match="No validators were found"
+    ):
+        ItemValidationPipeline.from_crawler(crawler)
+
+    # Invalid validator type
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS": True,
+        "SPIDERMON_VALIDATION_SCHEMAS": object(),
+        "SPIDERMON_VALIDATION_ERRORS_FIELD": "custom_validation_field",
+    }
+    crawler = get_crawler(settings_dict=settings)
+    with pytest.raises(
+        scrapy.exceptions.NotConfigured,
+        match=r"Invalid <.*> type for <.*> settings",
+    ):
+        ItemValidationPipeline.from_crawler(crawler)
+
+    # Invalid schema type
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS": True,
+        "SPIDERMON_VALIDATION_SCHEMAS": [False],
+        "SPIDERMON_VALIDATION_ERRORS_FIELD": "custom_validation_field",
+    }
+    crawler = get_crawler(settings_dict=settings)
+    with pytest.raises(
+        scrapy.exceptions.NotConfigured,
+        match=r"Invalid schema, jsonschemas must be defined as:.*",
+    ):
+        ItemValidationPipeline.from_crawler(crawler)
+
+
+def test_drop_invalid_item(dummy_schema):
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS": True,
+        "SPIDERMON_VALIDATION_SCHEMAS": [dummy_schema],
+        "SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS": True,
+        "SPIDERMON_VALIDATION_ERRORS_FIELD": "custom_validation_field",
+    }
+
+    crawler = get_crawler(settings_dict=settings)
+    pipeline = ItemValidationPipeline.from_crawler(crawler)
+
+    item = {"foo": "invalid"}
+    with pytest.raises(scrapy.exceptions.DropItem):
+        pipeline.process_item(item, None)
+
+
+def test_ignore_classes_without_schema(dummy_schema):
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS": True,
+        "SPIDERMON_VALIDATION_SCHEMAS": {scrapy.Item: dummy_schema},
+        "SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS": True,
+        "SPIDERMON_VALIDATION_ERRORS_FIELD": "custom_validation_field",
+    }
+    crawler = get_crawler(settings_dict=settings)
+    pipeline = ItemValidationPipeline.from_crawler(crawler)
+
+    @dataclass
+    class DummyItem:
+        foo: str = "bar"
+
+    item = DummyItem()
+    pipeline.process_item(item, None)
