@@ -1,6 +1,21 @@
 Release notes
 =============
 
+1.20.0 (2023-09-01)
+-------------------
+
+- feature: Add support for nested fields in ``SPIDERMON_VALIDATION_ERRORS_FIELD`` setting (`PR#416 <https://github.com/scrapinghub/spidermon/pull/417>`_)
+- bug: Fix ItemValidationPipeline using ``__setitem__`` method without ItemAdaper (`PR#415 <https://github.com/scrapinghub/spidermon/pull/415>`_)
+- feature: Improve tests coverage for item validation pipeline (`PR#414 <https://github.com/scrapinghub/spidermon/pull/414>`_) 
+- bug: Fix ``spidermon.utils.zyte.Client`` not following crawler settings (`PR#411 <https://github.com/scrapinghub/spidermon/pull/411>`_)
+- chore: Migrate ReadTheDocs to config file v2 (`PR#408 <https://github.com/scrapinghub/spidermon/pull/408>`_)
+- chore: Refactor package requirements (`PR#407 <https://github.com/scrapinghub/spidermon/pull/407>`_)
+
+Backwards incompatible changes in 1.20.0
+----------------------------------------
+
+- Keys that contains dots can't not longer be used as field name to store validation errors in dictionaries due to changes to ``SPIDERMON_VALIDATION_ERRORS_FIELD``.
+
 1.19.0 (2023-07-07)
 -------------------
 
