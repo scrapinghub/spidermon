@@ -3,6 +3,7 @@ from slugify import slugify
 from scrapy.utils.test import get_crawler
 from scrapy import Item
 from functools import partial
+from itemadapter import ItemAdapter
 
 from spidermon.contrib.scrapy.pipelines import ItemValidationPipeline
 from tests.fixtures.items import TreeItem, TestItem
@@ -234,7 +235,7 @@ class TestAddErrors:
         test_errors = {"some_error": ["some_message"]}
         crawler = get_crawler(settings_dict=settings)
         pipe = ItemValidationPipeline.from_crawler(crawler)
-        pipe._add_errors_to_item(test_item, test_errors)
+        pipe._add_errors_to_item(ItemAdapter(test_item), test_errors)
         return test_item
 
     def test_add_errors_to_item(self):
