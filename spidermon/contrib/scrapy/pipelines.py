@@ -8,6 +8,10 @@ from scrapy import Item
 
 from spidermon.contrib.validation import JSONSchemaValidator
 from spidermon.contrib.validation.jsonschema.tools import get_schema_from
+from spidermon.contrib.utils.attributes import (
+    get_nested_attribute,
+    set_nested_attribute,
+)
 
 from .stats import ValidationStatsManager
 
@@ -124,11 +128,13 @@ class ItemValidationPipeline:
         return find(item.__class__) or find(Item)
 
     def _add_errors_to_item(self, item: ItemAdapter, errors: Dict[str, str]):
-        if item.get(self.errors_field, None) is None:
-            item[self.errors_field] = defaultdict(list)
+        errors_field_instance = get_nested_attribute(item, self.errors_field)
+        if errors_field_instance is None:
+            errors_field_instance = defaultdict(list)
+            set_nested_attribute(item, self.errors_field, errors_field_instance)
 
         for field_name, messages in errors.items():
-            item[self.errors_field][field_name] += messages
+            errors_field_instance[field_name] += messages
 
     def _drop_item(self, item, errors):
         """
