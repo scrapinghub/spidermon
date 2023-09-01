@@ -11,8 +11,8 @@ Release notes
 - chore: Migrate ReadTheDocs to config file v2 (`PR#408 <https://github.com/scrapinghub/spidermon/pull/408>`_)
 - chore: Refactor package requirements (`PR#407 <https://github.com/scrapinghub/spidermon/pull/407>`_)
 
-Backward-incompatible changes in 1.20.0
----------------------------------------
+Backward-incompatible changes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - The ``SPIDERMON_VALIDATION_ERRORS_FIELD`` setting no longer supports a field 
   name that contains a dot (``.``). Dots are now be treated as field 
