@@ -2,7 +2,7 @@ import pytest
 
 from scrapy.utils.test import get_crawler
 from spidermon.exceptions import NotConfigured
-from spidermon.contrib.actions.sns import BaseSNSNotification
+from spidermon.contrib.actions.sns import SendSNSNotification
 from spidermon.contrib.actions.sns.notifiers import (
     SendSNSNotificationSpiderFinished,
     SendSNSNotificationSpiderStarted,
@@ -36,24 +36,24 @@ def mock_notifier_data(mocker):
 
 def test_fail_if_no_topic_arn():
     with pytest.raises(NotConfigured):
-        BaseSNSNotification(topic_arn=None)
+        SendSNSNotification(topic_arn=None)
 
 
 def test_fail_if_no_aws_access_key():
     with pytest.raises(NotConfigured):
-        BaseSNSNotification(topic_arn="arn:aws:sns:us-east-1:123456789012:MyTopic")
+        SendSNSNotification(topic_arn="arn:aws:sns:us-east-1:123456789012:MyTopic")
 
 
 def test_fail_if_no_aws_secret_key():
     with pytest.raises(NotConfigured):
-        BaseSNSNotification(
+        SendSNSNotification(
             topic_arn="arn:aws:sns:us-east-1:123456789012:MyTopic",
             aws_access_key="ACCESS_KEY",
         )
 
 
 def test_send_message(boto3_client, logger_info):
-    notifier = BaseSNSNotification(
+    notifier = SendSNSNotification(
         topic_arn="arn:aws:sns:us-east-1:123456789012:MyTopic",
         aws_access_key="ACCESS_KEY",
         aws_secret_key="SECRET_KEY",
@@ -67,7 +67,7 @@ def test_send_message(boto3_client, logger_info):
 
 def test_log_error_when_sns_returns_error(boto3_client, logger_error):
     boto3_client.return_value.publish.side_effect = Exception("SNS Error")
-    notifier = BaseSNSNotification(
+    notifier = SendSNSNotification(
         topic_arn="arn:aws:sns:us-east-1:123456789012:MyTopic",
         aws_access_key="ACCESS_KEY",
         aws_secret_key="SECRET_KEY",

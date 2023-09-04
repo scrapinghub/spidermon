@@ -1,7 +1,7 @@
-from . import BaseSNSNotification
+from . import SendSNSNotification
 
 
-class SendSNSNotificationSpiderStarted(BaseSNSNotification):
+class SendSNSNotificationSpiderStarted(SendSNSNotification):
     def run_action(self):
         subject = "Spider Started"
         attributes = {
@@ -15,7 +15,7 @@ class SendSNSNotificationSpiderStarted(BaseSNSNotification):
         self.send_message(subject, attributes)
 
 
-class SendSNSNotificationSpiderFinished(BaseSNSNotification):
+class SendSNSNotificationSpiderFinished(SendSNSNotification):
     def run_action(self):
         subject = "Spider Finished"
         attributes = {

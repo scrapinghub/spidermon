@@ -7,7 +7,7 @@ from spidermon.contrib.actions.templates import ActionWithTemplates
 logger = logging.getLogger(__name__)
 
 
-class BaseSNSNotification(ActionWithTemplates):
+class SendSNSNotification(ActionWithTemplates):
     aws_access_key = None
     aws_secret_key = None
     aws_region_name = "us-east-1"
@@ -71,14 +71,3 @@ class BaseSNSNotification(ActionWithTemplates):
             "aws_access_key": crawler.settings.get("SPIDERMON_AWS_ACCESS_KEY_ID"),
             "aws_secret_key": crawler.settings.get("SPIDERMON_AWS_SECRET_ACCESS_KEY"),
         }
-
-
-class SendSNSNotification(BaseSNSNotification):
-    def send_message(self, subject, body):
-        client = boto3.client(
-            service_name="sns",
-            region_name=self.aws_region_name,
-            aws_access_key_id=self.aws_access_key,
-            aws_secret_access_key=self.aws_secret_key,
-        )
-        client.publish(TopicArn=self.topic_arn, Message=body, Subject=subject)
