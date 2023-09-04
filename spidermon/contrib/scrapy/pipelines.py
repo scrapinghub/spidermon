@@ -1,4 +1,6 @@
 from collections import defaultdict
+from typing import Dict
+
 from itemadapter import ItemAdapter
 
 from scrapy.exceptions import DropItem, NotConfigured
@@ -6,6 +8,10 @@ from scrapy import Item
 
 from spidermon.contrib.validation import JSONSchemaValidator
 from spidermon.contrib.validation.jsonschema.tools import get_schema_from
+from spidermon.contrib.utils.attributes import (
+    get_nested_attribute,
+    set_nested_attribute,
+)
 
 from .stats import ValidationStatsManager
 
@@ -103,15 +109,16 @@ class ItemValidationPipeline:
             # No validators match this specific item type
             return item
 
-        data = self._convert_item_to_dict(item)
+        item_adapter = ItemAdapter(item)
+        item_dict = item_adapter.asdict()
         self.stats.add_item()
-        self.stats.add_fields(len(list(data.keys())))
+        self.stats.add_fields(len(item_dict.keys()))
         for validator in validators:
-            ok, errors = validator.validate(data)
+            ok, errors = validator.validate(item_dict)
             if not ok:
                 self._add_error_stats(errors)
                 if self.add_errors_to_items:
-                    self._add_errors_to_item(item, errors)
+                    self._add_errors_to_item(item_adapter, errors)
                 if self.drop_items_with_errors:
                     self._drop_item(item, errors)
         return item
@@ -120,16 +127,14 @@ class ItemValidationPipeline:
         find = lambda x: self.validators.get(x.__name__, [])
         return find(item.__class__) or find(Item)
 
-    def _convert_item_to_dict(self, item):
-        return ItemAdapter(item).asdict()
-
-    def _add_errors_to_item(self, item, errors):
-        data = ItemAdapter(item)
-        if self.errors_field not in data:
-            item[self.errors_field] = defaultdict(list)
+    def _add_errors_to_item(self, item: ItemAdapter, errors: Dict[str, str]):
+        errors_field_instance = get_nested_attribute(item, self.errors_field)
+        if errors_field_instance is None:
+            errors_field_instance = defaultdict(list)
+            set_nested_attribute(item, self.errors_field, errors_field_instance)
 
         for field_name, messages in errors.items():
-            data[self.errors_field][field_name] += messages
+            errors_field_instance[field_name] += messages
 
     def _drop_item(self, item, errors):
         """

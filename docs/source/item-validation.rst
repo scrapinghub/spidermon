@@ -102,7 +102,13 @@ SPIDERMON_VALIDATION_ERRORS_FIELD
 Default: ``_validation``
 
 The name of the field added to the item when a validation error happens and
-`SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS`_ is enabled.
+`SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS`_ is enabled. Nested fields are supported by using `.` separator:
+
+.. code-block:: python
+
+    # settings.py
+    SPIDERMON_VALIDATION_ERRORS_FIELD = "top_level.second_level._validation"
+
 
 SPIDERMON_VALIDATION_SCHEMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

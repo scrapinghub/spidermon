@@ -1,24 +1,8 @@
 from setuptools import find_packages, setup
 
-test_requirements = [
-    "pytest>=2.7.0",
-    "pytest-cov",
-    "pytest-mock",
-    "jinja2",
-    "boto3",
-    "lxml",
-    "premailer",
-    "scrapinghub",
-    "scrapinghub-entrypoint-scrapy",
-    "scrapy",
-    "slack-sdk",
-    "twisted>=19.7.0",
-    "itemadapter",
-]
-
 setup(
     name="spidermon",
-    version="1.19.0",
+    version="1.20.0",
     url="https://github.com/scrapinghub/spidermon",
     author="Zyte",
     author_email="opensource@zyte.com",
@@ -29,24 +13,25 @@ setup(
     package_data={"spidermon": ["VERSION"]},
     zip_safe=False,
     include_package_data=True,
-    install_requires=["jsonschema[format]>=3.2.0", "python-slugify"],
-    tests_require=test_requirements,
+    install_requires=[
+        "jsonschema[format]>=3.2.0",
+        "python-slugify",
+    ],
     extras_require={
         # Specific monitors and tools to support notifications and reports
         "monitoring": [
-            "scrapy",
             "Jinja2",
-            "scrapinghub",
-            "slack-sdk",
             "boto",
             "boto3",
+            "itemadapter",
             "premailer",
-            "sentry-sdk",
-        ],
-        # Tools to run the tests
-        "tests": test_requirements,
-        # Tools to build and publish the documentation
-        "docs": ["sphinx", "sphinx-rtd-theme", "s3cmd"],
+            "requests",
+            "scrapinghub",
+            "scrapinghub-entrypoint-scrapy",
+            "scrapy",
+            "sentry_sdk",
+            "slack_sdk",
+        ]
     },
     classifiers=[
         "Development Status :: 5 - Production/Stable",
