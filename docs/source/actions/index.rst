@@ -18,4 +18,5 @@ You can define your own actions or use one of the existing built-in actions.
    job-tags-action
    file-report-action
    sentry-action
+   sns-action
    custom-action
