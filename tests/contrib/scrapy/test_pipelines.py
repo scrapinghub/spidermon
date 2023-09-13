@@ -203,6 +203,16 @@ class PipelineJSONSchemaValidator(PipelineTest):
                 assert_type_in_stats(TreeItem),
             ],
         ),
+        DataTest(
+            name="validators specified by str rather than class",
+            item=TreeItem(),
+            settings={SETTING_SCHEMAS: {"TestItem": test_schema, "TreeItem": tree_schema}},
+            cases=[
+                f"{{stats}}['{STATS_MISSINGS}'] is 1",
+                assert_type_in_stats(TestItem),
+                assert_type_in_stats(TreeItem),
+            ],
+        ),
     ]
 
 

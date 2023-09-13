@@ -141,6 +141,17 @@ as a `dict`:
         OtherItem: '/path/to/otheritem_schema.json',
     }
 
+Keys of `dict` can also be strings matching item class names:
+
+.. code-block:: python
+
+    SPIDERMON_VALIDATION_SCHEMAS = {
+        'DummyItem': '/path/to/dummyitem_schema.json',
+        'OtherItem': '/path/to/otheritem_schema.json',
+    }
+
+
+
 Validation in Monitors
 ----------------------
 
