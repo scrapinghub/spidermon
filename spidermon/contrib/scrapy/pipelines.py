@@ -56,7 +56,7 @@ class ItemValidationPipeline:
             if type(schema) in (list, tuple):
                 schema = {Item: schema}
             for obj, paths in schema.items():
-                key = obj if type(obj) in (str) else obj.__name__
+                key = obj.__name__ if hasattr(obj, "__name__") else str(obj)
                 paths = paths if type(paths) in (list, tuple) else [paths]
                 objects = [loader(v) for v in paths]
                 validators[key].extend(objects)
