@@ -141,7 +141,7 @@ as a `dict`:
         OtherItem: '/path/to/otheritem_schema.json',
     }
 
-Keys of `dict` can also be strings matching item class names:
+Keys of ``dict`` can also be strings matching item class names:
 
 .. code-block:: python
 
