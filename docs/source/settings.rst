@@ -264,3 +264,81 @@ If set to ``2``, spider statistics will be:
   'spidermon_item_scraped_count/dict/field_2/_items/nested_field4/_items': 2,
   'spidermon_item_scraped_count/dict/field_2/_items/nested_field4/_items/deeper_field41': 2
 
+SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS
+-------------------------------------
+Default: ``0``
+
+If zero, all levels of nested dictionaries will have their cover computed.
+
+If larger than 0, field coverage will be computed for that many levels of nested dictionaries.
+
+Considering the spider returns the following items:
+
+  .. code-block:: python
+
+    [
+      {
+          "field1": {"field1.1": "value1.1"},
+          "field2": "value2",
+          "field3": {"field3.1": "value3.1"},
+          "field4": {
+              "field4.1": {
+                  "field4.1.1": "value",
+                  "field4.1.2": "value",
+                  "field4.1.3": {"field4.1.3.1": "value"},
+              }
+          },
+      },
+      {
+          "field1": {
+              "field1.1": "value1.1",
+              "field1.2": "value1.2",
+          },
+          "field2": "value2",
+      },
+    ]
+
+  If set to ``0``, the statistics will include:
+
+  .. code-block:: python
+      "spidermon_item_scraped_count/dict": 2
+      "spidermon_item_scraped_count/dict/field1": 2
+      "spidermon_item_scraped_count/dict/field1/field1.1": 2
+      "spidermon_item_scraped_count/dict/field1/field1.2": 1
+      "spidermon_item_scraped_count/dict/field2": 2
+      "spidermon_item_scraped_count/dict/field3": 1
+      "spidermon_item_scraped_count/dict/field4": 1
+      "spidermon_item_scraped_count/dict/field4/field4.1": 1
+      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.1": 1
+      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.2": 1
+      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3": 1
+      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3/field4.1.3.1": 1
+
+  If set to ``1``, the statistics will include:
+
+  .. code-block:: python
+      "spidermon_item_scraped_count/dict": 2
+      "spidermon_item_scraped_count/dict/field1": 2
+      "spidermon_item_scraped_count/dict/field1/field1.1": 2
+      "spidermon_item_scraped_count/dict/field1/field1.2": 1
+      "spidermon_item_scraped_count/dict/field2": 2
+      "spidermon_item_scraped_count/dict/field3": 1
+      "spidermon_item_scraped_count/dict/field4": 1
+      "spidermon_item_scraped_count/dict/field4/field4.1": 1
+      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.1": 1
+
+  If set to ``2``, the statistics will include:
+
+  .. code-block:: python
+      "spidermon_item_scraped_count/dict": 2
+      "spidermon_item_scraped_count/dict/field1": 2
+      "spidermon_item_scraped_count/dict/field1/field1.1": 2
+      "spidermon_item_scraped_count/dict/field1/field1.2": 1
+      "spidermon_item_scraped_count/dict/field2": 2
+      "spidermon_item_scraped_count/dict/field3": 1
+      "spidermon_item_scraped_count/dict/field4": 1
+      "spidermon_item_scraped_count/dict/field4/field4.1": 1
+      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.1": 1
+      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.2": 1
+      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3": 1
+
