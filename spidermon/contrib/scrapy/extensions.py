@@ -170,7 +170,7 @@ class Spidermon:
                         value,
                         skip_none_values,
                         field_item_count_stat,
-                        nesting_level=nesting_level + 1, 
+                        nesting_level=nesting_level + 1,
                         max_list_nesting_level=max_list_nesting_level,
                         max_dict_nesting_level=max_dict_nesting_level,
                     )
@@ -212,7 +212,6 @@ class Spidermon:
         dict_field_coverage_levels = spider.crawler.settings.getint(
             "SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS", 0
         )
-
         self.crawler.stats.inc_value("spidermon_item_scraped_count")
         self._count_item(
             item,
