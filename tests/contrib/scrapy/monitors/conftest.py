@@ -2,6 +2,8 @@ import pytest
 
 from scrapy import Spider
 from scrapy.crawler import Crawler
+from scrapy.statscollectors import MemoryStatsCollector
+
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 
 
@@ -9,6 +11,7 @@ from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 def make_data(request):
     def _make_data(settings=None):
         crawler = Crawler(Spider, settings=settings)
+        crawler.stats = MemoryStatsCollector(crawler)
         spider = Spider("dummy")
         return {
             "stats": crawler.stats.get_stats(),
