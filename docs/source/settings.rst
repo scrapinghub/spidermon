@@ -301,44 +301,47 @@ Considering the spider returns the following items:
   If set to ``0``, the statistics will include:
 
   .. code-block:: python
-      "spidermon_item_scraped_count/dict": 2
-      "spidermon_item_scraped_count/dict/field1": 2
-      "spidermon_item_scraped_count/dict/field1/field1.1": 2
-      "spidermon_item_scraped_count/dict/field1/field1.2": 1
-      "spidermon_item_scraped_count/dict/field2": 2
-      "spidermon_item_scraped_count/dict/field3": 1
-      "spidermon_item_scraped_count/dict/field4": 1
-      "spidermon_item_scraped_count/dict/field4/field4.1": 1
-      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.1": 1
-      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.2": 1
-      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3": 1
-      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3/field4.1.3.1": 1
+
+      'spidermon_item_scraped_count/dict': 2
+      'spidermon_item_scraped_count/dict/field1': 2
+      'spidermon_item_scraped_count/dict/field1/field1.1': 2
+      'spidermon_item_scraped_count/dict/field1/field1.2': 1
+      'spidermon_item_scraped_count/dict/field2': 2
+      'spidermon_item_scraped_count/dict/field3': 1
+      'spidermon_item_scraped_count/dict/field4': 1
+      'spidermon_item_scraped_count/dict/field4/field4.1': 1
+      'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.1': 1
+      'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.2': 1
+      'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3': 1
+      'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3/field4.1.3.1': 1
 
   If set to ``1``, the statistics will include:
 
   .. code-block:: python
-      "spidermon_item_scraped_count/dict": 2
-      "spidermon_item_scraped_count/dict/field1": 2
-      "spidermon_item_scraped_count/dict/field1/field1.1": 2
-      "spidermon_item_scraped_count/dict/field1/field1.2": 1
-      "spidermon_item_scraped_count/dict/field2": 2
-      "spidermon_item_scraped_count/dict/field3": 1
-      "spidermon_item_scraped_count/dict/field4": 1
-      "spidermon_item_scraped_count/dict/field4/field4.1": 1
-      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.1": 1
+
+      'spidermon_item_scraped_count/dict': 2
+      'spidermon_item_scraped_count/dict/field1': 2
+      'spidermon_item_scraped_count/dict/field1/field1.1': 2
+      'spidermon_item_scraped_count/dict/field1/field1.2': 1
+      'spidermon_item_scraped_count/dict/field2': 2
+      'spidermon_item_scraped_count/dict/field3': 1
+      'spidermon_item_scraped_count/dict/field4': 1
+      'spidermon_item_scraped_count/dict/field4/field4.1': 1
+      'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.1': 1
 
   If set to ``2``, the statistics will include:
 
   .. code-block:: python
-      "spidermon_item_scraped_count/dict": 2
-      "spidermon_item_scraped_count/dict/field1": 2
-      "spidermon_item_scraped_count/dict/field1/field1.1": 2
-      "spidermon_item_scraped_count/dict/field1/field1.2": 1
-      "spidermon_item_scraped_count/dict/field2": 2
-      "spidermon_item_scraped_count/dict/field3": 1
-      "spidermon_item_scraped_count/dict/field4": 1
-      "spidermon_item_scraped_count/dict/field4/field4.1": 1
-      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.1": 1
-      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.2": 1
-      "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3": 1
+
+      'spidermon_item_scraped_count/dict': 2
+      'spidermon_item_scraped_count/dict/field1': 2
+      'spidermon_item_scraped_count/dict/field1/field1.1': 2
+      'spidermon_item_scraped_count/dict/field1/field1.2': 1
+      'spidermon_item_scraped_count/dict/field2': 2
+      'spidermon_item_scraped_count/dict/field3': 1
+      'spidermon_item_scraped_count/dict/field4': 1
+      'spidermon_item_scraped_count/dict/field4/field4.1': 1
+      'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.1': 1
+      'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.2': 1
+      'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3': 1
 
