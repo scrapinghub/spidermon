@@ -1,6 +1,6 @@
 import pytest
 from scrapy.crawler import Crawler
-
+from scrapy.statscollectors import MemoryStatsCollector
 from scrapy import Spider
 
 
@@ -17,6 +17,7 @@ def get_crawler():
         settings.update(extended_settings)
         crawler = Crawler(Spider, settings=settings)
         crawler.spider = Spider("dummy")
+        crawler.stats = MemoryStatsCollector(crawler)
         return crawler
 
     return _crawler
