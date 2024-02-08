@@ -129,12 +129,15 @@ class ItemValidationPipeline:
 
     def _add_errors_to_item(self, item: ItemAdapter, errors: Dict[str, str]):
         errors_field_instance = get_nested_attribute(item, self.errors_field)
+
         if errors_field_instance is None:
             errors_field_instance = defaultdict(list)
-            set_nested_attribute(item, self.errors_field, errors_field_instance)
 
         for field_name, messages in errors.items():
             errors_field_instance[field_name] += messages
+
+        # change defaultdict to dict for errors_field_instance
+        set_nested_attribute(item, self.errors_field, dict(errors_field_instance))
 
     def _drop_item(self, item, errors):
         """
