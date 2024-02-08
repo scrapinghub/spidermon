@@ -925,7 +925,7 @@ class EmptyItems(SchemaTest):
     schema = {"minItems": 1}
     data_tests = [
         DataTest(
-            name='empty is invalid',
+            name="empty is invalid",
             data=list(),
             valid=False,
             expected_errors={"": [messages.SHOULD_BE_NON_EMPTY]},
@@ -937,15 +937,9 @@ class MinProperties(SchemaTest):
     schema = {"minProperties": 2}
     data_tests = [
         DataTest(
-            name="longer is valid",
-            data={"foo": 1, "bar": 2, "foobar": 3},
-            valid=True
+            name="longer is valid", data={"foo": 1, "bar": 2, "foobar": 3}, valid=True
         ),
-        DataTest(
-            name="exact length is valid",
-            data={"foo": 1, "bar": 2},
-            valid=True
-        ),
+        DataTest(name="exact length is valid", data={"foo": 1, "bar": 2}, valid=True),
         DataTest(
             name="too short is invalid",
             data={"foo": 1},
@@ -960,7 +954,7 @@ class EmptyProperties(SchemaTest):
     schema = {"minProperties": 1}
     data_tests = [
         DataTest(
-            name='empty is invalid',
+            name="empty is invalid",
             data=dict(),
             valid=False,
             expected_errors={"": [messages.SHOULD_BE_NON_EMPTY]},
