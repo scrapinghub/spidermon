@@ -956,6 +956,18 @@ class MinProperties(SchemaTest):
     ]
 
 
+class EmptyProperties(SchemaTest):
+    schema = {"minProperties": 1}
+    data_tests = [
+        DataTest(
+            name='empty is invalid',
+            data=dict(),
+            valid=False,
+            expected_errors={"": [messages.SHOULD_BE_NON_EMPTY]},
+        )
+    ]
+
+
 class Minimum(SchemaTest):
     # exclusiveMinimum behaviour changed from draft-04 to draft-06
     # http://json-schema.org/draft-06/json-schema-release-notes.html#backwards-incompatible-changes
