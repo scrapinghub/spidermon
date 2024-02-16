@@ -907,13 +907,13 @@ class Maximum(SchemaTest):
 
 
 class MinItems(SchemaTest):
-    schema = {"minItems": 1}
+    schema = {"minItems": 2}
     data_tests = [
-        DataTest(name="longer is valid", data=[1, 2], valid=True),
-        DataTest(name="exact length is valid", data=[1], valid=True),
+        DataTest(name="longer is valid", data=[1, 2, 3], valid=True),
+        DataTest(name="exact length is valid", data=[1, 2], valid=True),
         DataTest(
             name="too short is invalid",
-            data=[],
+            data=[1],
             valid=False,
             expected_errors={"": [messages.FIELD_TOO_SHORT]},
         ),
@@ -921,18 +921,44 @@ class MinItems(SchemaTest):
     ]
 
 
-class MinProperties(SchemaTest):
-    schema = {"minProperties": 1}
+class EmptyItems(SchemaTest):
+    schema = {"minItems": 1}
     data_tests = [
-        DataTest(name="longer is valid", data={"foo": 1, "bar": 2}, valid=True),
-        DataTest(name="exact length is valid", data={"foo": 1}, valid=True),
+        DataTest(
+            name="empty is invalid",
+            data=list(),
+            valid=False,
+            expected_errors={"": [messages.SHOULD_BE_NON_EMPTY]},
+        )
+    ]
+
+
+class MinProperties(SchemaTest):
+    schema = {"minProperties": 2}
+    data_tests = [
+        DataTest(
+            name="longer is valid", data={"foo": 1, "bar": 2, "foobar": 3}, valid=True
+        ),
+        DataTest(name="exact length is valid", data={"foo": 1, "bar": 2}, valid=True),
         DataTest(
             name="too short is invalid",
-            data={},
+            data={"foo": 1},
             valid=False,
             expected_errors={"": [messages.NOT_ENOUGH_PROPERTIES]},
         ),
         DataTest(name="ignores non-objects", data="", valid=True),
+    ]
+
+
+class EmptyProperties(SchemaTest):
+    schema = {"minProperties": 1}
+    data_tests = [
+        DataTest(
+            name="empty is invalid",
+            data=dict(),
+            valid=False,
+            expected_errors={"": [messages.SHOULD_BE_NON_EMPTY]},
+        )
     ]
 
 

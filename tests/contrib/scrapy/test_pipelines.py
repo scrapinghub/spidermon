@@ -88,7 +88,7 @@ class PipelineJSONSchemaValidator(PipelineTest):
             settings={SETTING_SCHEMAS: [test_schema]},
             cases=[
                 f"'{STATS_ITEM_ERRORS}' not in {{stats}}",
-                f"{{stats}}['{STATS_AMOUNTS}'] is 1",
+                f"{{stats}}['{STATS_AMOUNTS}'] == 1",
                 assert_type_in_stats(Item),
             ],
         ),
@@ -183,8 +183,8 @@ class PipelineJSONSchemaValidator(PipelineTest):
             item=TestItem(),
             settings={SETTING_SCHEMAS: {TestItem: [test_schema, tree_schema]}},
             cases=[
-                f"{{stats}}['{STATS_AMOUNTS}'] is 2",
-                f"{{stats}}['{STATS_ITEM_ERRORS}'] is 2",
+                f"{{stats}}['{STATS_AMOUNTS}'] == 2",
+                f"{{stats}}['{STATS_ITEM_ERRORS}'] == 2",
             ],
         ),
         DataTest(
@@ -198,7 +198,7 @@ class PipelineJSONSchemaValidator(PipelineTest):
             item=TreeItem(),
             settings={SETTING_SCHEMAS: {TestItem: test_schema, TreeItem: tree_schema}},
             cases=[
-                f"{{stats}}['{STATS_MISSINGS}'] is 1",
+                f"{{stats}}['{STATS_MISSINGS}'] == 1",
                 assert_type_in_stats(TestItem),
                 assert_type_in_stats(TreeItem),
             ],

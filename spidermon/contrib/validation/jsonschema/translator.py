@@ -38,6 +38,7 @@ class JSONSchemaMessageTranslator(MessageTranslator):
         r"^.* is not allowed for .*$": messages.NOT_ALLOWED_VALUE,
         r"^.+ is too short$": messages.FIELD_TOO_SHORT,
         r"^.+ is too long$": messages.FIELD_TOO_LONG,
+        r"^.+ should be non-empty$": messages.SHOULD_BE_NON_EMPTY,
         r"^.+ does not match .*$": messages.REGEX_NOT_MATCHED,
         r"^.+ has non-unique elements$": messages.NOT_UNIQUE,
     }
