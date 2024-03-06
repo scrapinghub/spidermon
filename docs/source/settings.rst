@@ -268,7 +268,7 @@ SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS
 -------------------------------------
 Default: ``-1``
 
-If zero, all levels of nested dictionaries will have their cover computed.
+If -1, all levels of nested dictionaries will have their cover computed.
 
 If larger than -1, field coverage will be computed for that many levels of nested dictionaries.
 
