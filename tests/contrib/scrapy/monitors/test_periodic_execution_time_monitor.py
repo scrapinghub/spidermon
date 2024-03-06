@@ -101,6 +101,26 @@ def test_periodic_execution_monitor_no_start_time(
         assert r.error is None
 
 
+def test_periodic_execution_monitor_invalid_start_time(
+    make_data,
+    mock_datetime,
+    monitor_suite,
+    mock_spider,
+):
+    """PeriodicExecutionTimeMonitor should handle invalid start time gracefully"""
+
+    data = make_data({SPIDERMON_MAX_EXECUTION_TIME: FAKE_EXECUTION_TIME + 1})
+    runner = data.pop("runner")
+    data["crawler"].spider = mock_spider
+
+    # Set an invalid start_time to force a TypeError in the monitor
+    data["crawler"].stats.set_value("start_time", "invalid_start_time")
+
+    runner.run(monitor_suite, **data)
+    for r in runner.result.monitor_results:
+        assert "TypeError" in r.error
+
+
 @pytest.fixture
 def item_count_suite():
     return MonitorSuite(monitors=[PeriodicItemCountMonitor])
