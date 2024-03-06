@@ -266,11 +266,11 @@ If set to ``2``, spider statistics will be:
 
 SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS
 -------------------------------------
-Default: ``0``
+Default: ``-1``
 
 If zero, all levels of nested dictionaries will have their cover computed.
 
-If larger than 0, field coverage will be computed for that many levels of nested dictionaries.
+If larger than -1, field coverage will be computed for that many levels of nested dictionaries.
 
 Considering the spider returns the following items:
 
@@ -298,7 +298,7 @@ Considering the spider returns the following items:
       },
     ]
 
-  If set to ``0``, the statistics will include:
+  If set to ``-1``, the statistics will include:
 
   .. code-block:: python
 
@@ -314,6 +314,16 @@ Considering the spider returns the following items:
       'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.2': 1
       'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3': 1
       'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3/field4.1.3.1': 1
+
+  If set to ``0``, the statistics will include:
+
+  .. code-block:: python
+
+      'spidermon_item_scraped_count/dict': 2
+      'spidermon_item_scraped_count/dict/field1': 2
+      'spidermon_item_scraped_count/dict/field2': 2
+      'spidermon_item_scraped_count/dict/field3': 1
+      'spidermon_item_scraped_count/dict/field4': 1
 
   If set to ``1``, the statistics will include:
 

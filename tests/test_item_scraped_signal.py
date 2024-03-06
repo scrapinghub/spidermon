@@ -323,6 +323,68 @@ def test_item_scraped_count_multiple_nested_field_with_two_levels_limit():
     )
 
 
+def test_item_scraped_count_multiple_nested_field_with_no_nested_levels():
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS": 0,
+    }
+    returned_items = [
+        {
+            "field1": {"field1.1": "value1.1"},
+            "field2": "value2",
+            "field3": {"field3.1": "value3.1"},
+            "field4": {
+                "field4.1": {
+                    "field4.1.1": "value",
+                    "field4.1.2": "value",
+                    "field4.1.3": {"field4.1.3.1": "value"},
+                }
+            },
+        },
+        {
+            "field1": {
+                "field1.1": "value1.1",
+                "field1.2": "value1.2",
+            },
+            "field2": "value2",
+        },
+    ]
+    crawler = get_crawler(settings_dict=settings)
+    spider = Spider.from_crawler(crawler, "example.com")
+    for item in returned_items:
+        spider.crawler.signals.send_catch_log_deferred(
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
+        )
+
+    stats = spider.crawler.stats.get_stats()
+
+    assert stats.get("spidermon_item_scraped_count/dict") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/field1/field1.1") == None
+    assert stats.get("spidermon_item_scraped_count/dict/field1/field1.2") == None
+    assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/field3") == 1
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field4/field4.1/field4.1.1")
+        == None
+    )
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field4/field4.1/field4.1.2")
+        == None
+    )
+    assert (
+        stats.get(
+            "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3/field4.1.3.1"
+        )
+        == None
+    )
+
+
 def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field_coverage_settings():
     settings = {
         "SPIDERMON_ENABLED": True,
