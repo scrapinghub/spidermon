@@ -14,7 +14,7 @@ setup(
     zip_safe=False,
     include_package_data=True,
     install_requires=[
-        "jsonschema[format]>=3.2.0",
+        "jsonschema[format]>=4.21.0",
         "python-slugify",
     ],
     extras_require={

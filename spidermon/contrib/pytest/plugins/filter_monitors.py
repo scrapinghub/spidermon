@@ -7,7 +7,7 @@ def pytest_report_header(config):
     return "Spidermon monitor filtering"
 
 
-@pytest.mark.trylast
+@pytest.hookimpl(trylast=True)
 def pytest_collection_modifyitems(session, config, items):
     items[:] = [
         item
