@@ -81,7 +81,7 @@ You can change the name of the field by assigning a name to `SPIDERMON_VALIDATIO
 .. code-block:: js
 
     {
-        '_validation': defaultdict(<class 'list'>, {'author_url': ['Invalid URL']}),
+        '_validation': {'author_url': ['Invalid URL']},
         'author': 'C.S. Lewis',
         'author_url': 'invalid_url',
         'quote': 'Some day you will be old enough to start reading fairy tales '

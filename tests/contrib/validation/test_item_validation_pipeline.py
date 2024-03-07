@@ -1,3 +1,4 @@
+from collections import defaultdict
 from dataclasses import dataclass
 
 import pytest
@@ -87,6 +88,7 @@ def test_jsonschema_validation(dummy_schema):
     result_item = pipeline.process_item(dict(item), None)
     assert item != result_item
     assert "_validation" in result_item
+    assert not isinstance(result_item["_validation"], defaultdict)
     assert result_item["_validation"]["foo"] == ["Missing required field"]
 
 
