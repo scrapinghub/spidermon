@@ -16,8 +16,8 @@ def calculate_field_coverage(stats):
 
             item_type_total = stats.get(f"spidermon_item_scraped_count/{item_type}")
 
-            if "_items" in item_key:
-                if item_key.endswith("_items"):
+            if "/_items" in item_key:
+                if item_key.endswith("/_items"):
                     continue
 
                 levels = item_key.split("/_items/")
