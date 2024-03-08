@@ -137,11 +137,16 @@ def test_item_count_monitor_validation(
     assert len(runner.result.monitor_results) == 1
     assert runner.result.monitor_results[0].status == expected_status
 
+
 def test_item_count_monitor_undefined_stats(make_data, item_count_suite):
     data = make_data({SPIDERMON_ITEM_COUNT_INCREASE: 0})
-    data["stats"]["enable_stats"] = 1 # otherwise monitor wont run
+    data["stats"]["enable_stats"] = 1  # otherwise monitor wont run
     runner = data.pop("runner")
     runner.run(MonitorSuite(monitors=[PeriodicItemCountMonitor]), **data)
     assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.FAILURE
     runner.run(MonitorSuite(monitors=[PeriodicItemCountMonitor]), **data)
     assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.FAILURE
+
+    data["stats"]["item_scraped_count"] = 1
+    runner.run(MonitorSuite(monitors=[PeriodicItemCountMonitor]), **data)
+    assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.SUCCESS
