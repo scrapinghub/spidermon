@@ -478,8 +478,7 @@ The resulted item will look like this:
 .. code-block:: js
 
     {
-        '_validation': defaultdict(
-            <class 'list'>, {'author_url': ['Invalid URL']}),
+        '_validation': {'author_url': ['Invalid URL']},
          'author': 'Mark Twain',
          'author_url': 'not_a_valid_url',
          'quote': 'Never tell the truth to people who are not worthy of it.',
