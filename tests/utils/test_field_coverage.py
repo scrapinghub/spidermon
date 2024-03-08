@@ -69,3 +69,17 @@ def test_calculate_field_coverage_from_stats_with_nested_fields():
     coverage = calculate_field_coverage(spider_stats)
 
     assert coverage == expected_coverage
+
+
+def test_calculate_field_coverage_field_ends_with_items():
+    spider_stats = {
+        "finish_reason": "finished",
+        "spidermon_item_scraped_count": 100,
+        "spidermon_item_scraped_count/dict": 100,
+        "spidermon_item_scraped_count/dict/field_ends_with_items": 100,
+    }
+
+    expected_coverage = {"spidermon_field_coverage/dict/field_ends_with_items": 1.0}
+
+    coverage = calculate_field_coverage(spider_stats)
+    assert coverage == expected_coverage
