@@ -632,8 +632,8 @@ class PeriodicItemCountMonitor(BaseStatMonitor):
     def get_threshold(self):
         crawler = self.data.crawler
         prev_item_scraped_count = self.stats.get("prev_item_scraped_count", 0)
-        item_scraped_count = self.stats.get(self.stat_name)
-        crawler.stats.set_value("prev_item_scraped_count", item_scraped_count or 0)
+        item_scraped_count = self.stats.get(self.stat_name, 0)
+        crawler.stats.set_value("prev_item_scraped_count", item_scraped_count)
         threshold_increase = crawler.settings.get(self.threshold_setting)
         if isinstance(threshold_increase, int):
             return prev_item_scraped_count + threshold_increase
