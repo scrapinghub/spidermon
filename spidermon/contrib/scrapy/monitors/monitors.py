@@ -494,7 +494,11 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
         if not start_time:
             return
 
-        duration = now - start_time
+        try:
+            duration = now - start_time
+        except TypeError:
+            now = datetime.datetime.now(datetime.timezone.utc)
+            duration = now - start_time
 
         msg = "The job has exceeded the maximum execution time"
         self.assertLess(duration.total_seconds(), max_execution_time, msg=msg)
