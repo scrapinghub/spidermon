@@ -1,4 +1,6 @@
+from datetime import datetime
 from unittest import TestCase
+from zoneinfo import ZoneInfo
 
 from spidermon import settings
 from .options import MonitorOptions, MonitorOptionsMetaclass
@@ -100,6 +102,9 @@ class Monitor(TestCase, metaclass=MonitorOptionsMetaclass):
 
     def _init_method(self):
         MonitorOptions.add_or_create(self.method.__func__)
+
+    def utc_now_with_timezone(self):
+        return datetime.utcnow().replace(tzinfo=ZoneInfo("UTC"))
 
     def __repr__(self):
         return "<MONITOR:({}) at {}>".format(self.name, hex(id(self)))

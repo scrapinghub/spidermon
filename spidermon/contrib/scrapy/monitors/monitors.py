@@ -489,10 +489,15 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
         max_execution_time = crawler.settings.getint(SPIDERMON_MAX_EXECUTION_TIME)
         if not max_execution_time:
             return
-        now = datetime.datetime.utcnow()
+
         start_time = self.data.stats.get("start_time")
         if not start_time:
             return
+
+        if start_time.tzinfo:
+            now = self.utc_now_with_timezone()
+        else:
+            now = datetime.datetime.utcnow()
 
         duration = now - start_time
 
