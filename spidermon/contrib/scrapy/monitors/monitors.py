@@ -21,6 +21,7 @@ SPIDERMON_MAX_REQUESTS_ALLOWED = "SPIDERMON_MAX_REQUESTS_ALLOWED"
 SPIDERMON_JOBS_COMPARISON = "SPIDERMON_JOBS_COMPARISON"
 SPIDERMON_JOBS_COMPARISON_STATES = "SPIDERMON_JOBS_COMPARISON_STATES"
 SPIDERMON_JOBS_COMPARISON_TAGS = "SPIDERMON_JOBS_COMPARISON_TAGS"
+SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS = "SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS"
 SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
 SPIDERMON_ITEM_COUNT_INCREASE = "SPIDERMON_ITEM_COUNT_INCREASE"
 
@@ -523,6 +524,10 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
     You can also filter which jobs to compare based on their tags using the
     ``SPIDERMON_JOBS_COMPARISON_TAGS`` setting. Among the defined tags we consider only those
     that are also present in the current job.
+
+    You can also filter which jobs to compare based on their close reason using the
+    ``SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS`` setting. The default value is ``()``,
+    which doesn't filter any job based on close_reason.
     """
 
     stat_name = "item_scraped_count"
@@ -551,6 +556,9 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
 
     def _get_jobs(self, states, number_of_jobs):
         tags = self._get_tags_to_filter()
+        close_reason = self.crawler.settings.getlist(
+            SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS, ()
+        )
 
         jobs = []
         start = 0
@@ -563,7 +571,13 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
             filters=dict(has_tag=tags) if tags else None,
         )
         while _jobs:
-            jobs.extend(_jobs)
+            if close_reason:
+                for job in _jobs:
+                    if job.get("close_reason") in close_reason:
+                        jobs.append(job)
+            else:
+                jobs.extend(_jobs)
+
             start += 1000
             _jobs = client.spider.jobs.list(
                 start=start,
