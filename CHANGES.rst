@@ -10,7 +10,7 @@ Release notes
 - bug: Fix tests for minimum properties and items in Jsonschema validations (`PR#432 <https://github.com/scrapinghub/spidermon/pull/432>`_)
 - feature: Add the ``SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS`` setting to limit nested dict stats computation (`PR#433 <https://github.com/scrapinghub/spidermon/pull/433>`_)
 - feature: Add ``SendSNSNotification`` to Spidermon Notifications (`PR#413 <https://github.com/scrapinghub/spidermon/pull/413>`_)
-- feature: Change format of content of _validation from defaultdict to dict (`PR#431 <https://github.com/scrapinghub/spidermon/pull/431>`_)  
+- feature: Change the format of the content of _validation from defaultdict to dict (`PR#431 <https://github.com/scrapinghub/spidermon/pull/431>`_)  
 
 1.20.0 (2023-09-01)
 -------------------
