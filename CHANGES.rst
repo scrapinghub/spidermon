@@ -8,7 +8,7 @@ Release notes
 - bug: Fix ``calculate_field_coverage`` incorrect handling of field names ending with _items (`PR#437 <https://github.com/scrapinghub/spidermon/pull/437>`_)
 - bug: Fix monitor failing when operating offset-naive and offset-aware datetimes (`PR#439 <https://github.com/scrapinghub/spidermon/pull/439>`_)
 - bug: Fix tests for minimum properties and items in Jsonschema validations (`PR#432 <https://github.com/scrapinghub/spidermon/pull/432>`_)
-- feature: Add ``SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS`` setting to limit nested dict stats computation (`PR#433 <https://github.com/scrapinghub/spidermon/pull/433>`_)
+- feature: Add the ``SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS`` setting to limit nested dict stats computation (`PR#433 <https://github.com/scrapinghub/spidermon/pull/433>`_)
 - feature: Add ``SendSNSNotification`` to Spidermon Notifications (`PR#413 <https://github.com/scrapinghub/spidermon/pull/413>`_)
 - feature: Change format of content of _validation from defaultdict to dict (`PR#431 <https://github.com/scrapinghub/spidermon/pull/431>`_)  
 
