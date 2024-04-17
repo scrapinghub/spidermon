@@ -6,7 +6,7 @@ Release notes
 - bug: Fix monitor ailing when operating offset-naive and offset-aware datestimes (`PR#439 <https://github.com/scrapinghub/spidermon/pull/439>`_)
 - bug: Fix ``calculate_field_coverage`` incorrect handling of field names ending with _items (`PR#437 <https://github.com/scrapinghub/spidermon/pull/437>`_)
 - bug: Fix TypeError in ``PeriodicItemCountMonitor`` when item_scraped_count was not defined the first time it was checked (`PR#436 <https://github.com/scrapinghub/spidermon/pull/436>`_)
-- feature: Add `SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS`` setting to limit nested dict stats computation (`PR#433 <https://github.com/scrapinghub/spidermon/pull/433>`_)
+- feature: Add ``SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS`` setting to limit nested dict stats computation (`PR#433 <https://github.com/scrapinghub/spidermon/pull/433>`_)
 - bug: Fix tests for minimum properties and items in Jsonschema validations (`PR#432 <https://github.com/scrapinghub/spidermon/pull/432>`_)
 - feature: Change format of content of _validation from defaultdict to dict (`PR#431 <https://github.com/scrapinghub/spidermon/pull/431>`_)  
 - bug: Fix CI/CD pipelines not working due to changes on Scrapy (`PR#426 <https://github.com/scrapinghub/spidermon/pull/426>`_)
