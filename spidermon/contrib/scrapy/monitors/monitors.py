@@ -556,7 +556,7 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
 
     def _get_jobs(self, states, number_of_jobs):
         tags = self._get_tags_to_filter()
-        close_reason = self.crawler.settings.getlist(
+        close_reasons = self.crawler.settings.getlist(
             SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS, ()
         )
 
@@ -571,12 +571,10 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
             filters=dict(has_tag=tags) if tags else None,
         )
         while _jobs:
-            if close_reason:
-                for job in _jobs:
-                    if job.get("close_reason") in close_reason:
-                        jobs.append(job)
-            else:
-                jobs.extend(_jobs)
+            for job in _jobs:
+                if close_reasons and job.get("close_reason") not in close_reasons:
+                    continue
+                jobs.append(job)
 
             start += 1000
             _jobs = client.spider.jobs.list(
