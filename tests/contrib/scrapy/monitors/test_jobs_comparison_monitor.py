@@ -202,7 +202,7 @@ def test_arguments_passed_to_zyte_client(
         (100, [{"items": 200, "close_reason": "finished"}], 0.9, ["finished"], True),
     ],
 )
-def test_jobs_comparison_monitor_threshold2(
+def test_jobs_comparison_monitor_close_reason(
     make_data,
     mock_suite_with_close_reason,
     item_count,
