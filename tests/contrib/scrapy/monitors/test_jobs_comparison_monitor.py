@@ -7,6 +7,7 @@ from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_JOBS_COMPARISON_STATES,
     SPIDERMON_JOBS_COMPARISON_TAGS,
     SPIDERMON_JOBS_COMPARISON_THRESHOLD,
+    SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS,
     ZyteJobsComparisonMonitor,
     monitors,
 )
@@ -19,8 +20,27 @@ def mock_jobs(previous_counts):
 
 
 @pytest.fixture
+def mock_jobs_with_close_reason(previous_job_objs, close_reasons):
+    return Mock(
+        return_value=[
+            dict(items=j["items"], close_reason=j["close_reason"])
+            for j in previous_job_objs
+            if j["close_reason"] in close_reasons
+        ]
+    )
+
+
+@pytest.fixture
 def mock_suite(mock_jobs, monkeypatch):
     monkeypatch.setattr(ZyteJobsComparisonMonitor, "_get_jobs", mock_jobs)
+    return MonitorSuite(monitors=[ZyteJobsComparisonMonitor])
+
+
+@pytest.fixture
+def mock_suite_with_close_reason(mock_jobs_with_close_reason, monkeypatch):
+    monkeypatch.setattr(
+        ZyteJobsComparisonMonitor, "_get_jobs", mock_jobs_with_close_reason
+    )
     return MonitorSuite(monitors=[ZyteJobsComparisonMonitor])
 
 
@@ -153,3 +173,52 @@ def test_arguments_passed_to_zyte_client(
     ]
 
     mock_client.spider.jobs.list.assert_has_calls(calls)
+
+
+@pytest.mark.parametrize(
+    ["item_count", "previous_job_objs", "threshold", "close_reasons", "should_raise"],
+    [
+        (
+            100,
+            [
+                {"items": 100, "close_reason": "finished"},
+                {"items": 50, "close_reason": "cancled"},
+            ],
+            0.9,
+            ["finished"],
+            False,
+        ),
+        (
+            100,
+            [
+                {"items": 20, "close_reason": "finished"},
+                {"items": 500, "close_reason": "cancled"},
+                {"items": 1500, "close_reason": "cancled"},
+            ],
+            0.9,
+            ["finished"],
+            False,
+        ),
+        (100, [{"items": 200, "close_reason": "finished"}], 0.9, ["finished"], True),
+    ],
+)
+def test_jobs_comparison_monitor_threshold2(
+    make_data,
+    mock_suite_with_close_reason,
+    item_count,
+    threshold,
+    close_reasons,
+    should_raise,
+):
+    data = make_data(
+        {
+            SPIDERMON_JOBS_COMPARISON: 1,
+            SPIDERMON_JOBS_COMPARISON_THRESHOLD: threshold,
+            SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS: "finished",
+        }
+    )
+    data["stats"]["item_scraped_count"] = item_count
+    runner = data.pop("runner")
+    runner.run(mock_suite_with_close_reason, **data)
+
+    assert should_raise == bool(runner.result.monitor_results[0].error)
