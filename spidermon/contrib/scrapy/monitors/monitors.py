@@ -557,26 +557,28 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
     def _get_jobs(self, states, number_of_jobs):
         tags = self._get_tags_to_filter()
 
-        jobs = []
+        total_jobs = []
         start = 0
         client = Client(self.crawler.settings)
 
-        _jobs = client.spider.jobs.list(
-            start=start,
-            state=states,
-            count=number_of_jobs,
-            filters=dict(has_tag=tags) if tags else None,
-        )
-        while _jobs:
-            jobs.extend(_jobs)
-            start += 1000
-            _jobs = client.spider.jobs.list(
+        while True:
+            # API has a 1000 results limit
+            count = min(number_of_jobs - len(total_jobs), 1000)
+            current_jobs = client.spider.jobs.list(
                 start=start,
                 state=states,
-                count=number_of_jobs,
+                count=count,
                 filters=dict(has_tag=tags) if tags else None,
             )
-        return jobs
+            total_jobs.extend(current_jobs)
+
+            if not current_jobs or len(total_jobs) == number_of_jobs:
+                # Stop when target is reached or no more total_jobs available
+                break
+
+            start += count
+
+        return total_jobs
 
     def _get_tags_to_filter(self):
         """
