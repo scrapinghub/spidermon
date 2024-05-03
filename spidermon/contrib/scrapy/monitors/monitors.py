@@ -560,10 +560,11 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         total_jobs = []
         start = 0
         client = Client(self.crawler.settings)
+        MAX_API_COUNT = 1000
 
         while True:
             # API has a 1000 results limit
-            count = min(number_of_jobs - len(total_jobs), 1000)
+            count = min(number_of_jobs - len(total_jobs), MAX_API_COUNT)
             current_jobs = client.spider.jobs.list(
                 start=start,
                 state=states,
@@ -572,11 +573,12 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
             )
             total_jobs.extend(current_jobs)
 
-            if not current_jobs or len(total_jobs) == number_of_jobs:
-                # Stop when target is reached or no more total_jobs available
+            if len(current_jobs) < MAX_API_COUNT or len(total_jobs) == number_of_jobs:
+                # Stop paginating if results are less than 1000 (pagination not required)
+                # or target jobs was reached - no more pagination required
                 break
 
-            start += count
+            start += len(current_jobs)
 
         return total_jobs
 

@@ -114,11 +114,12 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor = TestZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
-        mock_client.spider.jobs.list = Mock(return_value=[])
+        output = [Mock(), Mock()]
+        mock_client.spider.jobs.list = Mock(return_value=output)
 
         # Return less jobs than expected
         jobs = monitor._get_jobs(states=None, number_of_jobs=50)
-        assert jobs == []
+        assert jobs == output
         mock_client.spider.jobs.list.assert_called_once()
 
     with patch(
