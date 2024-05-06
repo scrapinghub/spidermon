@@ -197,7 +197,7 @@ def test_arguments_passed_to_zyte_client(
             state=list(states),
             # Count goes from pending number of jobs up to 1000
             count=min(number_of_jobs - n * 1000, 1000),
-            filters={"has_tag": list(tags)},
+            has_tag=list(tags),
         )
         # One call to api every 1000 expected jobs
         for n in range(0, math.ceil(number_of_jobs / 1000))

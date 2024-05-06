@@ -569,7 +569,7 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
                 start=start,
                 state=states,
                 count=count,
-                filters=dict(has_tag=tags) if tags else None,
+                has_tag=tags or None,
             )
             total_jobs.extend(current_jobs)
 
@@ -584,7 +584,7 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
 
     def _get_tags_to_filter(self):
         """
-        Return the intersect of the desired tags to filter and
+        Return a list of tags with the intersection of the desired tags to filter and
         the ones from the current job.
         """
         desired_tags = self.crawler.settings.getlist(SPIDERMON_JOBS_COMPARISON_TAGS)
@@ -596,7 +596,7 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
             return {}
 
         tags_to_filter = set(desired_tags) & set(current_tags)
-        return sorted(tags_to_filter)
+        return list(sorted(tags_to_filter))
 
     def get_threshold(self):
         number_of_jobs = self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON)
