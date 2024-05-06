@@ -589,11 +589,11 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         """
         desired_tags = self.crawler.settings.getlist(SPIDERMON_JOBS_COMPARISON_TAGS)
         if not desired_tags:
-            return {}
+            return []
 
         current_tags = json.loads(os.environ.get("SHUB_JOB_DATA", "{}")).get("tags")
         if not current_tags:
-            return {}
+            return []
 
         tags_to_filter = set(desired_tags) & set(current_tags)
         return list(sorted(tags_to_filter))
