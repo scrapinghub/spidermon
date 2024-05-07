@@ -90,6 +90,26 @@ class TestZyteJobsComparisonMonitor(ZyteJobsComparisonMonitor):
         pass
 
 
+def test_jobs_comparison_monitor_get_tags_to_filter(monkeypatch):
+    mock_data = Mock()
+
+    monitor = TestZyteJobsComparisonMonitor()
+    monitor.data = mock_data
+
+    # Empty SPIDERMON_JOBS_COMPARISON_TAGS
+    mock_data.crawler.settings.getlist.return_value = None
+    assert monitor._get_tags_to_filter() == []
+
+    # Empty SHUB_JOB_DATA.tags
+    mock_data.crawler.settings.getlist.return_value = ["tag1", "tag2"]
+    assert monitor._get_tags_to_filter() == []
+
+    # Sorted intersection
+    mock_data.crawler.settings.getlist.return_value = ["tag2", "tag1", "tag3"]
+    monkeypatch.setenv("SHUB_JOB_DATA", '{"tags": ["tag1", "tag2"]}')
+    assert monitor._get_tags_to_filter() == ["tag1", "tag2"]
+
+
 def test_jobs_comparison_monitor_get_jobs():
     mock_client = Mock()
     with patch(
@@ -197,7 +217,7 @@ def test_arguments_passed_to_zyte_client(
             state=list(states),
             # Count goes from pending number of jobs up to 1000
             count=min(number_of_jobs - n * 1000, 1000),
-            filters={"has_tag": list(tags)},
+            has_tag=list(tags),
         )
         # One call to api every 1000 expected jobs
         for n in range(0, math.ceil(number_of_jobs / 1000))
