@@ -34,7 +34,7 @@ Spidermon is an extension for Scrapy spiders. The package provides useful tools 
 Requirements
 ============
 
-* Python Version: 3.8, 3.9, 3.10 or 3.11
+* Python Version: 3.8, 3.9, 3.10, 3.11 or 3.12
 
 Install
 =======
