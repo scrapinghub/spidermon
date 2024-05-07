@@ -355,3 +355,55 @@ Considering the spider returns the following items:
       'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.2': 1
       'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3': 1
 
+SPIDERMON_MONITOR_SKIPPING_RULES
+--------------------------------
+Default: ``None``
+
+A dictionary where keys represent the names of the monitors to be skipped, and the corresponding values are lists containing either method names or lists defining skip conditions.
+
+When defining skip rules based on values, the list must follow the pattern: 
+
+``["stat_name", "comparison_operator", "threshold_value"]``. 
+
+Here, ``stat_name`` refers to the name of the Scrapy Stat being evaluated, ``comparison_operator`` indicates the type of comparison to perform (e.g., "==", "<", ">="), and ``threshold_value`` sets the threshold for the comparison.
+
+Additionally, custom skip rules can be defined using Python functions. These functions should accept a single argument (typically named ``monitor``) representing the monitor being evaluated and return a boolean value indicating whether the monitor should be skipped (``True``) or not (``False``).
+
+Below are examples illustrating how skip rules can be configured in the settings.
+
+Example #1: Skip monitor based on stat values
+
+   .. code-block:: python
+
+       class QuotesSpider(scrapy.Spider):
+           name = "quotes"
+           custom_settings = {
+               "SPIDERMON_FIELD_COVERAGE_RULES": {
+                   "dict/quote": 1,
+                   "dict/author": 1,
+               },
+               "SPIDERMON_MONITOR_SKIPPING_RULES": {
+                   "Field Coverage Monitor": [["item_scraped_count", "==", 0]],
+               }
+           }
+
+Example #2: Skip monitor based on a custom function
+
+   .. code-block:: python
+
+       def skip_function(monitor):
+           return datetime.datetime.today().weekday() == 4  # Don't test on Fridays
+
+       class QuotesSpider(scrapy.Spider):
+           name = "quotes"
+
+           custom_settings = {
+               "SPIDERMON_FIELD_COVERAGE_RULES": {
+                   "dict/quote": 1,
+                   "dict/author": 1,
+               },
+               "SPIDERMON_MONITOR_SKIPPING_RULES": {
+                   "Field Coverage Monitor": [skip_function],
+               }
+           }
+

@@ -10,47 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
-    """
-    Monitor can be skipped based on conditions given in the settings.
-    The purpose is to skip a monitor based on stat value or any custom
-    function. A scenario could be skipping the Field Coverage Monitor
-    when a spider produced no items. Following is a code block of
-    examples of how we can configure the skip rules in settings.
-
-    Example #1: skip rules based on stat values
-    .. code-block:: python
-        class QuotesSpider(scrapy.Spider):
-            name = "quotes"
-            custom_settings = {
-                "SPIDERMON_FIELD_COVERAGE_RULES": {
-                    "dict/quote": 1,
-                    "dict/author": 1,
-                },
-                "SPIDERMON_MONITOR_SKIPPING_RULES": {
-                    "Field Coverage Monitor": [["item_scraped_count", "==", 0]],
-                }
-            }
-
-    Example #2: skip rules based on a custom function
-    .. code-block:: python
-
-        def skip_function(monitor):
-            return "item_scraped_count" not in monitor.data.stats
-
-        class QuotesSpider(scrapy.Spider):
-            name = "quotes"
-
-            custom_settings = {
-                "SPIDERMON_FIELD_COVERAGE_RULES": {
-                    "dict/quote": 1,
-                    "dict/author": 1,
-                },
-                "SPIDERMON_MONITOR_SKIPPING_RULES": {
-                    "Field Coverage Monitor": [skip_function],
-                }
-            }
-    """
-
     longMessage = False
     ops = {
         ">": operator.gt,
