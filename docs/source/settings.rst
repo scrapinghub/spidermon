@@ -363,7 +363,7 @@ A dictionary where keys represent the names of the monitors to be skipped, and t
 
 When defining skip rules based on values, the list must follow the pattern: 
 
-``["stats_name", "comparison_operator", "threshold_value"]``. 
+``["stat_name", "comparison_operator", "threshold_value"]``. 
 
 Here, ``stat_name`` refers to the name of the Scrapy Stat being evaluated, ``comparison_operator`` indicates the type of comparison to perform (e.g., "==", "<", ">="), and ``threshold_value`` sets the threshold for the comparison.
 
