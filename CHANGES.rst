@@ -1,7 +1,17 @@
 Release notes
 =============
 
+1.22.0 (2024-05-08)
+-------------------
+
+- bugs: Fix ``_get_jobs`` to use the proper parameter for tag filtering in ``ZyteJobsComparisonMonitor``  (`PR#446 <https://github.com/scrapinghub/spidermon/pull/446>`_)
+- bugs: Fix ``_get_jobs`` method returning an incorrect number of jobs in ``ZyteJobsComparisonMonitor``  (`PR#444 <https://github.com/scrapinghub/spidermon/pull/444>`_)
+- docs: Add ``SPIDERMON_MONITOR_SKIPPING_RULES`` documentation and examples on settings page  (`PR#447 <https://github.com/scrapinghub/spidermon/pull/447>`_)
+- chore: Add Python 3.12 support (`PR#443 <https://github.com/scrapinghub/spidermon/pull/443>`_) (`PR#448 <https://github.com/scrapinghub/spidermon/pull/448>`_)
+
+
 1.21.0 (2024-04-18)
+-------------------
 
 - bug: Fix CI/CD pipelines not working due to changes on Scrapy (`PR#426 <https://github.com/scrapinghub/spidermon/pull/426>`_)
 - bug: Fix TypeError in ``PeriodicItemCountMonitor`` when item_scraped_count was not defined the first time it was checked (`PR#436 <https://github.com/scrapinghub/spidermon/pull/436>`_)
