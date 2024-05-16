@@ -1,4 +1,5 @@
 from typing import Any, List
+
 from itemadapter import ItemAdapter
 
 
@@ -14,7 +15,9 @@ def traverse_nested(obj: ItemAdapter, keys: List[str]) -> ItemAdapter:
             # Traverse next level of item object
             key = keys.pop(0)
             current_obj = ItemAdapter(current_obj[key])
-        except KeyError:
+        # KeyError: Key does not exist
+        # TypeError: Key is not compatible with ItemAdapter (None or unsupported type)
+        except (KeyError, TypeError):
             raise KeyError(f'Invalid key "{key}" for {current_obj} in {obj}')
 
     return current_obj
