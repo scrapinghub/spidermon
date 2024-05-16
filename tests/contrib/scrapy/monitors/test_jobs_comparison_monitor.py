@@ -139,6 +139,7 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor = TestZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
+        monitor.crawler.settings.getlist.return_value = None
         mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs)
 
         # Return exact number of jobs
@@ -154,6 +155,7 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor = TestZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
+        monitor.crawler.settings.getlist.return_value = None
         output = [Mock(), Mock()]
         mock_client.spider.jobs.list = Mock(return_value=output)
 
@@ -169,6 +171,7 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor = TestZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
+        monitor.crawler.settings.getlist.return_value = None
         mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs)
 
         # Jobs bigger than 1000
