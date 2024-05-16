@@ -1,4 +1,5 @@
-from unittest.mock import Mock, call
+import math
+from unittest.mock import Mock, call, patch
 
 import pytest
 from spidermon import MonitorSuite
@@ -11,6 +12,7 @@ from spidermon.contrib.scrapy.monitors import (
     ZyteJobsComparisonMonitor,
     monitors,
 )
+from spidermon.core.factories import MonitorFactory
 from spidermon.exceptions import NotConfigured
 
 
@@ -36,6 +38,10 @@ def mock_suite(mock_jobs, monkeypatch):
     return MonitorSuite(monitors=[ZyteJobsComparisonMonitor])
 
 
+def get_paginated_jobs(**kwargs):
+    return [Mock() for _ in range(kwargs["count"])]
+
+
 @pytest.fixture
 def mock_suite_with_close_reason(mock_jobs_with_close_reason, monkeypatch):
     monkeypatch.setattr(
@@ -49,16 +55,7 @@ def mock_suite_and_zyte_client(
     monkeypatch,
     number_of_jobs,
 ):
-    def get_paginated_jobs(**kwargs):
-        start = kwargs["start"]
-        if start < number_of_jobs:
-            return [
-                Mock() for _ in range(start, max(number_of_jobs - 1000, number_of_jobs))
-            ]
-        return []
-
     monkeypatch.setenv("SHUB_JOB_DATA", '{"tags":["tag1","tag2","tag3"]}')
-
     mock_client = Mock()
     mock_client.spider.jobs.list.side_effect = get_paginated_jobs
 
@@ -106,6 +103,78 @@ def test_jobs_comparison_monitor_is_enabled(
     else:
         with pytest.raises(NotConfigured):
             runner.run(mock_suite, **data)
+
+
+class TestZyteJobsComparisonMonitor(ZyteJobsComparisonMonitor):
+    def runTest():
+        pass
+
+
+def test_jobs_comparison_monitor_get_tags_to_filter(monkeypatch):
+    mock_data = Mock()
+
+    monitor = TestZyteJobsComparisonMonitor()
+    monitor.data = mock_data
+
+    # Empty SPIDERMON_JOBS_COMPARISON_TAGS
+    mock_data.crawler.settings.getlist.return_value = None
+    assert monitor._get_tags_to_filter() == []
+
+    # Empty SHUB_JOB_DATA.tags
+    mock_data.crawler.settings.getlist.return_value = ["tag1", "tag2"]
+    assert monitor._get_tags_to_filter() == []
+
+    # Sorted intersection
+    mock_data.crawler.settings.getlist.return_value = ["tag2", "tag1", "tag3"]
+    monkeypatch.setenv("SHUB_JOB_DATA", '{"tags": ["tag1", "tag2"]}')
+    assert monitor._get_tags_to_filter() == ["tag1", "tag2"]
+
+
+def test_jobs_comparison_monitor_get_jobs():
+    mock_client = Mock()
+    with patch(
+        "spidermon.contrib.scrapy.monitors.monitors.Client"
+    ) as mock_client_class:
+        mock_client_class.return_value = mock_client
+        monitor = TestZyteJobsComparisonMonitor()
+        monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
+        monitor.data = Mock()
+        mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs)
+
+        # Return exact number of jobs
+        jobs = monitor._get_jobs(states=None, number_of_jobs=50)
+        assert len(jobs) == 50
+        mock_client.spider.jobs.list.assert_called_once()
+
+    mock_client = Mock()
+    with patch(
+        "spidermon.contrib.scrapy.monitors.monitors.Client"
+    ) as mock_client_class:
+        mock_client_class.return_value = mock_client
+        monitor = TestZyteJobsComparisonMonitor()
+        monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
+        monitor.data = Mock()
+        output = [Mock(), Mock()]
+        mock_client.spider.jobs.list = Mock(return_value=output)
+
+        # Return less jobs than expected
+        jobs = monitor._get_jobs(states=None, number_of_jobs=50)
+        assert jobs == output
+        mock_client.spider.jobs.list.assert_called_once()
+
+    with patch(
+        "spidermon.contrib.scrapy.monitors.monitors.Client"
+    ) as mock_client_class:
+        mock_client_class.return_value = mock_client
+        monitor = TestZyteJobsComparisonMonitor()
+        monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
+        monitor.data = Mock()
+        mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs)
+
+        # Jobs bigger than 1000
+        jobs = monitor._get_jobs(states=None, number_of_jobs=2500)
+        assert len(jobs) == 2500
+        assert mock_client.spider.jobs.list.call_count == 3
 
 
 @pytest.mark.parametrize(
@@ -164,12 +233,14 @@ def test_arguments_passed_to_zyte_client(
 
     calls = [
         call.mock_client.spider.jobs.list(
-            start=n,
+            start=n * 1000,
             state=list(states),
-            count=number_of_jobs,
-            filters={"has_tag": list(tags)},
+            # Count goes from pending number of jobs up to 1000
+            count=min(number_of_jobs - n * 1000, 1000),
+            has_tag=list(tags),
         )
-        for n in range(0, number_of_jobs + 1000, 1000)
+        # One call to api every 1000 expected jobs
+        for n in range(0, math.ceil(number_of_jobs / 1000))
     ]
 
     mock_client.spider.jobs.list.assert_has_calls(calls)

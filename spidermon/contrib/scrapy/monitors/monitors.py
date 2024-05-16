@@ -565,46 +565,50 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
             SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS, ()
         )
 
-        jobs = []
+        total_jobs = []
         start = 0
         client = Client(self.crawler.settings)
+        MAX_API_COUNT = 1000
 
-        _jobs = client.spider.jobs.list(
-            start=start,
-            state=states,
-            count=number_of_jobs,
-            filters=dict(has_tag=tags) if tags else None,
-        )
-        while _jobs:
-            for job in _jobs:
-                if close_reasons and job.get("close_reason") not in close_reasons:
-                    continue
-                jobs.append(job)
-
-            start += 1000
-            _jobs = client.spider.jobs.list(
+        while True:
+            # API has a 1000 results limit
+            count = min(number_of_jobs - len(total_jobs), MAX_API_COUNT)
+            current_jobs = client.spider.jobs.list(
                 start=start,
                 state=states,
-                count=number_of_jobs,
-                filters=dict(has_tag=tags) if tags else None,
+                count=count,
+                has_tag=tags or None,
             )
-        return jobs
+
+            for job in current_jobs:
+                if close_reasons and job.get("close_reason") not in close_reasons:
+                    continue
+                total_jobs.append(job)
+
+            if len(current_jobs) < MAX_API_COUNT or len(total_jobs) >= number_of_jobs:
+                # Stop paginating if results are less than 1000 (pagination not required)
+                # or target jobs was reached - no more pagination required
+                break
+
+            start += len(current_jobs)
+
+        return total_jobs
 
     def _get_tags_to_filter(self):
         """
-        Return the intersect of the desired tags to filter and
+        Return a list of tags with the intersection of the desired tags to filter and
         the ones from the current job.
         """
         desired_tags = self.crawler.settings.getlist(SPIDERMON_JOBS_COMPARISON_TAGS)
         if not desired_tags:
-            return {}
+            return []
 
         current_tags = json.loads(os.environ.get("SHUB_JOB_DATA", "{}")).get("tags")
         if not current_tags:
-            return {}
+            return []
 
         tags_to_filter = set(desired_tags) & set(current_tags)
-        return sorted(tags_to_filter)
+        return list(sorted(tags_to_filter))
 
     def get_threshold(self):
         number_of_jobs = self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON)
