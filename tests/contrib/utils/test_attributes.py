@@ -1,7 +1,8 @@
-import pytest
 from dataclasses import dataclass
 
+import pytest
 from itemadapter import ItemAdapter
+
 from spidermon.contrib.utils.attributes import (
     get_nested_attribute,
     set_nested_attribute,
@@ -18,6 +19,11 @@ def test_get_nested_attribute():
     # Missing intermiddle attribute
     with pytest.raises(KeyError):
         get_nested_attribute(item, "attr1.missing_attribute.attr2")
+
+    # Intermiddle attribute is None
+    item = ItemAdapter({"foo": None})
+    with pytest.raises(KeyError):
+        get_nested_attribute(item, "foo.missing_attribute")
 
 
 def test_set_nested_attribute():
