@@ -133,7 +133,7 @@
                           JOB
                         ------------------------#}
                         {% if data.job %}
-                            {% set is_script = data.job.metadata['spider'].startswith('py:') %}
+                            {% set is_script = data.job.metadata.get('spider').startswith('py:') %}
                             {% set job_finished_time = data.job.metadata.get('finished_time', 0) %}
                             {% if not job_finished_time %}
                                 {% set job_finished_time = datetime.datetime.utcnow().strftime('%s')|int*1000 %}
@@ -142,10 +142,10 @@
                             {% set running_time = job_finished_time - job_running_time %}
 
                             {% if is_script %}
-                                {{ render_header_data('Script', data.job.metadata['spider'][3:], 'label label-blue') }}
+                                {{ render_header_data('Script', data.job.metadata.get('spider')[3:], 'label label-blue') }}
                             {% else %}
-                                {{ render_header_data('Spider', data.job.metadata['spider'], 'label label-blue') }}
-                                {{ render_header_data('Version', data.job.metadata['version']) }}
+                                {{ render_header_data('Spider', data.job.metadata.get('spider'), 'label label-blue') }}
+                                {{ render_header_data('Version', data.job.metadata.get('version')) }}
                                 {{ render_header_data('Items', items_count, "badge badge-green") }}
                                 {{ render_header_data('Requests', requests_count, "badge") }}
                             {% endif %}
@@ -190,11 +190,11 @@
                         {% if data.job %}
                             {{ render_header_data_separator() }}
                             {{ render_header_data('Job', data.job.key, classes='label label-blue') }}
-                            {{ render_header_data('State', data.job.metadata['state']) }}
-                            {{ render_header_data('Outcome', data.job.metadata['close_reason']) }}
-                            {{ render_header_data('Priority', data.job.metadata['priority']) }}
-                            {{ render_header_data('Bot Group', data.job.metadata['botgroup']) }}
-                            {{ render_header_data_list('Tags', data.job.metadata['tags'], 'label label-gray') }}
+                            {{ render_header_data('State', data.job.metadata.get('state')) }}
+                            {{ render_header_data('Outcome', data.job.metadata.get('close_reason')) }}
+                            {{ render_header_data('Priority', data.job.metadata.get('priority')) }}
+                            {{ render_header_data('Bot Group', data.job.metadata.get('botgroup')) }}
+                            {{ render_header_data_list('Tags', data.job.metadata.get('tags'), 'label label-gray') }}
                         {% endif %}
                     </table>
                 </td>
