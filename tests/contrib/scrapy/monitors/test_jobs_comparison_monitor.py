@@ -41,6 +41,7 @@ def mock_suite(mock_jobs, monkeypatch):
 def get_paginated_jobs(**kwargs):
     return [Mock() for _ in range(kwargs["count"])]
 
+
 def get_paginated_jobs_with_finished_close_reason(**kwargs):
     objs = []
     for _ in range(kwargs["count"]):
@@ -49,6 +50,7 @@ def get_paginated_jobs_with_finished_close_reason(**kwargs):
         objs.append(obj)
 
     return objs
+
 
 def get_paginated_jobs_with_cancel_close_reason(**kwargs):
     objs = []
@@ -207,7 +209,8 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = ["finished"]
         mock_client.spider.jobs.list = Mock(
-            side_effect=get_paginated_jobs_with_finished_close_reason)
+            side_effect=get_paginated_jobs_with_finished_close_reason
+        )
 
         # Return exact number of jobs
         jobs = monitor._get_jobs(states=None, number_of_jobs=50)
@@ -215,7 +218,7 @@ def test_jobs_comparison_monitor_get_jobs():
 
     mock_client = Mock()
     with patch(
-            "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = TestZyteJobsComparisonMonitor()
@@ -223,7 +226,8 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = ["finished"]
         mock_client.spider.jobs.list = Mock(
-            side_effect=get_paginated_jobs_with_cancel_close_reason)
+            side_effect=get_paginated_jobs_with_cancel_close_reason
+        )
 
         # Return no jobs as all will be filtered due to close reaseon
         jobs = monitor._get_jobs(states=None, number_of_jobs=50)
