@@ -532,7 +532,8 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
 
     You can also filter which jobs to compare based on their close reason using the
     ``SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS`` setting. The default value is ``()``,
-    which doesn't filter any job based on close_reason.
+    which doesn't filter any job based on close_reason. To only consider successfully finished jobs,
+    use ``("finished", ) instead.``
     """
 
     stat_name = "item_scraped_count"
