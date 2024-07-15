@@ -8,6 +8,7 @@ from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_JOBS_COMPARISON_STATES,
     SPIDERMON_JOBS_COMPARISON_TAGS,
     SPIDERMON_JOBS_COMPARISON_THRESHOLD,
+    SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS,
     ZyteJobsComparisonMonitor,
     monitors,
 )
@@ -21,6 +22,17 @@ def mock_jobs(previous_counts):
 
 
 @pytest.fixture
+def mock_jobs_with_close_reason(previous_job_objs, close_reasons):
+    return Mock(
+        return_value=[
+            dict(items=j["items"], close_reason=j["close_reason"])
+            for j in previous_job_objs
+            if j["close_reason"] in close_reasons
+        ]
+    )
+
+
+@pytest.fixture
 def mock_suite(mock_jobs, monkeypatch):
     monkeypatch.setattr(ZyteJobsComparisonMonitor, "_get_jobs", mock_jobs)
     return MonitorSuite(monitors=[ZyteJobsComparisonMonitor])
@@ -28,6 +40,34 @@ def mock_suite(mock_jobs, monkeypatch):
 
 def get_paginated_jobs(**kwargs):
     return [Mock() for _ in range(kwargs["count"])]
+
+
+def get_paginated_jobs_with_finished_close_reason(**kwargs):
+    objs = []
+    for _ in range(kwargs["count"]):
+        obj = Mock()
+        obj.get.return_value = "finished"
+        objs.append(obj)
+
+    return objs
+
+
+def get_paginated_jobs_with_cancel_close_reason(**kwargs):
+    objs = []
+    for _ in range(kwargs["count"]):
+        obj = Mock()
+        obj.get.return_value = "cancel"
+        objs.append(obj)
+
+    return objs
+
+
+@pytest.fixture
+def mock_suite_with_close_reason(mock_jobs_with_close_reason, monkeypatch):
+    monkeypatch.setattr(
+        ZyteJobsComparisonMonitor, "_get_jobs", mock_jobs_with_close_reason
+    )
+    return MonitorSuite(monitors=[ZyteJobsComparisonMonitor])
 
 
 @pytest.fixture
@@ -119,6 +159,7 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor = TestZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
+        monitor.crawler.settings.getlist.return_value = None
         mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs)
 
         # Return exact number of jobs
@@ -134,6 +175,7 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor = TestZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
+        monitor.crawler.settings.getlist.return_value = None
         output = [Mock(), Mock()]
         mock_client.spider.jobs.list = Mock(return_value=output)
 
@@ -149,12 +191,47 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor = TestZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
+        monitor.crawler.settings.getlist.return_value = None
         mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs)
 
         # Jobs bigger than 1000
         jobs = monitor._get_jobs(states=None, number_of_jobs=2500)
         assert len(jobs) == 2500
         assert mock_client.spider.jobs.list.call_count == 3
+
+    mock_client = Mock()
+    with patch(
+        "spidermon.contrib.scrapy.monitors.monitors.Client"
+    ) as mock_client_class:
+        mock_client_class.return_value = mock_client
+        monitor = TestZyteJobsComparisonMonitor()
+        monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
+        monitor.data = Mock()
+        monitor.crawler.settings.getlist.return_value = ["finished"]
+        mock_client.spider.jobs.list = Mock(
+            side_effect=get_paginated_jobs_with_finished_close_reason
+        )
+
+        # Return exact number of jobs
+        jobs = monitor._get_jobs(states=None, number_of_jobs=50)
+        assert len(jobs) == 50
+
+    mock_client = Mock()
+    with patch(
+        "spidermon.contrib.scrapy.monitors.monitors.Client"
+    ) as mock_client_class:
+        mock_client_class.return_value = mock_client
+        monitor = TestZyteJobsComparisonMonitor()
+        monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
+        monitor.data = Mock()
+        monitor.crawler.settings.getlist.return_value = ["finished"]
+        mock_client.spider.jobs.list = Mock(
+            side_effect=get_paginated_jobs_with_cancel_close_reason
+        )
+
+        # Return no jobs as all will be filtered due to close reaseon
+        jobs = monitor._get_jobs(states=None, number_of_jobs=50)
+        assert len(jobs) == 0
 
 
 @pytest.mark.parametrize(

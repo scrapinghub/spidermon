@@ -21,6 +21,7 @@ SPIDERMON_MAX_REQUESTS_ALLOWED = "SPIDERMON_MAX_REQUESTS_ALLOWED"
 SPIDERMON_JOBS_COMPARISON = "SPIDERMON_JOBS_COMPARISON"
 SPIDERMON_JOBS_COMPARISON_STATES = "SPIDERMON_JOBS_COMPARISON_STATES"
 SPIDERMON_JOBS_COMPARISON_TAGS = "SPIDERMON_JOBS_COMPARISON_TAGS"
+SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS = "SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS"
 SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
 SPIDERMON_ITEM_COUNT_INCREASE = "SPIDERMON_ITEM_COUNT_INCREASE"
 
@@ -528,6 +529,11 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
     You can also filter which jobs to compare based on their tags using the
     ``SPIDERMON_JOBS_COMPARISON_TAGS`` setting. Among the defined tags we consider only those
     that are also present in the current job.
+
+    You can also filter which jobs to compare based on their close reason using the
+    ``SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS`` setting. The default value is ``()``,
+    which doesn't filter any job based on close_reason. To only consider successfully finished jobs,
+    use ``("finished", ) instead.``
     """
 
     stat_name = "item_scraped_count"
@@ -556,6 +562,9 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
 
     def _get_jobs(self, states, number_of_jobs):
         tags = self._get_tags_to_filter()
+        close_reasons = self.crawler.settings.getlist(
+            SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS, ()
+        )
 
         total_jobs = []
         start = 0
@@ -571,9 +580,13 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
                 count=count,
                 has_tag=tags or None,
             )
-            total_jobs.extend(current_jobs)
 
-            if len(current_jobs) < MAX_API_COUNT or len(total_jobs) == number_of_jobs:
+            for job in current_jobs:
+                if close_reasons and job.get("close_reason") not in close_reasons:
+                    continue
+                total_jobs.append(job)
+
+            if len(current_jobs) < MAX_API_COUNT or len(total_jobs) >= number_of_jobs:
                 # Stop paginating if results are less than 1000 (pagination not required)
                 # or target jobs was reached - no more pagination required
                 break
