@@ -45,6 +45,6 @@ jobs:
           tox -e docs
       - name: Upload coverage.xml to codecov
         if: ${{ matrix.python-version == 3.11 }}
-        uses: codecov/codecov-action@v4.0.1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+        uses: codecov/codecov-action@v4.5.0
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
