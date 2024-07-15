@@ -57,4 +57,4 @@ Default: ``False``
 If set `True`, the Sentry message will be in the logs but nothing will be sent.
 
 .. _`Sentry`: https://sentry.io/
-.. _`Sentry DSN`: https://docs.sentry.io/concepts/key-terms/dsn-explainer/
+.. _`Sentry DSN`: https://docs.sentry.io/concepts/key-terms/dsn-explainer/#dsn-utilization
