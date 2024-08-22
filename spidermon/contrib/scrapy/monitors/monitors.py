@@ -332,9 +332,7 @@ class SPMErrorRatioMonitor(BaseScrapyMonitor):
 
     stat_name = "zyte_smartproxy/response/error"
 
-    @monitors.name(
-        "The error ratio should be less than threshold"
-    )
+    @monitors.name("The error ratio should be less than threshold")
     def test_maximum_error_ratio(self):
         if self.stat_name not in self.stats:
             message = f"Unable to find '{self.stat_name}' in job stats."
@@ -346,9 +344,11 @@ class SPMErrorRatioMonitor(BaseScrapyMonitor):
 
         errors = self.stats[self.stat_name]
         requests = self.stats["zyte_smartproxy/request"]
-        ratio = errors/requests
+        ratio = errors / requests
 
-        msg = "Too many failed SPM responses ({}) reached the maximum retry amount".format(errors)
+        msg = "Too many failed SPM responses ({}) reached the maximum retry amount".format(
+            errors
+        )
         self.assertLessEqual(ratio, threshold, msg=msg)
 
 
