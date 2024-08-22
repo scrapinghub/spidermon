@@ -24,6 +24,8 @@ SPIDERMON_JOBS_COMPARISON_TAGS = "SPIDERMON_JOBS_COMPARISON_TAGS"
 SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS = "SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS"
 SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
 SPIDERMON_ITEM_COUNT_INCREASE = "SPIDERMON_ITEM_COUNT_INCREASE"
+SPIDERMON_MAX_ZYTE_API_ERROR_RATIO = "SPIDERMON_MAX_ZYTE_API_ERROR_RATIO"
+SPIDERMON_MAX_SPM_ERROR_RATIO = "SPIDERMON_MAX_SPM_ERROR_RATIO"
 
 
 @monitors.name("Extracted Items Monitor")
@@ -295,6 +297,59 @@ class SuccessfulRequestsMonitor(BaseScrapyMonitor):
         threshold = self.crawler.settings.getint(SPIDERMON_MIN_SUCCESSFUL_REQUESTS, 0)
         msg = "Too few ({}) successful requests".format(requests)
         self.assertGreaterEqual(requests, threshold, msg=msg)
+
+
+@monitors.name("Zyte API Error Ratio monitor")
+class ZyteAPIErrorRatioMonitor(Monitor, BaseStatMonitor):
+    """Check the amount of zyte-api error ratio.
+
+    You can configure the maximum error ratio (range from 0 to 1) using
+    ``SPIDERMON_MAX_ZYTE_API_ERROR_RATIO`` as a project setting.
+
+    There's **NO** default value for this setting, if you try to use this
+    monitor without setting it, it'll raise a ``NotConfigured`` exception.
+
+    If the job isn't using zyte-api or no request is made using zyte-api,
+    the monitor will be skipped."""
+
+    stat_name = "scrapy-zyte-api/error_ratio"
+    threshold_setting = SPIDERMON_MAX_ZYTE_API_ERROR_RATIO
+    assert_type = "<="
+    fail_if_stat_missing = False
+
+
+@monitors.name("SPM Error Ratio monitor")
+class SPMErrorRatioMonitor(BaseScrapyMonitor):
+    """Check the amount of smart proxy manager error ratio.
+
+    You can configure the maximum error ratio (range from 0 to 1) using
+    ``SPIDERMON_MAX_SPM_ERROR_RATIO`` as a project setting.
+
+    The default is ``-1`` which disables the monitor.
+
+    If the job isn't using SPM or no request is made using SPM,
+    the monitor will be skipped."""
+
+    stat_name = "zyte_smartproxy/response/error"
+
+    @monitors.name(
+        "The error ratio should be less than threshold"
+    )
+    def test_maximum_error_ratio(self):
+        if self.stat_name not in self.stats:
+            message = f"Unable to find '{self.stat_name}' in job stats."
+            self.skipTest(message)
+
+        threshold = self.crawler.settings.getint(SPIDERMON_MAX_SPM_ERROR_RATIO, -1)
+        if threshold < 0:
+            return
+
+        errors = self.stats[self.stat_name]
+        requests = self.stats["zyte_smartproxy/request"]
+        ratio = errors/requests
+
+        msg = "Too many failed SPM responses ({}) reached the maximum retry amount".format(errors)
+        self.assertLessEqual(ratio, threshold, msg=msg)
 
 
 @monitors.name("Total Requests monitor")
