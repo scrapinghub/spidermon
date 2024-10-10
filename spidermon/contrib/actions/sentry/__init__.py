@@ -136,12 +136,13 @@ class SendSentryMessage(Action):
             scope.set_extra("failed_monitors", message.get("failed_monitors", []))
 
             sentry_client.capture_event(
-                {
+                event={
                     "message": "{title} \n {description}".format(
                         title=message.get("title"),
                         description=message.get("failure_reasons", ""),
                     ),
                     "level": self.sentry_log_level,
+                    "fingerprint": [message.get("title")],
                 },
                 scope=scope,
             )
