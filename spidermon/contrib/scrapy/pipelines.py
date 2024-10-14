@@ -109,8 +109,7 @@ class ItemValidationPipeline:
             # No validators match this specific item type
             return item
 
-        item_adapter = ItemAdapter(item)
-        item_dict = item_adapter.asdict()
+        item_dict = self._convert_item_to_dict(item)
         self.stats.add_item()
         self.stats.add_fields(len(item_dict.keys()))
         for validator in validators:
@@ -158,3 +157,15 @@ class ItemValidationPipeline:
             for message in messages:
                 self.stats.add_field_error(field_name, message)
         self.stats.add_item_with_errors()
+
+    @staticmethod
+    def _convert_item_to_dict(item: Item) -> dict:
+        """
+        Convert a Scrapy item to a dict.
+
+        :param item: Scrapy item
+        :returns: The item as a dict
+        """
+        item_adapter = ItemAdapter(item)
+        item_dict = item_adapter.asdict()
+        return item_dict
