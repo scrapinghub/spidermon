@@ -1,6 +1,16 @@
 Release notes
 =============
 
+1.23.0 (2024-10-31)
+-------------------
+
+- bugs: Fix ``traverse_nested`` when value is not compatible with ``ItemAdapter`` (`PR#450 <https://github.com/scrapinghub/spidermon/pull/450>`_)
+- bugs: Fix default templates non-subscriptable issue (`PR#451 <https://github.com/scrapinghub/spidermon/pull/451>`_)
+- chore: Update codecov action (`PR#453 <https://github.com/scrapinghub/spidermon/pull/453>`_)
+- docs: Fix broken link (`PR#452 <https://github.com/scrapinghub/spidermon/pull/452>`_)
+- feature: Allow to filter jobs in `ZyteJobsComparisonMonitor` by `close_reason` (`PR#440 <https://github.com/scrapinghub/spidermon/pull/440>`_)
+- feature: Apply fingerprint rules to group issues in sentry alerts (`PR#455 <https://github.com/scrapinghub/spidermon/pull/455>`_)
+
 1.22.0 (2024-05-08)
 -------------------
 
@@ -20,14 +30,14 @@ Release notes
 - bug: Fix tests for minimum properties and items in JSON Schema validations (`PR#432 <https://github.com/scrapinghub/spidermon/pull/432>`_)
 - feature: Add the ``SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS`` setting to limit nested dict stats computation (`PR#433 <https://github.com/scrapinghub/spidermon/pull/433>`_)
 - feature: Add ``SendSNSNotification`` to Spidermon Notifications (`PR#413 <https://github.com/scrapinghub/spidermon/pull/413>`_)
-- feature: Change the format of the content of _validation from defaultdict to dict (`PR#431 <https://github.com/scrapinghub/spidermon/pull/431>`_)  
+- feature: Change the format of the content of _validation from defaultdict to dict (`PR#431 <https://github.com/scrapinghub/spidermon/pull/431>`_)
 
 1.20.0 (2023-09-01)
 -------------------
 
 - feature: Add support for nested fields in the ``SPIDERMON_VALIDATION_ERRORS_FIELD`` setting (`PR#416 <https://github.com/scrapinghub/spidermon/pull/417>`_)
 - bug: Fix ItemValidationPipeline using the ``__setitem__`` method without ItemAdaper (`PR#415 <https://github.com/scrapinghub/spidermon/pull/415>`_)
-- feature: Improve test coverage for the item validation pipeline (`PR#414 <https://github.com/scrapinghub/spidermon/pull/414>`_) 
+- feature: Improve test coverage for the item validation pipeline (`PR#414 <https://github.com/scrapinghub/spidermon/pull/414>`_)
 - bug: Fix ``spidermon.utils.zyte.Client`` not following crawler settings (`PR#411 <https://github.com/scrapinghub/spidermon/pull/411>`_)
 - chore: Migrate ReadTheDocs to config file v2 (`PR#408 <https://github.com/scrapinghub/spidermon/pull/408>`_)
 - chore: Refactor package requirements (`PR#407 <https://github.com/scrapinghub/spidermon/pull/407>`_)
@@ -35,9 +45,9 @@ Release notes
 Backward-incompatible changes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- The ``SPIDERMON_VALIDATION_ERRORS_FIELD`` setting no longer supports a field 
-  name that contains a dot (``.``). Dots are now be treated as field 
-  separators, to support specifying a nested field.  
+- The ``SPIDERMON_VALIDATION_ERRORS_FIELD`` setting no longer supports a field
+  name that contains a dot (``.``). Dots are now be treated as field
+  separators, to support specifying a nested field.
 
 1.19.0 (2023-07-07)
 -------------------
