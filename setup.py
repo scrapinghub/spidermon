@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="spidermon",
-    version="1.22.0",
+    version="1.23.0",
     url="https://github.com/scrapinghub/spidermon",
     author="Zyte",
     author_email="opensource@zyte.com",
