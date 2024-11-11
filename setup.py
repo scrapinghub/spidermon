@@ -4,6 +4,12 @@ setup(
     name="spidermon",
     version="1.23.0",
     url="https://github.com/scrapinghub/spidermon",
+    project_urls={
+        "Documentation": "https://spidermon.readthedocs.io/",
+        "Source": "https://github.com/scrapinghub/spidermon",
+        "Tracker": "https://github.com/scrapinghub/spidermon/issues",
+        "Release notes": "https://spidermon.readthedocs.io/en/latest/changelog.html",
+    },
     author="Zyte",
     author_email="opensource@zyte.com",
     description=("Spidermon is a framework to build monitors for Scrapy spiders."),
