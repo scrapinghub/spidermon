@@ -14,6 +14,7 @@ setup(
     author_email="opensource@zyte.com",
     description=("Spidermon is a framework to build monitors for Scrapy spiders."),
     long_description=open("README.rst", encoding="utf-8").read(),
+    long_description_content_type="text/x-rst",
     license="BSD",
     packages=find_packages(),
     package_data={"spidermon": ["VERSION"]},
