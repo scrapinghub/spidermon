@@ -252,3 +252,11 @@ class TestAddErrors:
             "prefilled",
             "some_message",
         ]
+
+    @staticmethod
+    def test_convert_item_to_dict(self):
+        test_item = TestItem(
+            {"url": "http://example.com", "error_test": "error_message", "title": "test title"}
+        )
+        item_dict = ItemValidationPipeline._convert_item_to_dict(test_item)
+        assert item_dict == {"url": "http://example.com", "error_test": "error_message", "title": "test title"}
