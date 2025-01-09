@@ -23,6 +23,7 @@ SPIDERMON_JOBS_COMPARISON_STATES = "SPIDERMON_JOBS_COMPARISON_STATES"
 SPIDERMON_JOBS_COMPARISON_TAGS = "SPIDERMON_JOBS_COMPARISON_TAGS"
 SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS = "SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS"
 SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
+SPIDERMON_JOBS_COMPARISON_ARGUMENTS = "SPIDERMON_JOBS_COMPARISON_ARGUMENTS"
 SPIDERMON_ITEM_COUNT_INCREASE = "SPIDERMON_ITEM_COUNT_INCREASE"
 
 
@@ -565,6 +566,7 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         close_reasons = self.crawler.settings.getlist(
             SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS, ()
         )
+        args = self._get_args_to_filter()
 
         total_jobs = []
         start = 0
@@ -584,6 +586,9 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
             for job in current_jobs:
                 if close_reasons and job.get("close_reason") not in close_reasons:
                     continue
+                if not self._has_desired_args(job, args):
+                    continue
+
                 total_jobs.append(job)
 
             if len(current_jobs) < MAX_API_COUNT or len(total_jobs) >= number_of_jobs:
@@ -610,6 +615,23 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
 
         tags_to_filter = set(desired_tags) & set(current_tags)
         return list(sorted(tags_to_filter))
+
+    def _get_args_to_filter(self):
+        """
+        Return a list of desired arguments to filter
+        """
+        desired_args = self.crawler.settings.getlist(SPIDERMON_JOBS_COMPARISON_ARGUMENTS)
+        if not desired_args:
+            return []
+
+        return desired_args
+
+    def _has_desired_args(self, job, args):
+        if not args and not job.get("spider_args"):
+            return True
+
+        job_args = job["spider_args"].keys()
+        return all(a in job_args for a in args)
 
     def get_threshold(self):
         number_of_jobs = self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON)
