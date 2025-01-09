@@ -535,6 +535,11 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
     ``SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS`` setting. The default value is ``()``,
     which doesn't filter any job based on close_reason. To only consider successfully finished jobs,
     use ``("finished", ) instead.``
+
+    You can also filter which jobs to compare based on the job arguments using the
+    ``SPIDERMON_JOBS_COMPARISON_ARGUMENTS`` setting. It will filter any job based on spider_args.
+    The job that will have all the desired arguments will be processed.
+    Example ["debug_url"] or ["is_full_crawl"]
     """
 
     stat_name = "item_scraped_count"
