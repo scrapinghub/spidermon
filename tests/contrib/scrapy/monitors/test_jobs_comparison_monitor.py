@@ -8,6 +8,7 @@ from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_JOBS_COMPARISON_STATES,
     SPIDERMON_JOBS_COMPARISON_TAGS,
     SPIDERMON_JOBS_COMPARISON_THRESHOLD,
+    SPIDERMON_JOBS_COMPARISON_ARGUMENTS,
     SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS,
     ZyteJobsComparisonMonitor,
     monitors,
@@ -42,6 +43,15 @@ def get_paginated_jobs(**kwargs):
     mocked_job_meta = []
     for _ in range(kwargs["count"]):
         mocked_job_meta.append({"spider_args": {}})
+    return mocked_job_meta
+
+
+def get_paginated_jobs_with_one_args(**kwargs):
+    mocked_job_meta = []
+    for _ in range(kwargs["count"]):
+        mocked_job_meta.append(
+            {"spider_args": {"args1": True}, "close_reason": "finished"}
+        )
     return mocked_job_meta
 
 
@@ -284,6 +294,32 @@ def test_jobs_comparison_monitor_get_jobs():
         # Return exact number of jobs
         jobs = monitor._get_jobs(states=None, number_of_jobs=50)
         assert len(jobs) == 50
+        mock_client.spider.jobs.list.assert_called_once()
+
+    mock_client = Mock()
+    with patch(
+        "spidermon.contrib.scrapy.monitors.monitors.Client"
+    ) as mock_client_class:
+        mock_client_class.return_value = mock_client
+        monitor = TestZyteJobsComparisonMonitor()
+        monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
+        monitor.data = Mock()
+
+        def mock_getlist(key, default=None):
+            data = {
+                SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS: ["finished"],
+                SPIDERMON_JOBS_COMPARISON_ARGUMENTS: [],
+            }
+            return data.get(key, default)
+
+        monitor.crawler.settings = Mock()
+        monitor.crawler.settings.getlist.side_effect = mock_getlist
+        monitor.crawler.settings.getbool.return_value = True
+        mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs_arg_finished)
+
+        # Return 0 number of jobs
+        jobs = monitor._get_jobs(states=None, number_of_jobs=5)
+        assert len(jobs) == 0
         mock_client.spider.jobs.list.assert_called_once()
 
 
