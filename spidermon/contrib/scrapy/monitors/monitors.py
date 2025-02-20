@@ -24,6 +24,7 @@ SPIDERMON_JOBS_COMPARISON_TAGS = "SPIDERMON_JOBS_COMPARISON_TAGS"
 SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS = "SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS"
 SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
 SPIDERMON_JOBS_COMPARISON_ARGUMENTS = "SPIDERMON_JOBS_COMPARISON_ARGUMENTS"
+SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED = "SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED"
 SPIDERMON_ITEM_COUNT_INCREASE = "SPIDERMON_ITEM_COUNT_INCREASE"
 
 
@@ -540,6 +541,8 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
     ``SPIDERMON_JOBS_COMPARISON_ARGUMENTS`` setting. It will filter any job based on spider_args.
     The job that will have all the desired arguments will be processed.
     Example ["debug_url"] or ["is_full_crawl"]
+    You can enable this filter by setting SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED as True in the settings.
+    Otherwise, this filter will not be applied
     """
 
     stat_name = "item_scraped_count"
@@ -572,6 +575,7 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
             SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS, ()
         )
         args = self._get_args_to_filter()
+        args_enabled = self.crawler.settings.getbool(SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED, False)
 
         total_jobs = []
         start = 0
@@ -591,7 +595,8 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
             for job in current_jobs:
                 if close_reasons and job.get("close_reason") not in close_reasons:
                     continue
-                if not self._has_desired_args(job, args):
+
+                if args_enabled and not self._has_desired_args(job, args):
                     continue
 
                 total_jobs.append(job)
@@ -634,6 +639,8 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
     def _has_desired_args(self, job, args):
         if not args and not job.get("spider_args"):
             return True
+        elif not args and job.get("spider_args"):
+            return False
 
         job_args = job["spider_args"].keys()
         return all(a in job_args for a in args)

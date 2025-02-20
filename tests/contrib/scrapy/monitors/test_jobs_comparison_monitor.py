@@ -39,7 +39,19 @@ def mock_suite(mock_jobs, monkeypatch):
 
 
 def get_paginated_jobs(**kwargs):
-    return [Mock() for _ in range(kwargs["count"])]
+    mocked_job_meta = []
+    for _ in range(kwargs["count"]):
+        mocked_job_meta.append({"spider_args": {}})
+    return mocked_job_meta
+
+
+def get_paginated_jobs_arg_finished(**kwargs):
+    mocked_job_meta = []
+    for _ in range(kwargs["count"]):
+        mocked_job_meta.append({"spider_args": {"finished": True}, "close_reason": "finished"})
+        # mocked_job_meta.append({"close_reason": "finished"})
+        # obj.get.return_value = "finished"
+    return mocked_job_meta
 
 
 def get_paginated_jobs_with_finished_close_reason(**kwargs):
@@ -160,6 +172,7 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = None
+        monitor.crawler.settings.getbool.return_value = False
         mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs)
 
         # Return exact number of jobs
@@ -176,6 +189,7 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = None
+        monitor.crawler.settings.getbool.return_value = False
         output = [Mock(), Mock()]
         mock_client.spider.jobs.list = Mock(return_value=output)
 
@@ -192,6 +206,7 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = None
+        monitor.crawler.settings.getbool.return_value = False
         mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs)
 
         # Jobs bigger than 1000
@@ -208,6 +223,7 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = ["finished"]
+        monitor.crawler.settings.getbool.return_value = False
         mock_client.spider.jobs.list = Mock(
             side_effect=get_paginated_jobs_with_finished_close_reason
         )
@@ -225,6 +241,7 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = ["finished"]
+        monitor.crawler.settings.getbool.return_value = False
         mock_client.spider.jobs.list = Mock(
             side_effect=get_paginated_jobs_with_cancel_close_reason
         )
@@ -232,6 +249,40 @@ def test_jobs_comparison_monitor_get_jobs():
         # Return no jobs as all will be filtered due to close reaseon
         jobs = monitor._get_jobs(states=None, number_of_jobs=50)
         assert len(jobs) == 0
+
+    mock_client = Mock()
+    with patch(
+            "spidermon.contrib.scrapy.monitors.monitors.Client"
+    ) as mock_client_class:
+        mock_client_class.return_value = mock_client
+        monitor = TestZyteJobsComparisonMonitor()
+        monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
+        monitor.data = Mock()
+        monitor.crawler.settings.getlist.return_value = None
+        monitor.crawler.settings.getbool.return_value = True
+        mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs)
+
+        # Return exact number of jobs
+        jobs = monitor._get_jobs(states=None, number_of_jobs=50)
+        assert len(jobs) == 50
+        mock_client.spider.jobs.list.assert_called_once()
+
+    mock_client = Mock()
+    with patch(
+            "spidermon.contrib.scrapy.monitors.monitors.Client"
+    ) as mock_client_class:
+        mock_client_class.return_value = mock_client
+        monitor = TestZyteJobsComparisonMonitor()
+        monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
+        monitor.data = Mock()
+        monitor.crawler.settings.getlist.return_value = ["finished"]
+        monitor.crawler.settings.getbool.return_value = True
+        mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs_arg_finished)
+
+        # Return exact number of jobs
+        jobs = monitor._get_jobs(states=None, number_of_jobs=50)
+        assert len(jobs) == 50
+        mock_client.spider.jobs.list.assert_called_once()
 
 
 @pytest.mark.parametrize(
