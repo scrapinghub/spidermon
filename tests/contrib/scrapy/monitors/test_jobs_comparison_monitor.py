@@ -61,8 +61,6 @@ def get_paginated_jobs_arg_finished(**kwargs):
         mocked_job_meta.append(
             {"spider_args": {"finished": True}, "close_reason": "finished"}
         )
-        # mocked_job_meta.append({"close_reason": "finished"})
-        # obj.get.return_value = "finished"
     return mocked_job_meta
 
 
