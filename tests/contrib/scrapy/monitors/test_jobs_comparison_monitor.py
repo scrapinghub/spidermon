@@ -48,7 +48,9 @@ def get_paginated_jobs(**kwargs):
 def get_paginated_jobs_arg_finished(**kwargs):
     mocked_job_meta = []
     for _ in range(kwargs["count"]):
-        mocked_job_meta.append({"spider_args": {"finished": True}, "close_reason": "finished"})
+        mocked_job_meta.append(
+            {"spider_args": {"finished": True}, "close_reason": "finished"}
+        )
         # mocked_job_meta.append({"close_reason": "finished"})
         # obj.get.return_value = "finished"
     return mocked_job_meta
@@ -252,7 +254,7 @@ def test_jobs_comparison_monitor_get_jobs():
 
     mock_client = Mock()
     with patch(
-            "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = TestZyteJobsComparisonMonitor()
@@ -269,7 +271,7 @@ def test_jobs_comparison_monitor_get_jobs():
 
     mock_client = Mock()
     with patch(
-            "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = TestZyteJobsComparisonMonitor()

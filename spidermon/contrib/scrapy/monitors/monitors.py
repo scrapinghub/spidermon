@@ -24,7 +24,9 @@ SPIDERMON_JOBS_COMPARISON_TAGS = "SPIDERMON_JOBS_COMPARISON_TAGS"
 SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS = "SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS"
 SPIDERMON_JOBS_COMPARISON_THRESHOLD = "SPIDERMON_JOBS_COMPARISON_THRESHOLD"
 SPIDERMON_JOBS_COMPARISON_ARGUMENTS = "SPIDERMON_JOBS_COMPARISON_ARGUMENTS"
-SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED = "SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED"
+SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED = (
+    "SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED"
+)
 SPIDERMON_ITEM_COUNT_INCREASE = "SPIDERMON_ITEM_COUNT_INCREASE"
 
 
@@ -575,7 +577,9 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
             SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS, ()
         )
         args = self._get_args_to_filter()
-        args_enabled = self.crawler.settings.getbool(SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED, False)
+        args_enabled = self.crawler.settings.getbool(
+            SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED, False
+        )
 
         total_jobs = []
         start = 0
@@ -630,7 +634,9 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         """
         Return a list of desired arguments to filter
         """
-        desired_args = self.crawler.settings.getlist(SPIDERMON_JOBS_COMPARISON_ARGUMENTS)
+        desired_args = self.crawler.settings.getlist(
+            SPIDERMON_JOBS_COMPARISON_ARGUMENTS
+        )
         if not desired_args:
             return []
 
