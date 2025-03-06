@@ -298,7 +298,7 @@ def test_jobs_comparison_monitor_get_jobs():
 
     mock_client = Mock()
     with patch(
-            "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = TestZyteJobsComparisonMonitor()
@@ -342,7 +342,7 @@ def test_jobs_comparison_monitor_get_jobs():
 
     mock_client = Mock()
     with patch(
-            "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = TestZyteJobsComparisonMonitor()
