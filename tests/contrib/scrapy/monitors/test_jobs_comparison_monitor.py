@@ -340,6 +340,26 @@ def test_jobs_comparison_monitor_get_jobs():
         assert len(jobs) == 0
         mock_client.spider.jobs.list.assert_called_once()
 
+    mock_client = Mock()
+    with patch(
+            "spidermon.contrib.scrapy.monitors.monitors.Client"
+    ) as mock_client_class:
+        mock_client_class.return_value = mock_client
+        monitor = TestZyteJobsComparisonMonitor()
+        monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
+        monitor.data = Mock()
+
+        monitor.crawler.settings = Mock()
+        monitor.crawler.settings.getlist.return_value = ["finished"]
+        monitor.crawler.settings.getdict.return_value = {"is_debug": False}
+        monitor.crawler.settings.getbool.return_value = True
+        mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs_arg_finished)
+
+        # Return 0 number of jobs
+        jobs = monitor._get_jobs(states=None, number_of_jobs=5)
+        assert len(jobs) == 0
+        mock_client.spider.jobs.list.assert_called_once()
+
 
 @pytest.mark.parametrize(
     ["item_count", "previous_counts", "threshold", "should_raise"],
