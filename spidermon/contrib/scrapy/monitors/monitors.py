@@ -542,7 +542,7 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
     You can also filter which jobs to compare based on the job arguments using the
     ``SPIDERMON_JOBS_COMPARISON_ARGUMENTS`` setting. It will filter any job based on spider_args.
     The job that will have all the desired arguments will be processed.
-    Example ["debug_url"] or ["is_full_crawl"]
+    Example {"debug_url": "https://www.google.com"} or {"is_full_crawl": True}
     You can enable this filter by setting SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED as True in the settings.
     Otherwise, this filter will not be applied
     """
@@ -634,11 +634,11 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         """
         Return a list of desired arguments to filter
         """
-        desired_args = self.crawler.settings.getlist(
+        desired_args = self.crawler.settings.getdict(
             SPIDERMON_JOBS_COMPARISON_ARGUMENTS
         )
         if not desired_args:
-            return []
+            return {}
 
         return desired_args
 
@@ -649,7 +649,10 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
             return False
 
         job_args = job["spider_args"].keys()
-        return all(a in job_args for a in args)
+        if not all(a in job_args for a in args):
+            return False
+
+        return args == job["spider_args"]
 
     def get_threshold(self):
         number_of_jobs = self.crawler.settings.getint(SPIDERMON_JOBS_COMPARISON)

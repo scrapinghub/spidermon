@@ -268,6 +268,7 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor = TestZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
+        monitor.crawler.settings.getdict.return_value = {}
         monitor.crawler.settings.getlist.return_value = None
         monitor.crawler.settings.getbool.return_value = True
         mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs)
@@ -285,6 +286,7 @@ def test_jobs_comparison_monitor_get_jobs():
         monitor = TestZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
+        monitor.crawler.settings.getdict.return_value = {"finished": True}
         monitor.crawler.settings.getlist.return_value = ["finished"]
         monitor.crawler.settings.getbool.return_value = True
         mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs_arg_finished)
@@ -292,6 +294,24 @@ def test_jobs_comparison_monitor_get_jobs():
         # Return exact number of jobs
         jobs = monitor._get_jobs(states=None, number_of_jobs=50)
         assert len(jobs) == 50
+        mock_client.spider.jobs.list.assert_called_once()
+
+    mock_client = Mock()
+    with patch(
+            "spidermon.contrib.scrapy.monitors.monitors.Client"
+    ) as mock_client_class:
+        mock_client_class.return_value = mock_client
+        monitor = TestZyteJobsComparisonMonitor()
+        monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
+        monitor.data = Mock()
+        monitor.crawler.settings.getdict.return_value = {"finished": False}
+        monitor.crawler.settings.getlist.return_value = ["finished"]
+        monitor.crawler.settings.getbool.return_value = True
+        mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs_arg_finished)
+
+        # Return 0 number of jobs as argument values did not matched
+        jobs = monitor._get_jobs(states=None, number_of_jobs=50)
+        assert len(jobs) == 0
         mock_client.spider.jobs.list.assert_called_once()
 
     mock_client = Mock()
@@ -306,12 +326,12 @@ def test_jobs_comparison_monitor_get_jobs():
         def mock_getlist(key, default=None):
             data = {
                 SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS: ["finished"],
-                SPIDERMON_JOBS_COMPARISON_ARGUMENTS: [],
             }
             return data.get(key, default)
 
         monitor.crawler.settings = Mock()
         monitor.crawler.settings.getlist.side_effect = mock_getlist
+        monitor.crawler.settings.getdict.return_value = {}
         monitor.crawler.settings.getbool.return_value = True
         mock_client.spider.jobs.list = Mock(side_effect=get_paginated_jobs_arg_finished)
 
