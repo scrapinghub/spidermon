@@ -18,7 +18,8 @@ class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
 
         project = sh_client.get_project(proj_id)
         collections = project.collections
-        stats_location = f"{spider.name}_stats_history"
+        spider_name = os.getenv("SHUB_VIRTUAL_SPIDER", spider.name)
+        stats_location = f"{spider_name}_stats_history"
         store = collections.get_store(stats_location)
         return store
 

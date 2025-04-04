@@ -1,3 +1,5 @@
+import os
+
 from scrapy import signals
 from scrapy.exceptions import NotConfigured
 from scrapy.utils.misc import load_object
@@ -238,5 +240,6 @@ class Spidermon:
             else [],
             "crawler": self.crawler,
             "spider": spider,
+            "sc_spider_name": os.getenv("SHUB_VIRTUAL_SPIDER", spider.name),
             "job": self.client.job if self.client.available else None,
         }

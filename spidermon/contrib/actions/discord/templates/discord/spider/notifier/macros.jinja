@@ -16,4 +16,4 @@
 
 {% macro render_job_url() %}{% if data.job %} / [view job in Scrapy Cloud](https://app.scrapinghub.com/p/{{ data.job.key }}){% endif %}{% endmacro %}
 {% macro render_url() %}{{ render_job_url() }}{% endmacro %}
-{% macro render_spider_name() %}{% if data.spider %}{{ data.spider.name }}{% elif data.job %}{{ data.job.metadata.get('spider') }}{% else %}??{% endif %}{% endmacro %}
+{% macro render_spider_name() %}{% if data.spider %}{{ data.sc_spider_name }}{% elif data.job %}{{ data.job.metadata.get('spider') }}{% else %}??{% endif %}{% endmacro %}

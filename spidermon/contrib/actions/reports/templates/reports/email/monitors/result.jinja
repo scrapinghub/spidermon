@@ -168,7 +168,7 @@
                             {% set log_errors_count = data.stats.get('log_count/ERROR', 0) %}
                             {% set running_time = data.stats.get('finish_time') - data.stats.get('start_time') %}
 
-                            {{ render_header_data('Spider', data.spider.name, 'label label-blue') }}
+                            {{ render_header_data('Spider', data.sc_spider_name, 'label label-blue') }}
                             {{ render_header_data('Items', items_count, "badge badge-green") }}
                             {{ render_header_data('Requests', requests_count, "badge") }}
                             {{ render_header_data('Errors', log_errors_count, "badge badge-red") }}
