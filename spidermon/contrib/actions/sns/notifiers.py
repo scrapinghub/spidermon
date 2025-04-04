@@ -6,7 +6,10 @@ class SendSNSNotificationSpiderStarted(SendSNSNotification):
         subject = "Spider Started"
         attributes = {
             "EventType": {"DataType": "String", "StringValue": "SpiderStarted"},
-            "SpiderName": {"DataType": "String", "StringValue": self.data.sc_spider_name},
+            "SpiderName": {
+                "DataType": "String",
+                "StringValue": self.data.sc_spider_name,
+            },
             "StartTime": {
                 "DataType": "String",
                 "StringValue": str(self.data.stats.start_time),
@@ -20,7 +23,10 @@ class SendSNSNotificationSpiderFinished(SendSNSNotification):
         subject = "Spider Finished"
         attributes = {
             "EventType": {"DataType": "String", "StringValue": "SpiderFinished"},
-            "SpiderName": {"DataType": "String", "StringValue": self.data.sc_spider_name},
+            "SpiderName": {
+                "DataType": "String",
+                "StringValue": self.data.sc_spider_name,
+            },
             "ItemsScraped": {
                 "DataType": "Number",
                 "StringValue": str(self.data.stats.item_scraped_count),
