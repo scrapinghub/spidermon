@@ -27,7 +27,7 @@ def logger_error(mocker):
 @pytest.fixture
 def mock_notifier_data(mocker):
     data = mocker.MagicMock()
-    data.spider.name = "TestSpider"
+    data.sc_spider_name = "TestSpider"
     data.stats.start_time = "2023-08-25 10:00:00"
     data.stats.finish_time = "2023-08-25 11:00:00"
     data.stats.item_scraped_count = 100
