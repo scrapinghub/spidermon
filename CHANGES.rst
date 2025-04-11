@@ -1,6 +1,13 @@
 Release notes
 =============
 
+1.24.0 (2025-04-11)
+-------------------
+
+- feature: Allow filtering jobs in ``ZyteJobsComparisonMonitor`` based on job arguments (`PR#461 <https://github.com/scrapinghub/spidermon/pull/461>`_)
+- feature: Use ``SHUB_VIRTUAL_SPIDER`` as spider name when available for better identification of virtual spiders (`PR#462 <https://github.com/scrapinghub/spidermon/pull/462>`_)
+- chore: Update `setup.py` package information (`PR#458 <https://github.com/scrapinghub/spidermon/pull/458>`_)
+
 1.23.0 (2024-10-31)
 -------------------
 
