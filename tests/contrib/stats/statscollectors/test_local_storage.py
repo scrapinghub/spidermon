@@ -5,6 +5,7 @@ import pytest
 
 from scrapy import Spider
 from scrapy.utils.test import get_crawler
+from scrapy.utils.project import data_path
 from spidermon.contrib.stats.statscollectors.local_storage import (
     LocalStorageStatsHistoryCollector,
 )
@@ -150,3 +151,28 @@ def test_able_to_import_deprecated_local_storage_stats_collector_module():
         assert (
             False
         ), f"Unable to import spidermon.contrib.stats.statscollectors.LocalStorageStatsHistoryCollector"
+
+
+def test_stats_location_env_spider_name(test_settings):
+    statsdir = data_path("stats", createdir=False)
+    crawler = get_crawler(Spider, test_settings)
+    crawler.crawl("foo_spider")
+
+    os.environ["SHUB_VIRTUAL_SPIDER"] = "virtual_spider"
+
+    actual = crawler.stats._stats_location(crawler.spider)
+    expected = os.path.join(statsdir, "virtual_spider_stats_history")
+    assert actual == expected
+    crawler.stop()
+    del os.environ["SHUB_VIRTUAL_SPIDER"]
+
+
+def test_stats_location_regular_spider_name(test_settings):
+    statsdir = data_path("stats", createdir=False)
+    crawler = get_crawler(Spider, test_settings)
+    crawler.crawl("foo_spider")
+
+    actual = crawler.stats._stats_location(crawler.spider)
+    expected = os.path.join(statsdir, "foo_spider_stats_history")
+    assert actual == expected
+    crawler.stop()

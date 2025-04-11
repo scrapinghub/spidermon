@@ -5,11 +5,14 @@ from collections import deque
 from scrapy.statscollectors import StatsCollector
 from scrapy.utils.project import data_path
 
+from spidermon.contrib.utils.spider import get_spider_name
+
 
 class LocalStorageStatsHistoryCollector(StatsCollector):
     def _stats_location(self, spider):
         statsdir = data_path("stats", createdir=True)
-        return os.path.join(statsdir, f"{spider.name}_stats_history")
+        spider_name = get_spider_name(spider)
+        return os.path.join(statsdir, f"{spider_name}_stats_history")
 
     def open_spider(self, spider):
         stats_location = self._stats_location(spider)

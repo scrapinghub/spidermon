@@ -66,7 +66,7 @@ class SendSentryMessage(Action):
             "{project_name} | {environment} | Spider {spider_name} notification".format(
                 project_name=self.project_name,
                 environment=self.environment,
-                spider_name=self.data.spider.name,
+                spider_name=self.data.sc_spider_name,
             )
         )
 
@@ -83,7 +83,7 @@ class SendSentryMessage(Action):
             )
 
         if self.data.spider:
-            message["spider_name"] = self.data.spider.name
+            message["spider_name"] = self.data.sc_spider_name
 
         if self.data.stats:
             message["items_count"] = self.data.stats.get("item_scraped_count", 0)

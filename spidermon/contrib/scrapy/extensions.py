@@ -1,3 +1,5 @@
+import os
+
 from scrapy import signals
 from scrapy.exceptions import NotConfigured
 from scrapy.utils.misc import load_object
@@ -5,6 +7,7 @@ from twisted.internet.task import LoopingCall
 from itemadapter import ItemAdapter
 
 from spidermon import MonitorSuite
+from spidermon.contrib.utils.spider import get_spider_name
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 from spidermon.python import factory
 from spidermon.python.monitors import ExpressionsMonitor
@@ -238,5 +241,6 @@ class Spidermon:
             else [],
             "crawler": self.crawler,
             "spider": spider,
+            "sc_spider_name": get_spider_name(spider),
             "job": self.client.job if self.client.available else None,
         }

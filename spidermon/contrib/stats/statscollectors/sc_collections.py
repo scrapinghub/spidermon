@@ -5,6 +5,8 @@ from collections import deque
 import scrapinghub
 from sh_scrapy.stats import HubStorageStatsCollector
 
+from spidermon.contrib.utils.spider import get_spider_name
+
 logger = logging.getLogger(__name__)
 
 
@@ -18,7 +20,8 @@ class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
 
         project = sh_client.get_project(proj_id)
         collections = project.collections
-        stats_location = f"{spider.name}_stats_history"
+        spider_name = get_spider_name(spider)
+        stats_location = f"{spider_name}_stats_history"
         store = collections.get_store(stats_location)
         return store
 
