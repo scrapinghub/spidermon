@@ -143,3 +143,107 @@ def test_monitor_skip_if_no_items_set_false(field_coverage_monitor_suite):
     monitor_runner.run(field_coverage_monitor_suite, **data)
 
     assert not monitor_runner.result.wasSuccessful()
+
+
+def test_monitor_pass_with_tolerance_when_coverage_slightly_below_expected(
+    field_coverage_monitor_suite,
+):
+    settings = {
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_FIELD_COVERAGE_RULES": {
+            "dict/field": 0.95,
+        },
+        "SPIDERMON_FIELD_COVERAGE_TOLERANCE": 0.05,
+    }
+    stats = {"spidermon_field_coverage/dict/field": 0.91}
+    data = make_data_for_monitor(settings=settings, stats=stats)
+    monitor_runner = data.pop("runner")
+    monitor_runner.run(field_coverage_monitor_suite, **data)
+
+    assert monitor_runner.result.wasSuccessful()
+
+
+def test_monitor_fail_with_tolerance_when_coverage_too_far_below_expected(
+    field_coverage_monitor_suite,
+):
+    settings = {
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_FIELD_COVERAGE_RULES": {
+            "dict/field": 0.95,
+        },
+        "SPIDERMON_FIELD_COVERAGE_TOLERANCE": 0.05,
+    }
+    stats = {"spidermon_field_coverage/dict/field": 0.89}
+    data = make_data_for_monitor(settings=settings, stats=stats)
+    monitor_runner = data.pop("runner")
+    monitor_runner.run(field_coverage_monitor_suite, **data)
+
+    assert not monitor_runner.result.wasSuccessful()
+
+
+def test_monitor_pass_with_tolerance_when_coverage_exactly_at_tolerance_threshold(
+    field_coverage_monitor_suite,
+):
+    settings = {
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_FIELD_COVERAGE_RULES": {
+            "dict/field": 0.95,
+        },
+        "SPIDERMON_FIELD_COVERAGE_TOLERANCE": 0.05,
+    }
+    stats = {"spidermon_field_coverage/dict/field": 0.90}
+    data = make_data_for_monitor(settings=settings, stats=stats)
+    monitor_runner = data.pop("runner")
+    monitor_runner.run(field_coverage_monitor_suite, **data)
+
+    assert monitor_runner.result.wasSuccessful()
+
+
+def test_monitor_default_tolerance_is_zero(field_coverage_monitor_suite):
+    settings = {
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_FIELD_COVERAGE_RULES": {
+            "dict/field": 0.95,
+        },
+        # No tolerance setting - should default to 0
+    }
+    stats = {"spidermon_field_coverage/dict/field": 0.94}
+    data = make_data_for_monitor(settings=settings, stats=stats)
+    monitor_runner = data.pop("runner")
+    monitor_runner.run(field_coverage_monitor_suite, **data)
+
+    assert not monitor_runner.result.wasSuccessful()
+
+
+def test_monitor_raise_value_error_for_invalid_tolerance_negative(
+    field_coverage_monitor_suite,
+):
+    settings = {
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_FIELD_COVERAGE_RULES": {
+            "dict/field": 0.8,
+        },
+        "SPIDERMON_FIELD_COVERAGE_TOLERANCE": -0.1,
+    }
+    stats = {"spidermon_field_coverage/dict/field": 0.8}
+    data = make_data_for_monitor(settings=settings, stats=stats)
+    monitor_runner = data.pop("runner")
+    with pytest.raises(ValueError, match="SPIDERMON_FIELD_COVERAGE_TOLERANCE must be between 0 and 1"):
+        monitor_runner.run(field_coverage_monitor_suite, **data)
+
+
+def test_monitor_raise_value_error_for_invalid_tolerance_greater_than_one(
+    field_coverage_monitor_suite,
+):
+    settings = {
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_FIELD_COVERAGE_RULES": {
+            "dict/field": 0.8,
+        },
+        "SPIDERMON_FIELD_COVERAGE_TOLERANCE": 1.1,
+    }
+    stats = {"spidermon_field_coverage/dict/field": 0.8}
+    data = make_data_for_monitor(settings=settings, stats=stats)
+    monitor_runner = data.pop("runner")
+    with pytest.raises(ValueError, match="SPIDERMON_FIELD_COVERAGE_TOLERANCE must be between 0 and 1"):
+        monitor_runner.run(field_coverage_monitor_suite, **data)
