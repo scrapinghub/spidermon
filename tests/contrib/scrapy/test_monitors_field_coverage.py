@@ -228,7 +228,9 @@ def test_monitor_raise_value_error_for_invalid_tolerance_negative(
     stats = {"spidermon_field_coverage/dict/field": 0.8}
     data = make_data_for_monitor(settings=settings, stats=stats)
     monitor_runner = data.pop("runner")
-    with pytest.raises(ValueError, match="SPIDERMON_FIELD_COVERAGE_TOLERANCE must be between 0 and 1"):
+    with pytest.raises(
+        ValueError, match="SPIDERMON_FIELD_COVERAGE_TOLERANCE must be between 0 and 1"
+    ):
         monitor_runner.run(field_coverage_monitor_suite, **data)
 
 
@@ -245,5 +247,7 @@ def test_monitor_raise_value_error_for_invalid_tolerance_greater_than_one(
     stats = {"spidermon_field_coverage/dict/field": 0.8}
     data = make_data_for_monitor(settings=settings, stats=stats)
     monitor_runner = data.pop("runner")
-    with pytest.raises(ValueError, match="SPIDERMON_FIELD_COVERAGE_TOLERANCE must be between 0 and 1"):
+    with pytest.raises(
+        ValueError, match="SPIDERMON_FIELD_COVERAGE_TOLERANCE must be between 0 and 1"
+    ):
         monitor_runner.run(field_coverage_monitor_suite, **data)

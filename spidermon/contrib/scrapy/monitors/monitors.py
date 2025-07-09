@@ -473,7 +473,9 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
         if skip_no_items and int(items_scraped) == 0:
             self.skipTest("No items were scraped.")
 
-        tolerance = self.crawler.settings.getfloat(SPIDERMON_FIELD_COVERAGE_TOLERANCE, 0)
+        tolerance = self.crawler.settings.getfloat(
+            SPIDERMON_FIELD_COVERAGE_TOLERANCE, 0
+        )
         if tolerance < 0 or tolerance > 1:
             raise ValueError(
                 f"SPIDERMON_FIELD_COVERAGE_TOLERANCE must be between 0 and 1, got {tolerance}"
