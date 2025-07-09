@@ -28,6 +28,7 @@ SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED = (
     "SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED"
 )
 SPIDERMON_ITEM_COUNT_INCREASE = "SPIDERMON_ITEM_COUNT_INCREASE"
+SPIDERMON_FIELD_COVERAGE_TOLERANCE = "SPIDERMON_FIELD_COVERAGE_TOLERANCE"
 
 
 @monitors.name("Extracted Items Monitor")
@@ -439,6 +440,18 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
                "MyCustomItem/field_2": 1.0,
            }
 
+    You can also configure a tolerance setting to allow for small variations in field coverage.
+    This is useful to avoid false alarms when coverage is very close to the expected threshold.
+    Use the ``SPIDERMON_FIELD_COVERAGE_TOLERANCE`` setting to define the tolerance as a float
+    between 0 and 1 (representing 0% to 100%). The default value is 0 (no tolerance).
+
+    For example, if you set a tolerance of 0.05 (5%) and expect 95% coverage for a field,
+    the monitor will only fail if the actual coverage is below 90% (95% - 5%).
+
+    .. code-block:: python
+
+        SPIDERMON_FIELD_COVERAGE_TOLERANCE = 0.05  # 5% tolerance
+
     """
 
     def run(self, result):
@@ -460,6 +473,12 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
         if skip_no_items and int(items_scraped) == 0:
             self.skipTest("No items were scraped.")
 
+        tolerance = self.crawler.settings.getfloat(SPIDERMON_FIELD_COVERAGE_TOLERANCE, 0)
+        if tolerance < 0 or tolerance > 1:
+            raise ValueError(
+                f"SPIDERMON_FIELD_COVERAGE_TOLERANCE must be between 0 and 1, got {tolerance}"
+            )
+
         failures = []
         field_coverage_rules = self.crawler.settings.getdict(
             "SPIDERMON_FIELD_COVERAGE_RULES"
@@ -468,10 +487,10 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
             actual_coverage = self.data.stats.get(
                 f"spidermon_field_coverage/{field}", 0
             )
-            if actual_coverage < expected_coverage:
+            if actual_coverage + tolerance < expected_coverage:
                 failures.append(
-                    "{} (expected {}, got {})".format(
-                        field, expected_coverage, actual_coverage
+                    "{} (expected {}, got {}, tolerance: {})".format(
+                        field, expected_coverage, actual_coverage, tolerance
                     )
                 )
 
