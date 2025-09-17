@@ -355,6 +355,20 @@ Considering the spider returns the following items:
       'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.2': 1
       'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3': 1
 
+SPIDERMON_FIELD_COVERAGE_TOLERANCE
+-----------------------------------
+Default: ``0``
+
+A float value between 0 and 1 (representing 0% to 100%) that defines the tolerance for field coverage validation.
+
+When set, this tolerance allows for small variations in field coverage to avoid false alarms when coverage is very close to the expected threshold. The monitor will only fail if the actual coverage plus the tolerance is still below the expected coverage.
+
+For example, if you set a tolerance of 0.05 (5%) and expect 95% coverage for a field, the monitor will only fail if the actual coverage is below 90% (95% - 5%).
+
+.. code-block:: python
+
+    SPIDERMON_FIELD_COVERAGE_TOLERANCE = 0.05  # 5% tolerance
+
 SPIDERMON_MONITOR_SKIPPING_RULES
 --------------------------------
 Default: ``None``
