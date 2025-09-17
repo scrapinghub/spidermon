@@ -183,6 +183,59 @@ If this setting is not provided or set to ``False``, spider statistics will be:
    'spidermon_field_coverage/dict/field_1': 1,  # Did not ignore None value
    'spidermon_item_scraped_count/dict/field_2': 1,
 
+SPIDERMON_FIELD_COVERAGE_SKIP_FALSY
+-----------------------------------
+Default: ``False``
+
+When enabled, returned fields that have falsy values (empty strings, empty lists, empty tuples, empty dictionaries, zero, False, etc.) will not be counted as fields with a value.
+
+Considering your spider returns the following items:
+
+.. code-block:: python
+
+   [
+     {
+       "field_1": "",
+       "field_2": "value",
+       "field_3": [],
+       "field_4": 0,
+     },
+     {
+       "field_1": "value",
+       "field_2": "value",
+       "field_3": ["item1"],
+       "field_4": 42,
+     },
+   ]
+
+If this setting is set to ``True``, spider statistics will be:
+
+.. code-block:: python
+
+   'spidermon_item_scraped_count/dict': 2,
+   'spidermon_item_scraped_count/dict/field_1': 1,  # Ignored empty string
+   'spidermon_item_scraped_count/dict/field_2': 2,
+   'spidermon_item_scraped_count/dict/field_3': 1,  # Ignored empty list
+   'spidermon_item_scraped_count/dict/field_4': 1,  # Ignored zero
+   'spidermon_field_coverage/dict/field_1': 0.5,  # Ignored empty string
+   'spidermon_field_coverage/dict/field_2': 1.0,
+   'spidermon_field_coverage/dict/field_3': 0.5,  # Ignored empty list
+   'spidermon_field_coverage/dict/field_4': 0.5,  # Ignored zero
+
+If this setting is not provided or set to ``False``, spider statistics will be:
+
+.. code-block:: python
+
+   'spidermon_item_scraped_count/dict': 2,
+   'spidermon_item_scraped_count/dict/field_1': 2,  # Did not ignore empty string
+   'spidermon_item_scraped_count/dict/field_2': 2,
+   'spidermon_item_scraped_count/dict/field_3': 2,  # Did not ignore empty list
+   'spidermon_item_scraped_count/dict/field_4': 2,  # Did not ignore zero
+   'spidermon_field_coverage/dict/field_1': 1.0,  # Did not ignore empty string
+   'spidermon_field_coverage/dict/field_2': 1.0,
+   'spidermon_field_coverage/dict/field_3': 1.0,  # Did not ignore empty list
+   'spidermon_field_coverage/dict/field_4': 1.0,  # Did not ignore zero
+
 SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS
 -------------------------------------
 Default: ``0``
