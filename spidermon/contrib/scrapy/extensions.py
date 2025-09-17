@@ -142,6 +142,7 @@ class Spidermon:
         self,
         item,
         skip_none_values,
+        skip_falsy_values,
         item_count_stat=None,
         max_list_nesting_level=0,
         max_dict_nesting_level=-1,
@@ -156,6 +157,9 @@ class Spidermon:
             if skip_none_values and value is None:
                 continue
 
+            if skip_falsy_values and not value:
+                continue
+
             field_item_count_stat = f"{item_count_stat}/{field_name}"
             self.crawler.stats.inc_value(field_item_count_stat)
 
@@ -163,7 +167,9 @@ class Spidermon:
                 # if there's no max (set to -1), we just proceed indefinitely (all levels)
                 # this is for backwards compatibility
                 if max_dict_nesting_level == -1:
-                    self._count_item(value, skip_none_values, field_item_count_stat)
+                    self._count_item(
+                        value, skip_none_values, skip_falsy_values, field_item_count_stat
+                    )
                     continue
                 elif (
                     max_dict_nesting_level > -1
@@ -172,6 +178,7 @@ class Spidermon:
                     self._count_item(
                         value,
                         skip_none_values,
+                        skip_falsy_values,
                         field_item_count_stat,
                         nesting_level=nesting_level + 1,
                         max_list_nesting_level=max_list_nesting_level,
@@ -193,6 +200,7 @@ class Spidermon:
                         self._count_item(
                             list_item,
                             skip_none_values,
+                            skip_falsy_values,
                             items_count_stat,
                             max_list_nesting_level=max_list_nesting_level,
                             max_dict_nesting_level=max_dict_nesting_level,
@@ -209,6 +217,9 @@ class Spidermon:
         skip_none_values = spider.crawler.settings.getbool(
             "SPIDERMON_FIELD_COVERAGE_SKIP_NONE", False
         )
+        skip_falsy_values = spider.crawler.settings.getbool(
+            "SPIDERMON_FIELD_COVERAGE_SKIP_FALSY", False
+        )
         list_field_coverage_levels = spider.crawler.settings.getint(
             "SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS", 0
         )
@@ -219,6 +230,7 @@ class Spidermon:
         self._count_item(
             item,
             skip_none_values,
+            skip_falsy_values,
             max_list_nesting_level=list_field_coverage_levels,
             max_dict_nesting_level=dict_field_coverage_levels,
         )
