@@ -1,4 +1,4 @@
-import os
+import json
 
 from scrapy import signals
 from scrapy.exceptions import NotConfigured
@@ -59,6 +59,41 @@ class Spidermon:
         self.periodic_suites = periodic_suites or {}
         self.periodic_tasks = {}
         self.client = Client(self.crawler.settings)
+
+    def _get_skip_values_list(self, settings):
+        """Get skip values list, supporting Python lists, JSON strings, and
+        comma-separated strings.
+
+        This allows preserving types (e.g., integers) when provided as Python
+        lists or JSON strings, while still supporting comma-separated strings
+        for backward compatibility.
+        """
+        value = settings.get("SPIDERMON_FIELD_COVERAGE_SKIP_VALUES", [])
+        if not value:
+            return []
+
+        # If it's already a list, return it (preserves types)
+        if isinstance(value, list):
+            return value
+
+        # If it's a string, try to parse as JSON first (preserves types)
+        if isinstance(value, str):
+            try:
+                parsed = json.loads(value)
+                # If JSON parsing succeeds and returns a list, use it
+                if isinstance(parsed, list):
+                    return parsed
+            except (ValueError, TypeError):
+                # If JSON parsing fails, fall back to comma-separated string
+                pass
+
+            # Fall back to Scrapy's getlist (converts to list of strings)
+            return settings.getlist(
+                "SPIDERMON_FIELD_COVERAGE_SKIP_VALUES", []
+            )
+
+        # For any other type, try to convert to list
+        return list(value) if value else []
 
     def load_suite(self, suite_to_load):
         try:
@@ -143,6 +178,7 @@ class Spidermon:
         item,
         skip_none_values,
         skip_falsy_values,
+        skip_values=None,
         item_count_stat=None,
         max_list_nesting_level=0,
         max_dict_nesting_level=-1,
@@ -153,11 +189,17 @@ class Spidermon:
             item_count_stat = f"spidermon_item_scraped_count/{item_type}"
             self.crawler.stats.inc_value(item_count_stat)
 
+        if skip_values is None:
+            skip_values = []
+
         for field_name, value in ItemAdapter(item).items():
             if skip_none_values and value is None:
                 continue
 
             if skip_falsy_values and not value:
+                continue
+
+            if value in skip_values:
                 continue
 
             field_item_count_stat = f"{item_count_stat}/{field_name}"
@@ -168,7 +210,11 @@ class Spidermon:
                 # this is for backwards compatibility
                 if max_dict_nesting_level == -1:
                     self._count_item(
-                        value, skip_none_values, skip_falsy_values, field_item_count_stat
+                        value,
+                        skip_none_values,
+                        skip_falsy_values,
+                        skip_values,
+                        field_item_count_stat,
                     )
                     continue
                 elif (
@@ -179,6 +225,7 @@ class Spidermon:
                         value,
                         skip_none_values,
                         skip_falsy_values,
+                        skip_values,
                         field_item_count_stat,
                         nesting_level=nesting_level + 1,
                         max_list_nesting_level=max_list_nesting_level,
@@ -201,6 +248,7 @@ class Spidermon:
                             list_item,
                             skip_none_values,
                             skip_falsy_values,
+                            skip_values,
                             items_count_stat,
                             max_list_nesting_level=max_list_nesting_level,
                             max_dict_nesting_level=max_dict_nesting_level,
@@ -220,6 +268,7 @@ class Spidermon:
         skip_falsy_values = spider.crawler.settings.getbool(
             "SPIDERMON_FIELD_COVERAGE_SKIP_FALSY", False
         )
+        skip_values = self._get_skip_values_list(spider.crawler.settings)
         list_field_coverage_levels = spider.crawler.settings.getint(
             "SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS", 0
         )
@@ -231,6 +280,7 @@ class Spidermon:
             item,
             skip_none_values,
             skip_falsy_values,
+            skip_values,
             max_list_nesting_level=list_field_coverage_levels,
             max_dict_nesting_level=dict_field_coverage_levels,
         )
