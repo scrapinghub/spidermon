@@ -236,6 +236,69 @@ If this setting is not provided or set to ``False``, spider statistics will be:
    'spidermon_field_coverage/dict/field_3': 1.0,  # Did not ignore empty list
    'spidermon_field_coverage/dict/field_4': 1.0,  # Did not ignore zero
 
+SPIDERMON_FIELD_COVERAGE_SKIP_VALUES
+------------------------------------
+Default: ``[]``
+
+A list of custom values that should not be counted as valid field values when calculating field coverage. This is useful when your items contain placeholder values like "N/A", "-", "TBD", etc. that indicate missing data but are not Python falsy values. You can also skip numeric values like ``0`` or ``-1`` if they represent missing data in your use case.
+
+This setting works in addition to ``SPIDERMON_FIELD_COVERAGE_SKIP_NONE`` and ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY``. Values are matched using exact equality (``==``), so type matters (e.g., the string ``"0"`` is different from the integer ``0``).
+
+The setting can be provided in several formats:
+
+* As a Python list in your settings file (recommended for mixed types): ``[0, -1, "N/A"]``
+* As a JSON string (preserves types): ``'[0, -1, "N/A"]'``
+* As a comma-separated string (converts all values to strings): ``"0,-1,N/A"``
+
+For non-string values (like integers), use a Python list or JSON string to preserve the types. Comma-separated strings will convert all values to strings.
+
+Considering your spider returns the following items:
+
+.. code-block:: python
+
+   [
+     {
+       "field_1": "N/A",
+       "field_2": "value",
+       "field_3": "-",
+       "field_4": "TBD",
+     },
+     {
+       "field_1": "actual_value",
+       "field_2": "value",
+       "field_3": "data",
+       "field_4": "completed",
+     },
+   ]
+
+If this setting is set to ``["N/A", "-", "TBD"]``, spider statistics will be:
+
+.. code-block:: python
+
+   'spidermon_item_scraped_count/dict': 2,
+   'spidermon_item_scraped_count/dict/field_1': 1,  # Ignored "N/A"
+   'spidermon_item_scraped_count/dict/field_2': 2,
+   'spidermon_item_scraped_count/dict/field_3': 1,  # Ignored "-"
+   'spidermon_item_scraped_count/dict/field_4': 1,  # Ignored "TBD"
+   'spidermon_field_coverage/dict/field_1': 0.5,  # Ignored "N/A"
+   'spidermon_field_coverage/dict/field_2': 1.0,
+   'spidermon_field_coverage/dict/field_3': 0.5,  # Ignored "-"
+   'spidermon_field_coverage/dict/field_4': 0.5,  # Ignored "TBD"
+
+If this setting is not provided or set to an empty list, spider statistics will be:
+
+.. code-block:: python
+
+   'spidermon_item_scraped_count/dict': 2,
+   'spidermon_item_scraped_count/dict/field_1': 2,  # Did not ignore "N/A"
+   'spidermon_item_scraped_count/dict/field_2': 2,
+   'spidermon_item_scraped_count/dict/field_3': 2,  # Did not ignore "-"
+   'spidermon_item_scraped_count/dict/field_4': 2,  # Did not ignore "TBD"
+   'spidermon_field_coverage/dict/field_1': 1.0,  # Did not ignore "N/A"
+   'spidermon_field_coverage/dict/field_2': 1.0,
+   'spidermon_field_coverage/dict/field_3': 1.0,  # Did not ignore "-"
+   'spidermon_field_coverage/dict/field_4': 1.0,  # Did not ignore "TBD"
+
 SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS
 -------------------------------------
 Default: ``0``
