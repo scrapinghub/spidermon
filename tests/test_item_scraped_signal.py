@@ -504,11 +504,41 @@ async def test_item_scraped_count_ignore_custom_skip_values():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_do_not_ignore_custom_skip_values_by_default():
+async def test_item_scraped_count_ignore_default_skip_values():
+    """Test that default skip values (empty string, empty list, empty dict, N/A, -) are applied"""
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
+    }
+
+    crawler = get_crawler(settings_dict=settings)
+    spider = Spider.from_crawler(crawler, "example.com")
+
+    returned_items = [
+        {"field1": "value1", "field2": "N/A", "field3": "-", "field4": ""},
+        {"field1": "value1", "field2": "value2", "field3": "value3", "field4": "value4"},
+    ]
+
+    for item in returned_items:
+        await send_item_scraped(spider, item)
+
+    stats = spider.crawler.stats.get_stats()
+
+    assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/field2") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field3") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field4") == 1
+
+
+@deferred_f_from_coro_f
+async def test_item_scraped_count_do_not_ignore_custom_skip_values_when_empty_list():
+    """Test that setting skip_values to empty list disables default skip values"""
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_FIELD_COVERAGE_SKIP_VALUES": [],
     }
 
     crawler = get_crawler(settings_dict=settings)
