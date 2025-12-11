@@ -544,8 +544,12 @@ def test_item_scraped_count_ignore_custom_skip_values():
     stats = spider.crawler.stats.get_stats()
 
     assert stats.get("spidermon_item_scraped_count/dict/field1") == 3
-    assert stats.get("spidermon_item_scraped_count/dict/field2") == 1  # Only the valid value
-    assert stats.get("spidermon_item_scraped_count/dict/field3") == 2  # Only the valid values (skipped "TBD")
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field2") == 1
+    )  # Only the valid value
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field3") == 2
+    )  # Only the valid values (skipped "TBD")
 
 
 def test_item_scraped_count_do_not_ignore_custom_skip_values_by_default():
@@ -574,7 +578,9 @@ def test_item_scraped_count_do_not_ignore_custom_skip_values_by_default():
     stats = spider.crawler.stats.get_stats()
 
     assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
-    assert stats.get("spidermon_item_scraped_count/dict/field2") == 2  # Counted because skip_values not set
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field2") == 2
+    )  # Counted because skip_values not set
 
 
 def test_item_scraped_count_skip_values_type_sensitive():
@@ -705,7 +711,9 @@ def test_item_scraped_count_skip_values_works_with_nested_fields():
 
     assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
     assert stats.get("spidermon_item_scraped_count/dict/field1/nested1") == 2
-    assert stats.get("spidermon_item_scraped_count/dict/field1/nested2") == 1  # Only the valid value
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field1/nested2") == 1
+    )  # Only the valid value
 
 
 def test_item_scraped_count_skip_values_works_with_skip_falsy():
