@@ -1,4 +1,4 @@
-import os
+import json
 
 from scrapy import signals
 from scrapy.exceptions import NotConfigured
@@ -59,6 +59,55 @@ class Spidermon:
         self.periodic_suites = periodic_suites or {}
         self.periodic_tasks = {}
         self.client = Client(self.crawler.settings)
+
+    @staticmethod
+    def _get_default_skip_values():
+        """Get the default skip values array.
+
+        Default skip values: empty string, empty list, empty dict, 'N/A', '-'
+        """
+        return ["", [], {}, "N/A", "-"]
+
+    def _get_skip_values_list(self, settings):
+        """Get skip values list, supporting Python lists, JSON strings, and
+        comma-separated strings.
+
+        This allows preserving types (e.g., integers) when provided as Python
+        lists or JSON strings, while still supporting comma-separated strings
+        for backward compatibility.
+
+        Default skip values: empty string, empty list, empty dict, 'N/A', '-'
+        """
+        # Default skip values
+        default_skip_values = self._get_default_skip_values()
+
+        value = settings.get("SPIDERMON_FIELD_COVERAGE_SKIP_VALUES", None)
+        if value is None:
+            return default_skip_values
+
+        if not value:
+            return []
+
+        # If it's already a list, return it (preserves types)
+        if isinstance(value, list):
+            return value
+
+        # If it's a string, try to parse as JSON first (preserves types)
+        if isinstance(value, str):
+            try:
+                parsed = json.loads(value)
+                # If JSON parsing succeeds and returns a list, use it
+                if isinstance(parsed, list):
+                    return parsed
+            except (ValueError, TypeError):
+                # If JSON parsing fails, fall back to comma-separated string
+                pass
+
+            # Fall back to Scrapy's getlist (converts to list of strings)
+            return settings.getlist("SPIDERMON_FIELD_COVERAGE_SKIP_VALUES", [])
+
+        # For any other type, try to convert to list
+        return list(value) if value else []
 
     def load_suite(self, suite_to_load):
         try:
@@ -142,6 +191,8 @@ class Spidermon:
         self,
         item,
         skip_none_values,
+        skip_falsy_values,
+        skip_values=None,
         item_count_stat=None,
         max_list_nesting_level=0,
         max_dict_nesting_level=-1,
@@ -152,8 +203,17 @@ class Spidermon:
             item_count_stat = f"spidermon_item_scraped_count/{item_type}"
             self.crawler.stats.inc_value(item_count_stat)
 
+        if skip_values is None:
+            skip_values = []
+
         for field_name, value in ItemAdapter(item).items():
             if skip_none_values and value is None:
+                continue
+
+            if skip_falsy_values and value in self._get_default_skip_values():
+                continue
+
+            if value in skip_values:
                 continue
 
             field_item_count_stat = f"{item_count_stat}/{field_name}"
@@ -163,7 +223,13 @@ class Spidermon:
                 # if there's no max (set to -1), we just proceed indefinitely (all levels)
                 # this is for backwards compatibility
                 if max_dict_nesting_level == -1:
-                    self._count_item(value, skip_none_values, field_item_count_stat)
+                    self._count_item(
+                        value,
+                        skip_none_values,
+                        skip_falsy_values,
+                        skip_values,
+                        field_item_count_stat,
+                    )
                     continue
                 elif (
                     max_dict_nesting_level > -1
@@ -172,6 +238,8 @@ class Spidermon:
                     self._count_item(
                         value,
                         skip_none_values,
+                        skip_falsy_values,
+                        skip_values,
                         field_item_count_stat,
                         nesting_level=nesting_level + 1,
                         max_list_nesting_level=max_list_nesting_level,
@@ -193,6 +261,8 @@ class Spidermon:
                         self._count_item(
                             list_item,
                             skip_none_values,
+                            skip_falsy_values,
+                            skip_values,
                             items_count_stat,
                             max_list_nesting_level=max_list_nesting_level,
                             max_dict_nesting_level=max_dict_nesting_level,
@@ -209,6 +279,25 @@ class Spidermon:
         skip_none_values = spider.crawler.settings.getbool(
             "SPIDERMON_FIELD_COVERAGE_SKIP_NONE", False
         )
+        skip_falsy_values = spider.crawler.settings.getbool(
+            "SPIDERMON_FIELD_COVERAGE_SKIP_FALSY", True
+        )
+        # Check if SPIDERMON_FIELD_COVERAGE_SKIP_VALUES was explicitly set
+        # to empty list. If so, disable default skip values check.
+        skip_values_setting = spider.crawler.settings.get(
+            "SPIDERMON_FIELD_COVERAGE_SKIP_VALUES"
+        )
+        skip_values = self._get_skip_values_list(spider.crawler.settings)
+        if (
+            skip_values_setting is not None
+            and isinstance(skip_values_setting, list)
+            and skip_values_setting == []
+            and skip_values == []
+        ):
+            # Setting was explicitly set to empty list, disable default
+            # skip values (skip_falsy_values should not apply)
+            skip_falsy_values = False
+
         list_field_coverage_levels = spider.crawler.settings.getint(
             "SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS", 0
         )
@@ -219,6 +308,8 @@ class Spidermon:
         self._count_item(
             item,
             skip_none_values,
+            skip_falsy_values,
+            skip_values,
             max_list_nesting_level=list_field_coverage_levels,
             max_dict_nesting_level=dict_field_coverage_levels,
         )
@@ -236,9 +327,9 @@ class Spidermon:
     def _generate_data_for_spider(self, spider):
         return {
             "stats": self.crawler.stats.get_stats(spider),
-            "stats_history": spider.stats_history
-            if hasattr(spider, "stats_history")
-            else [],
+            "stats_history": (
+                spider.stats_history if hasattr(spider, "stats_history") else []
+            ),
             "crawler": self.crawler,
             "spider": spider,
             "sc_spider_name": get_spider_name(spider),
