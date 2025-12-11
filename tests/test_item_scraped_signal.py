@@ -517,7 +517,12 @@ async def test_item_scraped_count_ignore_default_skip_values():
 
     returned_items = [
         {"field1": "value1", "field2": "N/A", "field3": "-", "field4": ""},
-        {"field1": "value1", "field2": "value2", "field3": "value3", "field4": "value4"},
+        {
+            "field1": "value1",
+            "field2": "value2",
+            "field3": "value3",
+            "field4": "value4",
+        },
     ]
 
     for item in returned_items:
