@@ -60,6 +60,14 @@ class Spidermon:
         self.periodic_tasks = {}
         self.client = Client(self.crawler.settings)
 
+    @staticmethod
+    def _get_default_skip_values():
+        """Get the default skip values array.
+
+        Default skip values: empty string, empty list, empty dict, 'N/A', '-'
+        """
+        return ["", [], {}, "N/A", "-"]
+
     def _get_skip_values_list(self, settings):
         """Get skip values list, supporting Python lists, JSON strings, and
         comma-separated strings.
@@ -67,8 +75,16 @@ class Spidermon:
         This allows preserving types (e.g., integers) when provided as Python
         lists or JSON strings, while still supporting comma-separated strings
         for backward compatibility.
+
+        Default skip values: empty string, empty list, empty dict, 'N/A', '-'
         """
-        value = settings.get("SPIDERMON_FIELD_COVERAGE_SKIP_VALUES", [])
+        # Default skip values
+        default_skip_values = self._get_default_skip_values()
+
+        value = settings.get("SPIDERMON_FIELD_COVERAGE_SKIP_VALUES", None)
+        if value is None:
+            return default_skip_values
+
         if not value:
             return []
 
@@ -194,7 +210,7 @@ class Spidermon:
             if skip_none_values and value is None:
                 continue
 
-            if skip_falsy_values and not value:
+            if skip_falsy_values and value in self._get_default_skip_values():
                 continue
 
             if value in skip_values:
@@ -264,9 +280,24 @@ class Spidermon:
             "SPIDERMON_FIELD_COVERAGE_SKIP_NONE", False
         )
         skip_falsy_values = spider.crawler.settings.getbool(
-            "SPIDERMON_FIELD_COVERAGE_SKIP_FALSY", False
+            "SPIDERMON_FIELD_COVERAGE_SKIP_FALSY", True
+        )
+        # Check if SPIDERMON_FIELD_COVERAGE_SKIP_VALUES was explicitly set
+        # to empty list. If so, disable default skip values check.
+        skip_values_setting = spider.crawler.settings.get(
+            "SPIDERMON_FIELD_COVERAGE_SKIP_VALUES"
         )
         skip_values = self._get_skip_values_list(spider.crawler.settings)
+        if (
+            skip_values_setting is not None
+            and isinstance(skip_values_setting, list)
+            and skip_values_setting == []
+            and skip_values == []
+        ):
+            # Setting was explicitly set to empty list, disable default
+            # skip values (skip_falsy_values should not apply)
+            skip_falsy_values = False
+
         list_field_coverage_levels = spider.crawler.settings.getint(
             "SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS", 0
         )

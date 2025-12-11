@@ -185,7 +185,7 @@ If this setting is not provided or set to ``False``, spider statistics will be:
 
 SPIDERMON_FIELD_COVERAGE_SKIP_FALSY
 -----------------------------------
-Default: ``False``
+Default: ``True``
 
 When enabled, returned fields that have falsy values (empty strings, empty lists, empty tuples, empty dictionaries, zero, False, etc.) will not be counted as fields with a value.
 
@@ -238,9 +238,9 @@ If this setting is not provided or set to ``False``, spider statistics will be:
 
 SPIDERMON_FIELD_COVERAGE_SKIP_VALUES
 ------------------------------------
-Default: ``[]``
+Default: ``["", [], {}, "N/A", "-"]``
 
-A list of custom values that should not be counted as valid field values when calculating field coverage. This is useful when your items contain placeholder values like "N/A", "-", "TBD", etc. that indicate missing data but are not Python falsy values. You can also skip numeric values like ``0`` or ``-1`` if they represent missing data in your use case.
+A list of custom values that should not be counted as valid field values when calculating field coverage. By default, this includes empty string, empty list, empty dict, "N/A", and "-". You can override this to customize which values should be skipped. This is useful when your items contain placeholder values like "TBD", etc. that indicate missing data but are not Python falsy values. You can also skip numeric values like ``0`` or ``-1`` if they represent missing data in your use case.
 
 This setting works in addition to ``SPIDERMON_FIELD_COVERAGE_SKIP_NONE`` and ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY``. Values are matched using exact equality (``==``), so type matters (e.g., the string ``"0"`` is different from the integer ``0``).
 
@@ -285,7 +285,7 @@ If this setting is set to ``["N/A", "-", "TBD"]``, spider statistics will be:
    'spidermon_field_coverage/dict/field_3': 0.5,  # Ignored "-"
    'spidermon_field_coverage/dict/field_4': 0.5,  # Ignored "TBD"
 
-If this setting is not provided or set to an empty list, spider statistics will be:
+If you want to override the default skip values, you can set this to a custom list. If set to an empty list ``[]``, no custom skip values will be used (only falsy values will be skipped if ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` is enabled). If not provided, the default values will be used. Without the default skip values, spider statistics would be:
 
 .. code-block:: python
 
