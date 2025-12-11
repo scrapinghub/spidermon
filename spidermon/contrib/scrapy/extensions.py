@@ -87,9 +87,7 @@ class Spidermon:
                 pass
 
             # Fall back to Scrapy's getlist (converts to list of strings)
-            return settings.getlist(
-                "SPIDERMON_FIELD_COVERAGE_SKIP_VALUES", []
-            )
+            return settings.getlist("SPIDERMON_FIELD_COVERAGE_SKIP_VALUES", [])
 
         # For any other type, try to convert to list
         return list(value) if value else []
@@ -304,9 +302,9 @@ class Spidermon:
     def _generate_data_for_spider(self, spider):
         return {
             "stats": self.crawler.stats.get_stats(),
-            "stats_history": spider.stats_history
-            if hasattr(spider, "stats_history")
-            else [],
+            "stats_history": (
+                spider.stats_history if hasattr(spider, "stats_history") else []
+            ),
             "crawler": self.crawler,
             "spider": spider,
             "sc_spider_name": get_spider_name(spider),
