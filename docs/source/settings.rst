@@ -357,7 +357,7 @@ Considering the spider returns the following items:
 
 SPIDERMON_FIELD_COVERAGE_TOLERANCE
 -----------------------------------
-Default: ``0``
+Default: ``0.0``
 
 A small float value (>= 0) that defines the absolute tolerance for field coverage validation.
 This setting is used to handle small decimal precision differences in coverage calculations,
