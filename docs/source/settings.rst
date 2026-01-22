@@ -359,15 +359,24 @@ SPIDERMON_FIELD_COVERAGE_TOLERANCE
 -----------------------------------
 Default: ``0``
 
-A float value between 0 and 1 (representing 0% to 100%) that defines the tolerance for field coverage validation.
+A small float value (>= 0) that defines the absolute tolerance for field coverage validation.
+This setting is used to handle small decimal precision differences in coverage calculations,
+avoiding false alarms when coverage values are very close to the expected threshold due to
+floating-point precision issues (e.g., 49.999% vs 50.0%).
 
-When set, this tolerance allows for small variations in field coverage to avoid false alarms when coverage is very close to the expected threshold. The monitor will only fail if the actual coverage plus the tolerance is still below the expected coverage.
+The tolerance is used with Python's ``math.isclose()`` function to determine if the actual
+coverage is "close enough" to the expected coverage. The monitor will pass if the actual
+coverage is greater than the expected coverage, or if it's within the tolerance range.
 
-For example, if you set a tolerance of 0.05 (5%) and expect 95% coverage for a field, the monitor will only fail if the actual coverage is below 90% (95% - 5%).
+.. note::
+   This setting is intended for handling decimal precision issues, not for creating margins
+   or error bars. If you want to allow larger variations in coverage, consider adjusting
+   the coverage thresholds directly in ``SPIDERMON_FIELD_COVERAGE_RULES`` instead of using
+   this tolerance setting.
 
 .. code-block:: python
 
-    SPIDERMON_FIELD_COVERAGE_TOLERANCE = 0.05  # 5% tolerance
+    SPIDERMON_FIELD_COVERAGE_TOLERANCE = 0.001  # Allow 0.1% difference for precision
 
 SPIDERMON_MONITOR_SKIPPING_RULES
 --------------------------------

@@ -440,17 +440,25 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
                "MyCustomItem/field_2": 1.0,
            }
 
-    You can also configure a tolerance setting to allow for small variations in field coverage.
-    This is useful to avoid false alarms when coverage is very close to the expected threshold.
-    Use the ``SPIDERMON_FIELD_COVERAGE_TOLERANCE`` setting to define the tolerance as a float
-    between 0 and 1 (representing 0% to 100%). The default value is 0 (no tolerance).
+    You can also configure a tolerance setting to handle small decimal precision differences
+    in field coverage calculations. This is useful to avoid false alarms when coverage values
+    are very close to the expected threshold due to floating-point precision issues (e.g.,
+    49.999% vs 50.0%).
 
-    For example, if you set a tolerance of 0.05 (5%) and expect 95% coverage for a field,
-    the monitor will only fail if the actual coverage is below 90% (95% - 5%).
+    Use the ``SPIDERMON_FIELD_COVERAGE_TOLERANCE`` setting to define the absolute tolerance
+    as a small float value (default: 0, no tolerance). The tolerance is used with Python's
+    ``math.isclose()`` function to determine if the actual coverage is "close enough" to
+    the expected coverage.
+
+    .. note::
+       This setting is intended for handling decimal precision issues, not for creating
+       margins or error bars. If you want to allow larger variations in coverage, consider
+       adjusting the coverage thresholds directly in ``SPIDERMON_FIELD_COVERAGE_RULES``
+       instead of using this tolerance setting.
 
     .. code-block:: python
 
-        SPIDERMON_FIELD_COVERAGE_TOLERANCE = 0.05  # 5% tolerance
+        SPIDERMON_FIELD_COVERAGE_TOLERANCE = 0.001  # Allow 0.1% difference for precision
 
     """
 
@@ -476,10 +484,7 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
         tolerance = self.crawler.settings.getfloat(
             SPIDERMON_FIELD_COVERAGE_TOLERANCE, 0
         )
-        if tolerance < 0 or tolerance > 1:
-            raise ValueError(
-                f"SPIDERMON_FIELD_COVERAGE_TOLERANCE must be between 0 and 1, got {tolerance}"
-            )
+        # Note: math.isclose() will raise ValueError if tolerance is negative
 
         failures = []
         field_coverage_rules = self.crawler.settings.getdict(
@@ -489,12 +494,15 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
             actual_coverage = self.data.stats.get(
                 f"spidermon_field_coverage/{field}", 0
             )
-            if actual_coverage + tolerance < expected_coverage:
-                failures.append(
-                    "{} (expected {}, got {}, tolerance: {})".format(
-                        field, expected_coverage, actual_coverage, tolerance
-                    )
+            if actual_coverage > expected_coverage or math.isclose(
+                actual_coverage, expected_coverage, abs_tol=tolerance
+            ):
+                continue
+            failures.append(
+                "{} (expected {}, got {}, tolerance: {})".format(
+                    field, expected_coverage, actual_coverage, tolerance
                 )
+            )
 
         msg = "\nThe following items did not meet field coverage rules:\n{}".format(
             "\n".join(failures)
