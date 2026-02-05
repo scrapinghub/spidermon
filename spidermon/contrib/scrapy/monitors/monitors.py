@@ -28,6 +28,7 @@ SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED = (
     "SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED"
 )
 SPIDERMON_ITEM_COUNT_INCREASE = "SPIDERMON_ITEM_COUNT_INCREASE"
+SPIDERMON_FIELD_COVERAGE_TOLERANCE = "SPIDERMON_FIELD_COVERAGE_TOLERANCE"
 
 
 @monitors.name("Extracted Items Monitor")
@@ -439,6 +440,26 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
                "MyCustomItem/field_2": 1.0,
            }
 
+    You can also configure a tolerance setting to handle small decimal precision differences
+    in field coverage calculations. This is useful to avoid false alarms when coverage values
+    are very close to the expected threshold due to floating-point precision issues (e.g.,
+    49.999% vs 50.0%).
+
+    Use the ``SPIDERMON_FIELD_COVERAGE_TOLERANCE`` setting to define the absolute tolerance
+    as a small float value (default: 0, no tolerance). The tolerance is used with Python's
+    ``math.isclose()`` function to determine if the actual coverage is "close enough" to
+    the expected coverage.
+
+    .. note::
+       This setting is intended for handling decimal precision issues, not for creating
+       margins or error bars. If you want to allow larger variations in coverage, consider
+       adjusting the coverage thresholds directly in ``SPIDERMON_FIELD_COVERAGE_RULES``
+       instead of using this tolerance setting.
+
+    .. code-block:: python
+
+        SPIDERMON_FIELD_COVERAGE_TOLERANCE = 0.001  # Allow 0.1% difference for precision
+
     """
 
     def run(self, result):
@@ -460,6 +481,11 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
         if skip_no_items and int(items_scraped) == 0:
             self.skipTest("No items were scraped.")
 
+        tolerance = self.crawler.settings.getfloat(
+            SPIDERMON_FIELD_COVERAGE_TOLERANCE, 0
+        )
+        # Note: math.isclose() will raise ValueError if tolerance is negative
+
         failures = []
         field_coverage_rules = self.crawler.settings.getdict(
             "SPIDERMON_FIELD_COVERAGE_RULES"
@@ -468,12 +494,15 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
             actual_coverage = self.data.stats.get(
                 f"spidermon_field_coverage/{field}", 0
             )
-            if actual_coverage < expected_coverage:
-                failures.append(
-                    "{} (expected {}, got {})".format(
-                        field, expected_coverage, actual_coverage
-                    )
+            if actual_coverage > expected_coverage or math.isclose(
+                actual_coverage, expected_coverage, abs_tol=tolerance
+            ):
+                continue
+            failures.append(
+                "{} (expected {}, got {}, tolerance: {})".format(
+                    field, expected_coverage, actual_coverage, tolerance
                 )
+            )
 
         msg = "\nThe following items did not meet field coverage rules:\n{}".format(
             "\n".join(failures)

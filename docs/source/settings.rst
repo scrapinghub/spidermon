@@ -355,6 +355,29 @@ Considering the spider returns the following items:
       'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.2': 1
       'spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3': 1
 
+SPIDERMON_FIELD_COVERAGE_TOLERANCE
+-----------------------------------
+Default: ``0.0``
+
+A small float value (>= 0) that defines the absolute tolerance for field coverage validation.
+This setting is used to handle small decimal precision differences in coverage calculations,
+avoiding false alarms when coverage values are very close to the expected threshold due to
+floating-point precision issues (e.g., 49.999% vs 50.0%).
+
+The tolerance is used with Python's ``math.isclose()`` function to determine if the actual
+coverage is "close enough" to the expected coverage. The monitor will pass if the actual
+coverage is greater than the expected coverage, or if it's within the tolerance range.
+
+.. note::
+   This setting is intended for handling decimal precision issues, not for creating margins
+   or error bars. If you want to allow larger variations in coverage, consider adjusting
+   the coverage thresholds directly in ``SPIDERMON_FIELD_COVERAGE_RULES`` instead of using
+   this tolerance setting.
+
+.. code-block:: python
+
+    SPIDERMON_FIELD_COVERAGE_TOLERANCE = 0.001  # Allow 0.1% difference for precision
+
 SPIDERMON_MONITOR_SKIPPING_RULES
 --------------------------------
 Default: ``None``
