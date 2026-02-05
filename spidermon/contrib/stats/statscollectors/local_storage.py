@@ -14,7 +14,10 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
         spider_name = get_spider_name(spider)
         return os.path.join(statsdir, f"{spider_name}_stats_history")
 
-    def open_spider(self, spider):
+    def open_spider(self, spider=None):
+        # Support both new API (spider=None, get from crawler) and old API (spider passed)
+        if spider is None:
+            spider = self._crawler.spider
         stats_location = self._stats_location(spider)
 
         max_stored_stats = spider.crawler.settings.getint(
@@ -32,7 +35,9 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
 
         spider.stats_history = _stats_history
 
-    def _persist_stats(self, stats, spider):
+    def _persist_stats(self, stats):
+        # Parent class calls this with only stats parameter, spider available via crawler
+        spider = self._crawler.spider
         stats_location = self._stats_location(spider)
 
         spider.stats_history.appendleft(self._stats)

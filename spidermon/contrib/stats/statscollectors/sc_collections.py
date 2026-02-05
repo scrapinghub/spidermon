@@ -25,8 +25,12 @@ class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
         store = collections.get_store(stats_location)
         return store
 
-    def open_spider(self, spider):
-        super().open_spider(spider)
+    def open_spider(self, spider=None):
+        # Support both new API (spider=None, get from crawler) and old API (spider passed)
+        if spider is None:
+            spider = self._crawler.spider
+        # Parent class no longer accepts spider parameter
+        super().open_spider()
         self.store = self._open_collection(spider)
         # note that the _open_collection method does not error if collection does not exist yet
         if self.store is None:
@@ -45,7 +49,9 @@ class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
 
         spider.stats_history = stats_history
 
-    def _persist_stats(self, stats, spider):
+    def _persist_stats(self, stats):
+        # Parent class calls this with only stats parameter, spider available via crawler
+        spider = self._crawler.spider
         if self.store is None:
             return
         stats_history = spider.stats_history
