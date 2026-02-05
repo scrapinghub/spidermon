@@ -237,5 +237,3 @@ def test_monitor_default_tolerance_is_zero(field_coverage_monitor_suite):
     monitor_runner.run(field_coverage_monitor_suite, **data)
 
     assert not monitor_runner.result.wasSuccessful()
-
-
