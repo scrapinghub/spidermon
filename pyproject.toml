@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling>=1.28.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "spidermon"
+version = "1.24.0"
+description = "Spidermon is a framework to build monitors for Scrapy spiders."
+readme = "README.rst"
+requires-python = ">=3.10"
+license = "BSD-3-Clause"
+authors = [ { name = "Zyte", email = "opensource@zyte.com" } ]
+keywords = ["scrapy", "monitoring", "spidermon"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: Scrapy",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: System :: Monitoring",
+]
+dependencies = [
+    "jsonschema[format]>=4.21.0",
+    "python-slugify",
+]
+
+
+[project.urls]
+Documentation = "https://spidermon.readthedocs.io/"
+Source = "https://github.com/scrapinghub/spidermon"
+Tracker = "https://github.com/scrapinghub/spidermon/issues"
+"Release notes" = "https://spidermon.readthedocs.io/en/latest/changelog.html"
+
+[project.optional-dependencies]
+monitoring = [
+    "Jinja2",
+    "boto",
+    "boto3",
+    "itemadapter",
+    "premailer",
+    "requests",
+    "scrapinghub",
+    "scrapinghub-entrypoint-scrapy",
+    "scrapy>=2.7.0",
+    "sentry_sdk",
+    "slack_sdk",
+]
+
+[tool.hatch.build.targets.sdist]
+include = ["spidermon/VERSION"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["spidermon"]

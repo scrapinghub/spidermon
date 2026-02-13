@@ -1,6 +1,14 @@
 Release notes
 =============
 
+1.25.0 (unreleased)
+-------------------
+
+-   Dropped support for Python 3.8 and 3.9, added support for Python 3.13 and
+    3.14.
+
+-   The ``monitoring`` extra now requires Scrapy 2.7.0+.
+
 1.24.0 (2025-04-11)
 -------------------
 
