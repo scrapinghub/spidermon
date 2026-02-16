@@ -8,7 +8,8 @@ def calculate_field_coverage(stats):
             continue
 
         item_type_m = re.search(
-            r"spidermon_item_scraped_count\/(?P<item_type>\w+)\/(?P<item_key>.*)", key
+            r"spidermon_item_scraped_count\/(?P<item_type>\w+)\/(?P<item_key>.*)",
+            key,
         )
         if item_type_m:
             item_type = item_type_m.group(1)
@@ -23,7 +24,7 @@ def calculate_field_coverage(stats):
                 levels = item_key.split("/_items/")
 
                 root_field_type_total = stats.get(
-                    f"spidermon_item_scraped_count/{item_type}/{'/_items/'.join(levels[:-1])}/_items"
+                    f"spidermon_item_scraped_count/{item_type}/{'/_items/'.join(levels[:-1])}/_items",
                 )
 
                 item_field_coverage = value / root_field_type_total

@@ -90,16 +90,16 @@ class Interpreter:
 
         if not tree.body:
             raise InvalidExpression("Empty python expression")
-        elif len(tree.body) > 1:
+        if len(tree.body) > 1:
             raise InvalidExpression(
-                "Python expressions must be a single line expression"
+                "Python expressions must be a single line expression",
             )
 
         start_node = tree.body[0]
         if not isinstance(start_node, ast.Expr):
             raise InvalidExpression(
                 "Python string must be an expression: '%s' found"
-                % start_node.__class__.__name__
+                % start_node.__class__.__name__,
             )
 
         self._check_node(start_node)
@@ -133,5 +133,5 @@ class Interpreter:
     def _raise_not_allowed_node(self, node):
         raise InvalidExpression(
             "'%s' definition not allowed in python expressions"
-            % node.__class__.__name__
+            % node.__class__.__name__,
         )

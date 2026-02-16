@@ -1,19 +1,25 @@
-from spidermon.core.options import MonitorOptions
 from spidermon import settings
-from spidermon.decorators import OptionsDecorator, DecoratorWithAttributes
+from spidermon.core.options import MonitorOptions
+from spidermon.decorators import DecoratorWithAttributes, OptionsDecorator
 
 
 class LevelDecorator(DecoratorWithAttributes):
     name = "level"
     attributes = {
         "high": OptionsDecorator.set_fixed_value(
-            MonitorOptions, name, settings.MONITOR.LEVEL.HIGH
+            MonitorOptions,
+            name,
+            settings.MONITOR.LEVEL.HIGH,
         ),
         "normal": OptionsDecorator.set_fixed_value(
-            MonitorOptions, name, settings.MONITOR.LEVEL.NORMAL
+            MonitorOptions,
+            name,
+            settings.MONITOR.LEVEL.NORMAL,
         ),
         "low": OptionsDecorator.set_fixed_value(
-            MonitorOptions, name, settings.MONITOR.LEVEL.LOW
+            MonitorOptions,
+            name,
+            settings.MONITOR.LEVEL.LOW,
         ),
     }
 

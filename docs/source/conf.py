@@ -47,7 +47,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Spidermon"
-copyright = "2021, Zyte"
+project_copyright = "2021, Zyte"
 author = "Zyte"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -219,7 +219,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "spidermon.tex", "Spidermon Documentation", "Zyte", "manual")
+    (master_doc, "spidermon.tex", "Spidermon Documentation", "Zyte", "manual"),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -267,7 +267,7 @@ texinfo_documents = [
         "spidermon",
         "One line description of project.",
         "Miscellaneous",
-    )
+    ),
 ]
 
 # Documents to append as an appendix to all manuals.

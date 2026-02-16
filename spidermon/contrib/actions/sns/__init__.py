@@ -1,8 +1,9 @@
-import boto3
 import logging
 
-from spidermon.exceptions import NotConfigured
+import boto3
+
 from spidermon.contrib.actions.templates import ActionWithTemplates
+from spidermon.exceptions import NotConfigured
 
 logger = logging.getLogger(__name__)
 
@@ -31,15 +32,15 @@ class SendSNSNotification(ActionWithTemplates):
 
         if not self.topic_arn:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_SNS_TOPIC_ARN setting."
+                "You must provide a value for SPIDERMON_SNS_TOPIC_ARN setting.",
             )
         if not self.aws_access_key:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_AWS_ACCESS_KEY_ID setting."
+                "You must provide a value for SPIDERMON_AWS_ACCESS_KEY_ID setting.",
             )
         if not self.aws_secret_key:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_AWS_SECRET_ACCESS_KEY setting."
+                "You must provide a value for SPIDERMON_AWS_SECRET_ACCESS_KEY setting.",
             )
 
     def run_action(self):
@@ -53,11 +54,13 @@ class SendSNSNotification(ActionWithTemplates):
             aws_secret_access_key=self.aws_secret_key,
         )
         logger.info(
-            f"Sending SNS message with subject: {subject} and attributes: {attributes}"
+            f"Sending SNS message with subject: {subject} and attributes: {attributes}",
         )
         try:
             client.publish(
-                TopicArn=self.topic_arn, Message=subject, MessageAttributes=attributes
+                TopicArn=self.topic_arn,
+                Message=subject,
+                MessageAttributes=attributes,
             )
         except Exception as e:
             logger.error(f"Failed to send SNS message: {e}")

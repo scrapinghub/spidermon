@@ -2,10 +2,10 @@ import sys
 from typing import Any
 
 from spidermon.core.suites import MonitorSuite
+from spidermon.data import Data
+from spidermon.exceptions import InvalidMonitor, InvalidResult
 from spidermon.results.monitor import MonitorResult
 from spidermon.results.text import TextMonitorResult
-from spidermon.exceptions import InvalidMonitor, InvalidResult
-from spidermon.data import Data
 
 
 class MonitorRunner:
@@ -64,7 +64,8 @@ class MonitorRunner:
             self.run_monitors_passed()
         else:
             self.result.skip_all_step_actions(
-                actions=self.suite.monitors_passed_actions, reason="A Monitor failed"
+                actions=self.suite.monitors_passed_actions,
+                reason="A Monitor failed",
             )
         self.result.finish_step()
 
@@ -74,7 +75,8 @@ class MonitorRunner:
             self.run_monitors_failed()
         else:
             self.result.skip_all_step_actions(
-                actions=self.suite.monitors_failed_actions, reason="No Monitors failed"
+                actions=self.suite.monitors_failed_actions,
+                reason="No Monitors failed",
             )
         self.result.finish_step()
 

@@ -1,11 +1,11 @@
 import re
 
 from jsonschema.validators import validator_for
+
 from spidermon.contrib.validation.validator import Validator
 
-from .translator import JSONSchemaMessageTranslator
 from .formats import format_checker
-
+from .translator import JSONSchemaMessageTranslator
 
 REQUIRED_RE = re.compile("'(.+)' is a required property")
 
@@ -16,7 +16,8 @@ class JSONSchemaValidator(Validator):
 
     def __init__(self, schema, translator=None, use_default_translator=True):
         super().__init__(
-            translator=translator, use_default_translator=use_default_translator
+            translator=translator,
+            use_default_translator=use_default_translator,
         )
         self._schema = schema
 

@@ -5,6 +5,7 @@ import pytest
 pytest.importorskip("scrapy")
 
 from scrapy.utils.test import get_crawler
+
 from spidermon.utils import zyte
 
 
@@ -97,7 +98,7 @@ def test_has_client(monkeypatch, expected):
         monkeypatch.setitem(sys.modules, "scrapinghub", None)
 
     reload(zyte)
-    assert zyte.HAS_CLIENT == expected
+    assert expected == zyte.HAS_CLIENT
 
 
 def test_client_settings_priority(mock_module, monkeypatch):

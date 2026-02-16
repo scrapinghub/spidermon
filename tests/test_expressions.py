@@ -1,14 +1,14 @@
 import pytest
 
-from spidermon.python import Interpreter
-from spidermon.exceptions import InvalidExpression
 from spidermon.data import Data
+from spidermon.exceptions import InvalidExpression
+from spidermon.python import Interpreter
 
 from .fixtures.expressions import (
-    SYNTAXERROR_EXPRESSIONS,
-    INVALID_EXPRESSIONS,
-    VALID_EXPRESSIONS,
     EXPRESSIONS_TO_EVALUATE,
+    INVALID_EXPRESSIONS,
+    SYNTAXERROR_EXPRESSIONS,
+    VALID_EXPRESSIONS,
 )
 from .fixtures.stats import STATS_TO_EVALUATE
 

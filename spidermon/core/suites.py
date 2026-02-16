@@ -3,19 +3,17 @@ from __future__ import annotations
 import collections
 from unittest import TestSuite
 
-from spidermon.exceptions import InvalidMonitorIterable, NotAllowedMethod
 from spidermon import settings
+from spidermon.exceptions import InvalidMonitorIterable, NotAllowedMethod
 
+from .factories import ActionFactory, MonitorFactory
 from .monitors import Monitor
 from .options import MonitorOptionsMetaclass
-from .factories import MonitorFactory, ActionFactory
 
 
 class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
     monitors: list[
-        type[MonitorSuite]
-        | type[Monitor]
-        | tuple[str, type[MonitorSuite] | type[Monitor]]
+        type[MonitorSuite | Monitor] | tuple[str, type[MonitorSuite | Monitor]]
     ] = []
     monitors_finished_actions: list[str] = []
     monitors_passed_actions: list[str] = []
@@ -105,7 +103,7 @@ class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
             [
                 1 if isinstance(monitor, Monitor) else monitor.number_of_monitors
                 for monitor in self
-            ]
+            ],
         )
 
     @property
@@ -177,7 +175,7 @@ class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
         show_description=True,
     ):
         def debug_attribute(condition, name, value):
-            return "{:>12}: {}\n".format(name, str(value)) if condition else ""
+            return f"{name:>12}: {value!s}\n" if condition else ""
 
         s = "-" * 80 + "\n"
         for t in self.all_monitors:
@@ -186,7 +184,9 @@ class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
             s += debug_attribute(show_level, "LEVEL", t.level)
             s += debug_attribute(show_order, "ORDER", t.order)
             s += debug_attribute(
-                show_description, "DESCRIPTION", t.method_description or "..."
+                show_description,
+                "DESCRIPTION",
+                t.method_description or "...",
             )
             s += "-" * 80 + "\n"
         return s

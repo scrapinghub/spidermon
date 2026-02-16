@@ -1,8 +1,7 @@
-from __future__ import absolute_import
-
 import logging
 
 import requests
+
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
 
@@ -15,7 +14,7 @@ class DiscordMessageManager:
     def __init__(self, webhook_url, fake=False):
         if not webhook_url:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_DISCORD_WEBHOOK_URL setting."
+                "You must provide a value for SPIDERMON_DISCORD_WEBHOOK_URL setting.",
             )
         self.webhook_url = webhook_url
         self.fake = fake
@@ -31,7 +30,7 @@ class DiscordMessageManager:
 
         if not response.ok:
             logger.error(
-                f"Failed to send message. Discord API error: {response.reason}"
+                f"Failed to send message. Discord API error: {response.reason}",
             )
 
 
@@ -48,11 +47,12 @@ class SendDiscordMessage(ActionWithTemplates):
         message_template=None,
         fake=None,
     ):
-        super(SendDiscordMessage, self).__init__()
+        super().__init__()
 
         self.fake = fake or self.fake
         self.manager = DiscordMessageManager(
-            webhook_url or self.webhook_url, fake=self.fake
+            webhook_url or self.webhook_url,
+            fake=self.fake,
         )
         self.message = message or self.message
         self.message_template = message_template or self.message_template
@@ -63,7 +63,7 @@ class SendDiscordMessage(ActionWithTemplates):
             "webhook_url": crawler.settings.get("SPIDERMON_DISCORD_WEBHOOK_URL"),
             "message": crawler.settings.get("SPIDERMON_DISCORD_MESSAGE"),
             "message_template": crawler.settings.get(
-                "SPIDERMON_DISCORD_MESSAGE_TEMPLATE"
+                "SPIDERMON_DISCORD_MESSAGE_TEMPLATE",
             ),
             "fake": crawler.settings.getbool("SPIDERMON_DISCORD_FAKE"),
         }
@@ -74,5 +74,4 @@ class SendDiscordMessage(ActionWithTemplates):
     def get_message(self):
         if self.message:
             return self.render_text_template(self.message)
-        else:
-            return self.render_template(self.message_template)
+        return self.render_template(self.message_template)

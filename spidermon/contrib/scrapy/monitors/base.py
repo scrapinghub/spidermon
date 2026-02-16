@@ -1,5 +1,5 @@
-import operator
 import logging
+import operator
 
 from spidermon import Monitor
 from spidermon.exceptions import NotConfigured
@@ -29,14 +29,14 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
     def run(self, result):
         if self.check_if_skip_rule_met():
             logger.info(f"Skipping {self.monitor_name} monitor")
-            return
+            return None
 
         return super().run(result)
 
     def check_if_skip_rule_met(self):
         if (
             hasattr(self, "skip_rules")
-            and getattr(self, "monitor_name")
+            and self.monitor_name
             and self.skip_rules.get(self.monitor_name)
         ):
             skip_rules = self.skip_rules[self.monitor_name]
@@ -135,13 +135,13 @@ class BaseStatMonitor(BaseScrapyMonitor):
 
     def run(self, result):
         has_threshold_config = any(
-            [hasattr(self, "threshold_setting"), hasattr(self, "get_threshold")]
+            [hasattr(self, "threshold_setting"), hasattr(self, "get_threshold")],
         )
         if not has_threshold_config:
             raise NotConfigured(
                 f"{self.__class__.__name__} should include a a `threshold_setting` attribute "
                 "to be configured in your project settings with the desired threshold "
-                "or a `get_threshold` method that returns the desired threshold."
+                "or a `get_threshold` method that returns the desired threshold.",
             )
 
         if (
@@ -150,7 +150,7 @@ class BaseStatMonitor(BaseScrapyMonitor):
         ):
             raise NotConfigured(
                 f"Configure {self.threshold_setting} to your project "
-                f"settings to use {self.monitor_name}."
+                f"settings to use {self.monitor_name}.",
             )
 
         return super().run(result)

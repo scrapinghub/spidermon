@@ -2,11 +2,11 @@ import pytest
 
 pytest.importorskip("scrapy")
 
-from spidermon.contrib.scrapy.monitors import (
-    TotalRequestsMonitor,
-    SPIDERMON_MAX_REQUESTS_ALLOWED,
-)
 from spidermon import MonitorSuite
+from spidermon.contrib.scrapy.monitors import (
+    SPIDERMON_MAX_REQUESTS_ALLOWED,
+    TotalRequestsMonitor,
+)
 
 
 def new_suite():
@@ -15,7 +15,6 @@ def new_suite():
 
 def test_total_requests_monitor_should_fail(make_data):
     """Total Requests should fail if the request count is higher than expected"""
-
     data = make_data({SPIDERMON_MAX_REQUESTS_ALLOWED: 10})
 
     runner = data.pop("runner")
@@ -27,7 +26,6 @@ def test_total_requests_monitor_should_fail(make_data):
 
 def test_total_requests_monitor_should_pass_disabled(make_data):
     """Total Requests should pass if the limit is negative"""
-
     data = make_data({SPIDERMON_MAX_REQUESTS_ALLOWED: -1})
     runner = data.pop("runner")
     suite = new_suite()
@@ -38,7 +36,6 @@ def test_total_requests_monitor_should_pass_disabled(make_data):
 
 def test_total_requests_monitor_should_pass_default(make_data):
     """Total Requests should pass if the limit is not set"""
-
     data = make_data({})
     runner = data.pop("runner")
     suite = new_suite()
@@ -49,7 +46,6 @@ def test_total_requests_monitor_should_pass_default(make_data):
 
 def test_total_requests_monitor_should_pass_under_limit(make_data):
     """Total Requests should pass if the request count is not higher than expected"""
-
     data = make_data({SPIDERMON_MAX_REQUESTS_ALLOWED: 10})
     runner = data.pop("runner")
     suite = new_suite()

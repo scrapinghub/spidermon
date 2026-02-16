@@ -1,6 +1,5 @@
 from typing import Any
 
-
 STATS_A = {"item_scraped_count": 150}
 
 STATS_B = {"item_scraped_count": 0}

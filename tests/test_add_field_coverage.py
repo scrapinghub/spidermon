@@ -29,11 +29,17 @@ def spider():
 async def send_item_scraped(spider, item):
     if hasattr(spider.crawler.signals, "send_catch_log_async"):
         await spider.crawler.signals.send_catch_log_async(
-            signal=signals.item_scraped, item=item, response="", spider=spider
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
         )
     else:
         await spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped, item=item, response="", spider=spider
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
         )
 
 
@@ -178,11 +184,14 @@ async def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field
 
     item = {"field1": "value1"}
     await send_item_scraped(
-        spider, item
+        spider,
+        item,
     )  # Return item to have some stats to calculate coverage
 
     crawler.signals.send_catch_log(
-        signal=signals.spider_closed, spider=spider, reason=None
+        signal=signals.spider_closed,
+        spider=spider,
+        reason=None,
     )
 
     stats = spider.crawler.stats.get_stats()
@@ -202,11 +211,14 @@ async def test_add_field_coverage_when_spider_closes_if_have_field_coverage_sett
 
     item = {"field1": "value1"}
     await send_item_scraped(
-        spider, item
+        spider,
+        item,
     )  # Return item to have some stats to calculate coverage
 
     crawler.signals.send_catch_log(
-        signal=signals.spider_closed, spider=spider, reason=None
+        signal=signals.spider_closed,
+        spider=spider,
+        reason=None,
     )
 
     stats = spider.crawler.stats.get_stats()

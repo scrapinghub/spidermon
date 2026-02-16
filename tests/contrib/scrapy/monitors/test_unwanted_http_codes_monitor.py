@@ -4,9 +4,9 @@ pytest.importorskip("scrapy")
 
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.monitors import (
-    UnwantedHTTPCodesMonitor,
     SPIDERMON_UNWANTED_HTTP_CODES,
     SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT,
+    UnwantedHTTPCodesMonitor,
 )
 
 
@@ -16,8 +16,8 @@ def new_suite():
 
 def test_unwanted_httpcodes_should_fail(make_data):
     """Unwanted HTTP Code should fail if # off responses with error status
-    codes is higher than expected"""
-
+    codes is higher than expected
+    """
     # Scenario # 1
     data = make_data({SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT: 16})
 
@@ -48,7 +48,7 @@ def test_unwanted_httpcodes_should_fail(make_data):
         {
             SPIDERMON_UNWANTED_HTTP_CODES: [500],
             SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT: 15,
-        }
+        },
     )
 
     runner = data.pop("runner")
@@ -102,7 +102,7 @@ def test_unwanted_httpcodes_should_fail(make_data):
 
     # Scenario # 7
     data = make_data(
-        {SPIDERMON_UNWANTED_HTTP_CODES: {500: {"max_percentage": 0.5}, 400: 2}}
+        {SPIDERMON_UNWANTED_HTTP_CODES: {500: {"max_percentage": 0.5}, 400: 2}},
     )
 
     runner = data.pop("runner")
@@ -124,8 +124,8 @@ def test_unwanted_httpcodes_should_fail(make_data):
             SPIDERMON_UNWANTED_HTTP_CODES: {
                 500: {"max_percentage": 0.5, "max_count": 3},
                 400: 2,
-            }
-        }
+            },
+        },
     )
 
     runner = data.pop("runner")
@@ -146,8 +146,8 @@ def test_unwanted_httpcodes_should_fail(make_data):
             SPIDERMON_UNWANTED_HTTP_CODES: {
                 500: {"max_percentage": 0.99, "max_count": 10},
                 400: 2,
-            }
-        }
+            },
+        },
     )
 
     runner = data.pop("runner")
@@ -168,8 +168,8 @@ def test_unwanted_httpcodes_should_fail(make_data):
             SPIDERMON_UNWANTED_HTTP_CODES: {
                 500: {"max_percentage": 0.5, "max_count": 10},
                 400: 2,
-            }
-        }
+            },
+        },
     )
 
     runner = data.pop("runner")
@@ -188,8 +188,8 @@ def test_unwanted_httpcodes_should_fail(make_data):
 
 def test_unwanted_httpcodes_should_pass(make_data):
     """Unwanted HTTP Code should pass if # off responses with error status
-    codes is lower than expected"""
-
+    codes is lower than expected
+    """
     # Scenario # 1
     data = make_data({SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT: 16})
 
@@ -214,7 +214,7 @@ def test_unwanted_httpcodes_should_pass(make_data):
         {
             SPIDERMON_UNWANTED_HTTP_CODES: [500],
             SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT: 15,
-        }
+        },
     )
 
     runner = data.pop("runner")
@@ -248,8 +248,8 @@ def test_unwanted_httpcodes_should_pass(make_data):
             SPIDERMON_UNWANTED_HTTP_CODES: {
                 500: {"max_percentage": 0.5},
                 400: 2,
-            }
-        }
+            },
+        },
     )
 
     runner = data.pop("runner")
@@ -266,8 +266,8 @@ def test_unwanted_httpcodes_should_pass(make_data):
             SPIDERMON_UNWANTED_HTTP_CODES: {
                 500: {"max_count": 5, "max_percentage": 0.9},
                 400: 2,
-            }
-        }
+            },
+        },
     )
 
     runner = data.pop("runner")
@@ -284,8 +284,8 @@ def test_unwanted_httpcodes_should_pass(make_data):
             SPIDERMON_UNWANTED_HTTP_CODES: {
                 500: {},
                 400: 2,
-            }
-        }
+            },
+        },
     )
 
     runner = data.pop("runner")

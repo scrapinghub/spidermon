@@ -28,18 +28,18 @@ class SendSESEmail(SendEmail):
         self.aws_return_path = aws_return_path or self.aws_return_path
         if not self.fake and not self.aws_access_key:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_AWS_ACCESS_KEY_ID setting."
+                "You must provide a value for SPIDERMON_AWS_ACCESS_KEY_ID setting.",
             )
         if not self.fake and not self.aws_secret_key:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_AWS_SECRET_ACCESS_KEY setting."
+                "You must provide a value for SPIDERMON_AWS_SECRET_ACCESS_KEY setting.",
             )
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):
         kwargs = super().from_crawler_kwargs(crawler)
         (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(
-            crawler.settings
+            crawler.settings,
         )
         kwargs.update(
             {
@@ -47,7 +47,7 @@ class SendSESEmail(SendEmail):
                 "aws_secret_key": aws_secret_access_key,
                 "aws_region_name": crawler.settings.get("SPIDERMON_AWS_REGION_NAME"),
                 "aws_return_path": crawler.settings.get("SPIDERMON_AWS_RETURN_PATH"),
-            }
+            },
         )
         return kwargs
 

@@ -1,6 +1,7 @@
+from unittest.mock import MagicMock
+
 from spidermon.core.actions import Action
 from spidermon.exceptions import NotConfigured, SkipAction
-from unittest.mock import MagicMock
 
 
 def test_action_success():

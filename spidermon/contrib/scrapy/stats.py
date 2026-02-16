@@ -1,6 +1,5 @@
 from slugify import slugify
 
-
 STATS_DEFAULT_VALIDATION_PREFIX = "spidermon/validation"
 
 
@@ -21,14 +20,15 @@ class ValidationStatsManager:
     def add_validator(self, type, class_name):
         self.stats.inc_value(self._get_stats_name(NAMES.VALIDATORS))
         self.stats.set_value(
-            self._get_stats_name(NAMES.VALIDATORS, type, class_name), True
+            self._get_stats_name(NAMES.VALIDATORS, type, class_name),
+            True,
         )
 
     def add_field_error(self, field, error):
         self.stats.inc_value(self._get_stats_name(NAMES.FIELDS, NAMES.ERRORS))
         self.stats.inc_value(self._get_stats_name(NAMES.FIELDS, NAMES.ERRORS, error))
         self.stats.inc_value(
-            self._get_stats_name(NAMES.FIELDS, NAMES.ERRORS, error) + "/" + field
+            self._get_stats_name(NAMES.FIELDS, NAMES.ERRORS, error) + "/" + field,
         )
 
     def add_fields(self, count):

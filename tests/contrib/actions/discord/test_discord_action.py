@@ -2,8 +2,8 @@ import pytest
 
 pytest.importorskip("jinja2")
 
-from spidermon.exceptions import NotConfigured
 from spidermon.contrib.actions.discord import DiscordMessageManager
+from spidermon.exceptions import NotConfigured
 
 
 @pytest.fixture

@@ -4,18 +4,17 @@ pytest.importorskip("scrapy")
 
 from collections import deque
 from typing import Any
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import scrapinghub
-
 from packaging.version import Version
 from scrapy import Spider
 from scrapy.utils.defer import deferred_f_from_coro_f
 from scrapy.utils.test import get_crawler
+
 from spidermon.contrib.stats.statscollectors.sc_collections import (
     ScrapyCloudCollectionsStatsHistoryCollector,
 )
-
 from tests import SCRAPY_VERSION
 
 
@@ -66,7 +65,7 @@ def test_settings():
     return {
         "STATS_CLASS": (
             "spidermon.contrib.stats.statscollectors.sc_collections.ScrapyCloudCollectionsStatsHistoryCollector"
-        )
+        ),
     }
 
 
@@ -75,7 +74,7 @@ def test_open_spider_without_api(scrapinghub_mock, test_settings):
     crawler = get_crawler(Spider, test_settings)
     pipe = ScrapyCloudCollectionsStatsHistoryCollector(crawler)
 
-    args = [MagicMock()] if SCRAPY_VERSION < Version("2.14") else []
+    args = [MagicMock()] if Version("2.14") > SCRAPY_VERSION else []
     pipe.open_spider(*args)
 
     assert pipe.store is None
@@ -98,7 +97,8 @@ def test_open_collection_with_api(scrapinghub_mock, os_environ_mock, test_settin
 
 @deferred_f_from_coro_f
 async def test_spider_has_stats_history_attribute_when_opened_with_collector(
-    test_settings, stats_collection
+    test_settings,
+    stats_collection,
 ):
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
@@ -110,7 +110,8 @@ async def test_spider_has_stats_history_attribute_when_opened_with_collector(
 
 @deferred_f_from_coro_f
 async def test_spider_has_stats_history_queue_with_specified_max_size(
-    test_settings, stats_collection
+    test_settings,
+    stats_collection,
 ):
     max_stored_stats = 2
     test_settings["SPIDERMON_MAX_STORED_STATS"] = max_stored_stats
@@ -125,7 +126,10 @@ async def test_spider_has_stats_history_queue_with_specified_max_size(
 @pytest.mark.parametrize("initial_max_len,end_max_len", [(5, 2), (5, 10), (5, 5)])
 @deferred_f_from_coro_f
 async def test_spider_update_stats_history_queue_max_size(
-    test_settings, stats_collection, initial_max_len, end_max_len
+    test_settings,
+    stats_collection,
+    initial_max_len,
+    end_max_len,
 ):
     test_settings["SPIDERMON_MAX_STORED_STATS"] = initial_max_len
     crawler = get_crawler(Spider, test_settings)
@@ -142,7 +146,8 @@ async def test_spider_update_stats_history_queue_max_size(
 
 @deferred_f_from_coro_f
 async def test_spider_has_last_stats_history_when_opened_again(
-    test_settings, stats_collection
+    test_settings,
+    stats_collection,
 ):
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
@@ -158,7 +163,8 @@ async def test_spider_has_last_stats_history_when_opened_again(
 
 @deferred_f_from_coro_f
 async def test_spider_has_two_last_stats_history_when_opened_third_time(
-    test_settings, stats_collection
+    test_settings,
+    stats_collection,
 ):
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
@@ -222,7 +228,9 @@ async def test_job_id_added(mock_os_enviorn_get, test_settings, stats_collection
 @deferred_f_from_coro_f
 @patch("spidermon.contrib.stats.statscollectors.sc_collections.os.environ.get")
 async def test_job_id_not_available(
-    mock_os_enviorn_get, test_settings, stats_collection
+    mock_os_enviorn_get,
+    test_settings,
+    stats_collection,
 ):
     mock_os_enviorn_get.return_value = None
     crawler = get_crawler(Spider, test_settings)
@@ -235,7 +243,9 @@ async def test_job_id_not_available(
 
 @patch("spidermon.contrib.stats.statscollectors.sc_collections.os.environ.get")
 def test_stats_history_when_no_collection(
-    os_enviorn_mock, stats_collection_not_exist, test_settings
+    os_enviorn_mock,
+    stats_collection_not_exist,
+    test_settings,
 ):
     mock_spider = MagicMock()
     mock_spider.crawler.settings.getint.return_value = 100
@@ -245,6 +255,6 @@ def test_stats_history_when_no_collection(
     crawler = get_crawler(Spider, test_settings)
     crawler.spider = mock_spider
     pipe = ScrapyCloudCollectionsStatsHistoryCollector(crawler)
-    args = [mock_spider] if SCRAPY_VERSION < Version("2.14") else []
+    args = [mock_spider] if Version("2.14") > SCRAPY_VERSION else []
     pipe.open_spider(*args)
-    assert mock_spider.stats_history == deque([], maxlen=100)
+    assert mock_spider.stats_history == deque(maxlen=100)

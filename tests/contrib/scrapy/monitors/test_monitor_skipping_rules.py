@@ -1,13 +1,14 @@
 import operator
+
 import pytest
 
 pytest.importorskip("scrapy")
 
-from spidermon.contrib.scrapy.monitors import ItemCountMonitor
-from spidermon import settings
 from scrapy.utils.test import get_crawler
-from spidermon.contrib.scrapy.monitors.suites import SpiderCloseMonitorSuite
 
+from spidermon import settings
+from spidermon.contrib.scrapy.monitors import ItemCountMonitor
+from spidermon.contrib.scrapy.monitors.suites import SpiderCloseMonitorSuite
 
 ops = {
     ">": operator.gt,
@@ -54,12 +55,16 @@ class monitorSuite(SpiderCloseMonitorSuite):
     ],
 )
 def test_skipping_rule_on_stats_value(
-    make_data, value, threshold, expected_status, rules
+    make_data,
+    value,
+    threshold,
+    expected_status,
+    rules,
 ):
     data = make_data(
         {
             ItemCountMonitor.threshold_setting: threshold,
-        }
+        },
     )
 
     settings = {"SPIDERMON_MONITOR_SKIPPING_RULES": rules}
@@ -93,12 +98,16 @@ def test_skipping_rule_on_stats_value(
     ],
 )
 def test_skipping_rule_on_callable_function(
-    make_data, value, threshold, expected_status, rules
+    make_data,
+    value,
+    threshold,
+    expected_status,
+    rules,
 ):
     data = make_data(
         {
             ItemCountMonitor.threshold_setting: threshold,
-        }
+        },
     )
 
     settings = {"SPIDERMON_MONITOR_SKIPPING_RULES": rules}

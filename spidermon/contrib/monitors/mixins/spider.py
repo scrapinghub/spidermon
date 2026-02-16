@@ -23,7 +23,8 @@ class ResponsesInfo:
     def __init__(self, stats):
         self._stats_analyzer = StatsAnalyzer(stats=stats)
         self.count = self._stats_analyzer.search(DOWNLOADER_RESPONSE_COUNT + "$").get(
-            DOWNLOADER_RESPONSE_COUNT, 0
+            DOWNLOADER_RESPONSE_COUNT,
+            0,
         )
 
         # all status codes
@@ -33,25 +34,29 @@ class ResponsesInfo:
         # 1xx. informational
         self.informational = DictPercentCounter(total=self.count)
         self._add_status_codes(
-            pattern=DOWNLOADER_STATUS_CODES_INFORMATIONAL, target=self.informational
+            pattern=DOWNLOADER_STATUS_CODES_INFORMATIONAL,
+            target=self.informational,
         )
 
         # 2xx. successful
         self.successful = DictPercentCounter(total=self.count)
         self._add_status_codes(
-            pattern=DOWNLOADER_STATUS_CODES_SUCCESSFUL, target=self.successful
+            pattern=DOWNLOADER_STATUS_CODES_SUCCESSFUL,
+            target=self.successful,
         )
 
         # 3xx. redirections
         self.redirections = DictPercentCounter(total=self.count)
         self._add_status_codes(
-            pattern=DOWNLOADER_STATUS_CODES_REDIRECTIONS, target=self.redirections
+            pattern=DOWNLOADER_STATUS_CODES_REDIRECTIONS,
+            target=self.redirections,
         )
 
         # 4xx. bad requests
         self.bad_requests = DictPercentCounter(total=self.count)
         self._add_status_codes(
-            pattern=DOWNLOADER_STATUS_CODES_BAD_REQUESTS, target=self.bad_requests
+            pattern=DOWNLOADER_STATUS_CODES_BAD_REQUESTS,
+            target=self.bad_requests,
         )
 
         # 5xx. internal server errors
@@ -64,13 +69,15 @@ class ResponsesInfo:
         # >= 6xx. others
         self.others = DictPercentCounter(total=self.count)
         self._add_status_codes(
-            pattern=DOWNLOADER_STATUS_CODES_OTHERS, target=self.others
+            pattern=DOWNLOADER_STATUS_CODES_OTHERS,
+            target=self.others,
         )
 
         # errors (4xx + 5xx)
         self.errors = DictPercentCounter(total=self.count)
         self._add_status_codes(
-            pattern=DOWNLOADER_STATUS_CODES_ERRORS, target=self.errors
+            pattern=DOWNLOADER_STATUS_CODES_ERRORS,
+            target=self.errors,
         )
 
     def _add_status_codes(self, pattern, target):

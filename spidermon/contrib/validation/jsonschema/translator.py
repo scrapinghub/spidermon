@@ -1,5 +1,5 @@
-from spidermon.contrib.validation.translator import MessageTranslator
 from spidermon.contrib.validation import messages
+from spidermon.contrib.validation.translator import MessageTranslator
 
 
 class JSONSchemaMessageTranslator(MessageTranslator):

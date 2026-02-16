@@ -1,9 +1,9 @@
-from collections import OrderedDict
 import unittest
+from collections import OrderedDict
 
 from spidermon import settings
 
-from .steps import MonitorStep, ActionsStep
+from .steps import ActionsStep, MonitorStep
 
 
 def step_required_decorator(allowed_steps):
@@ -11,8 +11,7 @@ def step_required_decorator(allowed_steps):
         def decorator(self, *args, **kwargs):
             if self.step.name not in allowed_steps:
                 raise ValueError  # TO-DO
-            else:
-                return fn(self, *args, **kwargs)
+            return fn(self, *args, **kwargs)
 
         return decorator
 
@@ -27,7 +26,7 @@ class MonitorResult(unittest.TestResult):
     def __init__(self):
         super().__init__()
         self._steps = OrderedDict(
-            [(step, self._get_step_class(step)(step)) for step in settings.STEPS.ALL]
+            [(step, self._get_step_class(step)(step)) for step in settings.STEPS.ALL],
         )
         self._current_step = None
 
@@ -42,7 +41,7 @@ class MonitorResult(unittest.TestResult):
     @property
     def monitors_passed_results(self):
         return self._step_monitors.items_for_statuses(
-            settings.MONITOR.STATUSES.SUCCESSFUL
+            settings.MONITOR.STATUSES.SUCCESSFUL,
         )
 
     @property
@@ -128,7 +127,6 @@ class MonitorResult(unittest.TestResult):
     @actions_step_required
     def add_action_success(self, action):
         self.step[action].status = settings.ACTION.STATUS.SUCCESS
-        pass
 
     @actions_step_required
     def add_action_skip(self, action, reason):

@@ -5,6 +5,7 @@ import pytest
 pytest.importorskip("jinja2")
 
 import jinja2
+
 from spidermon.templates import TemplateLoader
 
 

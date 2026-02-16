@@ -52,5 +52,5 @@ def test_get_contents_fails(mocker, caplog):
             "spidermon.contrib.validation.jsonschema.tools",
             40,
             "'ValueError' object has no attribute 'decode'\nFailed to get 'https://example.com/schema.json'",
-        )
+        ),
     ]

@@ -1,6 +1,5 @@
 import json
 
-
 tree_schema = {
     "$schema": "http://json-schema.org/draft-04/schema",
     "required": ["child"],

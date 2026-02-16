@@ -52,6 +52,7 @@ def test_set_nested_attribute():
 
     item = ItemAdapter(DummyItem(attr1=NestedField(foo="bar")))
     with pytest.raises(
-        KeyError, match="NestedField does not support field: missing_attribute"
+        KeyError,
+        match="NestedField does not support field: missing_attribute",
     ):
         set_nested_attribute(item, "attr1.missing_attribute", "foo")

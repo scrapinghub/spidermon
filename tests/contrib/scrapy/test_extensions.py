@@ -6,8 +6,8 @@ import pytest
 pytest.importorskip("scrapy")
 
 
-from scrapy.utils.test import get_crawler
 from scrapy import Spider
+from scrapy.utils.test import get_crawler
 
 from spidermon.contrib.scrapy.extensions import Spidermon
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
@@ -68,7 +68,7 @@ class ExpressionMonitorsTesting(TestCase):
         settings = {
             "SPIDERMON_ENABLED": True,
             "SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS": [
-                {"tests": [{"expression": dt.expression}]}
+                {"tests": [{"expression": dt.expression}]},
             ],
         }
         settings.update(dt.settings)
@@ -96,17 +96,19 @@ class ExpressionMonitorsTesting(TestCase):
                     raise AssertionError(trace)
             if dt.expected_error:
                 raise AssertionError(
-                    f"Expected error <{dt.expected_error}> was not raised"
+                    f"Expected error <{dt.expected_error}> was not raised",
                 )
 
     def test_stats_ready(self):
         self.run_test(
-            stats={"finish_reason": "dead"}, expression="stats.finish_reason == 'dead'"
+            stats={"finish_reason": "dead"},
+            expression="stats.finish_reason == 'dead'",
         )
 
     def test_stats_not_configured(self):
         self.run_test(
-            expression="stats.finish_reason == 'dead'", expected_error="NotConfigured"
+            expression="stats.finish_reason == 'dead'",
+            expected_error="NotConfigured",
         )
 
     def test_crawler_ready(self):
@@ -135,7 +137,8 @@ class ExpressionMonitorsTesting(TestCase):
 
     def test_validation_not_configured(self):
         self.run_test(
-            expression="validation.items.count == 0", expected_error="NotConfigured"
+            expression="validation.items.count == 0",
+            expected_error="NotConfigured",
         )
 
     def test_job_not_configured(self):

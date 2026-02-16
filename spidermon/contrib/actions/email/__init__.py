@@ -56,11 +56,11 @@ class SendEmail(ActionWithTemplates):
         self.fake = fake or self.fake
         if not self.fake and not self.to:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_EMAIL_TO setting."
+                "You must provide a value for SPIDERMON_EMAIL_TO setting.",
             )
         if not self.subject:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_EMAIL_SUBJECT setting."
+                "You must provide a value for SPIDERMON_EMAIL_SUBJECT setting.",
             )
         if not any(
             [
@@ -68,7 +68,7 @@ class SendEmail(ActionWithTemplates):
                 self.body_text_template,
                 self.body_html,
                 self.body_html_template,
-            ]
+            ],
         ):
             body_settings = ", ".join(
                 [
@@ -76,10 +76,10 @@ class SendEmail(ActionWithTemplates):
                     "SPIDERMON_BODY_TEXT_TEMPLATE",
                     "SPIDERMON_BODY_HTML",
                     "SPIDERMON_BODY_HTML_TEMPLATE",
-                ]
+                ],
             )
             raise NotConfigured(
-                f"You must provide a value for one of these settings: {body_settings}"
+                f"You must provide a value for one of these settings: {body_settings}",
             )
 
     @classmethod
@@ -88,7 +88,7 @@ class SendEmail(ActionWithTemplates):
             "sender": crawler.settings.get("SPIDERMON_EMAIL_SENDER"),
             "subject": crawler.settings.get("SPIDERMON_EMAIL_SUBJECT"),
             "subject_template": crawler.settings.get(
-                "SPIDERMON_EMAIL_SUBJECT_TEMPLATE"
+                "SPIDERMON_EMAIL_SUBJECT_TEMPLATE",
             ),
             "to": cls.getlist(crawler.settings, "SPIDERMON_EMAIL_TO"),
             "cc": cls.getlist(crawler.settings, "SPIDERMON_EMAIL_CC"),
@@ -116,18 +116,16 @@ class SendEmail(ActionWithTemplates):
     def get_subject(self):
         if self.subject:
             return self.render_text_template(self.subject)
-        elif self.subject_template:
+        if self.subject_template:
             return self.render_template(self.subject_template)
-        else:
-            return ""
+        return ""
 
     def get_body_text(self):
         if self.body_text:
             return self.render_text_template(self.body_text)
-        elif self.body_text_template:
+        if self.body_text_template:
             return self.render_template(self.body_text_template)
-        else:
-            return ""
+        return ""
 
     def get_body_html(self):
         html = ""

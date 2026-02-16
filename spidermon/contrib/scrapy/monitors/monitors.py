@@ -4,10 +4,10 @@ import math
 import os
 
 from spidermon import Monitor, monitors
-from spidermon.exceptions import NotConfigured
-from spidermon.utils.zyte import Client
-from spidermon.utils.settings import getdictorlist
 from spidermon.contrib.monitors.mixins.stats import StatsMonitorMixin
+from spidermon.exceptions import NotConfigured
+from spidermon.utils.settings import getdictorlist
+from spidermon.utils.zyte import Client
 
 from .base import BaseScrapyMonitor, BaseStatMonitor
 
@@ -52,7 +52,8 @@ class CriticalCountMonitor(BaseStatMonitor):
     There's **NO** default value for this setting, if you try to use this
     monitor without setting it, it'll raise a ``NotConfigured`` exception.
 
-    If the job doesn't have any critical error, the monitor will be skipped."""
+    If the job doesn't have any critical error, the monitor will be skipped.
+    """
 
     stat_name = "log_count/CRITICAL"
     threshold_setting = "SPIDERMON_MAX_CRITICALS"
@@ -68,7 +69,8 @@ class ErrorCountMonitor(BaseStatMonitor):
     There's **NO** default value for this setting, if you try to use this
     monitor without setting it, it'll raise a ``NotConfigured`` exception.
 
-    If the job doesn't have any error, the monitor will be skipped."""
+    If the job doesn't have any error, the monitor will be skipped.
+    """
 
     stat_name = "log_count/ERROR"
     threshold_setting = "SPIDERMON_MAX_ERRORS"
@@ -84,7 +86,8 @@ class WarningCountMonitor(BaseStatMonitor):
     There's **NO** default value for this setting, if you try to use this
     monitor without setting it, it'll raise a ``NotConfigured`` exception.
 
-    If the job doesn't have any warning, the monitor will be skipped."""
+    If the job doesn't have any warning, the monitor will be skipped.
+    """
 
     stat_name = "log_count/WARNING"
     threshold_setting = "SPIDERMON_MAX_WARNINGS"
@@ -100,17 +103,17 @@ class FinishReasonMonitor(BaseScrapyMonitor):
     ``SPIDERMON_EXPECTED_FINISH_REASONS``, it should be an ``iterable`` of
     valid finish reasons.
 
-    The default value of this settings is: ``['finished', ]``."""
+    The default value of this settings is: ``['finished', ]``.
+    """
 
     @monitors.name("Should have the expected finished reason(s)")
     def test_should_finish_with_expected_reason(self):
         expected_reasons = self.crawler.settings.getlist(
-            SPIDERMON_EXPECTED_FINISH_REASONS, ("finished",)
+            SPIDERMON_EXPECTED_FINISH_REASONS,
+            ("finished",),
         )
         finished_reason = self.stats.get("finish_reason")
-        msg = 'Finished with "{}" the expected reasons are {}'.format(
-            finished_reason, expected_reasons
-        )
+        msg = f'Finished with "{finished_reason}" the expected reasons are {expected_reasons}'
         self.assertTrue(finished_reason in expected_reasons, msg=msg)
 
 
@@ -184,9 +187,7 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
         )
 
         if not isinstance(unwanted_http_codes, dict):
-            unwanted_http_codes = {
-                code: errors_max_count for code in unwanted_http_codes
-            }
+            unwanted_http_codes = dict.fromkeys(unwanted_http_codes, errors_max_count)
 
         requests = self.stats.get("downloader/request_count", 0)
         for code, max_errors in unwanted_http_codes.items():
@@ -210,14 +211,14 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
                     calculated_percentage_errors = int(
                         percentual_max_errors * requests
                         if percentual_max_errors
-                        else requests
+                        else requests,
                     )
 
                     # takes the minimum of the two values.
                     # if no absolute max errors were set, take the number
                     # of requests as this effectively disables this check
                     max_errors = min(
-                        absolute_max_errors if absolute_max_errors else requests,
+                        absolute_max_errors or requests,
                         calculated_percentage_errors,
                     )
 
@@ -226,17 +227,12 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
                     percentage_trigger = max_errors == calculated_percentage_errors
 
             stat_message = (
-                "This exceeds the limit of {} ({}% of {} total requests)".format(
-                    max_errors, percentual_max_errors * 100, requests
-                )
+                f"This exceeds the limit of {max_errors} ({percentual_max_errors * 100}% of {requests} total requests)"
                 if percentage_trigger
-                else "This exceeds the limit of {}".format(max_errors)
+                else f"This exceeds the limit of {max_errors}"
             )
 
-            msg = (
-                "Found {} Responses with status code={} - ".format(count, code)
-                + stat_message
-            )
+            msg = f"Found {count} Responses with status code={code} - " + stat_message
             self.assertTrue(count <= max_errors, msg=msg)
 
 
@@ -273,16 +269,14 @@ class RetryCountMonitor(BaseScrapyMonitor):
     """
 
     @monitors.name(
-        "Should not hit the limit of requests that reached the maximum retry amount"
+        "Should not hit the limit of requests that reached the maximum retry amount",
     )
     def test_maximum_retries(self):
         max_reached = self.stats.get("retry/max_reached", 0)
         threshold = self.crawler.settings.getint(SPIDERMON_MAX_RETRIES, -1)
         if threshold < 0:
             return
-        msg = "Too many requests ({}) reached the maximum retry amount".format(
-            max_reached
-        )
+        msg = f"Too many requests ({max_reached}) reached the maximum retry amount"
         self.assertLessEqual(max_reached, threshold, msg=msg)
 
 
@@ -297,7 +291,7 @@ class SuccessfulRequestsMonitor(BaseScrapyMonitor):
     def test_minimum_successful_requests(self):
         requests = self.stats.get("downloader/response_status_count/200", 0)
         threshold = self.crawler.settings.getint(SPIDERMON_MIN_SUCCESSFUL_REQUESTS, 0)
-        msg = "Too few ({}) successful requests".format(requests)
+        msg = f"Too few ({requests}) successful requests"
         self.assertGreaterEqual(requests, threshold, msg=msg)
 
 
@@ -315,7 +309,7 @@ class TotalRequestsMonitor(BaseScrapyMonitor):
         threshold = self.crawler.settings.getint(SPIDERMON_MAX_REQUESTS_ALLOWED, -1)
         if threshold < 0:
             return
-        msg = "Too many ({}) requests".format(requests)
+        msg = f"Too many ({requests}) requests"
         self.assertLessEqual(requests, threshold, msg=msg)
 
 
@@ -443,18 +437,20 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
 
     def run(self, result):
         add_field_coverage_set = self.crawler.settings.getbool(
-            "SPIDERMON_ADD_FIELD_COVERAGE", False
+            "SPIDERMON_ADD_FIELD_COVERAGE",
+            False,
         )
         if not add_field_coverage_set:
             raise NotConfigured(
-                "To enable field coverage monitor, set SPIDERMON_ADD_FIELD_COVERAGE=True in your project settings"
+                "To enable field coverage monitor, set SPIDERMON_ADD_FIELD_COVERAGE=True in your project settings",
             )
 
         return super().run(result)
 
     def test_check_if_field_coverage_rules_are_met(self):
         skip_no_items = self.crawler.settings.getbool(
-            "SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM", False
+            "SPIDERMON_FIELD_COVERAGE_SKIP_IF_NO_ITEM",
+            False,
         )
         items_scraped = self.data.stats.get("item_scraped_count", 0)
         if skip_no_items and int(items_scraped) == 0:
@@ -462,21 +458,20 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
 
         failures = []
         field_coverage_rules = self.crawler.settings.getdict(
-            "SPIDERMON_FIELD_COVERAGE_RULES"
+            "SPIDERMON_FIELD_COVERAGE_RULES",
         )
         for field, expected_coverage in field_coverage_rules.items():
             actual_coverage = self.data.stats.get(
-                f"spidermon_field_coverage/{field}", 0
+                f"spidermon_field_coverage/{field}",
+                0,
             )
             if actual_coverage < expected_coverage:
                 failures.append(
-                    "{} (expected {}, got {})".format(
-                        field, expected_coverage, actual_coverage
-                    )
+                    f"{field} (expected {expected_coverage}, got {actual_coverage})",
                 )
 
         msg = "\nThe following items did not meet field coverage rules:\n{}".format(
-            "\n".join(failures)
+            "\n".join(failures),
         )
         self.assertTrue(len(failures) == 0, msg=msg)
 
@@ -486,7 +481,8 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
     """Check for runtime exceeding a target maximum runtime.
 
     You can configure the maximum runtime (in seconds) using
-    ``SPIDERMON_MAX_EXECUTION_TIME`` as a project setting or spider attribute."""
+    ``SPIDERMON_MAX_EXECUTION_TIME`` as a project setting or spider attribute.
+    """
 
     @monitors.name("Maximum execution time reached")
     def test_execution_time(self):
@@ -557,7 +553,7 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         ):
             raise NotConfigured(
                 f"Configure SPIDERMON_JOBS_COMPARISON to your project "
-                f"settings to use {self.monitor_name}."
+                f"settings to use {self.monitor_name}.",
             )
 
         if (
@@ -566,7 +562,7 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         ):
             raise NotConfigured(
                 f"Configure SPIDERMON_JOBS_COMPARISON_THRESHOLD to your project "
-                f"settings to use {self.monitor_name}."
+                f"settings to use {self.monitor_name}.",
             )
 
         return super().run(result)
@@ -574,11 +570,13 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
     def _get_jobs(self, states, number_of_jobs):
         tags = self._get_tags_to_filter()
         close_reasons = self.crawler.settings.getlist(
-            SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS, ()
+            SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS,
+            (),
         )
         args = self._get_args_to_filter()
         args_enabled = self.crawler.settings.getbool(
-            SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED, False
+            SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED,
+            False,
         )
 
         total_jobs = []
@@ -628,14 +626,14 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
             return []
 
         tags_to_filter = set(desired_tags) & set(current_tags)
-        return list(sorted(tags_to_filter))
+        return sorted(tags_to_filter)
 
     def _get_args_to_filter(self):
         """
         Return a list of desired arguments to filter
         """
         desired_args = self.crawler.settings.getdict(
-            SPIDERMON_JOBS_COMPARISON_ARGUMENTS
+            SPIDERMON_JOBS_COMPARISON_ARGUMENTS,
         )
         if not desired_args:
             return {}
@@ -645,7 +643,7 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
     def _has_desired_args(self, job, args):
         if not args and not job.get("spider_args"):
             return True
-        elif not args and job.get("spider_args"):
+        if not args and job.get("spider_args"):
             return False
 
         job_args = job["spider_args"].keys()
@@ -660,7 +658,8 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         threshold = self.crawler.settings.getfloat(SPIDERMON_JOBS_COMPARISON_THRESHOLD)
 
         states = self.crawler.settings.getlist(
-            SPIDERMON_JOBS_COMPARISON_STATES, ("finished",)
+            SPIDERMON_JOBS_COMPARISON_STATES,
+            ("finished",),
         )
 
         jobs = self._get_jobs(states, number_of_jobs)
@@ -689,7 +688,7 @@ class PeriodicItemCountMonitor(BaseStatMonitor):
         if SPIDERMON_ITEM_COUNT_INCREASE not in self.crawler.settings.attributes:
             raise NotConfigured(
                 f"Configure {SPIDERMON_ITEM_COUNT_INCREASE} to your project "
-                f"settings to use {self.monitor_name}."
+                f"settings to use {self.monitor_name}.",
             )
 
         return super().run(result)
@@ -702,7 +701,7 @@ class PeriodicItemCountMonitor(BaseStatMonitor):
         threshold_increase = crawler.settings.get(self.threshold_setting)
         if isinstance(threshold_increase, int):
             return prev_item_scraped_count + threshold_increase
-        elif isinstance(threshold_increase, float):
+        if isinstance(threshold_increase, float):
             return prev_item_scraped_count + (
                 prev_item_scraped_count * threshold_increase
             )

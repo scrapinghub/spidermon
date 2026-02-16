@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, ClassVar
 from unittest import TestCase
 
-from spidermon.contrib.validation import JSONSchemaValidator
-from spidermon.contrib.validation import messages
-from spidermon.contrib.validation.jsonschema.formats import is_email, is_url
-
 from slugify import slugify
+
+from spidermon.contrib.validation import JSONSchemaValidator, messages
+from spidermon.contrib.validation.jsonschema.formats import is_email, is_url
 
 
 class SchemaTestCaseMetaclass(type):
@@ -30,8 +29,8 @@ class SchemaTestCaseMetaclass(type):
 
 
 class SchemaTest(TestCase, metaclass=SchemaTestCaseMetaclass):
-    schema: dict[str, Any] = {}
-    data_tests: list[DataTest] = []
+    schema: ClassVar[dict[str, Any]] = {}
+    data_tests: ClassVar[list] = []
 
 
 class DataTest:
@@ -59,7 +58,7 @@ class Formats(TestCase):
 
 
 class AdditionalItems(SchemaTest):
-    data_tests = [
+    data_tests: ClassVar[list] = [
         DataTest(
             name="additionalItems as schema, additional items match schema",
             schema={"items": [{}], "additionalItems": {"type": "integer"}},
@@ -145,18 +144,20 @@ class AdditionalItems(SchemaTest):
 
 
 class AdditionalProperties(SchemaTest):
-    schema_false: dict[str, Any] = {
+    schema_false: ClassVar[dict[str, Any]] = {
         "properties": {"foo": {}, "bar": {}},
         "patternProperties": {"^v": {}},
         "additionalProperties": False,
     }
-    schema_allows_schema: dict[str, Any] = {
+    schema_allows_schema: ClassVar[dict[str, Any]] = {
         "properties": {"foo": {}, "bar": {}},
         "additionalProperties": {"type": "boolean"},
     }
-    schema_alone: dict[str, Any] = {"additionalProperties": {"type": "boolean"}}
-    schema_no: dict[str, Any] = {"properties": {"foo": {}, "bar": {}}}
-    data_tests = [
+    schema_alone: ClassVar[dict[str, Any]] = {
+        "additionalProperties": {"type": "boolean"}
+    }
+    schema_no: ClassVar[dict[str, Any]] = {"properties": {"foo": {}, "bar": {}}}
+    data_tests: ClassVar[list] = [
         DataTest(
             name="schema_false, no additional properties is valid",
             schema=schema_false,
@@ -173,7 +174,7 @@ class AdditionalProperties(SchemaTest):
                 # '': [messages.UNEXPECTED_FIELD],
                 # This changed in jsonschema 2.6.0:
                 # https://github.com/Julian/jsonschema/pull/317
-                "": [messages.REGEX_NOT_MATCHED]
+                "": [messages.REGEX_NOT_MATCHED],
             },
         ),
         DataTest(
@@ -230,12 +231,12 @@ class AdditionalProperties(SchemaTest):
 
 
 class AllOf(SchemaTest):
-    schema = {
+    schema: ClassVar[dict[str, Any]] = {
         "type": "object",
         "properties": {"A": {"type": "boolean"}, "B": {"type": "boolean"}},
         "allOf": [{"required": ["A"]}, {"required": ["B"]}],
     }
-    data_tests = [
+    data_tests: ClassVar[list] = [
         DataTest(
             name="Empty object",
             data={},
@@ -277,12 +278,12 @@ class AllOf(SchemaTest):
 
 
 class AnyOf(SchemaTest):
-    schema = {
+    schema: ClassVar[dict[str, Any]] = {
         "type": "object",
         "properties": {"A": {"type": "boolean"}, "B": {"type": "boolean"}},
         "anyOf": [{"required": ["A"]}, {"required": ["B"]}],
     }
-    data_tests = [
+    data_tests: ClassVar[list] = [
         DataTest(
             name="Empty object",
             data={},
@@ -311,16 +312,18 @@ class AnyOf(SchemaTest):
 
 
 class Dependencies(SchemaTest):
-    schema_single = {"dependencies": {"bar": ["foo"]}}
-    schema_multiple = {"dependencies": {"quux": ["foo", "bar"]}}
-    schema_multiple_subschema = {
+    schema_single: ClassVar[dict[str, Any]] = {"dependencies": {"bar": ["foo"]}}
+    schema_multiple: ClassVar[dict[str, Any]] = {
+        "dependencies": {"quux": ["foo", "bar"]}
+    }
+    schema_multiple_subschema: ClassVar[dict[str, Any]] = {
         "dependencies": {
             "bar": {
-                "properties": {"foo": {"type": "integer"}, "bar": {"type": "integer"}}
-            }
-        }
+                "properties": {"foo": {"type": "integer"}, "bar": {"type": "integer"}},
+            },
+        },
     }
-    data_tests = [
+    data_tests: ClassVar[list] = [
         DataTest(name="single, neither", schema=schema_single, data={}, valid=True),
         DataTest(
             name="single, nondependant",
@@ -380,7 +383,10 @@ class Dependencies(SchemaTest):
             data={"quux": 1},
             valid=False,
             expected_errors={
-                "": [messages.MISSING_DEPENDENT_FIELD, messages.MISSING_DEPENDENT_FIELD]
+                "": [
+                    messages.MISSING_DEPENDENT_FIELD,
+                    messages.MISSING_DEPENDENT_FIELD,
+                ],
             },
         ),
         DataTest(
@@ -423,14 +429,16 @@ class Dependencies(SchemaTest):
 
 
 class Enum(SchemaTest):
-    schema_simple = {"enum": [1, 2, 3]}
-    schema_heterogeneous = {"enum": [6, "foo", [], True, {"foo": 12}]}
-    schema_properties = {
+    schema_simple: ClassVar[dict[str, Any]] = {"enum": [1, 2, 3]}
+    schema_heterogeneous: ClassVar[dict[str, Any]] = {
+        "enum": [6, "foo", [], True, {"foo": 12}]
+    }
+    schema_properties: ClassVar[dict[str, Any]] = {
         "type": "object",
         "properties": {"foo": {"enum": ["foo"]}, "bar": {"enum": ["bar"]}},
         "required": ["bar"],
     }
-    data_tests = [
+    data_tests: ClassVar[list] = [
         DataTest(name="simple, valid", schema=schema_simple, data=1, valid=True),
         DataTest(
             name="simple, invalid",
@@ -489,7 +497,7 @@ class Enum(SchemaTest):
 
 
 class Format(SchemaTest):
-    schema = {
+    schema: ClassVar[dict[str, Any]] = {
         "type": "object",
         "properties": {
             "datetimes": {
@@ -510,11 +518,14 @@ class Format(SchemaTest):
             },
         },
     }
-    data_tests = [
+    data_tests: ClassVar[list] = [
         DataTest(
             name="datetime. valid",
             data={
-                "datetimes": ["2013-03-25T12:42:31+00:32", "2013-03-25T22:04:10.04399Z"]
+                "datetimes": [
+                    "2013-03-25T12:42:31+00:32",
+                    "2013-03-25T22:04:10.04399Z",
+                ],
             },
             valid=True,
         ),
@@ -525,7 +536,7 @@ class Format(SchemaTest):
                     "2015-05-13 13:35:15.718978",
                     "2015-05-13 13:35:15",
                     "13-05-2013",
-                ]
+                ],
             },
             valid=False,
             expected_errors={
@@ -544,7 +555,7 @@ class Format(SchemaTest):
                     "j@sub.domain.com",
                     "j@d.com",
                     "j@domain.co.uk",
-                ]
+                ],
             },
             valid=True,
         ),
@@ -559,7 +570,7 @@ class Format(SchemaTest):
                     "@domain",
                     "@domain.com",
                     "domain.com",
-                ]
+                ],
             },
             valid=False,
             expected_errors={
@@ -582,7 +593,7 @@ class Format(SchemaTest):
                     "127.0.0.0",
                     "0.0.0.0",
                     "255.255.255.255",
-                ]
+                ],
             },
             valid=True,
         ),
@@ -602,7 +613,7 @@ class Format(SchemaTest):
                     "2002:4559:1FE2::4559:1FE2",
                     "2002:4559:1FE2:0:0:0:4559:1FE2",
                     "2002:4559:1FE2:0000:0000:0000:4559:1FE2",
-                ]
+                ],
             },
             valid=False,
             expected_errors={
@@ -627,7 +638,7 @@ class Format(SchemaTest):
                     "2002:4559:1FE2::4559:1FE2",
                     "2002:4559:1FE2:0:0:0:4559:1FE2",
                     "2002:4559:1FE2:0000:0000:0000:4559:1FE2",
-                ]
+                ],
             },
             valid=True,
         ),
@@ -642,7 +653,7 @@ class Format(SchemaTest):
                     "127.0.0.0",
                     "0.0.0.0",
                     "255.255.255.255",
-                ]
+                ],
             },
             valid=False,
             expected_errors={
@@ -665,7 +676,7 @@ class Format(SchemaTest):
                     "google.com",
                     "xn--hxajbheg2az3al.xn--jxalpdlp",
                     "a" * 63,
-                ]
+                ],
             },
             valid=True,
         ),
@@ -696,7 +707,7 @@ class Format(SchemaTest):
                     "http://www.domain.com/level2/level3/leafnode-L3.xhtml/",
                     "http://www.domain.com?pageid=123&testid=1524",
                     "http://www.domain.com/do.html#A",
-                ]
+                ],
             },
             valid=True,
         ),
@@ -721,7 +732,7 @@ class Format(SchemaTest):
                     "./",
                     "../",
                     "http:\\\\www.domain.com\\leafnode-L1.xhtml\\",
-                ]
+                ],
             },
             valid=False,
             expected_errors={
@@ -755,9 +766,11 @@ class Format(SchemaTest):
 
 
 class Items(SchemaTest):
-    schema_items = {"items": {"type": "integer"}}
-    schema_array = {"items": [{"type": "integer"}, {"type": "string"}]}
-    data_tests = [
+    schema_items: ClassVar[dict[str, Any]] = {"items": {"type": "integer"}}
+    schema_array: ClassVar[dict[str, Any]] = {
+        "items": [{"type": "integer"}, {"type": "string"}]
+    }
+    data_tests: ClassVar[list] = [
         DataTest(
             name="schema_items. valid items",
             schema=schema_items,
@@ -797,8 +810,8 @@ class Items(SchemaTest):
 
 
 class MaxItems(SchemaTest):
-    schema = {"maxItems": 2}
-    data_tests = [
+    schema: ClassVar[dict[str, Any]] = {"maxItems": 2}
+    data_tests: ClassVar[list] = [
         DataTest(name="shorter is valid", data=[1], valid=True),
         DataTest(name="exact length is valid", data=[1, 2], valid=True),
         DataTest(
@@ -812,8 +825,8 @@ class MaxItems(SchemaTest):
 
 
 class MaxLength(SchemaTest):
-    schema = {"maxLength": 2}
-    data_tests = [
+    schema: ClassVar[dict[str, Any]] = {"maxLength": 2}
+    data_tests: ClassVar[list] = [
         DataTest(name="shorter is valid", data="f", valid=True),
         DataTest(name="exact length is valid", data="fo", valid=True),
         DataTest(
@@ -827,8 +840,8 @@ class MaxLength(SchemaTest):
 
 
 class MaxProperties(SchemaTest):
-    schema = {"maxProperties": 2}
-    data_tests = [
+    schema: ClassVar[dict[str, Any]] = {"maxProperties": 2}
+    data_tests: ClassVar[list] = [
         DataTest(name="shorter is valid", data={"foo": 1}, valid=True),
         DataTest(name="exact length is valid", data={"foo": 1, "bar": 2}, valid=True),
         DataTest(
@@ -844,18 +857,18 @@ class MaxProperties(SchemaTest):
 class Maximum(SchemaTest):
     # exclusiveMaximum behaviour changed from draft-04 to draft-06
     # http://json-schema.org/draft-06/json-schema-release-notes.html#backwards-incompatible-changes
-    schema = {"maximum": 3.0}
-    draft4_schema_exclusive = {
+    schema: ClassVar[dict[str, Any]] = {"maximum": 3.0}
+    draft4_schema_exclusive: ClassVar[dict[str, Any]] = {
         "$schema": "http://json-schema.org/draft-04/schema",
         "maximum": 3.0,
         "exclusiveMaximum": True,
     }
-    draft6_schema_exclusive = {
+    draft6_schema_exclusive: ClassVar[dict[str, Any]] = {
         "$schema": "http://json-schema.org/draft-06/schema",
         "exclusiveMaximum": 3.0,
     }
 
-    data_tests = [
+    data_tests: ClassVar[list] = [
         DataTest(name="below", data=2.6, valid=True),
         DataTest(
             name="above",
@@ -864,7 +877,9 @@ class Maximum(SchemaTest):
             expected_errors={"": [messages.NUMBER_TOO_HIGH]},
         ),
         DataTest(
-            name="ignores non-numbers", data={"foo": 1, "bar": 2, "baz": 3}, valid=True
+            name="ignores non-numbers",
+            data={"foo": 1, "bar": 2, "baz": 3},
+            valid=True,
         ),
         DataTest(
             name="draft4 exclusive. below",
@@ -910,8 +925,8 @@ class Maximum(SchemaTest):
 
 
 class MinItems(SchemaTest):
-    schema = {"minItems": 2}
-    data_tests = [
+    schema: ClassVar[dict[str, Any]] = {"minItems": 2}
+    data_tests: ClassVar[list] = [
         DataTest(name="longer is valid", data=[1, 2, 3], valid=True),
         DataTest(name="exact length is valid", data=[1, 2], valid=True),
         DataTest(
@@ -925,22 +940,24 @@ class MinItems(SchemaTest):
 
 
 class EmptyItems(SchemaTest):
-    schema = {"minItems": 1}
-    data_tests = [
+    schema: ClassVar[dict[str, Any]] = {"minItems": 1}
+    data_tests: ClassVar[list] = [
         DataTest(
             name="empty is invalid",
             data=list(),
             valid=False,
             expected_errors={"": [messages.SHOULD_BE_NON_EMPTY]},
-        )
+        ),
     ]
 
 
 class MinProperties(SchemaTest):
-    schema = {"minProperties": 2}
-    data_tests = [
+    schema: ClassVar[dict[str, Any]] = {"minProperties": 2}
+    data_tests: ClassVar[list] = [
         DataTest(
-            name="longer is valid", data={"foo": 1, "bar": 2, "foobar": 3}, valid=True
+            name="longer is valid",
+            data={"foo": 1, "bar": 2, "foobar": 3},
+            valid=True,
         ),
         DataTest(name="exact length is valid", data={"foo": 1, "bar": 2}, valid=True),
         DataTest(
@@ -954,32 +971,32 @@ class MinProperties(SchemaTest):
 
 
 class EmptyProperties(SchemaTest):
-    schema = {"minProperties": 1}
-    data_tests = [
+    schema: ClassVar[dict[str, Any]] = {"minProperties": 1}
+    data_tests: ClassVar[list] = [
         DataTest(
             name="empty is invalid",
             data=dict(),
             valid=False,
             expected_errors={"": [messages.SHOULD_BE_NON_EMPTY]},
-        )
+        ),
     ]
 
 
 class Minimum(SchemaTest):
     # exclusiveMinimum behaviour changed from draft-04 to draft-06
     # http://json-schema.org/draft-06/json-schema-release-notes.html#backwards-incompatible-changes
-    schema = {"minimum": 1.1}
-    draft4_schema_exclusive = {
+    schema: ClassVar[dict[str, Any]] = {"minimum": 1.1}
+    draft4_schema_exclusive: ClassVar[dict[str, Any]] = {
         "$schema": "http://json-schema.org/draft-04/schema",
         "minimum": 1.1,
         "exclusiveMinimum": True,
     }
-    draft6_schema_exclusive = {
+    draft6_schema_exclusive: ClassVar[dict[str, Any]] = {
         "$schema": "http://json-schema.org/draft-06/schema",
         "exclusiveMinimum": 1.1,
     }
 
-    data_tests = [
+    data_tests: ClassVar[list] = [
         DataTest(name="above", data=2.6, valid=True),
         DataTest(
             name="below",
@@ -1032,10 +1049,10 @@ class Minimum(SchemaTest):
 
 
 class MultipleOf(SchemaTest):
-    schema_int = {"multipleOf": 2}
-    schema_number = {"multipleOf": 1.5}
-    schema_small_number = {"multipleOf": 0.0001}
-    data_tests = [
+    schema_int: ClassVar[dict[str, Any]] = {"multipleOf": 2}
+    schema_number: ClassVar[dict[str, Any]] = {"multipleOf": 1.5}
+    schema_small_number: ClassVar[dict[str, Any]] = {"multipleOf": 0.0001}
+    data_tests: ClassVar[list] = [
         DataTest(name="int. valid", schema=schema_int, data=10, valid=True),
         DataTest(name="int. valid float", schema=schema_int, data=10.0, valid=True),
         DataTest(
@@ -1077,13 +1094,15 @@ class MultipleOf(SchemaTest):
 
 
 class Not(SchemaTest):
-    schema_not = {"not": {"type": "integer"}}
-    schema_multiple = {"not": {"type": ["integer", "boolean"]}}
-    schema_complex = {
-        "not": {"type": "object", "properties": {"foo": {"type": "string"}}}
+    schema_not: ClassVar[dict[str, Any]] = {"not": {"type": "integer"}}
+    schema_multiple: ClassVar[dict[str, Any]] = {
+        "not": {"type": ["integer", "boolean"]}
     }
-    schema_forbidden: dict[str, Any] = {"properties": {"foo": {"not": {}}}}
-    data_tests = [
+    schema_complex: ClassVar[dict[str, Any]] = {
+        "not": {"type": "object", "properties": {"foo": {"type": "string"}}},
+    }
+    schema_forbidden: ClassVar[dict[str, Any]] = {"properties": {"foo": {"not": {}}}}
+    data_tests: ClassVar[list] = [
         DataTest(name="not. allowed", schema=schema_not, data="foo", valid=True),
         DataTest(
             name="not. disallowed",
@@ -1093,7 +1112,10 @@ class Not(SchemaTest):
             expected_errors={"": [messages.NOT_ALLOWED_VALUE]},
         ),
         DataTest(
-            name="multiple. allowed", schema=schema_multiple, data="foo", valid=True
+            name="multiple. allowed",
+            schema=schema_multiple,
+            data="foo",
+            valid=True,
         ),
         DataTest(
             name="multiple. mismatch",
@@ -1140,12 +1162,12 @@ class Not(SchemaTest):
 
 
 class OneOf(SchemaTest):
-    schema = {
+    schema: ClassVar[dict[str, Any]] = {
         "type": "object",
         "properties": {"A": {"type": "boolean"}, "B": {"type": "boolean"}},
         "oneOf": [{"required": ["A"]}, {"required": ["B"]}],
     }
-    data_tests = [
+    data_tests: ClassVar[list] = [
         DataTest(
             name="Empty object",
             data={},
@@ -1183,8 +1205,8 @@ class OneOf(SchemaTest):
 
 
 class Pattern(SchemaTest):
-    schema = {"pattern": "^a*$"}
-    data_tests = [
+    schema: ClassVar[dict[str, Any]] = {"pattern": "^a*$"}
+    data_tests: ClassVar[list] = [
         DataTest(name="valid", data="aaa", valid=True),
         DataTest(
             name="invalid",
@@ -1197,19 +1219,24 @@ class Pattern(SchemaTest):
 
 
 class PatternProperties(SchemaTest):
-    schema_single = {"patternProperties": {"f.*o": {"type": "integer"}}}
-    schema_multiple = {
-        "patternProperties": {"a*": {"type": "integer"}, "aaa*": {"maximum": 20}}
+    schema_single: ClassVar[dict[str, Any]] = {
+        "patternProperties": {"f.*o": {"type": "integer"}}
     }
-    schema_complex = {
+    schema_multiple: ClassVar[dict[str, Any]] = {
+        "patternProperties": {"a*": {"type": "integer"}, "aaa*": {"maximum": 20}},
+    }
+    schema_complex: ClassVar[dict[str, Any]] = {
         "patternProperties": {
             "[0-9]{2,}": {"type": "boolean"},
             "X_": {"type": "string"},
-        }
+        },
     }
-    data_tests = [
+    data_tests: ClassVar[list] = [
         DataTest(
-            name="single. valid", schema=schema_single, data={"foo": 1}, valid=True
+            name="single. valid",
+            schema=schema_single,
+            data={"foo": 1},
+            valid=True,
         ),
         DataTest(
             name="single. multiple valid",
@@ -1241,7 +1268,10 @@ class PatternProperties(SchemaTest):
             valid=True,
         ),
         DataTest(
-            name="multiple. valid", schema=schema_multiple, data={"a": 21}, valid=True
+            name="multiple. valid",
+            schema=schema_multiple,
+            data={"a": 21},
+            valid=True,
         ),
         DataTest(
             name="multiple. simultaneous valid",
@@ -1309,8 +1339,10 @@ class PatternProperties(SchemaTest):
 
 
 class Properties(SchemaTest):
-    schema = {"properties": {"foo": {"type": "integer"}, "bar": {"type": "string"}}}
-    schema_mixed = {
+    schema: ClassVar[dict[str, Any]] = {
+        "properties": {"foo": {"type": "integer"}, "bar": {"type": "string"}}
+    }
+    schema_mixed: ClassVar[dict[str, Any]] = {
         "properties": {
             "foo": {"type": "array", "maxItems": 3},
             "bar": {"type": "array"},
@@ -1318,7 +1350,7 @@ class Properties(SchemaTest):
         "patternProperties": {"f.o": {"minItems": 2}},
         "additionalProperties": {"type": "integer"},
     }
-    data_tests = [
+    data_tests: ClassVar[list] = [
         DataTest(name="both present", data={"foo": 1, "bar": "baz"}, valid=True),
         DataTest(
             name="one invalid",
@@ -1393,12 +1425,17 @@ class Properties(SchemaTest):
 
 
 class Ref(SchemaTest):
-    schema_root = {"properties": {"foo": {"$ref": "#"}}, "additionalProperties": False}
-    schema_relative = {
-        "properties": {"foo": {"type": "integer"}, "bar": {"$ref": "#/properties/foo"}}
+    schema_root: ClassVar[dict[str, Any]] = {
+        "properties": {"foo": {"$ref": "#"}},
+        "additionalProperties": False,
     }
-    schema_relative_array = {"items": [{"type": "integer"}, {"$ref": "#/items/0"}]}
-    schema_escaped = {
+    schema_relative: ClassVar[dict[str, Any]] = {
+        "properties": {"foo": {"type": "integer"}, "bar": {"$ref": "#/properties/foo"}},
+    }
+    schema_relative_array: ClassVar[dict[str, Any]] = {
+        "items": [{"type": "integer"}, {"$ref": "#/items/0"}]
+    }
+    schema_escaped: ClassVar[dict[str, Any]] = {
         "tilda~field": {"type": "integer"},
         "slash/field": {"type": "integer"},
         "percent%field": {"type": "integer"},
@@ -1408,7 +1445,7 @@ class Ref(SchemaTest):
             "percent": {"$ref": "#/percent%25field"},
         },
     }
-    schema_nested = {
+    schema_nested: ClassVar[dict[str, Any]] = {
         "definitions": {
             "a": {"type": "integer"},
             "b": {"$ref": "#/definitions/a"},
@@ -1416,9 +1453,12 @@ class Ref(SchemaTest):
         },
         "$ref": "#/definitions/c",
     }
-    data_tests = [
+    data_tests: ClassVar[list] = [
         DataTest(
-            name="root. match", schema=schema_root, data={"foo": False}, valid=True
+            name="root. match",
+            schema=schema_root,
+            data={"foo": False},
+            valid=True,
         ),
         DataTest(
             name="root. recursive match",
@@ -1434,9 +1474,9 @@ class Ref(SchemaTest):
             expected_errors={
                 "": [
                     messages.UNEXPECTED_FIELDS.format(
-                        unexpected_fields="('bar' was unexpected)"
-                    )
-                ]
+                        unexpected_fields="('bar' was unexpected)",
+                    ),
+                ],
             },
         ),
         DataTest(
@@ -1447,13 +1487,16 @@ class Ref(SchemaTest):
             expected_errors={
                 "foo": [
                     messages.UNEXPECTED_FIELDS.format(
-                        unexpected_fields="('bar' was unexpected)"
-                    )
-                ]
+                        unexpected_fields="('bar' was unexpected)",
+                    ),
+                ],
             },
         ),
         DataTest(
-            name="relative. match", schema=schema_relative, data={"bar": 3}, valid=True
+            name="relative. match",
+            schema=schema_relative,
+            data={"bar": 3},
+            valid=True,
         ),
         DataTest(
             name="relative. mismatch",
@@ -1519,9 +1562,12 @@ class Ref(SchemaTest):
 
 
 class Required(SchemaTest):
-    schema: dict[str, Any] = {"properties": {"foo": {}, "bar": {}}, "required": ["foo"]}
-    schema_default: dict[str, Any] = {"properties": {"foo": {}}}
-    data_tests = [
+    schema: ClassVar[dict[str, Any]] = {
+        "properties": {"foo": {}, "bar": {}},
+        "required": ["foo"],
+    }
+    schema_default: ClassVar[dict[str, Any]] = {"properties": {"foo": {}}}
+    data_tests: ClassVar[list] = [
         DataTest(name="valid", data={"foo": 1}, valid=True),
         DataTest(
             name="invalid",
@@ -1530,13 +1576,16 @@ class Required(SchemaTest):
             expected_errors={"foo": [messages.MISSING_REQUIRED_FIELD]},
         ),
         DataTest(
-            name="not required by default", schema=schema_default, data={}, valid=True
+            name="not required by default",
+            schema=schema_default,
+            data={},
+            valid=True,
         ),
     ]
 
 
 class Type(SchemaTest):
-    type_tests = [
+    type_tests: ClassVar[list] = [
         # -------------------------------------------------------
         # type          data        expected error
         # -------------------------------------------------------
@@ -1602,7 +1651,7 @@ class Type(SchemaTest):
         ("string", [], messages.INVALID_STRING),
         ("string", {}, messages.INVALID_STRING),
     ]
-    data_tests = [
+    data_tests: ClassVar[list] = [
         DataTest(
             name="%02d_%s" % (i + 1, data_type),
             data=data,
@@ -1615,8 +1664,8 @@ class Type(SchemaTest):
 
 
 class Unique(SchemaTest):
-    schema = {"uniqueItems": True}
-    data_tests = [
+    schema: ClassVar[dict[str, Any]] = {"uniqueItems": True}
+    data_tests: ClassVar[list] = [
         DataTest(name="unique array", data=[1, 2], valid=True),
         DataTest(
             name="non-unique array",
@@ -1662,7 +1711,9 @@ class Unique(SchemaTest):
         DataTest(name="1 and True", data=[1, True], valid=True),
         DataTest(name="0 and False", data=[0, False], valid=True),
         DataTest(
-            name="unique heterogeneous types", data=[{}, [1], True, None, 1], valid=True
+            name="unique heterogeneous types",
+            data=[{}, [1], True, None, 1],
+            valid=True,
         ),
         DataTest(
             name="non-unique heterogeneous types",

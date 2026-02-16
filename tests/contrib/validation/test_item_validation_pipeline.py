@@ -140,7 +140,8 @@ def test_add_error_to_items_undefined_validation_field(dummy_schema):
     item = ScrapyItem(foo="invalid")
     # Supports item assignment but field but does not support field
     with pytest.raises(
-        KeyError, match="ScrapyItem does not support field: custom_validation_field"
+        KeyError,
+        match="ScrapyItem does not support field: custom_validation_field",
     ):
         item = pipeline.process_item(item, None)
 
@@ -163,7 +164,8 @@ def test_not_configured():
     }
     crawler = get_crawler(settings_dict=settings)
     with pytest.raises(
-        scrapy.exceptions.NotConfigured, match="No validators were found"
+        scrapy.exceptions.NotConfigured,
+        match="No validators were found",
     ):
         ItemValidationPipeline.from_crawler(crawler)
 

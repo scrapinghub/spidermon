@@ -63,7 +63,7 @@ class Action(metaclass=ActionOptionsMetaclass):
         return {}
 
     def __repr__(self):
-        return "<ACTION:({}) at {}>".format(self.name, hex(id(self)))
+        return f"<ACTION:({self.name}) at {hex(id(self))}>"
 
     def __str__(self):
         return repr(self)

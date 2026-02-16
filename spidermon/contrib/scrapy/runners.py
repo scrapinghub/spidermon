@@ -79,7 +79,7 @@ class SpiderMonitorResult(MonitorResult):
     def write_item_result(self, item, extra=None):
         self.log_info(
             "%s... %s%s"
-            % (item.name, self.step[item].status, " (%s)" % extra if extra else "")
+            % (item.name, self.step[item].status, " (%s)" % extra if extra else ""),
         )
 
     def write_run_footer(self):
@@ -89,7 +89,7 @@ class SpiderMonitorResult(MonitorResult):
                 item_name=self.step.item_result_class.name,
                 plural_suffix="" if self.step.number_of_items == 1 else "s",
                 time=self.step.time_taken,
-            )
+            ),
         )
 
     def write_step_summary(self):

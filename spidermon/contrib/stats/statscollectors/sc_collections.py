@@ -16,7 +16,7 @@ class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
         proj_id = os.environ.get("SCRAPY_PROJECT_ID")
         if proj_id is None:
             # not running on dash
-            return
+            return None
 
         project = sh_client.get_project(proj_id)
         collections = project.collections
@@ -35,7 +35,8 @@ class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
             return
 
         max_stored_stats = spider.crawler.settings.getint(
-            "SPIDERMON_MAX_STORED_STATS", default=100
+            "SPIDERMON_MAX_STORED_STATS",
+            default=100,
         )
 
         try:
@@ -43,7 +44,7 @@ class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
             stats_history = deque(stats_history, maxlen=max_stored_stats)
         except scrapinghub.client.exceptions.NotFound:
             # this happens if the stats store has not been created yet
-            stats_history = deque([], maxlen=max_stored_stats)
+            stats_history = deque(maxlen=max_stored_stats)
 
         spider.stats_history = stats_history
 

@@ -11,7 +11,11 @@ class SendTelegramMessageSpiderFinished(SendTelegramMessage):
     include_error_messages = True
 
     def __init__(
-        self, include_ok_messages=None, include_error_messages=None, *args, **kwargs
+        self,
+        include_ok_messages=None,
+        include_error_messages=None,
+        *args,
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.include_ok_messages = include_ok_messages or self.include_ok_messages
@@ -25,12 +29,12 @@ class SendTelegramMessageSpiderFinished(SendTelegramMessage):
         kwargs.update(
             {
                 "include_ok_messages": crawler.settings.get(
-                    "SPIDERMON_TELEGRAM_NOTIFIER_INCLUDE_OK_MESSAGES"
+                    "SPIDERMON_TELEGRAM_NOTIFIER_INCLUDE_OK_MESSAGES",
                 ),
                 "include_error_messages": crawler.settings.get(
-                    "SPIDERMON_TELEGRAM_NOTIFIER_INCLUDE_ERROR_MESSAGES"
+                    "SPIDERMON_TELEGRAM_NOTIFIER_INCLUDE_ERROR_MESSAGES",
                 ),
-            }
+            },
         )
         return kwargs
 
@@ -40,7 +44,7 @@ class SendTelegramMessageSpiderFinished(SendTelegramMessage):
             {
                 "include_ok_messages": self.include_ok_messages,
                 "include_error_messages": self.include_error_messages,
-            }
+            },
         )
         return context
 

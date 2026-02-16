@@ -2,7 +2,6 @@ import pytest
 
 from .fixtures.names import NamedTopSuite, UnnamedTopSuite
 
-
 NAMES = [
     "UnnamedMonitor/A Test",
     "UnnamedMonitor/test_without_name",
@@ -192,7 +191,8 @@ def unnamed_top_suite():
 def test_names(named_top_suite, unnamed_top_suite):
     _check_names(generated_names=_generate_names(named_top_suite), expected_names=NAMES)
     _check_names(
-        generated_names=_generate_names(unnamed_top_suite), expected_names=NAMES
+        generated_names=_generate_names(unnamed_top_suite),
+        expected_names=NAMES,
     )
 
 

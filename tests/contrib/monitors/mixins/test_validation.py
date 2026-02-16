@@ -8,7 +8,6 @@ from spidermon.contrib.monitors.mixins import ValidationMonitorMixin
 from spidermon.contrib.scrapy.monitors import BaseScrapyMonitor
 from spidermon.data import Data
 
-
 stats = {
     "spidermon/validation/fields": 100,
     "spidermon/validation/fields/errors": 20,
@@ -86,18 +85,16 @@ Required field field3 is missing in 10 items!
 
 def test_check_missing_required_fields_no_fields_old(old_monitor):
     msg = "15 required fields are missing!"
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(AssertionError, match=msg):
-            old_monitor.check_missing_required_fields()
+    with pytest.warns(DeprecationWarning), pytest.raises(AssertionError, match=msg):
+        old_monitor.check_missing_required_fields()
 
 
 def test_check_missing_required_fields_no_fields_old_without_attribute(
     old_monitor_without_attr,
 ):
     msg = "15 required fields are missing!"
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(AssertionError, match=msg):
-            old_monitor_without_attr.check_missing_required_fields()
+    with pytest.warns(DeprecationWarning), pytest.raises(AssertionError, match=msg):
+        old_monitor_without_attr.check_missing_required_fields()
 
 
 def check_missing_required_field(monitor):
@@ -145,9 +142,8 @@ Required fields are missing:
 
 def test_check_missing_required_fields_percent_no_fields_old(old_monitor):
     msg = "150.0% of required fields are missing!"
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(AssertionError, match=msg):
-            old_monitor.check_missing_required_fields_percent()
+    with pytest.warns(DeprecationWarning), pytest.raises(AssertionError, match=msg):
+        old_monitor.check_missing_required_fields_percent()
 
 
 def check_missing_required_field_percent(monitor):
@@ -195,9 +191,8 @@ Field field3 has 10 validation errors!
 
 def test_check_fields_errors_no_fields_old(old_monitor):
     msg = "15 fields have validation errors!"
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(AssertionError, match=msg):
-            old_monitor.check_fields_errors()
+    with pytest.warns(DeprecationWarning), pytest.raises(AssertionError, match=msg):
+        old_monitor.check_fields_errors()
 
 
 def test_check_field_errors(monitor):
@@ -245,9 +240,8 @@ There are field errors:
 
 def test_check_fields_errors_percent_no_fields_old(old_monitor):
     msg = "150.0% of fields have validation errors!"
-    with pytest.warns(DeprecationWarning):
-        with pytest.raises(AssertionError, match=msg):
-            old_monitor.check_fields_errors_percent()
+    with pytest.warns(DeprecationWarning), pytest.raises(AssertionError, match=msg):
+        old_monitor.check_fields_errors_percent()
 
 
 def test_check_field_errors_percent(monitor):

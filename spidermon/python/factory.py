@@ -1,11 +1,13 @@
 import json
+
 from jsonschema import validate
 
-from spidermon import Monitor
+from spidermon import Monitor, settings
 from spidermon.core.options import MonitorOptions
-from spidermon.python import Interpreter, schemas
 from spidermon.exceptions import InvalidMonitor, NotConfigured
-from spidermon import settings
+
+from . import schemas
+from .interpreter import Interpreter
 
 
 class PythonExpressionsMonitor(Monitor):
@@ -45,12 +47,13 @@ def create_monitor_class_from_dict(monitor_dict, monitor_class=None):
                 test.get("name", None),
                 test.get("description", None),
                 test.get("fail_message", None),
-            )
+            ),
         )
     klass = _create_monitor_class(tests, monitor_class)
     klass.options.name = monitor_dict.get("name", settings.MONITOR.DEFAULT_NAME)
     klass.options.description = monitor_dict.get(
-        "description", settings.MONITOR.DEFAULT_DESCRIPTION
+        "description",
+        settings.MONITOR.DEFAULT_DESCRIPTION,
     )
     return klass
 

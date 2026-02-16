@@ -38,7 +38,7 @@ METHOD_DESCRIPTIONS = [
     (
         DescriptedMethodsMonitor,
         "test_docstring_descripted",
-        "docstring method description",
+        "Docstring method description",
     ),
     (
         DescriptedMethodsMonitor,

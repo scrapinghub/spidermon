@@ -11,7 +11,7 @@ class CreateFileReport(CreateReport):
         self.filename = filename or self.filename
         if not self.filename:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_REPORT_FILENAME setting."
+                "You must provide a value for SPIDERMON_REPORT_FILENAME setting.",
             )
 
     @classmethod

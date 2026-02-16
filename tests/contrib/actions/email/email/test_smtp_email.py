@@ -5,13 +5,12 @@ pytest.importorskip("scrapy")
 from scrapy.utils.test import get_crawler
 
 from spidermon.contrib.actions.email.smtp import (
-    SendSmtpEmail,
-    DEFAULT_SMTP_PORT,
-    DEFAULT_SMTP_ENFORCE_TLS,
     DEFAULT_SMTP_ENFORCE_SSL,
+    DEFAULT_SMTP_ENFORCE_TLS,
+    DEFAULT_SMTP_PORT,
+    SendSmtpEmail,
 )
 from spidermon.exceptions import NotConfigured
-
 
 sent_subject = None
 
@@ -136,14 +135,19 @@ def test_set_provided_smtp_settings(setting, attribute, smtp_action_settings):
     ],
 )
 def test_email_sent(
-    mock_render_template, settings_subject, expected_subject, smtp_action_settings
+    mock_render_template,
+    settings_subject,
+    expected_subject,
+    smtp_action_settings,
 ):
     smtp_action_settings["SPIDERMON_EMAIL_SUBJECT"] = settings_subject
 
     crawler = get_crawler(settings_dict=smtp_action_settings)
     send_email = SendSmtpEmail.from_crawler(crawler)
     send_email.send_message(
-        send_email.get_message(), debug=True, _callback=_catch_mail_sent
+        send_email.get_message(),
+        debug=True,
+        _callback=_catch_mail_sent,
     )
     assert sent_subject == expected_subject
 
@@ -157,7 +161,8 @@ def test_email_sent(
     ],
 )
 def test_raise_not_configured_if_required_setting_not_provided(
-    smtp_action_settings, missing_setting
+    smtp_action_settings,
+    missing_setting,
 ):
     # Remove requred setting so we can test if exception is raised
     del smtp_action_settings[missing_setting]

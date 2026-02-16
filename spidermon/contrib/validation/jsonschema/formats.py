@@ -1,6 +1,6 @@
 from jsonschema._format import FormatChecker, _checks_drafts
 
-from spidermon.contrib.validation.utils import is_valid_url, is_valid_email
+from spidermon.contrib.validation.utils import is_valid_email, is_valid_url
 
 
 @_checks_drafts("url")

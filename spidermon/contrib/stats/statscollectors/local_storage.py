@@ -25,14 +25,15 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
         stats_location = self._stats_location(spider)
 
         max_stored_stats = spider.crawler.settings.getint(
-            "SPIDERMON_MAX_STORED_STATS", default=100
+            "SPIDERMON_MAX_STORED_STATS",
+            default=100,
         )
 
         if os.path.isfile(stats_location):
             with open(stats_location, "rb") as stats_file:
                 _stats_history = pickle.load(stats_file)
         else:
-            _stats_history = deque([], maxlen=max_stored_stats)
+            _stats_history = deque(maxlen=max_stored_stats)
 
         if _stats_history.maxlen != max_stored_stats:
             _stats_history = deque(_stats_history, maxlen=max_stored_stats)

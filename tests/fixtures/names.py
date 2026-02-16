@@ -1,4 +1,4 @@
-from spidermon import monitors, Monitor, MonitorSuite
+from spidermon import Monitor, MonitorSuite, monitors
 
 
 # ----------------------------------

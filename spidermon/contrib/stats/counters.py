@@ -13,8 +13,7 @@ class PercentCounterBase:
     def percent(self):
         if self._total <= 0 or self.count <= 0:
             return 0
-        else:
-            return float(self.count) / float(self._total)
+        return float(self.count) / float(self._total)
 
     def __str__(self):
         return "(count=%d, percent=%.2f)" % (self.count, self.percent)
@@ -58,8 +57,7 @@ class DictPercentCounter(PercentCounterBase, collections.abc.MutableMapping):
     def __getitem__(self, key):
         if key not in self._dict:
             return self.__items_class__(total=self._total)
-        else:
-            return self._dict[self.__keytransform__(key)]
+        return self._dict[self.__keytransform__(key)]
 
     def __iter__(self):
         return iter(self._dict)

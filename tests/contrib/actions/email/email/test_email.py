@@ -46,7 +46,7 @@ def test_email_message_to(mock_render_template, settings_to, expected_to):
             "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
             "SPIDERMON_BODY_HTML": "some html",
             "SPIDERMON_BODY_TEXT": "some text",
-        }
+        },
     )
     send_email = SendEmail.from_crawler(crawler)
 
@@ -87,7 +87,7 @@ def test_email_message_cc(mock_render_template, settings_cc, expected_cc):
             "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
             "SPIDERMON_BODY_HTML": "some html",
             "SPIDERMON_BODY_TEXT": "some text",
-        }
+        },
     )
     send_email = SendEmail.from_crawler(crawler)
 
@@ -128,7 +128,7 @@ def test_email_message_bcc(mock_render_template, settings_bcc, expected_bcc):
             "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
             "SPIDERMON_BODY_HTML": "some html",
             "SPIDERMON_BODY_TEXT": "some text",
-        }
+        },
     )
     send_email = SendEmail.from_crawler(crawler)
 

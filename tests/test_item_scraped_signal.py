@@ -29,11 +29,17 @@ def spider():
 async def send_item_scraped(spider, item):
     if hasattr(spider.crawler.signals, "send_catch_log_async"):
         await spider.crawler.signals.send_catch_log_async(
-            signal=signals.item_scraped, item=item, response="", spider=spider
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
         )
     else:
         await spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped, item=item, response="", spider=spider
+            signal=signals.item_scraped,
+            item=item,
+            response="",
+            spider=spider,
         )
 
 
@@ -136,7 +142,7 @@ async def test_item_scraped_count_multiple_nested_field(spider):
                     "field4.1.1": "value",
                     "field4.1.2": "value",
                     "field4.1.3": {"field4.1.3.1": "value"},
-                }
+                },
             },
         },
         {
@@ -172,7 +178,7 @@ async def test_item_scraped_count_multiple_nested_field(spider):
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3/field4.1.3.1"
+            "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3/field4.1.3.1",
         )
         == 1
     )
@@ -196,7 +202,7 @@ async def test_item_scraped_count_multiple_nested_field_with_limit():
                     "field4.1.1": "value",
                     "field4.1.2": "value",
                     "field4.1.3": {"field4.1.3.1": "value"},
-                }
+                },
             },
         },
         {
@@ -230,7 +236,7 @@ async def test_item_scraped_count_multiple_nested_field_with_limit():
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3/field4.1.3.1"
+            "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3/field4.1.3.1",
         )
         is None
     )
@@ -254,7 +260,7 @@ async def test_item_scraped_count_multiple_nested_field_with_two_levels_limit():
                     "field4.1.1": "value",
                     "field4.1.2": "value",
                     "field4.1.3": {"field4.1.3.1": "value"},
-                }
+                },
             },
         },
         {
@@ -286,7 +292,7 @@ async def test_item_scraped_count_multiple_nested_field_with_two_levels_limit():
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3/field4.1.3.1"
+            "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3/field4.1.3.1",
         )
         is None
     )
@@ -310,7 +316,7 @@ async def test_item_scraped_count_multiple_nested_field_with_no_nested_levels():
                     "field4.1.1": "value",
                     "field4.1.2": "value",
                     "field4.1.3": {"field4.1.3.1": "value"},
-                }
+                },
             },
         },
         {
@@ -344,7 +350,7 @@ async def test_item_scraped_count_multiple_nested_field_with_no_nested_levels():
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3/field4.1.3.1"
+            "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3/field4.1.3.1",
         )
         is None
     )
@@ -362,11 +368,14 @@ async def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field
 
     item = {"field1": "value1"}
     await send_item_scraped(
-        spider, item
+        spider,
+        item,
     )  # Return item to have some stats to calculate coverage
 
     crawler.signals.send_catch_log(
-        signal=signals.spider_closed, spider=spider, reason=None
+        signal=signals.spider_closed,
+        spider=spider,
+        reason=None,
     )
 
     stats = spider.crawler.stats.get_stats()
@@ -386,11 +395,14 @@ async def test_add_field_coverage_when_spider_closes_if_have_field_coverage_sett
 
     item = {"field1": "value1"}
     await send_item_scraped(
-        spider, item
+        spider,
+        item,
     )  # Return item to have some stats to calculate coverage
 
     crawler.signals.send_catch_log(
-        signal=signals.spider_closed, spider=spider, reason=None
+        signal=signals.spider_closed,
+        spider=spider,
+        reason=None,
     )
 
     stats = spider.crawler.stats.get_stats()
@@ -527,19 +539,19 @@ async def test_item_scraped_count_list_of_dicts_disabled(spider):
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items",
         )
         is None
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items/deep_field1"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items/deep_field1",
         )
         is None
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items/deep_field2"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items/deep_field2",
         )
         is None
     )
@@ -549,13 +561,13 @@ async def test_item_scraped_count_list_of_dicts_disabled(spider):
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field4/deep_field1"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field4/deep_field1",
         )
         is None
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field4/deep_field2"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field4/deep_field2",
         )
         is None
     )
@@ -620,19 +632,19 @@ async def test_item_scraped_count_list_of_dicts_one_nesting_level(spider):
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items",
         )
         is None
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items/deep_field1"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items/deep_field1",
         )
         is None
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items/deep_field2"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items/deep_field2",
         )
         is None
     )
@@ -641,13 +653,13 @@ async def test_item_scraped_count_list_of_dicts_one_nesting_level(spider):
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field4/deep_field1"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field4/deep_field1",
         )
         == 1
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field4/deep_field2"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field4/deep_field2",
         )
         == 1
     )
@@ -728,19 +740,19 @@ async def test_item_scraped_count_list_of_dicts_two_nesting_levels(spider):
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items",
         )
         == 3
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items/deep_field1"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items/deep_field1",
         )
         == 2
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items/deep_field2"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field3/_items/deep_field2",
         )
         == 1
     )
@@ -749,13 +761,13 @@ async def test_item_scraped_count_list_of_dicts_two_nesting_levels(spider):
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field4/deep_field1"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field4/deep_field1",
         )
         == 1
     )
     assert (
         stats.get(
-            "spidermon_item_scraped_count/dict/field2/_items/nested_field4/deep_field2"
+            "spidermon_item_scraped_count/dict/field2/_items/nested_field4/deep_field2",
         )
         == 1
     )

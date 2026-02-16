@@ -15,12 +15,11 @@ class DecoratorWithAttributes:
                     attribute=self.name,
                     name=name,
                     values=", ".join(
-                        ["'%s'" % attr for attr in self.attributes.keys()]
+                        ["'%s'" % attr for attr in self.attributes.keys()],
                     ),
-                )
+                ),
             )
-        else:
-            return self.attributes[name]
+        return self.attributes[name]
 
 
 class OptionsDecorator:

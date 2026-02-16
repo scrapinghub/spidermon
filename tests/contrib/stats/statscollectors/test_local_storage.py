@@ -6,9 +6,10 @@ import pytest
 pytest.importorskip("scrapy")
 
 from scrapy import Spider
-from scrapy.utils.test import get_crawler
-from scrapy.utils.project import data_path
 from scrapy.utils.defer import deferred_f_from_coro_f
+from scrapy.utils.project import data_path
+from scrapy.utils.test import get_crawler
+
 from spidermon.contrib.stats.statscollectors.local_storage import (
     LocalStorageStatsHistoryCollector,
 )
@@ -35,13 +36,14 @@ def test_settings():
     return {
         "STATS_CLASS": (
             "spidermon.contrib.stats.statscollectors.local_storage.LocalStorageStatsHistoryCollector"
-        )
+        ),
     }
 
 
 @deferred_f_from_coro_f
 async def test_spider_has_stats_history_attribute_when_opened_with_collector(
-    test_settings, stats_temporary_location
+    test_settings,
+    stats_temporary_location,
 ):
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
@@ -53,7 +55,8 @@ async def test_spider_has_stats_history_attribute_when_opened_with_collector(
 
 @deferred_f_from_coro_f
 async def test_spider_has_stats_history_queue_with_specified_max_size(
-    test_settings, stats_temporary_location
+    test_settings,
+    stats_temporary_location,
 ):
     max_stored_stats = 2
     test_settings["SPIDERMON_MAX_STORED_STATS"] = max_stored_stats
@@ -68,7 +71,10 @@ async def test_spider_has_stats_history_queue_with_specified_max_size(
 @pytest.mark.parametrize("initial_max_len,end_max_len", [(5, 2), (5, 10), (5, 5)])
 @deferred_f_from_coro_f
 async def test_spider_update_stats_history_queue_max_size(
-    test_settings, stats_temporary_location, initial_max_len, end_max_len
+    test_settings,
+    stats_temporary_location,
+    initial_max_len,
+    end_max_len,
 ):
     test_settings["SPIDERMON_MAX_STORED_STATS"] = initial_max_len
     crawler = get_crawler(Spider, test_settings)
@@ -85,7 +91,8 @@ async def test_spider_update_stats_history_queue_max_size(
 
 @deferred_f_from_coro_f
 async def test_spider_has_last_stats_history_when_opened_again(
-    test_settings, stats_temporary_location
+    test_settings,
+    stats_temporary_location,
 ):
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
@@ -101,7 +108,8 @@ async def test_spider_has_last_stats_history_when_opened_again(
 
 @deferred_f_from_coro_f
 async def test_spider_has_two_last_stats_history_when_opened_third_time(
-    test_settings, stats_temporary_location
+    test_settings,
+    stats_temporary_location,
 ):
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
@@ -123,7 +131,8 @@ async def test_spider_has_two_last_stats_history_when_opened_third_time(
 
 @deferred_f_from_coro_f
 async def test_spider_limit_number_of_stored_stats(
-    test_settings, stats_temporary_location
+    test_settings,
+    stats_temporary_location,
 ):
     test_settings["SPIDERMON_MAX_STORED_STATS"] = 2
     crawler = get_crawler(Spider, test_settings)

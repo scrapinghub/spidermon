@@ -2,10 +2,9 @@ import pytest
 
 pytest.importorskip("scrapy")
 
+from spidermon import MonitorSuite, settings
 from spidermon.contrib.scrapy.monitors import ItemValidationMonitor
-from spidermon import MonitorSuite
 from spidermon.exceptions import NotConfigured
-from spidermon import settings
 
 
 @pytest.fixture
@@ -45,7 +44,11 @@ def test_skip_monitor_if_stat_not_in_job_stats(make_data, item_validation_suite)
     ],
 )
 def test_item_validation_monitor_validation(
-    make_data, item_validation_suite, value, threshold, expected_status
+    make_data,
+    item_validation_suite,
+    value,
+    threshold,
+    expected_status,
 ):
     data = make_data({ItemValidationMonitor.threshold_setting: threshold})
     runner = data.pop("runner")

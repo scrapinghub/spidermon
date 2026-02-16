@@ -1,20 +1,17 @@
 from collections import defaultdict
-from typing import Dict
 
 from itemadapter import ItemAdapter
-
-from scrapy.exceptions import DropItem, NotConfigured
 from scrapy import Item
+from scrapy.exceptions import DropItem, NotConfigured
 
-from spidermon.contrib.validation import JSONSchemaValidator
-from spidermon.contrib.validation.jsonschema.tools import get_schema_from
 from spidermon.contrib.utils.attributes import (
     get_nested_attribute,
     set_nested_attribute,
 )
+from spidermon.contrib.validation import JSONSchemaValidator
+from spidermon.contrib.validation.jsonschema.tools import get_schema_from
 
 from .stats import ValidationStatsManager
-
 
 DEFAULT_ERRORS_FIELD = "_validation"
 DEFAULT_ADD_ERRORS_TO_ITEM = False
@@ -69,8 +66,8 @@ class ItemValidationPipeline:
                 continue
             if type(res) not in allowed_types:
                 raise NotConfigured(
-                    "Invalid <{}> type for <{}> settings, dict or list/tuple"
-                    "is required".format(type(res), name)
+                    f"Invalid <{type(res)}> type for <{name}> settings, dict or list/tuple"
+                    "is required",
                 )
             set_validators(loader, res)
 
@@ -81,10 +78,10 @@ class ItemValidationPipeline:
             validators=validators,
             stats=crawler.stats,
             drop_items_with_errors=crawler.settings.getbool(
-                "SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS"
+                "SPIDERMON_VALIDATION_DROP_ITEMS_WITH_ERRORS",
             ),
             add_errors_to_items=crawler.settings.getbool(
-                "SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS"
+                "SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS",
             ),
             errors_field=crawler.settings.get("SPIDERMON_VALIDATION_ERRORS_FIELD"),
         )
@@ -99,7 +96,7 @@ class ItemValidationPipeline:
                 "- a python dict.\n"
                 "- an object path to a python dict.\n"
                 "- an object path to a JSON string.\n"
-                "- a path to a JSON file."
+                "- a path to a JSON file.",
             )
         return JSONSchemaValidator(schema)
 
@@ -129,7 +126,7 @@ class ItemValidationPipeline:
 
         return find(item.__class__) or find(Item)
 
-    def _add_errors_to_item(self, item: ItemAdapter, errors: Dict[str, str]):
+    def _add_errors_to_item(self, item: ItemAdapter, errors: dict[str, str]):
         errors_field_instance = get_nested_attribute(item, self.errors_field)
 
         if errors_field_instance is None:

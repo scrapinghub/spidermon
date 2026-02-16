@@ -1,10 +1,10 @@
+import time
 from collections import OrderedDict
 from collections.abc import Sequence
-import time
 
 from spidermon import settings
 
-from .items import ItemResult, MonitorResult, ActionResult
+from .items import ActionResult, ItemResult, MonitorResult
 
 
 class Step:
@@ -92,10 +92,10 @@ class MonitorStep(Step):
             "errors": len(self.items_for_status(settings.MONITOR.STATUS.ERROR)),
             "skipped": len(self.items_for_status(settings.MONITOR.STATUS.SKIPPED)),
             "expected failures": len(
-                self.items_for_status(settings.MONITOR.STATUS.EXPECTED_FAILURE)
+                self.items_for_status(settings.MONITOR.STATUS.EXPECTED_FAILURE),
             ),
             "unexpected successes": len(
-                self.items_for_status(settings.MONITOR.STATUS.UNEXPECTED_SUCCESS)
+                self.items_for_status(settings.MONITOR.STATUS.UNEXPECTED_SUCCESS),
             ),
         }
 

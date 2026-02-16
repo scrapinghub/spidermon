@@ -5,6 +5,8 @@ try:
 except ImportError:
     pass
 else:
+    from typing import Any
+
     import pytest
     from scrapy import Spider
     from scrapy.crawler import Crawler
@@ -12,7 +14,8 @@ else:
 
     @pytest.fixture
     def get_crawler():
-        def _crawler(extended_settings={}):
+        def _crawler(extended_settings: dict[str, Any] | None = None):
+            extended_settings = extended_settings or {}
             settings = {
                 "SPIDERMON_ENABLED": True,
                 "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 500},

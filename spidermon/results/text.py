@@ -3,8 +3,7 @@ import sys
 from spidermon import settings
 from spidermon.utils.text import line_title
 
-from .monitor import MonitorResult, monitors_step_required, actions_step_required
-
+from .monitor import MonitorResult, actions_step_required, monitors_step_required
 
 DOTS = {
     # Monitors
@@ -142,7 +141,7 @@ class TextMonitorResult(MonitorResult):
                 item_name=self.step.item_result_class.name,
                 plural_suffix="" if self.step.number_of_items == 1 else "s",
                 time=self.step.time_taken,
-            )
+            ),
         )
         self.write_line()
 
@@ -161,7 +160,7 @@ class TextMonitorResult(MonitorResult):
         infos = self.step.get_infos()
         if infos and sum(infos.values()):
             self.write_line(
-                " (%s)" % ", ".join([f"{k}={v}" for k, v in infos.items() if v])
+                " (%s)" % ", ".join([f"{k}={v}" for k, v in infos.items() if v]),
             )
         else:
             self.write_line()

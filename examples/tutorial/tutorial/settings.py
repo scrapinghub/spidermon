@@ -24,5 +24,5 @@ STATS_CLASS = "spidermon.contrib.stats.statscollectors.local_storage.LocalStorag
 SPIDERMON_MAX_STORED_STATS = 10  # Stores the stats of the last 10 spider execution
 
 SPIDERMON_PERIODIC_MONITORS = {
-    "tutorial.monitors.PeriodicMonitorSuite": 10  # every 10 seconds
+    "tutorial.monitors.PeriodicMonitorSuite": 10,  # every 10 seconds
 }

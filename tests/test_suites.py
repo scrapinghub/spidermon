@@ -3,8 +3,8 @@ import pytest
 from spidermon import Monitor, MonitorSuite
 from spidermon.exceptions import (
     InvalidMonitor,
-    InvalidMonitorIterable,
     InvalidMonitorClass,
+    InvalidMonitorIterable,
     InvalidMonitorTuple,
     NotAllowedMethod,
 )
@@ -119,7 +119,8 @@ def test_creation_from_add_monitor():
 def _test_creation_from_init(definition):
     suite = definition.suite_class(monitors=definition.monitors)
     check_suite(
-        suite=suite, expected_number_of_monitors=definition.expected_number_of_monitors
+        suite=suite,
+        expected_number_of_monitors=definition.expected_number_of_monitors,
     )
 
 
@@ -135,7 +136,8 @@ def _test_creation_from_add_monitors(definition):
     suite = definition.suite_class()
     suite.add_monitors(definition.monitors)
     check_suite(
-        suite=suite, expected_number_of_monitors=definition.expected_number_of_monitors
+        suite=suite,
+        expected_number_of_monitors=definition.expected_number_of_monitors,
     )
 
 
@@ -144,7 +146,8 @@ def _test_creation_from_add_monitor(definition):
     for monitor in definition.monitors:
         suite.add_monitor(monitor)
     check_suite(
-        suite=suite, expected_number_of_monitors=definition.expected_number_of_monitors
+        suite=suite,
+        expected_number_of_monitors=definition.expected_number_of_monitors,
     )
 
 

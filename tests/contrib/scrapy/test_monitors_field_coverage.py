@@ -53,7 +53,7 @@ def test_no_error_if_add_field_coverage_setting_set_true(field_coverage_monitor_
         monitor_runner.run(field_coverage_monitor_suite, **data)
     except NotConfigured:
         pytest.fail(
-            "It should not raise NotConfigured if SPIDERMON_ADD_FIELD_COVERAGE = True"
+            "It should not raise NotConfigured if SPIDERMON_ADD_FIELD_COVERAGE = True",
         )
 
 

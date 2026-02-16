@@ -1,9 +1,9 @@
-from typing import Any, List
+from typing import Any
 
 from itemadapter import ItemAdapter
 
 
-def traverse_nested(obj: ItemAdapter, keys: List[str]) -> ItemAdapter:
+def traverse_nested(obj: ItemAdapter, keys: list[str]) -> ItemAdapter:
     """
     Get the last nested attribute from a list of keys within an ItemAdapter object.
     Raises:

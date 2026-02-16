@@ -2,12 +2,12 @@ import pytest
 
 pytest.importorskip("scrapy")
 
-from spidermon.exceptions import NotConfigured
 from spidermon.contrib.actions.sns import SendSNSNotification
 from spidermon.contrib.actions.sns.notifiers import (
     SendSNSNotificationSpiderFinished,
     SendSNSNotificationSpiderStarted,
 )
+from spidermon.exceptions import NotConfigured
 
 
 @pytest.fixture

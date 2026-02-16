@@ -3,7 +3,7 @@ try:
 except ImportError:
     pass
 else:
-    from scrapy import Item, Field
+    from scrapy import Field, Item
 
     class TreeItem(Item):
         child = Field()

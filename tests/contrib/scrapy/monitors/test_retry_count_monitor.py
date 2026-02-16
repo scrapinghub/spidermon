@@ -2,11 +2,8 @@ import pytest
 
 pytest.importorskip("scrapy")
 
-from spidermon.contrib.scrapy.monitors import (
-    RetryCountMonitor,
-    SPIDERMON_MAX_RETRIES,
-)
 from spidermon import MonitorSuite
+from spidermon.contrib.scrapy.monitors import SPIDERMON_MAX_RETRIES, RetryCountMonitor
 
 
 def new_suite():
@@ -15,7 +12,6 @@ def new_suite():
 
 def test_retry_count_monitor_should_fail(make_data):
     """Retry Count should fail if the retry count is higher than expected"""
-
     data = make_data({SPIDERMON_MAX_RETRIES: 10})
 
     runner = data.pop("runner")
@@ -30,7 +26,6 @@ def test_retry_count_monitor_should_fail(make_data):
 
 def test_retry_count_monitor_should_pass_disabled(make_data):
     """Retry Count should pass if the limit is negative"""
-
     data = make_data({SPIDERMON_MAX_RETRIES: -1})
 
     runner = data.pop("runner")
@@ -42,7 +37,6 @@ def test_retry_count_monitor_should_pass_disabled(make_data):
 
 def test_retry_count_monitor_should_pass_default(make_data):
     """Retry Count should pass if the limit is not set"""
-
     data = make_data()
 
     runner = data.pop("runner")
@@ -54,7 +48,6 @@ def test_retry_count_monitor_should_pass_default(make_data):
 
 def test_retry_count_monitor_should_pass_under_limit(make_data):
     """Retry Count should pass if the retry count is not higher than expected"""
-
     data = make_data({SPIDERMON_MAX_RETRIES: 10})
 
     runner = data.pop("runner")

@@ -19,5 +19,5 @@ class QuotesSpider(scrapy.Spider):
             yield item
 
         yield scrapy.Request(
-            response.urljoin(response.css(".next a::attr(href)").get())
+            response.urljoin(response.css(".next a::attr(href)").get()),
         )

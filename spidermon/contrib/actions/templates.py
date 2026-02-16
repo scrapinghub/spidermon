@@ -1,9 +1,10 @@
-import os
 import inspect
+import os
 from typing import Any
 
 from jinja2 import Template
-from spidermon.core.actions import ActionOptionsMetaclass, Action
+
+from spidermon.core.actions import Action, ActionOptionsMetaclass
 from spidermon.templates import template_loader
 
 

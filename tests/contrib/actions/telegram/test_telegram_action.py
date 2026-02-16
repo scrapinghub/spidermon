@@ -1,14 +1,15 @@
 import json
+
 import pytest
 
 pytest.importorskip("scrapy")
 
-from spidermon.exceptions import NotConfigured
 from spidermon.contrib.actions.telegram import (
-    TelegramMessageManager,
     SendTelegramMessage,
     SimplyTelegramClient,
+    TelegramMessageManager,
 )
+from spidermon.exceptions import NotConfigured
 
 
 @pytest.fixture
@@ -19,7 +20,7 @@ def logger_info(mocker):
 @pytest.fixture
 def client_send_message(mocker):
     return mocker.patch(
-        "spidermon.contrib.actions.telegram.SimplyTelegramClient.send_message"
+        "spidermon.contrib.actions.telegram.SimplyTelegramClient.send_message",
     )
 
 
@@ -61,7 +62,8 @@ def test_fail_if_no_recipients():
 
 
 @pytest.mark.parametrize(
-    "recipients,call_count", [(["1234"], 1), (["1234", "4321"], 2)]
+    "recipients,call_count",
+    [(["1234"], 1), (["1234", "4321"], 2)],
 )
 def test_send_message(client_send_message, recipients, call_count):
     manager = TelegramMessageManager(sender_token="anything", fake=False)

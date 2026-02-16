@@ -2,10 +2,9 @@ import pytest
 
 pytest.importorskip("scrapy")
 
+from spidermon import MonitorSuite, settings
 from spidermon.contrib.scrapy.monitors import DownloaderExceptionMonitor
-from spidermon import MonitorSuite
 from spidermon.exceptions import NotConfigured
-from spidermon import settings
 
 
 @pytest.fixture
@@ -14,7 +13,8 @@ def downloader_exception_suite():
 
 
 def test_needs_to_configure_downloader_exception_monitor(
-    make_data, downloader_exception_suite
+    make_data,
+    downloader_exception_suite,
 ):
     data = make_data()
     runner = data.pop("runner")
@@ -46,7 +46,11 @@ def test_skip_monitor_if_stat_not_in_job_stats(make_data, downloader_exception_s
     ],
 )
 def test_downloader_exception_monitor_validation(
-    make_data, downloader_exception_suite, value, threshold, expected_status
+    make_data,
+    downloader_exception_suite,
+    value,
+    threshold,
+    expected_status,
 ):
     data = make_data({DownloaderExceptionMonitor.threshold_setting: threshold})
     runner = data.pop("runner")

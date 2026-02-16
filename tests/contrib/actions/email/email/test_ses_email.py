@@ -1,11 +1,11 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 pytest.importorskip("scrapy")
 
-from scrapy.utils.test import get_crawler
 from scrapy import Spider
+from scrapy.utils.test import get_crawler
 
 from spidermon.contrib.actions.email.ses import SendSESEmail
 

@@ -18,10 +18,12 @@ def test_loading(loader):
         expected_number_of_monitors=0,
     )
     check_suite(
-        suite=loader.load_suite_from_monitor(Monitor01), expected_number_of_monitors=3
+        suite=loader.load_suite_from_monitor(Monitor01),
+        expected_number_of_monitors=3,
     )
     check_suite(
-        suite=loader.load_suite_from_monitor(Monitor02), expected_number_of_monitors=2
+        suite=loader.load_suite_from_monitor(Monitor02),
+        expected_number_of_monitors=2,
     )
 
 
@@ -42,7 +44,9 @@ def test_testcase_names(loader):
         expected_names=["test_a", "test_b", "test_c"],
     )
     _check_testcase_names(
-        loader=loader, monitor_class=Monitor02, expected_names=["test_d", "test_e"]
+        loader=loader,
+        monitor_class=Monitor02,
+        expected_names=["test_d", "test_e"],
     )
 
 

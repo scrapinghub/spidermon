@@ -29,7 +29,8 @@ class Client:
         if self.available:
             self.job_key = os.environ["SHUB_JOBKEY"]
             self.project_id, self.spider_id, self.job_id = map(
-                int, self.job_key.split("/")
+                int,
+                self.job_key.split("/"),
             )
         else:
             self.project_id = None
@@ -51,7 +52,7 @@ class Client:
         if not apikey:
             raise RuntimeError(
                 "No Scrapy Cloud API key found. Please set `SHUB_APIKEY` in Scrapy settings,"
-                " or either `SH_APIKEY` or `SHUB_JOBAUTH` environment variables `."
+                " or either `SH_APIKEY` or `SHUB_JOBAUTH` environment variables `.",
             )
         return apikey
 

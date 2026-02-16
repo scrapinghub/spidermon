@@ -58,7 +58,7 @@ def test_remove_job_tags(test_settings):
 
     remove_job_tags.data = MagicMock()
     remove_job_tags.data.job.metadata = SettableDict(
-        {"tags": ["remove_foo", "remove_bar"]}
+        {"tags": ["remove_foo", "remove_bar"]},
     )
     remove_job_tags.run_action()
     assert remove_job_tags.data.job.metadata.get("tags") == []

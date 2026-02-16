@@ -5,7 +5,7 @@ pytest.importorskip("scrapy")
 from scrapy.utils.test import get_crawler
 from slack_sdk.errors import SlackApiError
 
-from spidermon.contrib.actions.slack import SlackMessageManager, SendSlackMessage
+from spidermon.contrib.actions.slack import SendSlackMessage, SlackMessageManager
 
 
 @pytest.fixture
@@ -28,7 +28,7 @@ def test_load_recipients_list_from_crawler_settings(recipients):
 
 def test_get_valid_icon_url(mock_webclient):
     mock_webclient().users_list.return_value = {
-        "members": [{"name": "test_valid_user", "profile": {"image_48": "fake.jpg"}}]
+        "members": [{"name": "test_valid_user", "profile": {"image_48": "fake.jpg"}}],
     }
     manager = SlackMessageManager(sender_token="Fake", sender_name="test_valid_user")
     url = manager._get_icon_url()
@@ -37,7 +37,7 @@ def test_get_valid_icon_url(mock_webclient):
 
 def test_get_invalid_user_icon_url(mock_webclient):
     mock_webclient().users_list.return_value = {
-        "members": [{"name": "test_valid_user", "profile": {"image_48": "fake.jpg"}}]
+        "members": [{"name": "test_valid_user", "profile": {"image_48": "fake.jpg"}}],
     }
     manager = SlackMessageManager(sender_token="Fake", sender_name="test_invalid_user")
     url = manager._get_icon_url()

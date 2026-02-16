@@ -2,12 +2,9 @@ import pytest
 
 pytest.importorskip("scrapy")
 
-from spidermon.contrib.scrapy.monitors import (
-    CriticalCountMonitor,
-)
-from spidermon import MonitorSuite
+from spidermon import MonitorSuite, settings
+from spidermon.contrib.scrapy.monitors import CriticalCountMonitor
 from spidermon.exceptions import NotConfigured
-from spidermon import settings
 
 
 @pytest.fixture
@@ -35,7 +32,11 @@ def test_needs_to_configure_critical_count_monitor(make_data, critical_count_sui
     ],
 )
 def test_critical_count_monitor_validation(
-    make_data, critical_count_suite, value, threshold, expected_status
+    make_data,
+    critical_count_suite,
+    value,
+    threshold,
+    expected_status,
 ):
     data = make_data({CriticalCountMonitor.threshold_setting: threshold})
     runner = data.pop("runner")

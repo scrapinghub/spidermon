@@ -2,12 +2,9 @@ import pytest
 
 pytest.importorskip("scrapy")
 
-from spidermon.contrib.scrapy.monitors import (
-    BaseStatMonitor,
-)
-from spidermon import MonitorSuite
+from spidermon import MonitorSuite, settings
+from spidermon.contrib.scrapy.monitors import BaseStatMonitor
 from spidermon.exceptions import NotConfigured
-from spidermon import settings
 
 
 @pytest.mark.parametrize(
@@ -36,7 +33,11 @@ from spidermon import settings
     ],
 )
 def test_base_stat_monitor_assertion_types(
-    make_data, assertion_type, stat_value, threshold, expected_status
+    make_data,
+    assertion_type,
+    stat_value,
+    threshold,
+    expected_status,
 ):
     class TestBaseStatMonitor(BaseStatMonitor):
         stat_name = "test_statistic"

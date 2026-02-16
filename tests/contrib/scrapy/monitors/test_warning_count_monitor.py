@@ -2,12 +2,9 @@ import pytest
 
 pytest.importorskip("scrapy")
 
-from spidermon.contrib.scrapy.monitors import (
-    WarningCountMonitor,
-)
-from spidermon import MonitorSuite
+from spidermon import MonitorSuite, settings
+from spidermon.contrib.scrapy.monitors import WarningCountMonitor
 from spidermon.exceptions import NotConfigured
-from spidermon import settings
 
 
 @pytest.fixture
@@ -35,7 +32,11 @@ def test_needs_to_configure_warning_count_monitor(make_data, warning_count_suite
     ],
 )
 def test_warning_count_monitor_validation(
-    make_data, warning_count_suite, value, threshold, expected_status
+    make_data,
+    warning_count_suite,
+    value,
+    threshold,
+    expected_status,
 ):
     data = make_data({WarningCountMonitor.threshold_setting: threshold})
     runner = data.pop("runner")

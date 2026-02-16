@@ -1,9 +1,11 @@
 from unittest import mock
+
 import pytest
 
 pytest.importorskip("scrapy")
 
 from scrapy import signals
+
 from spidermon.contrib.scrapy.extensions import Spidermon
 
 
@@ -26,7 +28,9 @@ def test_spider_closed_suites_should_run(get_crawler, suites):
     """The suites defined at spider_closed_suites should be loaded and run"""
     crawler = get_crawler()
     spidermon = Spidermon(
-        crawler, spider_opened_suites=suites, spider_closed_suites=suites
+        crawler,
+        spider_opened_suites=suites,
+        spider_closed_suites=suites,
     )
     spidermon.spider_closed_suites[0].run = mock.MagicMock()
     spidermon.spider_opened(crawler.spider)
