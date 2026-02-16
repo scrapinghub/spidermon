@@ -24,6 +24,22 @@ def mock_render_template(mocker):
     mocker.patch.object(SendSmtpEmail, "get_body_html", lambda s: s.body_html)
 
 
+@pytest.fixture(autouse=True)
+def mock_mail_sender(mocker):
+
+    class DummyMailSender:
+        def __init__(self, *a, **kw):
+            pass
+
+        def send(self, to, subject, body, cc=None, _callback=None, **kwargs):
+            if _callback:
+                _callback(to, subject, body, cc, None, None)
+
+    mocker.patch(
+        "spidermon.contrib.actions.email.smtp.MailSender", DummyMailSender
+    )
+
+
 @pytest.fixture
 def smtp_action_settings():
     return {
