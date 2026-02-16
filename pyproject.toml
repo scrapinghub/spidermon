@@ -54,8 +54,12 @@ monitoring = [
     "slack_sdk",
 ]
 
+[tool.coverage.run]
+branch = true
+
 [tool.hatch.build.targets.sdist]
 include = ["spidermon/VERSION"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["spidermon"]
+

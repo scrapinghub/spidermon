@@ -169,7 +169,7 @@ class BaseStatMonitor(BaseScrapyMonitor):
             "==": self.assertEqual,
             "!=": self.assertNotEqual,
         }
-        threshold = self._get_threshold_value()
+        threshold = float(self._get_threshold_value())
 
         if self.stat_name not in self.stats:
             message = f"Unable to find '{self.stat_name}' in job stats."
@@ -178,9 +178,10 @@ class BaseStatMonitor(BaseScrapyMonitor):
             else:
                 self.skipTest(message)
 
-        value = self.stats.get(self.stat_name)
+        value = float(self.stats.get(self.stat_name))
 
         assertion_method = assertions.get(self.assert_type)
+
         assertion_method(
             value,
             threshold,

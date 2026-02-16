@@ -104,8 +104,8 @@ def test_failure_message_describe_values_expected(make_data):
         threshold_setting = "THRESHOLD_SETTING"
         assert_type = "=="
 
-    expected_threshold = 100
-    obtained_value = 90
+    expected_threshold = 100.0
+    obtained_value = 90.0
     data = make_data({TestBaseStatMonitor.threshold_setting: expected_threshold})
 
     runner = data.pop("runner")
