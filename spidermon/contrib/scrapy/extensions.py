@@ -235,7 +235,7 @@ class Spidermon:
 
     def _generate_data_for_spider(self, spider):
         return {
-            "stats": self.crawler.stats.get_stats(spider),
+            "stats": self.crawler.stats.get_stats(),
             "stats_history": spider.stats_history
             if hasattr(spider, "stats_history")
             else [],

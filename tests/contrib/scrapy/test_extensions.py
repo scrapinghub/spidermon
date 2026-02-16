@@ -73,7 +73,7 @@ class ExpressionMonitorsTesting(TestCase):
         }
         settings.update(dt.settings)
         crawler = get_crawler(settings_dict=settings)
-        crawler.stats.get_stats = lambda _: dt.stats
+        crawler.stats.get_stats = lambda: dt.stats
         spidermon = Spidermon.from_crawler(crawler)
         spider = Spider(name=self.spider_name)
 
