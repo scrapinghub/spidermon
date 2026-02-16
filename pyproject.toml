@@ -65,13 +65,6 @@ packages = ["spidermon"]
 
 [tool.mypy]
 ignore_missing_imports = true
-check_untyped_defs = false
-disallow_untyped_defs = false
-disallow_untyped_calls = false
-disallow_incomplete_defs = false
-warn_return_any = false
-warn_unused_ignores = true
-warn_redundant_casts = true
 
 [tool.pytest]
 filterwarnings = [
