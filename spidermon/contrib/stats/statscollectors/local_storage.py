@@ -1,11 +1,17 @@
+from __future__ import annotations
+
 import os
 import pickle
 from collections import deque
+from typing import TYPE_CHECKING
 
 from scrapy.statscollectors import StatsCollector
 from scrapy.utils.project import data_path
 
 from spidermon.contrib.utils.spider import get_spider_name
+
+if TYPE_CHECKING:
+    from scrapy import Spider
 
 
 class LocalStorageStatsHistoryCollector(StatsCollector):
@@ -14,7 +20,8 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
         spider_name = get_spider_name(spider)
         return os.path.join(statsdir, f"{spider_name}_stats_history")
 
-    def open_spider(self, spider):
+    def open_spider(self, spider: Spider | None = None):
+        spider = spider or self._crawler.spider
         stats_location = self._stats_location(spider)
 
         max_stored_stats = spider.crawler.settings.getint(
