@@ -32,7 +32,8 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
 
         spider.stats_history = _stats_history
 
-    def _persist_stats(self, stats, spider):
+    def _persist_stats(self, stats, spider=None):
+        spider = spider or self._crawler.spider
         stats_location = self._stats_location(spider)
 
         spider.stats_history.appendleft(self._stats)
