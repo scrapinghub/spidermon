@@ -1,3 +1,7 @@
+import pytest
+
+pytest.importorskip("scrapy")
+
 from scrapy.settings import Settings
 
 from spidermon.utils.settings import get_aws_credentials

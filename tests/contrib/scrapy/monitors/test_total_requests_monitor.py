@@ -1,3 +1,7 @@
+import pytest
+
+pytest.importorskip("scrapy")
+
 from spidermon.contrib.scrapy.monitors import (
     TotalRequestsMonitor,
     SPIDERMON_MAX_REQUESTS_ALLOWED,

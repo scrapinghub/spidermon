@@ -1,4 +1,7 @@
 import pytest
+
+pytest.importorskip("scrapy")
+
 from scrapy.utils.test import get_crawler
 
 from spidermon.contrib.actions.email import SendEmail

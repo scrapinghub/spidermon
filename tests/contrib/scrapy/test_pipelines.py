@@ -1,4 +1,9 @@
 from unittest import TestCase
+
+import pytest
+
+pytest.importorskip("scrapy")
+
 from slugify import slugify
 from scrapy.utils.test import get_crawler
 from scrapy import Item

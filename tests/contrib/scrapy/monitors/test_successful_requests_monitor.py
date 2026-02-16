@@ -1,3 +1,7 @@
+import pytest
+
+pytest.importorskip("scrapy")
+
 from spidermon.contrib.scrapy.monitors import (
     SuccessfulRequestsMonitor,
     SPIDERMON_MIN_SUCCESSFUL_REQUESTS,

@@ -2,6 +2,9 @@ from collections import defaultdict
 from dataclasses import dataclass
 
 import pytest
+
+pytest.importorskip("scrapy")
+
 import scrapy
 from scrapy.utils.test import get_crawler
 

@@ -100,7 +100,8 @@ class Monitor(TestCase, metaclass=MonitorOptionsMetaclass):
         return level * "\t" + repr(self) + "\n"
 
     def _init_method(self):
-        MonitorOptions.add_or_create(self.method.__func__)
+        if hasattr(self, self._testMethodName):
+            MonitorOptions.add_or_create(self.method.__func__)
 
     def utc_now_with_timezone(self):
         return datetime.utcnow().replace(tzinfo=timezone.utc)

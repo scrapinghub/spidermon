@@ -1,5 +1,7 @@
 import pytest
 
+pytest.importorskip("scrapy")
+
 from scrapy.utils.test import get_crawler
 from slack_sdk.errors import SlackApiError
 

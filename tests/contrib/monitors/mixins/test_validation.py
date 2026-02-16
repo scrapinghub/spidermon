@@ -2,6 +2,8 @@ import re
 
 import pytest
 
+pytest.importorskip("scrapy")
+
 from spidermon.contrib.monitors.mixins import ValidationMonitorMixin
 from spidermon.contrib.scrapy.monitors import BaseScrapyMonitor
 from spidermon.data import Data

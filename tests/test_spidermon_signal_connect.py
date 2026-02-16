@@ -1,6 +1,7 @@
-import sys
-
 import pytest
+
+pytest.importorskip("scrapy")
+
 from scrapy import signals
 from scrapy.spiders import Spider
 from scrapy.utils.test import get_crawler

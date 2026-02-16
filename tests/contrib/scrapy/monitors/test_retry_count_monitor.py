@@ -1,3 +1,7 @@
+import pytest
+
+pytest.importorskip("scrapy")
+
 from spidermon.contrib.scrapy.monitors import (
     RetryCountMonitor,
     SPIDERMON_MAX_RETRIES,

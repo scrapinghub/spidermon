@@ -1,5 +1,7 @@
 import pytest
 
+pytest.importorskip("scrapy")
+
 from spidermon.contrib.scrapy.monitors import ItemValidationMonitor
 from spidermon import MonitorSuite
 from spidermon.exceptions import NotConfigured

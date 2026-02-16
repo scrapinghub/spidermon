@@ -1,5 +1,8 @@
 import operator
 import pytest
+
+pytest.importorskip("scrapy")
+
 from spidermon.contrib.scrapy.monitors import ItemCountMonitor
 from spidermon import settings
 from scrapy.utils.test import get_crawler

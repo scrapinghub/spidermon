@@ -2,6 +2,9 @@ from collections import deque
 from unittest.mock import patch, MagicMock
 
 import pytest
+
+pytest.importorskip("scrapy")
+
 import scrapinghub
 
 from scrapy import Spider

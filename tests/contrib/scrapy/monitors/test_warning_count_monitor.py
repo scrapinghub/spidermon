@@ -1,5 +1,7 @@
 import pytest
 
+pytest.importorskip("scrapy")
+
 from spidermon.contrib.scrapy.monitors import (
     WarningCountMonitor,
 )

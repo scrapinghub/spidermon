@@ -1,6 +1,8 @@
 from unittest import mock
 import pytest
 
+pytest.importorskip("scrapy")
+
 from scrapy import signals
 from spidermon.contrib.scrapy.extensions import Spidermon
 

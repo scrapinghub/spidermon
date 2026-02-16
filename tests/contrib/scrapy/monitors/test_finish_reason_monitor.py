@@ -1,3 +1,7 @@
+import pytest
+
+pytest.importorskip("scrapy")
+
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.monitors import (
     FinishReasonMonitor,

@@ -1,5 +1,9 @@
 import datetime
+
 import pytest
+
+pytest.importorskip("scrapy")
+
 from spidermon import settings
 
 

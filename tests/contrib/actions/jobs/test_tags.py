@@ -1,6 +1,9 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
+
+pytest.importorskip("scrapy")
+
 from scrapy.utils.test import get_crawler
 
 from spidermon.contrib.actions.jobs.tags import AddJobTags, JobTagsAction, RemoveJobTags

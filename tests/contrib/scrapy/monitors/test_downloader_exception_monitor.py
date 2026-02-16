@@ -1,5 +1,7 @@
 import pytest
 
+pytest.importorskip("scrapy")
+
 from spidermon.contrib.scrapy.monitors import DownloaderExceptionMonitor
 from spidermon import MonitorSuite
 from spidermon.exceptions import NotConfigured

@@ -1,6 +1,9 @@
 from unittest import mock
 
 import pytest
+
+pytest.importorskip("scrapy")
+
 from scrapy.utils.test import get_crawler
 from spidermon.utils import zyte
 

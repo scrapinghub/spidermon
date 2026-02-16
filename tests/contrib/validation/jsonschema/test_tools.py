@@ -1,4 +1,7 @@
 import pytest
+
+pytest.importorskip("scrapy")
+
 import spidermon.contrib.validation.jsonschema.tools as schema_tools
 
 

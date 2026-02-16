@@ -2,6 +2,9 @@ import math
 from unittest.mock import Mock, call, patch
 
 import pytest
+
+pytest.importorskip("scrapy")
+
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_JOBS_COMPARISON,

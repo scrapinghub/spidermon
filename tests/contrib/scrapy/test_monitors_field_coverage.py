@@ -1,4 +1,7 @@
 import pytest
+
+pytest.importorskip("scrapy")
+
 from scrapy import Spider
 from scrapy.utils.test import get_crawler
 

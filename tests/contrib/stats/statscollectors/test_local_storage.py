@@ -3,6 +3,8 @@ from collections import deque
 
 import pytest
 
+pytest.importorskip("scrapy")
+
 from scrapy import Spider
 from scrapy.utils.test import get_crawler
 from scrapy.utils.project import data_path

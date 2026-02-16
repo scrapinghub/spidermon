@@ -1,5 +1,6 @@
-import sys
 import pytest
+
+pytest.importorskip("jinja2")
 
 from unittest.mock import MagicMock, patch
 from spidermon.contrib.actions.slack import SendSlackMessage, SlackMessageManager

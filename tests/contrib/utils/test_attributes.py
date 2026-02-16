@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 
 import pytest
+
+pytest.importorskip("itemadapter")
+
 from itemadapter import ItemAdapter
 
 from spidermon.contrib.utils.attributes import (

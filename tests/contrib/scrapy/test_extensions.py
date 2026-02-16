@@ -1,6 +1,11 @@
 from functools import partial
 from unittest import TestCase
 
+import pytest
+
+pytest.importorskip("scrapy")
+
+
 from scrapy.utils.test import get_crawler
 from scrapy import Spider
 

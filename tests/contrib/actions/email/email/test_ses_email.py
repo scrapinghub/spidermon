@@ -1,9 +1,13 @@
 from unittest.mock import patch, MagicMock
-from spidermon.contrib.actions.email.ses import SendSESEmail
 
 import pytest
+
+pytest.importorskip("scrapy")
+
 from scrapy.utils.test import get_crawler
 from scrapy import Spider
+
+from spidermon.contrib.actions.email.ses import SendSESEmail
 
 
 @pytest.fixture

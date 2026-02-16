@@ -1,4 +1,7 @@
 import pytest
+
+pytest.importorskip("scrapy")
+
 from spidermon.contrib.scrapy.monitors import (
     BaseStatMonitor,
 )
@@ -113,7 +116,7 @@ def test_failure_message_describe_values_expected(make_data):
     assert (
         runner.result.monitor_results[0].reason
         == f"Expecting '{TestBaseStatMonitor.stat_name}' to be '{TestBaseStatMonitor.assert_type}' "
-        f"to '{expected_threshold}'. Current value: '{obtained_value}'",
+        f"to '{expected_threshold}'. Current value: '{obtained_value}'"
     )
 
 
