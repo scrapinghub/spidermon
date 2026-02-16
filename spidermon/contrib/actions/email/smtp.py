@@ -21,7 +21,7 @@ class SendSmtpEmail(SendEmail):
         smtp_enforce_tls=None,
         smtp_enforce_ssl=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super(SendSmtpEmail, self).__init__(*args, **kwargs)
 

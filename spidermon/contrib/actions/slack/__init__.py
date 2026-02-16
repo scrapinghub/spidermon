@@ -149,7 +149,7 @@ class SlackMessageManager:
                 and e.response.data.get("needed") == "users:read"
             ):
                 logger.warning(
-                    f"bot does not have users:read permissions for slack org - default icon url used"
+                    "bot does not have users:read permissions for slack org - default icon url used"
                 )
                 # can be an expected outcome - will use its own icon
                 icon_url = None
@@ -159,7 +159,7 @@ class SlackMessageManager:
             # bot has read permissions for slack org but can't find sender in list
             # can be an expected outcome - will use its own icon
             logger.warning(
-                f"bot cannot finder user in slack org member list - default icon url used"
+                "bot cannot finder user in slack org member list - default icon url used"
             )
             icon_url = None
         return icon_url

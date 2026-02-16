@@ -9,9 +9,9 @@ file as follows:
 .. code-block:: python
 
     # settings.py
-    SPIDERMON_SENTRY_DSN = '<SENTRY_DSN_URL>'
-    SPIDERMON_SENTRY_PROJECT_NAME = '<PROJECT_NAME>'
-    SPIDERMON_SENTRY_ENVIRONMENT_TYPE = '<ENVIRONMENT_TYPE>'
+    SPIDERMON_SENTRY_DSN = "<SENTRY_DSN_URL>"
+    SPIDERMON_SENTRY_PROJECT_NAME = "<PROJECT_NAME>"
+    SPIDERMON_SENTRY_ENVIRONMENT_TYPE = "<ENVIRONMENT_TYPE>"
 
 A notification on `Sentry`_ will look like the following one:
 

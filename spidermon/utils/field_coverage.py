@@ -29,9 +29,9 @@ def calculate_field_coverage(stats):
                 item_field_coverage = value / root_field_type_total
                 global_field_coverage = value / item_type_total
 
-                coverage[
-                    f"spidermon_field_coverage/{item_type}/{'/'.join(levels)}"
-                ] = global_field_coverage
+                coverage[f"spidermon_field_coverage/{item_type}/{'/'.join(levels)}"] = (
+                    global_field_coverage
+                )
 
                 coverage[
                     f"spidermon_field_coverage/{item_type}/{'/_items/'.join(levels)}"
@@ -40,8 +40,8 @@ def calculate_field_coverage(stats):
             else:
                 field_coverage = value / item_type_total
 
-                coverage[
-                    f"spidermon_field_coverage/{item_type}/{item_key}"
-                ] = field_coverage
+                coverage[f"spidermon_field_coverage/{item_type}/{item_key}"] = (
+                    field_coverage
+                )
 
     return coverage

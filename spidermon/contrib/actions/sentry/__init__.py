@@ -1,14 +1,13 @@
 import logging
 
 from slugify import slugify
-
-logger = logging.getLogger(__name__)
-
 from sentry_sdk import configure_scope
 from sentry_sdk.client import Client
 
 from spidermon import Action
 from spidermon.exceptions import NotConfigured
+
+logger = logging.getLogger(__name__)
 
 
 class SendSentryMessage(Action):

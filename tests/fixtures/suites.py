@@ -1,7 +1,7 @@
 from spidermon import MonitorSuite
 
 
-from .cases import *
+from .cases import Monitor01, Monitor02
 
 
 class EmptySuite(MonitorSuite):

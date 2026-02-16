@@ -1,6 +1,6 @@
 from spidermon import settings
 
-from .fixtures.levels import *
+from .fixtures.levels import Monitors, Suites
 
 HIGH = settings.MONITOR.LEVEL.HIGH
 NORMAL = settings.MONITOR.LEVEL.NORMAL

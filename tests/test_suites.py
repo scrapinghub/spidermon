@@ -1,6 +1,6 @@
 import pytest
 
-from spidermon import MonitorSuite
+from spidermon import Monitor, MonitorSuite
 from spidermon.exceptions import (
     InvalidMonitor,
     InvalidMonitorIterable,
@@ -9,7 +9,8 @@ from spidermon.exceptions import (
     NotAllowedMethod,
 )
 
-from .fixtures.suites import *
+from .fixtures.cases import EmptyMonitor, Monitor01, Monitor02
+from .fixtures.suites import EmptySuite, Suite01, Suite02, Suite03, Suite04
 
 
 class SuiteDefinition:

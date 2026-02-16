@@ -177,7 +177,9 @@ async def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field
     spider = Spider.from_crawler(crawler, "example.com")
 
     item = {"field1": "value1"}
-    await send_item_scraped(spider, item)  # Return item to have some stats to calculate coverage
+    await send_item_scraped(
+        spider, item
+    )  # Return item to have some stats to calculate coverage
 
     crawler.signals.send_catch_log(
         signal=signals.spider_closed, spider=spider, reason=None
@@ -199,7 +201,9 @@ async def test_add_field_coverage_when_spider_closes_if_have_field_coverage_sett
     spider = Spider.from_crawler(crawler, "example.com")
 
     item = {"field1": "value1"}
-    await send_item_scraped(spider, item)  # Return item to have some stats to calculate coverage
+    await send_item_scraped(
+        spider, item
+    )  # Return item to have some stats to calculate coverage
 
     crawler.signals.send_catch_log(
         signal=signals.spider_closed, spider=spider, reason=None

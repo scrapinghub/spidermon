@@ -220,7 +220,9 @@ async def test_job_id_added(mock_os_enviorn_get, test_settings, stats_collection
 
 @deferred_f_from_coro_f
 @patch("spidermon.contrib.stats.statscollectors.sc_collections.os.environ.get")
-async def test_job_id_not_available(mock_os_enviorn_get, test_settings, stats_collection):
+async def test_job_id_not_available(
+    mock_os_enviorn_get, test_settings, stats_collection
+):
     mock_os_enviorn_get.return_value = None
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")

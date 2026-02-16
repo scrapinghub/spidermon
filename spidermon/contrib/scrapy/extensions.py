@@ -1,5 +1,3 @@
-import os
-
 from scrapy import signals
 from scrapy.exceptions import NotConfigured
 from scrapy.utils.misc import load_object

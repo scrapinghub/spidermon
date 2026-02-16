@@ -35,9 +35,7 @@ def mock_mail_sender(mocker):
             if _callback:
                 _callback(to, subject, body, cc, None, None)
 
-    mocker.patch(
-        "spidermon.contrib.actions.email.smtp.MailSender", DummyMailSender
-    )
+    mocker.patch("spidermon.contrib.actions.email.smtp.MailSender", DummyMailSender)
 
 
 @pytest.fixture

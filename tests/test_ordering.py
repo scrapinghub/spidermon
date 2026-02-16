@@ -1,4 +1,11 @@
-from .fixtures.ordering import *
+from .fixtures.ordering import (
+    MonitorSuite,
+    Unordered,
+    Ordered,
+    UnorderedMethodsMonitor,
+    OrderedMethodsMonitor,
+    EqualOrderedMethodsMonitor,
+)
 
 SUITE_SEQUENCES = [
     # ------------------------------------------------------------------------------------------------------------

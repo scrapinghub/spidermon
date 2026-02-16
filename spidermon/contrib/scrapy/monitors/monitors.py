@@ -368,7 +368,7 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
             "field_3": {
                 "field_3_1": "some_value",
                 "field_3_2": "some_value",
-            }
+            },
         }
 
     A set of rules may be defined as follows:

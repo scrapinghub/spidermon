@@ -39,7 +39,7 @@ class Action(metaclass=ActionOptionsMetaclass):
             self.run_action()
         except SkipAction as e:
             result.add_action_skip(self, e.args[0])
-        except:
+        except:  # noqa: E722
             result.add_action_error(self, traceback.format_exc())
             if self.fallback is not None:
                 self.fallback.run(self.result, self.data)

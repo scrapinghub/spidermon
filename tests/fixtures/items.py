@@ -1,14 +1,12 @@
 try:
-    import scrapy
+    import scrapy  # noqa: F401
 except ImportError:
     pass
 else:
     from scrapy import Item, Field
 
-
     class TreeItem(Item):
         child = Field()
-
 
     class TestItem(Item):
         __test__ = False

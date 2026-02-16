@@ -21,7 +21,7 @@ class SendSlackMessageSpiderFinished(SendSlackMessage):
         include_report_link=None,
         report_index=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.include_ok_attachments = (

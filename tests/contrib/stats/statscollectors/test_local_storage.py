@@ -122,7 +122,9 @@ async def test_spider_has_two_last_stats_history_when_opened_third_time(
 
 
 @deferred_f_from_coro_f
-async def test_spider_limit_number_of_stored_stats(test_settings, stats_temporary_location):
+async def test_spider_limit_number_of_stored_stats(
+    test_settings, stats_temporary_location
+):
     test_settings["SPIDERMON_MAX_STORED_STATS"] = 2
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
@@ -161,12 +163,12 @@ def test_able_to_import_deprecated_local_storage_stats_collector_module():
     """
     try:
         from spidermon.contrib.stats.statscollectors import (
-            LocalStorageStatsHistoryCollector,
+            LocalStorageStatsHistoryCollector,  # noqa: F401
         )
     except ModuleNotFoundError:
-        assert (
-            False
-        ), f"Unable to import spidermon.contrib.stats.statscollectors.LocalStorageStatsHistoryCollector"
+        assert False, (
+            "Unable to import spidermon.contrib.stats.statscollectors.LocalStorageStatsHistoryCollector"
+        )
 
 
 @deferred_f_from_coro_f

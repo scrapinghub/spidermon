@@ -9,8 +9,7 @@ class OptionsMetaclassBase(abc.ABCMeta):
         cls = super().__new__(mcs, name, bases, attrs)
         if not cls.__options_class__:
             raise TypeError(
-                "Options class not defined! "
-                "are you trying to use OptionsMetaclassBase?"
+                "Options class not defined! are you trying to use OptionsMetaclassBase?"
             )
         cls.options = cls.__options_class__()
         return cls

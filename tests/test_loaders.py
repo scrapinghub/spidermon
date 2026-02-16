@@ -3,7 +3,7 @@ import pytest
 from spidermon import MonitorLoader
 from spidermon.exceptions import InvalidMonitor
 
-from .fixtures.cases import *
+from .fixtures.cases import EmptyMonitor, Monitor01, Monitor02
 from .test_suites import check_suite
 
 

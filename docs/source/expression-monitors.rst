@@ -120,4 +120,3 @@ Each `expression monitor` should follow this schema::
        },
        "required": ["name", "tests"],
      }
-

@@ -19,7 +19,7 @@ class SendSESEmail(SendEmail):
         aws_region_name=None,
         aws_return_path=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.aws_access_key = aws_access_key or self.aws_access_key

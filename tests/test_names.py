@@ -1,6 +1,6 @@
 import pytest
 
-from .fixtures.names import *
+from .fixtures.names import NamedTopSuite, UnnamedTopSuite
 
 
 NAMES = [

@@ -11,6 +11,7 @@ In this example we will create a file called `my_report.html` when the monitor s
     # monitors.py
     from spidermon.contrib.actions.reports.files import CreateFileReport
 
+
     class DummyMonitorSuite(MonitorSuite):
         monitors = [
             DummyMonitor,
@@ -23,11 +24,9 @@ In this example we will create a file called `my_report.html` when the monitor s
 .. code-block:: python
 
     # settings.py
-    SPIDERMON_REPORT_TEMPLATE = 'reports/email/monitors/result.jinja'
-    SPIDERMON_REPORT_CONTEXT = {
-        'report_title': 'Spidermon File Report'
-    }
-    SPIDERMON_REPORT_FILENAME = 'my_report.html'
+    SPIDERMON_REPORT_TEMPLATE = "reports/email/monitors/result.jinja"
+    SPIDERMON_REPORT_CONTEXT = {"report_title": "Spidermon File Report"}
+    SPIDERMON_REPORT_FILENAME = "my_report.html"
 
 Settings available:
 

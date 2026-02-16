@@ -31,5 +31,5 @@ Steps
 .. code-block:: python
 
     # settings.py
-    SPIDERMON_TELEGRAM_SENDER_TOKEN = 'YOUR_BOT_AUTHORIZATION_TOKEN'
-    SPIDERMON_TELEGRAM_RECIPIENTS = ['chat_id', 'group_id', '@channelname']
+    SPIDERMON_TELEGRAM_SENDER_TOKEN = "YOUR_BOT_AUTHORIZATION_TOKEN"
+    SPIDERMON_TELEGRAM_RECIPIENTS = ["chat_id", "group_id", "@channelname"]

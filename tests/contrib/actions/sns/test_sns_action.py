@@ -2,7 +2,6 @@ import pytest
 
 pytest.importorskip("scrapy")
 
-from scrapy.utils.test import get_crawler
 from spidermon.exceptions import NotConfigured
 from spidermon.contrib.actions.sns import SendSNSNotification
 from spidermon.contrib.actions.sns.notifiers import (

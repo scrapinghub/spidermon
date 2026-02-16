@@ -1,13 +1,13 @@
+import logging
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import logging
 
-logger = logging.getLogger(__name__)
+from premailer import transform
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
 
-from premailer import transform
+logger = logging.getLogger(__name__)
 
 
 class SendEmail(ActionWithTemplates):

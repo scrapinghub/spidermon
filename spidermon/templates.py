@@ -3,7 +3,6 @@ import inspect
 import os
 import pprint as pretty_print
 
-import jinja2
 from jinja2 import Environment, FileSystemLoader
 
 DEFAULT_TEMPLATE_FOLDERS = ["templates"]

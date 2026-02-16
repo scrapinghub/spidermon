@@ -9,7 +9,6 @@ from spidermon import settings
 
 from spidermon.contrib.scrapy.monitors import (
     PeriodicExecutionTimeMonitor,
-    ItemCountMonitor,
     PeriodicItemCountMonitor,
     SPIDERMON_MAX_EXECUTION_TIME,
     SPIDERMON_ITEM_COUNT_INCREASE,

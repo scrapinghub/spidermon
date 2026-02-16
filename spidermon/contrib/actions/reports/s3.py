@@ -4,6 +4,7 @@ from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
 from spidermon.exceptions import NotConfigured
+from spidermon.utils.settings import get_aws_credentials
 
 from . import CreateReport
 
@@ -75,7 +76,7 @@ class CreateS3Report(CreateReport):
         make_public=False,
         content_type=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
 

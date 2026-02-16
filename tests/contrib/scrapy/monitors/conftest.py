@@ -1,5 +1,5 @@
 try:
-    import scrapy
+    import scrapy  # noqa: F401
 except ImportError:
     pass
 else:
@@ -9,7 +9,6 @@ else:
     from scrapy.statscollectors import MemoryStatsCollector
 
     from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
-
 
     @pytest.fixture
     def make_data(request):

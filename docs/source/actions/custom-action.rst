@@ -9,10 +9,11 @@ the `run_action` method.
 
     from spidermon.core.actions import Action
 
+
     class MyCustomAction(Action):
         def run_action(self):
             # Include here the logic of your action
-            # (...)
+            ...
 
 
 Fallback Actions
@@ -26,17 +27,20 @@ your custom action.
 
     from spidermon.core.actions import Action
 
+
     class MyFallbackAction(Action):
         def run_action(self):
             # Include here the logic of your action
             # Runs if MyCustomAction().run_action() throws an unhandled exception
-            # (...)
+            ...
+
 
     class MyCustomAction(Action):
         fallback = MyFallbackAction
+
         def run_action(self):
             # Include here the logic of your action
-            # (...)
+            ...
 
 
 You can also add fallbacks to spidermon built-in actions by subclassing them. For
@@ -48,6 +52,6 @@ example, send an email if a slack message could not be sent.
     from spidermon.contrib.actions import Slack
     from spidermon.contrib.actions.email.smtp import SendSmtpEmail
 
+
     class MyCustomSlackAction(Slack):
         fallback = SendSmtpEmail
-

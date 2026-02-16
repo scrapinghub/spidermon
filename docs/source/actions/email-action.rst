@@ -18,6 +18,7 @@ your ``DummyMonitorSuite`` finishes, you can use:
 
     from spidermon.contrib.actions.email.ses import SendSESEmail
 
+
     class DummyMonitorSuite(MonitorSuite):
         monitors = [
             DummyMonitor,
@@ -33,6 +34,7 @@ your ``DummyMonitorSuite`` finishes and some monitor fails, you can use:
 .. code-block:: python
 
     from spidermon.contrib.actions.email.smtp import SendSmtpEmail
+
 
     class DummyMonitorSuite(MonitorSuite):
         monitors = [

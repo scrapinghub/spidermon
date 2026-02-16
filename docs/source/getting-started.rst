@@ -34,25 +34,25 @@ And our spider code:
     # tutorial/spiders/quotes.py
     import scrapy
 
+
     class QuotesSpider(scrapy.Spider):
-        name = 'quotes'
-        allowed_domains = ['quotes.toscrape.com']
-        start_urls = ['http://quotes.toscrape.com/']
+        name = "quotes"
+        allowed_domains = ["quotes.toscrape.com"]
+        start_urls = ["http://quotes.toscrape.com/"]
 
         def parse(self, response):
-            for quote in response.css('.quote'):
+            for quote in response.css(".quote"):
                 yield {
-                    'quote': quote.css('.text::text').get(),
-                    'author': quote.css('.author::text').get(),
-                    'author_url': response.urljoin(
-                        quote.css('.author a::attr(href)').get()),
-                    'tags': quote.css('.tag *::text').getall(),
+                    "quote": quote.css(".text::text").get(),
+                    "author": quote.css(".author::text").get(),
+                    "author_url": response.urljoin(
+                        quote.css(".author a::attr(href)").get()
+                    ),
+                    "tags": quote.css(".tag *::text").getall(),
                 }
 
             yield scrapy.Request(
-                response.urljoin(
-                    response.css('.next a::attr(href)').get()
-                )
+                response.urljoin(response.css(".next a::attr(href)").get())
             )
 
 .. _enabling-spidermon:
@@ -68,7 +68,7 @@ To enable Spidermon in your project, include the following lines in your Scrapy 
     SPIDERMON_ENABLED = True
 
     EXTENSIONS = {
-        'spidermon.contrib.scrapy.extensions.Spidermon': 500,
+        "spidermon.contrib.scrapy.extensions.Spidermon": 500,
     }
 
 Our first monitor
@@ -91,20 +91,18 @@ your monitors.
     # tutorial/monitors.py
     from spidermon import Monitor, MonitorSuite, monitors
 
-    @monitors.name('Item count')
+
+    @monitors.name("Item count")
     class ItemCountMonitor(Monitor):
 
-        @monitors.name('Minimum number of items')
+        @monitors.name("Minimum number of items")
         def test_minimum_number_of_items(self):
-            item_extracted = getattr(
-                self.data.stats, 'item_scraped_count', 0)
+            item_extracted = getattr(self.data.stats, "item_scraped_count", 0)
             minimum_threshold = 10
 
-            msg = 'Extracted less than {} items'.format(
-                minimum_threshold)
-            self.assertTrue(
-                item_extracted >= minimum_threshold, msg=msg
-            )
+            msg = "Extracted less than {} items".format(minimum_threshold)
+            self.assertTrue(item_extracted >= minimum_threshold, msg=msg)
+
 
     class SpiderCloseMonitorSuite(MonitorSuite):
 
@@ -118,9 +116,7 @@ SPIDERMON_SPIDER_CLOSE_MONITORS list in your `settings.py` file:
 .. code-block:: python
 
     # tutorial/settings.py
-    SPIDERMON_SPIDER_CLOSE_MONITORS = (
-        'tutorial.monitors.SpiderCloseMonitorSuite',
-    )
+    SPIDERMON_SPIDER_CLOSE_MONITORS = ("tutorial.monitors.SpiderCloseMonitorSuite",)
 
 After executing the spider, you should see the following in your logs:
 
@@ -203,6 +199,7 @@ a Slack channel using a bot when a monitor fails.
 
     # (...your monitors code...)
 
+
     class SpiderCloseMonitorSuite(MonitorSuite):
         monitors = [
             ItemCountMonitor,
@@ -219,9 +216,9 @@ credentials`_. You can access the required credentials by following these steps 
 
     # tutorial/settings.py
     (...)
-    SPIDERMON_SLACK_SENDER_TOKEN = '<SLACK_SENDER_TOKEN>'
-    SPIDERMON_SLACK_SENDER_NAME = '<SLACK_SENDER_NAME>'
-    SPIDERMON_SLACK_RECIPIENTS = ['@yourself', '#yourprojectchannel']
+    SPIDERMON_SLACK_SENDER_TOKEN = "<SLACK_SENDER_TOKEN>"
+    SPIDERMON_SLACK_SENDER_NAME = "<SLACK_SENDER_NAME>"
+    SPIDERMON_SLACK_RECIPIENTS = ["@yourself", "#yourprojectchannel"]
 
 If a monitor fails, the recipients provided will receive a message in Slack:
 
@@ -238,9 +235,12 @@ a Telegram user, group or channel using a bot when a monitor fails.
 .. code-block:: python
 
     # tutorial/monitors.py
-    from spidermon.contrib.actions.telegram.notifiers import SendTelegramMessageSpiderFinished
+    from spidermon.contrib.actions.telegram.notifiers import (
+        SendTelegramMessageSpiderFinished,
+    )
 
     # (...your monitors code...)
+
 
     class SpiderCloseMonitorSuite(MonitorSuite):
         monitors = [
@@ -259,8 +259,8 @@ Later, fill the required information in your `settings.py` as follows:
 
     # tutorial/settings.py
     (...)
-    SPIDERMON_TELEGRAM_SENDER_TOKEN = '<TELEGRAM_SENDER_TOKEN>'
-    SPIDERMON_TELEGRAM_RECIPIENTS = ['chatid', 'groupid', '@channelname']
+    SPIDERMON_TELEGRAM_SENDER_TOKEN = "<TELEGRAM_SENDER_TOKEN>"
+    SPIDERMON_TELEGRAM_RECIPIENTS = ["chatid", "groupid", "@channelname"]
 
 If a monitor fails, the recipients provided will receive a message in Telegram:
 
@@ -280,6 +280,7 @@ a Discord channel using a bot when a monitor fails.
     from spidermon.contrib.actions.discord.notifiers import SendDiscordMessageSpiderFinished
 
     # (...your monitors code...)
+
 
     class SpiderCloseMonitorSuite(MonitorSuite):
         monitors = [
@@ -315,7 +316,7 @@ Item validation
 ---------------
 
 Item validators allows you to match your returned items with predetermined structure
-ensuring that all fields contains data in the expected format. supports `JSON Schema`_ 
+ensuring that all fields contains data in the expected format. supports `JSON Schema`_
 to define the structure of your item.
 
 First step is to change our actual spider code to use `Scrapy items`_. Create a
@@ -325,6 +326,7 @@ new file called `items.py`:
 
     # tutorial/items.py
     import scrapy
+
 
     class QuoteItem(scrapy.Item):
         quote = scrapy.Field()
@@ -340,27 +342,24 @@ And then modify the spider code to use the newly defined item:
     import scrapy
     from tutorial.items import QuoteItem
 
+
     class QuotesSpider(scrapy.Spider):
-        name = 'quotes'
-        allowed_domains = ['quotes.toscrape.com']
-        start_urls = ['http://quotes.toscrape.com/']
+        name = "quotes"
+        allowed_domains = ["quotes.toscrape.com"]
+        start_urls = ["http://quotes.toscrape.com/"]
 
         def parse(self, response):
-            for quote in response.css('.quote'):
+            for quote in response.css(".quote"):
                 item = QuoteItem(
-                    quote=quote.css('.text::text').get(),
-                    author=quote.css('.author::text').get(),
-                    author_url=response.urljoin(
-                        quote.css('.author a::attr(href)').get()
-                    ),
-                    tags=quote.css('.tag *::text').getall()
+                    quote=quote.css(".text::text").get(),
+                    author=quote.css(".author::text").get(),
+                    author_url=response.urljoin(quote.css(".author a::attr(href)").get()),
+                    tags=quote.css(".tag *::text").getall(),
                 )
                 yield item
 
             yield scrapy.Request(
-                response.urljoin(
-                    response.css('.next a::attr(href)').get()
-                )
+                response.urljoin(response.css(".next a::attr(href)").get())
             )
 
 Now we need to create our jsonschema model in the `schemas/quote_item.json` file that will contain
@@ -405,12 +404,10 @@ inform the path of the json schema used for validation:
 
     # tutorial/settings.py
     ITEM_PIPELINES = {
-        'spidermon.contrib.scrapy.pipelines.ItemValidationPipeline': 800,
+        "spidermon.contrib.scrapy.pipelines.ItemValidationPipeline": 800,
     }
 
-    SPIDERMON_VALIDATION_SCHEMAS = (
-        './schemas/quote_item.json',
-    )
+    SPIDERMON_VALIDATION_SCHEMAS = ("./schemas/quote_item.json",)
 
 After that, every time you run your spider you will have a new set of stats in
 your spider log providing information about the results of the validations:
@@ -436,20 +433,19 @@ a failure when we have a item validation error:
 
     # (...other monitors...)
 
-    @monitors.name('Item validation')
+
+    @monitors.name("Item validation")
     class ItemValidationMonitor(Monitor, StatsMonitorMixin):
 
-        @monitors.name('No item validation errors')
+        @monitors.name("No item validation errors")
         def test_no_item_validation_errors(self):
-            validation_errors = getattr(
-                self.stats, 'spidermon/validation/fields/errors', 0
-            )
+            validation_errors = getattr(self.stats, "spidermon/validation/fields/errors", 0)
             self.assertEqual(
                 validation_errors,
                 0,
-                msg='Found validation errors in {} fields'.format(
-                    validation_errors)
+                msg="Found validation errors in {} fields".format(validation_errors),
             )
+
 
     class SpiderCloseMonitorSuite(MonitorSuite):
         monitors = [

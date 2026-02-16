@@ -124,7 +124,9 @@ class ItemValidationPipeline:
         return item
 
     def find_validators(self, item):
-        find = lambda x: self.validators.get(x.__name__, [])
+        def find(x):
+            return self.validators.get(x.__name__, [])
+
         return find(item.__class__) or find(Item)
 
     def _add_errors_to_item(self, item: ItemAdapter, errors: Dict[str, str]):

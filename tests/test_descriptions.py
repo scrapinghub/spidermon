@@ -1,4 +1,14 @@
-from .fixtures.descriptions import *
+from .fixtures.descriptions import (
+    DescoratedDescriptedMonitor,
+    DescoratedDescriptedMonitor2,
+    DescoratedDescriptedSuite,
+    DescoratedDescriptedSuite2,
+    DescriptedMethodsMonitor,
+    DocstringDescriptedMonitor,
+    DocstringDescriptedSuite,
+    NotDescriptedMonitor,
+    NotDescriptedSuite,
+)
 
 MONITOR_DESCRIPTIONS = [
     # --------------------------------------------------------------

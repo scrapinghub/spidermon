@@ -18,16 +18,17 @@ number of items were extracted and fails if it is less than the expected thresho
 
     from spidermon import Monitor, monitors
 
-    @monitors.name('Item count')
+
+    @monitors.name("Item count")
     class ItemCountMonitor(Monitor):
 
-        @monitors.name('Minimum items extracted')
+        @monitors.name("Minimum items extracted")
         def test_minimum_number_of_items_extracted(self):
             minimum_threshold = 100
-            item_extracted = getattr(self.data.stats, 'item_scraped_count', 0)
+            item_extracted = getattr(self.data.stats, "item_scraped_count", 0)
             self.assertFalse(
                 item_extracted < minimum_threshold,
-                msg='Extracted less than {} items'.format(minimum_threshold)
+                msg="Extracted less than {} items".format(minimum_threshold),
             )
 
 A :class:`~spidermon.core.monitors.Monitor` instance defines a monitor that includes
@@ -57,6 +58,7 @@ Here is an example of how to configure a new monitor suite in your project:
 
     # monitors.py
     from spidermon.core.suites import MonitorSuite
+
 
     # Monitor definition above...
     class SpiderCloseMonitorSuite(MonitorSuite):
@@ -187,12 +189,13 @@ First we define a new action that will close the spider when executed:
     # tutorial/actions.py
     from spidermon.core.actions import Action
 
+
     class CloseSpiderAction(Action):
 
         def run_action(self):
-            spider = self.data['spider']
+            spider = self.data["spider"]
             spider.logger.info("Closing spider")
-            spider.crawler.engine.close_spider(spider, 'closed_by_spidermon')
+            spider.crawler.engine.close_spider(spider, "closed_by_spidermon")
 
 Then we create our monitor and monitor suite that verifies the number of errors
 and then take an action if it fails:
@@ -202,16 +205,18 @@ and then take an action if it fails:
     # tutorial/monitors.py
     from tutorial.actions import CloseSpiderAction
 
-    @monitors.name('Periodic job stats monitor')
+
+    @monitors.name("Periodic job stats monitor")
     class PeriodicJobStatsMonitor(Monitor, StatsMonitorMixin):
 
-        @monitors.name('Maximum number of errors reached')
+        @monitors.name("Maximum number of errors reached")
         def test_number_of_errors(self):
             accepted_num_errors = 20
-            num_errors = self.data.stats.get('log_count/ERROR', 0)
+            num_errors = self.data.stats.get("log_count/ERROR", 0)
 
-            msg = 'The job has exceeded the maximum number of errors'
+            msg = "The job has exceeded the maximum number of errors"
             self.assertLessEqual(num_errors, accepted_num_errors, msg=msg)
+
 
     class PeriodicMonitorSuite(MonitorSuite):
         monitors = [PeriodicJobStatsMonitor]
@@ -224,7 +229,7 @@ The last step is to configure the suite to be executed every 60 seconds:
     # tutorial/settings.py
 
     SPIDERMON_PERIODIC_MONITORS = {
-        'tutorial.monitors.PeriodicMonitorSuite': 60,  # time in seconds
+        "tutorial.monitors.PeriodicMonitorSuite": 60,  # time in seconds
     }
 
 What to monitor?

@@ -1,7 +1,7 @@
 pytest_plugins = "spidermon.contrib.pytest.plugins.filter_monitors"
 
 try:
-    import scrapy
+    import scrapy  # noqa: F401
 except ImportError:
     pass
 else:
@@ -9,7 +9,6 @@ else:
     from scrapy import Spider
     from scrapy.crawler import Crawler
     from scrapy.statscollectors import MemoryStatsCollector
-
 
     @pytest.fixture
     def get_crawler():

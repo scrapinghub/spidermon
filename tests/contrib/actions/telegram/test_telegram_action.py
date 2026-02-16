@@ -3,8 +3,6 @@ import pytest
 
 pytest.importorskip("scrapy")
 
-from scrapy import Spider
-from scrapy.utils.test import get_crawler
 from spidermon.exceptions import NotConfigured
 from spidermon.contrib.actions.telegram import (
     TelegramMessageManager,

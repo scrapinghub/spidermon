@@ -51,7 +51,7 @@ def test_log_error_when_api_return_an_error(mocker, request_post):
     request_post.return_value.reason = "Fail Reason"
 
     logger_error = mocker.patch("spidermon.contrib.actions.discord.logger.error")
-    error_message = f"Failed to send message. Discord API error: Fail Reason"
+    error_message = "Failed to send message. Discord API error: Fail Reason"
 
     manager = DiscordMessageManager("discord-webhook-url", fake=False)
     manager.send_message("Hello")

@@ -17,9 +17,9 @@ To use this action you need to:
 .. code-block:: python
 
     # settings.py
-    SPIDERMON_SLACK_SENDER_TOKEN = '<SLACK_SENDER_TOKEN>'
-    SPIDERMON_SLACK_SENDER_NAME = '<SLACK_SENDER_NAME>'
-    SPIDERMON_SLACK_RECIPIENTS = ['@yourself', '#yourprojectchannel']
+    SPIDERMON_SLACK_SENDER_TOKEN = "<SLACK_SENDER_TOKEN>"
+    SPIDERMON_SLACK_SENDER_NAME = "<SLACK_SENDER_NAME>"
+    SPIDERMON_SLACK_RECIPIENTS = ["@yourself", "#yourprojectchannel"]
 
 A notification will look like the following one:
 

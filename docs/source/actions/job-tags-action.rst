@@ -15,6 +15,7 @@ for failed jobs.
     # monitors.py
     from spidermon.contrib.actions.jobs.tags import AddJobTags, RemoveJobTags
 
+
     class DummyMonitorSuite(MonitorSuite):
         monitors = [
             DummyMonitor,
@@ -31,8 +32,12 @@ for failed jobs.
 .. code-block:: python
 
     # settings.py
-    SPIDERMON_JOB_TAGS_TO_ADD = ['failed', ]
-    SPIDERMON_JOB_TAGS_TO_REMOVE = ['running', ]
+    SPIDERMON_JOB_TAGS_TO_ADD = [
+        "failed",
+    ]
+    SPIDERMON_JOB_TAGS_TO_REMOVE = [
+        "running",
+    ]
 
 By default we have the following settings when using these two actions:
 
@@ -55,11 +60,14 @@ of the setting that will contain the list of tags that will be included in the j
     # monitors.py
     from spidermon.contrib.actions.jobs.tags import AddJobTags
 
+
     class AddJobTagsPassed(AddJobTags):
-        tag_settings = 'TAG_TO_ADD_WHEN_PASS'
+        tag_settings = "TAG_TO_ADD_WHEN_PASS"
+
 
     class AddJobTagsFailed(AddJobTags):
-        tag_settings = 'TAG_TO_ADD_WHEN_FAIL'
+        tag_settings = "TAG_TO_ADD_WHEN_FAIL"
+
 
     class DummyMonitorSuite(MonitorSuite):
         monitors = [
@@ -77,7 +85,11 @@ of the setting that will contain the list of tags that will be included in the j
 .. code-block:: python
 
     # settings.py
-    TAG_TO_ADD_WHEN_PASS = ['passed', ]
-    TAG_TO_ADD_WHEN_FAIL = ['failed', ]
+    TAG_TO_ADD_WHEN_PASS = [
+        "passed",
+    ]
+    TAG_TO_ADD_WHEN_FAIL = [
+        "failed",
+    ]
 
 .. _Scrapy Cloud: https://zyte.com/scrapy-cloud

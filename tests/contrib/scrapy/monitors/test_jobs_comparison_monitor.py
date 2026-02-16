@@ -11,12 +11,10 @@ from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_JOBS_COMPARISON_STATES,
     SPIDERMON_JOBS_COMPARISON_TAGS,
     SPIDERMON_JOBS_COMPARISON_THRESHOLD,
-    SPIDERMON_JOBS_COMPARISON_ARGUMENTS,
     SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS,
     ZyteJobsComparisonMonitor,
     monitors,
 )
-from spidermon.core.factories import MonitorFactory
 from spidermon.exceptions import NotConfigured
 
 

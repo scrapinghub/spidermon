@@ -62,7 +62,7 @@ class SendSNSNotification(ActionWithTemplates):
         except Exception as e:
             logger.error(f"Failed to send SNS message: {e}")
             raise
-        logger.info(f"SNS message sent successfully!")
+        logger.info("SNS message sent successfully!")
 
     @classmethod
     def from_crawler_kwargs(cls, crawler):

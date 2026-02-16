@@ -1,5 +1,5 @@
 try:
-    import scrapy
+    import scrapy  # noqa: F401
 except ImportError:
     pass
 else:
