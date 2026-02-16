@@ -25,8 +25,10 @@ class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
         store = collections.get_store(stats_location)
         return store
 
-    def open_spider(self, spider):
-        super().open_spider(spider)
+    def open_spider(self, spider=None):
+        args = [spider] if spider else []
+        super().open_spider(*args)
+        spider = spider or self._crawler.spider
         self.store = self._open_collection(spider)
         # note that the _open_collection method does not error if collection does not exist yet
         if self.store is None:
@@ -45,9 +47,10 @@ class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
 
         spider.stats_history = stats_history
 
-    def _persist_stats(self, stats, spider):
+    def _persist_stats(self, stats, spider=None):
         if self.store is None:
             return
+        spider = spider or self._crawler.spider
         stats_history = spider.stats_history
         stats_history.appendleft(self._stats)
         for index, data in enumerate(stats_history):

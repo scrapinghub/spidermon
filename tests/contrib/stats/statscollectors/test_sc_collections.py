@@ -7,11 +7,14 @@ pytest.importorskip("scrapy")
 
 import scrapinghub
 
+from packaging.version import Version
 from scrapy import Spider
 from scrapy.utils.test import get_crawler
 from spidermon.contrib.stats.statscollectors.sc_collections import (
     ScrapyCloudCollectionsStatsHistoryCollector,
 )
+
+from tests import SCRAPY_VERSION
 
 
 class StoreMock:
@@ -60,11 +63,11 @@ def test_settings():
 
 @patch("spidermon.contrib.stats.statscollectors.sc_collections.scrapinghub")
 def test_open_spider_without_api(scrapinghub_mock, test_settings):
-    mock_spider = MagicMock()
     crawler = get_crawler(Spider, test_settings)
     pipe = ScrapyCloudCollectionsStatsHistoryCollector(crawler)
 
-    pipe.open_spider(mock_spider)
+    args = [MagicMock()] if SCRAPY_VERSION < Version("2.14") else []
+    pipe.open_spider()
 
     assert pipe.store is None
 
@@ -221,6 +224,8 @@ def test_stats_history_when_no_collection(
 
     os_enviorn_mock.return_value = 1234
     crawler = get_crawler(Spider, test_settings)
+    crawler.spider = mock_spider
     pipe = ScrapyCloudCollectionsStatsHistoryCollector(crawler)
-    pipe.open_spider(mock_spider)
+    args = [mock_spider] if SCRAPY_VERSION < Version("2.14") else []
+    pipe.open_spider(*args)
     assert mock_spider.stats_history == deque([], maxlen=100)
