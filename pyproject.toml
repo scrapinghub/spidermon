@@ -63,3 +63,13 @@ include = ["spidermon/VERSION"]
 [tool.hatch.build.targets.wheel]
 packages = ["spidermon"]
 
+[tool.pytest]
+filterwarnings = [
+    'error',
+    # resource warnings from sockets
+    'ignore::pytest.PytestUnraisableExceptionWarning',
+    # scrapy's reactor unclosed sockets
+    'ignore::ResourceWarning:scrapy.utils.reactor',
+    # https://github.com/scrapinghub/python-scrapinghub/pull/183
+    'ignore:datetime\.datetime\.utcfromtimestamp\(\) is deprecated:DeprecationWarning:scrapinghub\..*',
+]
