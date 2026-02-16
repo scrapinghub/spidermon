@@ -4,6 +4,7 @@ pytest.importorskip("scrapy")
 
 from scrapy import Item, signals
 from scrapy.spiders import Spider
+from scrapy.utils.defer import deferred_f_from_coro_f
 from scrapy.utils.test import get_crawler
 
 
@@ -25,30 +26,27 @@ def spider():
     return spider
 
 
-def test_add_stats_item_scraped_count_by_item_type(spider):
-    for _ in range(15):
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item={"_type": "regular_dict"},
-            response="",
-            spider=spider,
+async def send_item_scraped(spider, item):
+    if hasattr(spider.crawler.signals, "send_catch_log_async"):
+        await spider.crawler.signals.send_catch_log_async(
+            signal=signals.item_scraped, item=item, response="", spider=spider
         )
+    else:
+        await spider.crawler.signals.send_catch_log_deferred(
+            signal=signals.item_scraped, item=item, response="", spider=spider
+        )
+
+
+@deferred_f_from_coro_f
+async def test_add_stats_item_scraped_count_by_item_type(spider):
+    for _ in range(15):
+        await send_item_scraped(spider, {"_type": "regular_dict"})
 
     for _ in range(20):
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=Item(),
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, Item())
 
     for _ in range(25):
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=TestItem(),
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, TestItem())
 
     stats = spider.crawler.stats.get_stats()
 
@@ -58,57 +56,46 @@ def test_add_stats_item_scraped_count_by_item_type(spider):
     assert stats.get("spidermon_item_scraped_count/TestItem") == 25
 
 
-def test_item_scraped_count_single_field(spider):
+@deferred_f_from_coro_f
+async def test_item_scraped_count_single_field(spider):
     returned_items = [{"field1": "value1"}]
 
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, item)
 
     stats = spider.crawler.stats.get_stats()
     assert stats.get("spidermon_item_scraped_count/dict/field1") == 1
 
 
-def test_item_scraped_count_multiple_field(spider):
+@deferred_f_from_coro_f
+async def test_item_scraped_count_multiple_field(spider):
     returned_items = [{"field1": "value1", "field2": "value2"}]
 
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, item)
 
     stats = spider.crawler.stats.get_stats()
     assert stats.get("spidermon_item_scraped_count/dict/field1") == 1
     assert stats.get("spidermon_item_scraped_count/dict/field2") == 1
 
 
-def test_item_scraped_count_multiple_items(spider):
+@deferred_f_from_coro_f
+async def test_item_scraped_count_multiple_items(spider):
     returned_items = [
         {"field1": "value1", "field2": "value2"},
         {"field1": "value1", "field2": "value2"},
     ]
 
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, item)
 
     stats = spider.crawler.stats.get_stats()
     assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
     assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
 
 
-def test_item_scraped_count_multiple_items_field_missing(spider):
+@deferred_f_from_coro_f
+async def test_item_scraped_count_multiple_items_field_missing(spider):
     returned_items = [
         {"field1": "value1", "field2": "value2"},
         {
@@ -117,28 +104,19 @@ def test_item_scraped_count_multiple_items_field_missing(spider):
     ]
 
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, item)
 
     stats = spider.crawler.stats.get_stats()
     assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
     assert stats.get("spidermon_item_scraped_count/dict/field2") == 1
 
 
-def test_item_scraped_count_single_nested_field(spider):
+@deferred_f_from_coro_f
+async def test_item_scraped_count_single_nested_field(spider):
     returned_items = [{"field1": {"field1.1": "value1.1"}}]
 
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, item)
 
     stats = spider.crawler.stats.get_stats()
     assert stats.get("spidermon_item_scraped_count/dict") == 1
@@ -146,7 +124,8 @@ def test_item_scraped_count_single_nested_field(spider):
     assert stats.get("spidermon_item_scraped_count/dict/field1/field1.1") == 1
 
 
-def test_item_scraped_count_multiple_nested_field(spider):
+@deferred_f_from_coro_f
+async def test_item_scraped_count_multiple_nested_field(spider):
     returned_items = [
         {
             "field1": {"field1.1": "value1.1"},
@@ -170,12 +149,7 @@ def test_item_scraped_count_multiple_nested_field(spider):
     ]
 
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, item)
 
     stats = spider.crawler.stats.get_stats()
 
@@ -204,7 +178,8 @@ def test_item_scraped_count_multiple_nested_field(spider):
     )
 
 
-def test_item_scraped_count_multiple_nested_field_with_limit():
+@deferred_f_from_coro_f
+async def test_item_scraped_count_multiple_nested_field_with_limit():
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -235,12 +210,7 @@ def test_item_scraped_count_multiple_nested_field_with_limit():
     crawler = get_crawler(settings_dict=settings)
     spider = Spider.from_crawler(crawler, "example.com")
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, item)
 
     stats = spider.crawler.stats.get_stats()
 
@@ -266,7 +236,8 @@ def test_item_scraped_count_multiple_nested_field_with_limit():
     )
 
 
-def test_item_scraped_count_multiple_nested_field_with_two_levels_limit():
+@deferred_f_from_coro_f
+async def test_item_scraped_count_multiple_nested_field_with_two_levels_limit():
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -297,12 +268,7 @@ def test_item_scraped_count_multiple_nested_field_with_two_levels_limit():
     crawler = get_crawler(settings_dict=settings)
     spider = Spider.from_crawler(crawler, "example.com")
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, item)
 
     stats = spider.crawler.stats.get_stats()
 
@@ -326,7 +292,8 @@ def test_item_scraped_count_multiple_nested_field_with_two_levels_limit():
     )
 
 
-def test_item_scraped_count_multiple_nested_field_with_no_nested_levels():
+@deferred_f_from_coro_f
+async def test_item_scraped_count_multiple_nested_field_with_no_nested_levels():
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -357,12 +324,7 @@ def test_item_scraped_count_multiple_nested_field_with_no_nested_levels():
     crawler = get_crawler(settings_dict=settings)
     spider = Spider.from_crawler(crawler, "example.com")
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, item)
 
     stats = spider.crawler.stats.get_stats()
 
@@ -388,7 +350,8 @@ def test_item_scraped_count_multiple_nested_field_with_no_nested_levels():
     )
 
 
-def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field_coverage_settings():
+@deferred_f_from_coro_f
+async def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field_coverage_settings():
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -398,12 +361,7 @@ def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field_cover
     spider = Spider.from_crawler(crawler, "example.com")
 
     item = {"field1": "value1"}
-    spider.crawler.signals.send_catch_log_deferred(
-        signal=signals.item_scraped,
-        item=item,
-        response="",
-        spider=spider,
-    )  # Return item to have some stats to calculate coverage
+    await send_item_scraped(spider, item)  # Return item to have some stats to calculate coverage
 
     crawler.signals.send_catch_log(
         signal=signals.spider_closed, spider=spider, reason=None
@@ -414,7 +372,8 @@ def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field_cover
     assert stats.get("spidermon_field_coverage/dict/field1") is None
 
 
-def test_add_field_coverage_when_spider_closes_if_have_field_coverage_settings():
+@deferred_f_from_coro_f
+async def test_add_field_coverage_when_spider_closes_if_have_field_coverage_settings():
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -424,12 +383,7 @@ def test_add_field_coverage_when_spider_closes_if_have_field_coverage_settings()
     spider = Spider.from_crawler(crawler, "example.com")
 
     item = {"field1": "value1"}
-    spider.crawler.signals.send_catch_log_deferred(
-        signal=signals.item_scraped,
-        item=item,
-        response="",
-        spider=spider,
-    )  # Return item to have some stats to calculate coverage
+    await send_item_scraped(spider, item)  # Return item to have some stats to calculate coverage
 
     crawler.signals.send_catch_log(
         signal=signals.spider_closed, spider=spider, reason=None
@@ -440,7 +394,8 @@ def test_add_field_coverage_when_spider_closes_if_have_field_coverage_settings()
     assert stats.get("spidermon_field_coverage/dict/field1") == 1.0
 
 
-def test_item_scraped_count_ignore_none_values():
+@deferred_f_from_coro_f
+async def test_item_scraped_count_ignore_none_values():
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -457,12 +412,7 @@ def test_item_scraped_count_ignore_none_values():
     ]
 
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, item)
 
     stats = spider.crawler.stats.get_stats()
 
@@ -470,7 +420,8 @@ def test_item_scraped_count_ignore_none_values():
     assert stats.get("spidermon_item_scraped_count/dict/field2") == 1
 
 
-def test_item_scraped_count_do_not_ignore_none_values():
+@deferred_f_from_coro_f
+async def test_item_scraped_count_do_not_ignore_none_values():
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -486,12 +437,7 @@ def test_item_scraped_count_do_not_ignore_none_values():
     ]
 
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, item)
 
     stats = spider.crawler.stats.get_stats()
 
@@ -499,19 +445,15 @@ def test_item_scraped_count_do_not_ignore_none_values():
     assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
 
 
-def test_item_scraped_count_do_not_ignore_none_values_by_default(spider):
+@deferred_f_from_coro_f
+async def test_item_scraped_count_do_not_ignore_none_values_by_default(spider):
     returned_items = [
         {"field1": "value1", "field2": "value2"},
         {"field1": "value1", "field2": None},
     ]
 
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, item)
 
     stats = spider.crawler.stats.get_stats()
 
@@ -519,7 +461,8 @@ def test_item_scraped_count_do_not_ignore_none_values_by_default(spider):
     assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
 
 
-def test_item_scraped_count_list_of_dicts_disabled(spider):
+@deferred_f_from_coro_f
+async def test_item_scraped_count_list_of_dicts_disabled(spider):
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -558,12 +501,7 @@ def test_item_scraped_count_list_of_dicts_disabled(spider):
     ]
 
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, item)
 
     stats = spider.crawler.stats.get_stats()
 
@@ -619,7 +557,8 @@ def test_item_scraped_count_list_of_dicts_disabled(spider):
     )
 
 
-def test_item_scraped_count_list_of_dicts_one_nesting_level(spider):
+@deferred_f_from_coro_f
+async def test_item_scraped_count_list_of_dicts_one_nesting_level(spider):
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -658,12 +597,7 @@ def test_item_scraped_count_list_of_dicts_one_nesting_level(spider):
     ]
 
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_item_scraped(spider, item)
 
     stats = spider.crawler.stats.get_stats()
 
@@ -715,7 +649,8 @@ def test_item_scraped_count_list_of_dicts_one_nesting_level(spider):
     )
 
 
-def test_item_scraped_count_list_of_dicts_two_nesting_levels(spider):
+@deferred_f_from_coro_f
+async def test_item_scraped_count_list_of_dicts_two_nesting_levels(spider):
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -753,13 +688,24 @@ def test_item_scraped_count_list_of_dicts_two_nesting_levels(spider):
         },
     ]
 
+    async def send_signal(item):
+        if hasattr(spider.crawler.signals, "send_catch_log_async"):
+            await spider.crawler.signals.send_catch_log_async(
+                signal=signals.item_scraped,
+                item=item,
+                response="",
+                spider=spider,
+            )
+        else:
+            spider.crawler.signals.send_catch_log_deferred(
+                signal=signals.item_scraped,
+                item=item,
+                response="",
+                spider=spider,
+            )
+
     for item in returned_items:
-        spider.crawler.signals.send_catch_log_deferred(
-            signal=signals.item_scraped,
-            item=item,
-            response="",
-            spider=spider,
-        )
+        await send_signal(item)
 
     stats = spider.crawler.stats.get_stats()
 

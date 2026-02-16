@@ -67,7 +67,7 @@ def test_open_spider_without_api(scrapinghub_mock, test_settings):
     pipe = ScrapyCloudCollectionsStatsHistoryCollector(crawler)
 
     args = [MagicMock()] if SCRAPY_VERSION < Version("2.14") else []
-    pipe.open_spider()
+    pipe.open_spider(*args)
 
     assert pipe.store is None
 
