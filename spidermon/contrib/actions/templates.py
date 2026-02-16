@@ -1,5 +1,6 @@
 import os
 import inspect
+from typing import Any
 
 from jinja2 import Template
 from spidermon.core.actions import ActionOptionsMetaclass, Action
@@ -23,8 +24,8 @@ class ActionWithTemplatesMetaclass(ActionOptionsMetaclass):
 
 
 class ActionWithTemplates(Action, metaclass=ActionWithTemplatesMetaclass):
-    template_paths = []
-    context = None
+    template_paths: list[str] = []
+    context: dict[str, Any] | None = None
 
     def __init__(self, context=None):
         super().__init__()

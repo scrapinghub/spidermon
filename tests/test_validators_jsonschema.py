@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+from typing import Any
 from unittest import TestCase
 
 from spidermon.contrib.validation import JSONSchemaValidator
@@ -27,8 +30,8 @@ class SchemaTestCaseMetaclass(type):
 
 
 class SchemaTest(TestCase, metaclass=SchemaTestCaseMetaclass):
-    schema = {}
-    data_tests = []
+    schema: dict[str, Any] = {}
+    data_tests: list[DataTest] = []
 
 
 class DataTest:
@@ -142,17 +145,17 @@ class AdditionalItems(SchemaTest):
 
 
 class AdditionalProperties(SchemaTest):
-    schema_false = {
+    schema_false: dict[str, Any] = {
         "properties": {"foo": {}, "bar": {}},
         "patternProperties": {"^v": {}},
         "additionalProperties": False,
     }
-    schema_allows_schema = {
+    schema_allows_schema: dict[str, Any] = {
         "properties": {"foo": {}, "bar": {}},
         "additionalProperties": {"type": "boolean"},
     }
-    schema_alone = {"additionalProperties": {"type": "boolean"}}
-    schema_no = {"properties": {"foo": {}, "bar": {}}}
+    schema_alone: dict[str, Any] = {"additionalProperties": {"type": "boolean"}}
+    schema_no: dict[str, Any] = {"properties": {"foo": {}, "bar": {}}}
     data_tests = [
         DataTest(
             name="schema_false, no additional properties is valid",
@@ -1079,7 +1082,7 @@ class Not(SchemaTest):
     schema_complex = {
         "not": {"type": "object", "properties": {"foo": {"type": "string"}}}
     }
-    schema_forbidden = {"properties": {"foo": {"not": {}}}}
+    schema_forbidden: dict[str, Any] = {"properties": {"foo": {"not": {}}}}
     data_tests = [
         DataTest(name="not. allowed", schema=schema_not, data="foo", valid=True),
         DataTest(
@@ -1516,8 +1519,8 @@ class Ref(SchemaTest):
 
 
 class Required(SchemaTest):
-    schema = {"properties": {"foo": {}, "bar": {}}, "required": ["foo"]}
-    schema_default = {"properties": {"foo": {}}}
+    schema: dict[str, Any] = {"properties": {"foo": {}, "bar": {}}, "required": ["foo"]}
+    schema_default: dict[str, Any] = {"properties": {"foo": {}}}
     data_tests = [
         DataTest(name="valid", data={"foo": 1}, valid=True),
         DataTest(

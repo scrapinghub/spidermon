@@ -1,12 +1,13 @@
 import re
 from collections import defaultdict
+from typing import Any
 
 
 RE_PATTERN_INSTANCE = type(re.compile(""))
 
 
 class Validator:
-    default_translator = None
+    default_translator: Any = None
     name = "validator"
 
     def __init__(self, translator=None, use_default_translator=True):

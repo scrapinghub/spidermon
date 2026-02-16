@@ -37,7 +37,7 @@ class PercentCounter(PercentCounterBase):
 
 
 class DictPercentCounter(PercentCounterBase, collections.abc.MutableMapping):
-    __items_class__ = PercentCounter
+    __items_class__: type[PercentCounterBase] = PercentCounter
 
     def __init__(self, total):
         super().__init__(total)

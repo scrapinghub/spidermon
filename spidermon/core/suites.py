@@ -1,5 +1,7 @@
-from unittest import TestSuite
+from __future__ import annotations
+
 import collections
+from unittest import TestSuite
 
 from spidermon.exceptions import InvalidMonitorIterable, NotAllowedMethod
 from spidermon import settings
@@ -10,10 +12,14 @@ from .factories import MonitorFactory, ActionFactory
 
 
 class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
-    monitors = []
-    monitors_finished_actions = []
-    monitors_passed_actions = []
-    monitors_failed_actions = []
+    monitors: list[
+        type[MonitorSuite]
+        | type[Monitor]
+        | tuple[str, type[MonitorSuite] | type[Monitor]]
+    ] = []
+    monitors_finished_actions: list[str] = []
+    monitors_passed_actions: list[str] = []
+    monitors_failed_actions: list[str] = []
 
     def __init__(
         self,

@@ -1,4 +1,5 @@
 import sys
+from typing import Any
 
 from spidermon.core.suites import MonitorSuite
 from spidermon.results.monitor import MonitorResult
@@ -9,7 +10,7 @@ from spidermon.data import Data
 
 class MonitorRunner:
     data_immutable_dicts = ["stats"]
-    data_default_data = {"meta": {}}
+    data_default_data: dict[str, Any] = {"meta": {}}
 
     def __init__(self):
         self.suite = None

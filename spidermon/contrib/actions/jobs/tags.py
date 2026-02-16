@@ -3,8 +3,8 @@ from spidermon.exceptions import NotConfigured
 
 
 class JobTagsAction(Action):
-    tags = []
-    tag_settings = None
+    tags: list[str] = []
+    tag_settings: str | None = None
 
     def __init__(self, tags=None):
         super().__init__()

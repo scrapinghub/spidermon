@@ -1,8 +1,10 @@
-from unittest import TestCase
+from __future__ import annotations
 
 import pytest
 
 pytest.importorskip("scrapy")
+
+from unittest import TestCase
 
 from slugify import slugify
 from scrapy.utils.test import get_crawler
@@ -65,7 +67,7 @@ class PipelineTestCaseMetaclass(type):
 
 
 class PipelineTest(TestCase, metaclass=PipelineTestCaseMetaclass):
-    data_tests = []
+    data_tests: list[DataTest] = []
 
 
 class DataTest:

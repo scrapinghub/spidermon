@@ -148,15 +148,10 @@ def test_jobs_comparison_monitor_is_enabled(
             runner.run(mock_suite, **data)
 
 
-class TestZyteJobsComparisonMonitor(ZyteJobsComparisonMonitor):
-    def runTest():
-        pass
-
-
 def test_jobs_comparison_monitor_get_tags_to_filter(monkeypatch):
     mock_data = Mock()
 
-    monitor = TestZyteJobsComparisonMonitor()
+    monitor = ZyteJobsComparisonMonitor()
     monitor.data = mock_data
 
     # Empty SPIDERMON_JOBS_COMPARISON_TAGS
@@ -179,7 +174,7 @@ def test_jobs_comparison_monitor_get_jobs():
         "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = None
@@ -196,7 +191,7 @@ def test_jobs_comparison_monitor_get_jobs():
         "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = None
@@ -213,7 +208,7 @@ def test_jobs_comparison_monitor_get_jobs():
         "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = None
@@ -230,7 +225,7 @@ def test_jobs_comparison_monitor_get_jobs():
         "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = ["finished"]
@@ -248,7 +243,7 @@ def test_jobs_comparison_monitor_get_jobs():
         "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = ["finished"]
@@ -266,7 +261,7 @@ def test_jobs_comparison_monitor_get_jobs():
         "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getdict.return_value = {}
@@ -284,7 +279,7 @@ def test_jobs_comparison_monitor_get_jobs():
         "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getdict.return_value = {"finished": True}
@@ -302,7 +297,7 @@ def test_jobs_comparison_monitor_get_jobs():
         "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getdict.return_value = {"finished": False}
@@ -320,7 +315,7 @@ def test_jobs_comparison_monitor_get_jobs():
         "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
 
@@ -346,7 +341,7 @@ def test_jobs_comparison_monitor_get_jobs():
         "spidermon.contrib.scrapy.monitors.monitors.Client"
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
 

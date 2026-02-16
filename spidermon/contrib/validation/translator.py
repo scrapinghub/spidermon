@@ -2,7 +2,7 @@ import re
 
 
 class MessageTranslator:
-    messages = {}
+    messages: dict[str, str] = {}
 
     def __init__(self):
         self.compiled_messages = {m: re.compile(m) for m in self.messages}

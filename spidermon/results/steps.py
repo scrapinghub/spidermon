@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from collections.abc import Sequence
 import time
 
 from spidermon import settings
@@ -8,8 +9,8 @@ from .items import ItemResult, MonitorResult, ActionResult
 
 class Step:
     item_result_class = ItemResult
-    successful_statuses = []
-    error_statuses = []
+    successful_statuses: Sequence[str] = []
+    error_statuses: Sequence[str] = []
 
     def __init__(self, name):
         self.name = name

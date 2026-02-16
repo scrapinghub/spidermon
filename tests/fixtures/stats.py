@@ -1,8 +1,11 @@
+from typing import Any
+
+
 STATS_A = {"item_scraped_count": 150}
 
 STATS_B = {"item_scraped_count": 0}
 
-STATS_EMPTY = {}
+STATS_EMPTY: dict[str, Any] = {}
 
 STATS_TO_EVALUATE = {
     "downloader/exception_count": 16,

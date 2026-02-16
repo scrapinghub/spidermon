@@ -1,6 +1,6 @@
 class DecoratorWithAttributes:
-    name = None
-    attributes = {}
+    name: str | None = None
+    attributes: dict[str, str] = {}
 
     def __init__(self):
         if not self.name:

@@ -1,9 +1,10 @@
-from collections import deque
-from unittest.mock import patch, MagicMock
-
 import pytest
 
 pytest.importorskip("scrapy")
+
+from collections import deque
+from typing import Any
+from unittest.mock import patch, MagicMock
 
 import scrapinghub
 
@@ -26,7 +27,7 @@ async def stop_crawler(crawler):
 
 
 class StoreMock:
-    stored_data = []
+    stored_data: list[Any] = []
     raise_iter_error = False
 
     def iter(self):
