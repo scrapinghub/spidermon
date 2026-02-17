@@ -92,4 +92,4 @@ of the setting that will contain the list of tags that will be included in the j
         "failed",
     ]
 
-.. _Scrapy Cloud: https://zyte.com/scrapy-cloud
+.. _Scrapy Cloud: https://www.zyte.com/scrapy-cloud

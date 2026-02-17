@@ -68,4 +68,4 @@ SPIDERMON_REPORT_S3_MAKE_PUBLIC
 SPIDERMON_REPORT_S3_REGION_ENDPOINT
 -----------------------------------
 
-.. _Jinja2: http://jinja.pocoo.org/
+.. _Jinja2: https://jinja.palletsprojects.com/en/stable/

@@ -91,7 +91,7 @@ SPIDERMON_BODY_HTML_TEMPLATE
 
 String containing the location of the `Jinja2`_ template for the Spidermon email report.
 
-Default :download:`reports/email/monitors/result.jinja <../../../spidermon/contrib/actions/reports/templates/reports/email/monitors/result.jinja>`.
+Default :download:`reports/email/monitors/result.jinja <../../spidermon/contrib/actions/reports/templates/reports/email/monitors/result.jinja>`.
 
 SPIDERMON_BODY_TEXT
 ~~~~~~~~~~~~~~~~~~~
@@ -230,5 +230,5 @@ Default: ``False``
 .. _Amazon Simple Email Service: https://aws.amazon.com/pt/ses/
 .. _`AWS_ACCESS_KEY_ID`: https://docs.scrapy.org/en/latest/topics/settings.html#aws-access-key-id
 .. _`AWS_SECRET_ACCESS_KEY`: https://docs.scrapy.org/en/latest/topics/settings.html#aws-secret-access-key
-.. _Jinja2: http://jinja.pocoo.org/
+.. _Jinja2: https://jinja.palletsprojects.com/en/stable/
 .. _SMTP: https://datatracker.ietf.org/doc/html/rfc821

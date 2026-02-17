@@ -133,9 +133,9 @@ Default: ``0``
 For `SendSlackMessageSpiderFinished` notifier only. The index of the report to link if multiple reports generated. See `file report actions`_.
 
 .. _`Slack`: https://slack.com/
-.. _`Slack credentials`: https://api.slack.com/docs/token-types
+.. _`Slack credentials`: https://docs.slack.dev/authentication/tokens/
 .. _`slackclient`: https://pypi.org/project/slackclient/
-.. _`slack message attachment`: https://api.slack.com/reference/messaging/attachments
-.. _`Jinja2`: http://jinja.pocoo.org/
+.. _`slack message attachment`: https://docs.slack.dev/legacy/legacy-messaging/legacy-secondary-message-attachments
+.. _`Jinja2`: https://jinja.palletsprojects.com/en/stable/
 .. _`notifier templates folder`: https://github.com/scrapinghub/spidermon/tree/master/spidermon/contrib/actions/slack/templates/slack/spider/notifier
 .. _`file report actions`: https://spidermon.readthedocs.io/en/latest/actions/file-report-action.html

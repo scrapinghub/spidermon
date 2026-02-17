@@ -183,5 +183,5 @@ Some examples:
     self.check_field_errors_percent()
 
 .. _`JSON Schema`: https://json-schema.org/
-.. _`guide`: http://json-schema.org/learn/getting-started-step-by-step.html
+.. _`guide`: https://json-schema.org/learn/getting-started-step-by-step
 .. _`jsonschema`: https://pypi.org/project/jsonschema/

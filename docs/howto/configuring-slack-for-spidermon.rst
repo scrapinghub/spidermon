@@ -17,7 +17,7 @@ Steps
 .. note:
     You need to be the `owner/admin <https://get.slack.help/hc/en-us/articles/201314026-Understanding-roles-permissions-inside-Slack>`_ of the `Slack workspace <https://get.slack.help/hc/en-us/articles/206845317-Create-a-Slack-workspace>`_ for which you are trying to create a bot.
 
-#. `Create a Slack bot app <https://get.slack.help/hc/en-us/articles/115005265703-Create-a-bot-for-your-workspace>`_.
+. `Create a Slack bot app <https://docs.slack.dev/quickstart/>`_.
 
 #. Go to the `OAuth & Permissions` tab on the left sidebar.
 

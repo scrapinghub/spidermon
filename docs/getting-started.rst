@@ -482,10 +482,10 @@ The resulted item will look like this:
     }
 
 .. _`JSON Schema`: https://json-schema.org/
-.. _`Scrapy`: https://scrapy.org/
+.. _`Scrapy`: https://www.scrapy.org/
 .. _`Scrapy items`: https://docs.scrapy.org/en/latest/topics/items.html
 .. _`Scrapy Tutorial`: https://doc.scrapy.org/en/latest/intro/tutorial.html
-.. _`Scrapy project`: https://doc.scrapy.org/en/latest/intro/tutorial.html?#creating-a-project
-.. _`Slack credentials`: https://api.slack.com/docs/token-types
+.. _`Scrapy project`: https://doc.scrapy.org/en/latest/intro/tutorial.html#creating-a-project
+.. _`Slack credentials`: https://docs.slack.dev/authentication/tokens/
 .. _`Telegram bot token`: https://core.telegram.org/bots
-.. _`Discord Webhook URL`: https://discord.com/developers/docs/resources/webhook
+.. _`Discord Webhook URL`: https://docs.discord.com/developers/resources/webhook

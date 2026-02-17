@@ -18,7 +18,7 @@ from pathlib import Path
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use Path.resolve() to make it absolute, like shown here.
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 # -- General configuration ------------------------------------------------
 
@@ -76,6 +76,8 @@ language = "en"
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 exclude_patterns = []
+
+linkcheck_ignore = [r"https://github\.com/scrapinghub/spidermon/.*"]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

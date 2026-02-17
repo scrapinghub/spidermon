@@ -12,7 +12,7 @@ following features:
 * It can check the output data produced by Scrapy (or other sources) and
   verify it against a schema or model that defines the expected structure,
   data types and value restrictions. It supports data validation based on
-  the jsonschema library (`<https://github.com/Julian/jsonschema>`_).
+  the jsonschema library (`<https://github.com/python-jsonschema/jsonschema>`_).
 * It allows you to define conditions that should trigger an alert based on
   Scrapy stats.
 * It supports notifications via email, Slack, Telegram and Discord.
