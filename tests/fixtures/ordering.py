@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import ClassVar
 
 from spidermon import Monitor, MonitorSuite, monitors
@@ -9,7 +10,11 @@ class DummyMonitor(Monitor):
 
 
 class DummyMonitorSuite(MonitorSuite):
-    monitors: ClassVar[list[type]] = [DummyMonitor]
+    monitors: ClassVar[
+        Sequence[
+            type[MonitorSuite | Monitor] | tuple[str, type[MonitorSuite | Monitor]]
+        ]
+    ] = [DummyMonitor]
 
 
 # ----------------------------------

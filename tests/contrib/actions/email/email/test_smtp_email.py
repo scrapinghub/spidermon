@@ -12,7 +12,7 @@ from spidermon.contrib.actions.email.smtp import (
 )
 from spidermon.exceptions import NotConfigured
 
-sent_subject = []
+sent_subject: list[str] = []
 
 
 @pytest.fixture

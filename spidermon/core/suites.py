@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import collections
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 from unittest import TestSuite
 
 from spidermon import settings
@@ -11,10 +11,15 @@ from .factories import ActionFactory, MonitorFactory
 from .monitors import Monitor
 from .options import MonitorOptionsMetaclass
 
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
 
 class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
     monitors: ClassVar[
-        list[type[MonitorSuite | Monitor] | tuple[str, type[MonitorSuite | Monitor]]]
+        Sequence[
+            type[MonitorSuite | Monitor] | tuple[str, type[MonitorSuite | Monitor]]
+        ]
     ] = []
     monitors_finished_actions: ClassVar[list[str]] = []
     monitors_passed_actions: ClassVar[list[str]] = []

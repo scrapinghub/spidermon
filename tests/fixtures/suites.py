@@ -1,6 +1,7 @@
+from collections.abc import Sequence
 from typing import ClassVar
 
-from spidermon import MonitorSuite
+from spidermon import Monitor, MonitorSuite
 
 from .cases import Monitor01, Monitor02
 
@@ -10,16 +11,43 @@ class EmptySuite(MonitorSuite):
 
 
 class Suite01(MonitorSuite):
-    monitors: ClassVar[list[type]] = [Monitor01]
+    monitors: ClassVar[
+        Sequence[
+            type[MonitorSuite | Monitor] | tuple[str, type[MonitorSuite | Monitor]]
+        ]
+    ] = [Monitor01]
 
 
 class Suite02(MonitorSuite):
-    monitors: ClassVar[list[type]] = [Suite01, Monitor02]
+    monitors: ClassVar[
+        Sequence[
+            type[MonitorSuite | Monitor] | tuple[str, type[MonitorSuite | Monitor]]
+        ]
+    ] = [
+        Suite01,
+        Monitor02,
+    ]
 
 
 class Suite03(MonitorSuite):
-    monitors: ClassVar[list[type]] = [Suite01, Suite02]
+    monitors: ClassVar[
+        Sequence[
+            type[MonitorSuite | Monitor] | tuple[str, type[MonitorSuite | Monitor]]
+        ]
+    ] = [
+        Suite01,
+        Suite02,
+    ]
 
 
 class Suite04(MonitorSuite):
-    monitors: ClassVar[list[type]] = [Suite01, Suite02, Monitor01, Monitor02]
+    monitors: ClassVar[
+        Sequence[
+            type[MonitorSuite | Monitor] | tuple[str, type[MonitorSuite | Monitor]]
+        ]
+    ] = [
+        Suite01,
+        Suite02,
+        Monitor01,
+        Monitor02,
+    ]
