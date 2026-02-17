@@ -18,7 +18,7 @@ class DecoratorWithAttributes:
                     attribute=self.name,
                     name=name,
                     values=", ".join(
-                        ["'%s'" % attr for attr in self.attributes.keys()],
+                        [f"'{attr}'" for attr in self.attributes.keys()],
                     ),
                 ),
             )

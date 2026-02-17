@@ -16,7 +16,7 @@ class Data(dict):
     def __getattr__(self, name):
         if name in self:
             return self[name]
-        raise AttributeError("Key '%s' not found." % name)
+        raise AttributeError(f"Key '{name}' not found.")
 
     def _immutable(self, *args, **kws):
         raise InvalidDataOperation(

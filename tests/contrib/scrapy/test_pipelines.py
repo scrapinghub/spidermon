@@ -62,7 +62,7 @@ class PipelineTestCaseMetaclass(type):
 
         cls = super().__new__(mcs, name, bases, attrs)
         for dt in getattr(cls, "data_tests", []):
-            function_name = "test_%s" % slugify(dt.name, separator="_").lower()
+            function_name = f"test_{slugify(dt.name, separator='_').lower()}"
             setattr(cls, function_name, _test_function(dt))
         return cls
 

@@ -16,7 +16,7 @@ class PercentCounterBase:
         return float(self.count) / float(self._total)
 
     def __str__(self):
-        return "(count=%d, percent=%.2f)" % (self.count, self.percent)
+        return f"(count={self.count:d}, percent={self.percent:.2f})"
 
     def __repr__(self):
         return self.__str__()
@@ -72,11 +72,7 @@ class DictPercentCounter(PercentCounterBase, collections.abc.MutableMapping):
         raise TypeError
 
     def __str__(self):
-        return "(count=%d, percent=%.2f, %s)" % (
-            self.count,
-            self.percent,
-            str(self._dict),
-        )
+        return f"(count={self.count:d}, percent={self.percent:.2f}, {str(self._dict)})"
 
     __setitem__ = _immutable
     __delitem__ = _immutable
@@ -101,11 +97,9 @@ class AttributeDictPercentCounter(PercentCounterBase):
         self.attribute_dict.add_value(key, value)
 
     def __str__(self):
-        return "(count=%d, percent=%.2f, %s=%s)" % (
-            self.count,
-            self.percent,
-            self.__attribute_dict_name__,
-            str(self.attribute_dict),
+        return (
+            f"(count={self.count:d}, percent={self.percent:.2f}, "
+            f"{self.__attribute_dict_name__}={str(self.attribute_dict)})"
         )
 
     def __repr__(self):

@@ -158,10 +158,16 @@ ignore = [
     "D101",
     # Missing docstring in public method
     "D102",
+    # Missing docstring in public function
+    "D103",
     # Missing docstring in public package
     "D104",
+    # Missing docstring in magic method
+    "D105",
     # Missing docstring in __init__
     "D107",
+    # 1 blank line required between summary line and description
+    "D205",
 ]
 
 [tool.ruff.lint.isort]
@@ -171,7 +177,7 @@ split-on-trailing-comma = false
 "conftest.py" = ["D"]
 "examples/**" = ["D"]
 "!tests/**" = ["PT0"]
-"tests/**" = ["D", "PLR2004", "S101"]
+"tests/**" = ["D", "PLR2004", "S"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "pep257"

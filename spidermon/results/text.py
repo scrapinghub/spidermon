@@ -115,10 +115,10 @@ class TextMonitorResult(MonitorResult):
         self.write_line(line_title(title))
 
     def write_line(self, text=None):
-        self.write("%s\n" % (text or ""))
+        self.write(f"{text or ''}\n")
 
     def write_run_status(self, text, extra=None):
-        self.write_line("{}{}".format(text, " (%s)" % extra if extra else ""))
+        self.write_line(f"{text}{f' ({extra})' if extra else ''}")
 
     def write_run_start(self, item):
         if self.show_all:
@@ -159,9 +159,7 @@ class TextMonitorResult(MonitorResult):
         self.write("OK" if self.step.successful else "FAILED")
         infos = self.step.get_infos()
         if infos and sum(infos.values()):
-            self.write_line(
-                " (%s)" % ", ".join([f"{k}={v}" for k, v in infos.items() if v]),
-            )
+            self.write_line(f" ({', '.join([f'{k}={v}' for k, v in infos.items() if v])})")
         else:
             self.write_line()
         self.write_line()

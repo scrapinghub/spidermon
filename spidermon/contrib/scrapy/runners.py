@@ -78,8 +78,7 @@ class SpiderMonitorResult(MonitorResult):
 
     def write_item_result(self, item, extra=None):
         self.log_info(
-            "%s... %s%s"
-            % (item.name, self.step[item].status, " (%s)" % extra if extra else ""),
+            f"{item.name}... {self.step[item].status}{f' ({extra})' if extra else ''}",
         )
 
     def write_run_footer(self):
@@ -96,7 +95,7 @@ class SpiderMonitorResult(MonitorResult):
         summary = "OK" if self.step.successful else "FAILED"
         infos = self.step.get_infos()
         if infos and sum(infos.values()):
-            summary += " (%s)" % ", ".join([f"{k}={v}" for k, v in infos.items() if v])
+            summary += f" ({', '.join([f'{k}={v}' for k, v in infos.items() if v])})"
         self.log_info(summary)
 
     def write_errors(self):

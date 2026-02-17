@@ -23,7 +23,7 @@ class SchemaTestCaseMetaclass(type):
 
         cls = super().__new__(mcs, name, bases, attrs)
         for dt in getattr(cls, "data_tests", []):
-            function_name = "test_%s" % slugify(dt.name, separator="_").lower()
+            function_name = f"test_{slugify(dt.name, separator='_').lower()}"
             setattr(cls, function_name, _test_function(dt))
         return cls
 
@@ -1653,7 +1653,7 @@ class Type(SchemaTest):
     ]
     data_tests: ClassVar[list] = [
         DataTest(
-            name="%02d_%s" % (i + 1, data_type),
+            name=f"{i+1:02d}_{data_type}",
             data=data,
             valid=expected_error is None,
             expected_errors={"": [expected_error]} if expected_error else None,

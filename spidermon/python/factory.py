@@ -18,15 +18,12 @@ class PythonExpressionsMonitor(Monitor):
     @classmethod
     def generate_class_name(cls):
         cls._classes_counter += 1
-        return "%s%d" % (cls.__name__, cls._classes_counter)
+        return f"{cls.__name__}{cls._classes_counter}"
 
     @classmethod
     def generate_method_name(cls):
         cls._test_methods_counter += 1
-        return "%s_python_expression_%d" % (
-            cls._test_methods_prefix,
-            cls._test_methods_counter,
-        )
+        return f"{cls._test_methods_prefix}_python_expression_{cls._test_methods_counter}"
 
     def get_context_data(self):
         raise NotConfigured("Context data needs to be set up")
@@ -81,9 +78,9 @@ def _create_test_method(expression, name=None, description=None, fail_reason=Non
         if result is not None:
             self.assertTrue(
                 bool(result),
-                msg=('Expression not safisfied: "%s"' % expression)
+                msg=(f'Expression not safisfied: "{expression}"'
                 if not fail_reason
-                else interpreter.eval(fail_reason, context=context),
+                else interpreter.eval(fail_reason, context=context)),
             )
 
     test_method = _test_method

@@ -196,12 +196,7 @@ class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
         self._tests = sorted(self._tests, key=lambda x: x.order, reverse=False)
 
     def __repr__(self):
-        return "<SUITE:%s[%d,%s] at %s>" % (
-            self.name,
-            len(self._tests),
-            self.number_of_monitors,
-            hex(id(self)),
-        )
+        return f"<SUITE:{self.name}[{len(self._tests)},{self.number_of_monitors}] at {hex(id(self))}>"
 
     def __str__(self):
         return self.name
