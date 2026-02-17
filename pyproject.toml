@@ -164,6 +164,8 @@ ignore = [
     "D104",
     # Missing docstring in magic method
     "D105",
+    # Missing docstring in public nested class
+    "D106",
     # Missing docstring in __init__
     "D107",
     # 1 blank line required between summary line and description

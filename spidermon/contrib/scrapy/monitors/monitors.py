@@ -121,6 +121,7 @@ class FinishReasonMonitor(BaseScrapyMonitor):
 @monitors.name("Unwanted HTTP codes monitor")
 class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
     """Check for maximum number of unwanted HTTP codes.
+
     You can configure it using ``SPIDERMON_UNWANTED_HTTP_CODES_MAX_COUNT`` setting
     or ``SPIDERMON_UNWANTED_HTTP_CODES`` setting
 
@@ -156,7 +157,7 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
     absolute value and works the same way as setting an integer value. The latter refers
     to a max_percentage of the total number of requests the spider made. If both are set, the
     monitor will fail if any of the conditions are met. If none are set, it will default to
-    ``DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT```.
+    ``DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT``.
 
     With the following setting, the monitor will fail if it has at least one 500 error or
     if there are more than ``min(100, 0.5 * total requests)`` 400 responses.
@@ -641,9 +642,7 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
         return sorted(tags_to_filter)
 
     def _get_args_to_filter(self):
-        """
-        Return a list of desired arguments to filter
-        """
+        """Return a list of desired arguments to filter."""
         desired_args = self.crawler.settings.getdict(
             SPIDERMON_JOBS_COMPARISON_ARGUMENTS,
         )
