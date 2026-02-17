@@ -65,7 +65,7 @@ class SendSentryMessage(Action):
 
     def get_message(self):
         """Return the message dictionary."""
-        message = dict()
+        message = {}
 
         message["title"] = self.get_title()
         if self.data.job:

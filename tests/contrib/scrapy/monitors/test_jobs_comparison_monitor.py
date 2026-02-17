@@ -20,14 +20,14 @@ from spidermon.exceptions import NotConfigured
 
 @pytest.fixture
 def mock_jobs(previous_counts):
-    return Mock(return_value=[dict(items=c) for c in previous_counts])
+    return Mock(return_value=[{"items": c} for c in previous_counts])
 
 
 @pytest.fixture
 def mock_jobs_with_close_reason(previous_job_objs, close_reasons):
     return Mock(
         return_value=[
-            dict(items=j["items"], close_reason=j["close_reason"])
+            {"items": j["items"], "close_reason": j["close_reason"]}
             for j in previous_job_objs
             if j["close_reason"] in close_reasons
         ],

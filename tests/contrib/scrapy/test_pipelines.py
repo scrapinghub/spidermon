@@ -72,11 +72,11 @@ class PipelineTest(TestCase, metaclass=PipelineTestCaseMetaclass):
 
 
 class DataTest:
-    def __init__(self, name, item, cases, settings=dict(), spidermon_enabled=True):
+    def __init__(self, name, item, cases, settings=None, spidermon_enabled=True):
         self.name = name
         self.item = item
         self.cases = cases
-        self.settings = settings
+        self.settings = {} if settings is None else settings
         self.settings["SPIDERMON_ENABLED"] = spidermon_enabled
 
 

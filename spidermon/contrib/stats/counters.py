@@ -40,7 +40,7 @@ class DictPercentCounter(PercentCounterBase, collections.abc.MutableMapping):
 
     def __init__(self, total):
         super().__init__(total)
-        self._dict = dict()
+        self._dict = {}
 
     @property
     def count(self):
@@ -72,7 +72,7 @@ class DictPercentCounter(PercentCounterBase, collections.abc.MutableMapping):
         raise TypeError
 
     def __str__(self):
-        return f"(count={self.count:d}, percent={self.percent:.2f}, {str(self._dict)})"
+        return f"(count={self.count:d}, percent={self.percent:.2f}, {self._dict!s})"
 
     __setitem__ = _immutable
     __delitem__ = _immutable
@@ -99,7 +99,7 @@ class AttributeDictPercentCounter(PercentCounterBase):
     def __str__(self):
         return (
             f"(count={self.count:d}, percent={self.percent:.2f}, "
-            f"{self.__attribute_dict_name__}={str(self.attribute_dict)})"
+            f"{self.__attribute_dict_name__}={self.attribute_dict!s})"
         )
 
     def __repr__(self):

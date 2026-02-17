@@ -944,7 +944,7 @@ class EmptyItems(SchemaTest):
     data_tests: ClassVar[list] = [
         DataTest(
             name="empty is invalid",
-            data=list(),
+            data=[],
             valid=False,
             expected_errors={"": [messages.SHOULD_BE_NON_EMPTY]},
         ),
@@ -975,7 +975,7 @@ class EmptyProperties(SchemaTest):
     data_tests: ClassVar[list] = [
         DataTest(
             name="empty is invalid",
-            data=dict(),
+            data={},
             valid=False,
             expected_errors={"": [messages.SHOULD_BE_NON_EMPTY]},
         ),
@@ -1653,7 +1653,7 @@ class Type(SchemaTest):
     ]
     data_tests: ClassVar[list] = [
         DataTest(
-            name=f"{i+1:02d}_{data_type}",
+            name=f"{i + 1:02d}_{data_type}",
             data=data,
             valid=expected_error is None,
             expected_errors={"": [expected_error]} if expected_error else None,
