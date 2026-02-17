@@ -159,7 +159,9 @@ class TextMonitorResult(MonitorResult):
         self.write("OK" if self.step.successful else "FAILED")
         infos = self.step.get_infos()
         if infos and sum(infos.values()):
-            self.write_line(f" ({', '.join([f'{k}={v}' for k, v in infos.items() if v])})")
+            self.write_line(
+                f" ({', '.join([f'{k}={v}' for k, v in infos.items() if v])})"
+            )
         else:
             self.write_line()
         self.write_line()
