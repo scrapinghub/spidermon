@@ -9,6 +9,9 @@ from spidermon.exceptions import (
 from .actions import Action
 from .monitors import Monitor
 
+# Length of a valid monitor tuple (name, monitor)
+MONITOR_TUPLE_LENGTH = 2
+
 
 class MonitorFactory:
     @classmethod
@@ -43,7 +46,7 @@ class MonitorFactory:
 
     @classmethod
     def load_monitor_from_tuple(cls, monitor_tuple):
-        if len(monitor_tuple) != 2:
+        if len(monitor_tuple) != MONITOR_TUPLE_LENGTH:
             cls.raise_invalid_tuple()
         name, monitor = monitor_tuple
         if not isinstance(name, str):

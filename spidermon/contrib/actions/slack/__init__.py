@@ -144,8 +144,7 @@ class SlackMessageManager:
         )
 
     def _get_icon_url(self):
-        """
-        Looks up the icon url for the user set as the message sender
+        """Look up the icon url for the user set as the message sender.
 
         This will only return a URL if the slack app has users:read permission and
         bot appears in the organisation user list. A no frills bot intended to
@@ -194,7 +193,7 @@ class SendSlackMessage(ActionWithTemplates):
     include_attachments = True
     fake = False
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         sender_token=None,
         sender_name=None,

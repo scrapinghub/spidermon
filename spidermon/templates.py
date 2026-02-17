@@ -6,10 +6,11 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 
 DEFAULT_TEMPLATE_FOLDERS = ["templates"]
+LOG_ERROR_LEVEL = 40
 
 
 def get_log_errors(logs):
-    return [e for e in logs.list() if e["level"] >= 40]
+    return [e for e in logs.list() if e["level"] >= LOG_ERROR_LEVEL]
 
 
 def make_list(obj):

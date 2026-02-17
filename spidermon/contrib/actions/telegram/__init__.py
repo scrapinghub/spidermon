@@ -21,7 +21,7 @@ class SimplyTelegramClient:
             chat_id=recipient,
             text=message,
         )
-        r = requests.get(api_url).json()
+        r = requests.get(api_url, timeout=60).json()
         if r.get("ok") is False:
             logger.error(
                 "Failed to send message. Telegram api error: %s",

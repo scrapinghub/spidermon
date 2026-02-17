@@ -171,7 +171,7 @@ split-on-trailing-comma = false
 "conftest.py" = ["D"]
 "examples/**" = ["D"]
 "!tests/**" = ["PT0"]
-"tests/**" = ["D"]
+"tests/**" = ["D", "PLR2004", "S101"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "pep257"

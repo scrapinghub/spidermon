@@ -106,15 +106,19 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             "ValidationMonitorMixin behavior with is deprecated, please switch to per-field thresholds and set the "
             '"correct_field_list_handling" class attribute',
             DeprecationWarning,
+            stacklevel=3,
         )
 
     def check_missing_required_fields(self, field_names=None, allowed_count=0):
-        """
-        Checks that the number of "missing_required_field" errors for the ``field_names`` fields is less or equal than
-        ``allowed_count`` and raises an error with all problematic fields.
-        If ``field_names`` is None and ``self.correct_field_list_handling`` is True, checks all fields.
-        If ``field_names`` is None and ``self.correct_field_list_handling`` is False, checks that the total number of
-        "missing_required_field" errors is less or equal than ``allowed_count``.
+        """Check that the number of "missing_required_field" errors for the
+        ``field_names`` fields is less or equal than ``allowed_count`` and
+        raise an error with all problematic fields.
+
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is
+        True, checks all fields. If ``field_names`` is None and
+        ``self.correct_field_list_handling`` is False, checks that the total
+        number of "missing_required_field" errors is less or equal than
+        ``allowed_count``.
         """
         if not self.correct_field_list_handling and not field_names:
             self._warn_list_handling()
