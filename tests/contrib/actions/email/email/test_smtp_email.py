@@ -172,6 +172,6 @@ def test_raise_not_configured_if_required_setting_not_provided(
         SendSmtpEmail.from_crawler(crawler)
 
 
-def _catch_mail_sent(to, subject, body, cc, attach, msg):
+def _catch_mail_sent(to, subject, body, cc, attach, msg):  # noqa: PLR0913
     global sent_subject
     sent_subject = subject

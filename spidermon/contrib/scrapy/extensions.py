@@ -13,7 +13,7 @@ from spidermon.utils.zyte import Client
 
 
 class Spidermon:
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         crawler,
         spider_opened_suites=None,
@@ -139,7 +139,7 @@ class Spidermon:
         spider = self.crawler.spider
         self._run_suites(spider, self.engine_stopped_suites)
 
-    def _count_item(
+    def _count_item(  # noqa: PLR0913
         self,
         item,
         skip_none_values,

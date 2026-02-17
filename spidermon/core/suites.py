@@ -20,7 +20,7 @@ class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
     monitors_passed_actions: ClassVar[list[str]] = []
     monitors_failed_actions: ClassVar[list[str]] = []
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         name=None,
         monitors=None,

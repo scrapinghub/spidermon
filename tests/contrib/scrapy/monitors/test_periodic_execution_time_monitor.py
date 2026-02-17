@@ -129,7 +129,7 @@ def item_count_suite():
         (54, 50, 0.1, settings.MONITOR.STATUS.FAILURE),
     ],
 )
-def test_item_count_monitor_validation(
+def test_item_count_monitor_validation(  # noqa: PLR0913
     make_data,
     item_count_suite,
     item_scraped_count,

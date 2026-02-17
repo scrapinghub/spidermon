@@ -109,7 +109,13 @@ def mock_suite_and_zyte_client(
 
 
 @pytest.mark.parametrize(
-    ("number_of_jobs", "threshold", "item_count", "previous_counts", "expected_to_be_enabled"),
+    (
+        "number_of_jobs",
+        "threshold",
+        "item_count",
+        "previous_counts",
+        "expected_to_be_enabled",
+    ),
     [
         (0, 0, 1, [1], False),
         (0, 0.5, 1, [1], False),
@@ -122,7 +128,7 @@ def mock_suite_and_zyte_client(
         (5, 1.1, 1, [1], True),
     ],
 )
-def test_jobs_comparison_monitor_is_enabled(
+def test_jobs_comparison_monitor_is_enabled(  # noqa: PLR0913
     make_data,
     mock_suite,
     item_count,
@@ -396,7 +402,7 @@ def test_jobs_comparison_monitor_threshold(
         (("foo", "bar"), 2000, ("tag3",), 0.5),
     ],
 )
-def test_arguments_passed_to_zyte_client(
+def test_arguments_passed_to_zyte_client(  # noqa: PLR0913
     make_data,
     mock_suite_and_zyte_client,
     states,
