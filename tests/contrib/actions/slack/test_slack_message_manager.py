@@ -2,6 +2,8 @@ import pytest
 
 pytest.importorskip("scrapy")
 
+from typing import ClassVar
+
 from scrapy.utils.test import get_crawler
 from slack_sdk.errors import SlackApiError
 
@@ -46,7 +48,10 @@ def test_get_invalid_user_icon_url(mock_webclient):
 
 def test_get_invalid_permissions_icon_url(mock_webclient):
     class FakeResponse:
-        data = {"error": "missing_scope", "needed": "users:read"}
+        data: ClassVar[dict[str, str]] = {
+            "error": "missing_scope",
+            "needed": "users:read",
+        }
 
     fake_error = SlackApiError("message", FakeResponse())
     mock_webclient().users_list.side_effect = fake_error
@@ -57,7 +62,7 @@ def test_get_invalid_permissions_icon_url(mock_webclient):
 
 def test_get_invalid_unknown_slack_error_icon_url(mock_webclient):
     class FakeResponse:
-        data = {"error": "unknown", "needed": "unknown"}
+        data: ClassVar[dict[str, str]] = {"error": "unknown", "needed": "unknown"}
 
     fake_error = SlackApiError("mocked error", FakeResponse())
     mock_webclient().users_list.side_effect = fake_error

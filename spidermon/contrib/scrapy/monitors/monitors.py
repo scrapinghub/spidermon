@@ -2,6 +2,7 @@ import datetime
 import json
 import math
 import os
+from typing import ClassVar
 
 from spidermon import Monitor, monitors
 from spidermon.contrib.monitors.mixins.stats import StatsMonitorMixin
@@ -171,7 +172,18 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
     """
 
     DEFAULT_UNWANTED_HTTP_CODES_MAX_COUNT = 10
-    DEFAULT_UNWANTED_HTTP_CODES = [400, 407, 429, 500, 502, 503, 504, 523, 540, 541]
+    DEFAULT_UNWANTED_HTTP_CODES: ClassVar[list[int]] = [
+        400,
+        407,
+        429,
+        500,
+        502,
+        503,
+        504,
+        523,
+        540,
+        541,
+    ]
 
     @monitors.name("Should not hit the limit of unwanted http status")
     def test_check_unwanted_http_codes(self):

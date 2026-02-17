@@ -24,7 +24,7 @@ class SendEmail(ActionWithTemplates):
     body_html_template = "reports/email/monitors/result.jinja"
     fake = False
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         sender,
         to,

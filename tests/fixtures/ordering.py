@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from spidermon import Monitor, MonitorSuite, monitors
 
 
@@ -7,7 +9,7 @@ class DummyMonitor(Monitor):
 
 
 class DummyMonitorSuite(MonitorSuite):
-    monitors = [DummyMonitor]
+    monitors: ClassVar[list[type]] = [DummyMonitor]
 
 
 # ----------------------------------

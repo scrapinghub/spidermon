@@ -1,4 +1,6 @@
 # monitors.py
+from typing import ClassVar
+
 from spidermon import Monitor, MonitorSuite, monitors
 from spidermon.contrib.actions.slack.notifiers import SendSlackMessageSpiderFinished
 from spidermon.contrib.monitors.mixins import StatsMonitorMixin
@@ -45,11 +47,15 @@ class PeriodicJobStatsMonitor(Monitor, StatsMonitorMixin):
 
 
 class PeriodicMonitorSuite(MonitorSuite):
-    monitors = [PeriodicJobStatsMonitor]
-    monitors_failed_actions = [CloseSpiderAction]
+    monitors: ClassVar[list[type]] = [PeriodicJobStatsMonitor]
+    monitors_failed_actions: ClassVar[list[type]] = [CloseSpiderAction]
 
 
 class SpiderCloseMonitorSuite(MonitorSuite):
-    monitors = [ItemCountMonitor, ItemValidationMonitor, PeriodicJobStatsMonitor]
+    monitors: ClassVar[list[type]] = [
+        ItemCountMonitor,
+        ItemValidationMonitor,
+        PeriodicJobStatsMonitor,
+    ]
 
-    monitors_failed_actions = [SendSlackMessageSpiderFinished]
+    monitors_failed_actions: ClassVar[list[type]] = [SendSlackMessageSpiderFinished]

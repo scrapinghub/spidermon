@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from spidermon import MonitorSuite
 
 from .monitors import (
@@ -63,7 +65,7 @@ class SpiderCloseMonitorSuite(MonitorSuite):
             for monitor in self.monitors:
                 monitor.skip_rules = skip_rules
 
-    monitors = [
+    monitors: ClassVar[list[type]] = [
         ItemCountMonitor,
         ItemValidationMonitor,
         ErrorCountMonitor,
@@ -90,7 +92,7 @@ class PeriodicMonitorSuite(MonitorSuite):
             }
     """
 
-    monitors = [PeriodicExecutionTimeMonitor]
+    monitors: ClassVar[list[type]] = [PeriodicExecutionTimeMonitor]
 
 
 class PeriodicItemCountMonitorSuite(MonitorSuite):
@@ -105,4 +107,4 @@ class PeriodicItemCountMonitorSuite(MonitorSuite):
             }
     """
 
-    monitors = [PeriodicItemCountMonitor]
+    monitors: ClassVar[list[type]] = [PeriodicItemCountMonitor]

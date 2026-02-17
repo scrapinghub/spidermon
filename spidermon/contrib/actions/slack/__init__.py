@@ -38,7 +38,7 @@ class SlackMessageManager:
             self._users = self._get_users_info()
         return self._users
 
-    def send_message(
+    def send_message(  # noqa: PLR0913
         self,
         to,
         text,

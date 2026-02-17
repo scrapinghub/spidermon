@@ -4,6 +4,8 @@ import pytest
 
 pytest.importorskip("scrapy")
 
+from typing import ClassVar
+
 from scrapy.utils.test import get_crawler
 
 from spidermon import settings
@@ -29,7 +31,7 @@ def never_skip(monitor):
 
 
 class monitorSuite(SpiderCloseMonitorSuite):
-    monitors = [ItemCountMonitor]
+    monitors: ClassVar[list[type]] = [ItemCountMonitor]
 
 
 @pytest.mark.parametrize(

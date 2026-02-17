@@ -1,5 +1,5 @@
 import sys
-from typing import Any
+from typing import Any, ClassVar
 
 from spidermon.core.suites import MonitorSuite
 from spidermon.data import Data
@@ -9,8 +9,8 @@ from spidermon.results.text import TextMonitorResult
 
 
 class MonitorRunner:
-    data_immutable_dicts = ["stats"]
-    data_default_data: dict[str, Any] = {"meta": {}}
+    data_immutable_dicts: ClassVar[list[str]] = ["stats"]
+    data_default_data: ClassVar[dict[str, Any]] = {"meta": {}}
 
     def __init__(self):
         self.suite = None

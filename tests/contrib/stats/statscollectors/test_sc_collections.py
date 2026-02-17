@@ -3,7 +3,7 @@ import pytest
 pytest.importorskip("scrapy")
 
 from collections import deque
-from typing import Any
+from typing import Any, ClassVar
 from unittest.mock import MagicMock, patch
 
 import scrapinghub
@@ -26,7 +26,7 @@ async def stop_crawler(crawler):
 
 
 class StoreMock:
-    stored_data: list[Any] = []
+    stored_data: ClassVar[list[Any]] = []
     raise_iter_error = False
 
     def iter(self):

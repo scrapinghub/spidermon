@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import collections
+from typing import ClassVar
 from unittest import TestSuite
 
 from spidermon import settings
@@ -12,12 +13,12 @@ from .options import MonitorOptionsMetaclass
 
 
 class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
-    monitors: list[
-        type[MonitorSuite | Monitor] | tuple[str, type[MonitorSuite | Monitor]]
+    monitors: ClassVar[
+        list[type[MonitorSuite | Monitor] | tuple[str, type[MonitorSuite | Monitor]]]
     ] = []
-    monitors_finished_actions: list[str] = []
-    monitors_passed_actions: list[str] = []
-    monitors_failed_actions: list[str] = []
+    monitors_finished_actions: ClassVar[list[str]] = []
+    monitors_passed_actions: ClassVar[list[str]] = []
+    monitors_failed_actions: ClassVar[list[str]] = []
 
     def __init__(
         self,

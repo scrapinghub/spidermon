@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import ClassVar
+
 import pytest
 
 pytest.importorskip("scrapy")
@@ -66,7 +68,7 @@ class PipelineTestCaseMetaclass(type):
 
 
 class PipelineTest(TestCase, metaclass=PipelineTestCaseMetaclass):
-    data_tests: list[DataTest] = []
+    data_tests: ClassVar[list[DataTest]] = []
 
 
 class DataTest:
@@ -85,7 +87,7 @@ def assert_type_in_stats(validator_type, obj):
 class PipelineJSONSchemaValidator(PipelineTest):
     assert_type_in_stats = partial(assert_type_in_stats, "jsonschema")
 
-    data_tests = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name="processing usual items without errors",
             item=TestItem({"url": "example.com"}),

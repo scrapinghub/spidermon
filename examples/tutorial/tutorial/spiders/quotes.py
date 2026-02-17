@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 import scrapy
 
 from tutorial.items import QuoteItem
@@ -5,8 +7,8 @@ from tutorial.items import QuoteItem
 
 class QuotesSpider(scrapy.Spider):
     name = "quotes"
-    allowed_domains = ["quotes.toscrape.com"]
-    start_urls = ["http://quotes.toscrape.com/"]
+    allowed_domains: ClassVar[list[str]] = ["quotes.toscrape.com"]
+    start_urls: ClassVar[list[str]] = ["http://quotes.toscrape.com/"]
 
     def parse(self, response):
         for quote in response.css(".quote"):

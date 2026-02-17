@@ -1,6 +1,9 @@
+from typing import ClassVar
+
+
 class DecoratorWithAttributes:
     name: str | None = None
-    attributes: dict[str, str] = {}
+    attributes: ClassVar[dict[str, str]] = {}
 
     def __init__(self):
         if not self.name:

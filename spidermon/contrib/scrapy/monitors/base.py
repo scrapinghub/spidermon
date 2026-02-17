@@ -1,5 +1,6 @@
 import logging
 import operator
+from typing import Any, ClassVar
 
 from spidermon import Monitor
 from spidermon.exceptions import NotConfigured
@@ -11,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
     longMessage = False
-    ops = {
+    ops: ClassVar[dict[str, Any]] = {
         ">": operator.gt,
         ">=": operator.ge,
         "<": operator.lt,

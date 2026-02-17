@@ -1,6 +1,6 @@
 import inspect
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 from jinja2 import Template
 
@@ -25,7 +25,7 @@ class ActionWithTemplatesMetaclass(ActionOptionsMetaclass):
 
 
 class ActionWithTemplates(Action, metaclass=ActionWithTemplatesMetaclass):
-    template_paths: list[str] = []
+    template_paths: ClassVar[list[str]] = []
     context: dict[str, Any] | None = None
 
     def __init__(self, context=None):

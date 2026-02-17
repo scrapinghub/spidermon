@@ -25,7 +25,7 @@ class DiscordMessageManager:
             return
 
         body = {"content": text}
-        response = requests.post(self.webhook_url, json=body)
+        response = requests.post(self.webhook_url, json=body, timeout=60)
         response.raise_for_status()
 
         if not response.ok:

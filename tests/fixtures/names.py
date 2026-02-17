@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from spidermon import Monitor, MonitorSuite, monitors
 
 
@@ -27,7 +29,7 @@ class NamedMonitor(Monitor):
 # Child Suites
 # ----------------------------------
 class BaseChildSuite(MonitorSuite):
-    monitors = [
+    monitors: ClassVar[list[type]] = [
         UnnamedMonitor,
         NamedMonitor,
         ("Instance Monitor", UnnamedMonitor),
@@ -48,7 +50,7 @@ class ChildNamedSuite(BaseChildSuite):
 # Top Suites
 # ----------------------------------
 class BaseTopSuite(MonitorSuite):
-    monitors = [
+    monitors: ClassVar[list[type]] = [
         ChildUnnamedSuite,
         ChildNamedSuite,
         ("Instance Suite Name", ChildUnnamedSuite),

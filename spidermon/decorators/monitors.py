@@ -1,3 +1,5 @@
+from typing import Any, ClassVar
+
 from spidermon import settings
 from spidermon.core.options import MonitorOptions
 from spidermon.decorators import DecoratorWithAttributes, OptionsDecorator
@@ -5,7 +7,7 @@ from spidermon.decorators import DecoratorWithAttributes, OptionsDecorator
 
 class LevelDecorator(DecoratorWithAttributes):
     name = "level"
-    attributes = {
+    attributes: ClassVar[dict[str, Any]] = {
         "high": OptionsDecorator.set_fixed_value(
             MonitorOptions,
             name,

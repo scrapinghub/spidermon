@@ -64,9 +64,7 @@ class SendSentryMessage(Action):
         return f"{self.project_name} | {self.environment} | Spider {self.data.sc_spider_name} notification"
 
     def get_message(self):
-        """
-        Returns message dictionary
-        """
+        """Return the message dictionary."""
         message = dict()
 
         message["title"] = self.get_title()
