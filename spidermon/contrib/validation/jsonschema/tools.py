@@ -1,5 +1,6 @@
 import json
 import logging
+from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import urlopen
 
@@ -16,7 +17,7 @@ def get_schema_from(source):
         except Exception as e:
             logger.exception(str(e) + f"\nCould not parse schema from '{source}'")
     elif source.endswith(".json"):
-        with open(source) as f:
+        with Path(source).open() as f:
             try:
                 return json.load(f)
             except Exception as e:

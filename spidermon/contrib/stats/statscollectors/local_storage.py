@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import os
 import pickle
 from collections import deque
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from scrapy.statscollectors import StatsCollector
@@ -18,7 +18,7 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
     def _stats_location(self, spider):
         statsdir = data_path("stats", createdir=True)
         spider_name = get_spider_name(spider)
-        return os.path.join(statsdir, f"{spider_name}_stats_history")
+        return Path(statsdir) / f"{spider_name}_stats_history"
 
     def open_spider(self, spider: Spider | None = None):
         spider = spider or self._crawler.spider
@@ -29,8 +29,8 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
             default=100,
         )
 
-        if os.path.isfile(stats_location):
-            with open(stats_location, "rb") as stats_file:
+        if stats_location.is_file():
+            with stats_location.open("rb") as stats_file:
                 _stats_history = pickle.load(stats_file)
         else:
             _stats_history = deque(maxlen=max_stored_stats)
@@ -45,5 +45,5 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
         stats_location = self._stats_location(spider)
 
         spider.stats_history.appendleft(self._stats)
-        with open(stats_location, "wb") as stats_file:
+        with stats_location.open("wb") as stats_file:
             pickle.dump(spider.stats_history, stats_file)

@@ -1,4 +1,5 @@
 import hashlib
+from pathlib import Path
 
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
@@ -28,7 +29,7 @@ class S3Uploader:
         headers=None,
         make_public=False,
     ):
-        with open(source_filename) as f:
+        with Path(source_filename).open() as f:
             self._upload_with_method(
                 bucket=s3_bucket,
                 method_name="set_contents_from_file",

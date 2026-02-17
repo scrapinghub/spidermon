@@ -1,5 +1,6 @@
 import os
 from collections import deque
+from pathlib import Path
 
 import pytest
 
@@ -27,7 +28,7 @@ def stats_temporary_location(monkeypatch, tmp_path):
     monkeypatch.setattr(
         LocalStorageStatsHistoryCollector,
         "_stats_location",
-        lambda x, y: os.path.join(str(tmp_path), "stats"),
+        lambda self, y: Path(tmp_path) / "stats",
     )
 
 
@@ -189,7 +190,7 @@ async def test_stats_location_env_spider_name(test_settings):
     os.environ["SHUB_VIRTUAL_SPIDER"] = "virtual_spider"
 
     actual = crawler.stats._stats_location(crawler.spider)
-    expected = os.path.join(statsdir, "virtual_spider_stats_history")
+    expected = Path(statsdir) / "virtual_spider_stats_history"
     assert actual == expected
     await stop_crawler(crawler)
     del os.environ["SHUB_VIRTUAL_SPIDER"]
@@ -202,6 +203,6 @@ async def test_stats_location_regular_spider_name(test_settings):
     crawler.crawl("foo_spider")
 
     actual = crawler.stats._stats_location(crawler.spider)
-    expected = os.path.join(statsdir, "foo_spider_stats_history")
+    expected = Path(statsdir) / "foo_spider_stats_history"
     assert actual == expected
     await stop_crawler(crawler)

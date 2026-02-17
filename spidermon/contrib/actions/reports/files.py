@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from spidermon.exceptions import NotConfigured
 
 from . import CreateReport
@@ -23,5 +25,5 @@ class CreateFileReport(CreateReport):
     def after_render_report(self):
         rendered_filename = self.render_text_template(self.filename)
 
-        with open(rendered_filename, "w") as f:
+        with Path(rendered_filename).open("w") as f:
             f.write(self.report)
