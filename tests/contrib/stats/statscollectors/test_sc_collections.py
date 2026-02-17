@@ -123,7 +123,7 @@ async def test_spider_has_stats_history_queue_with_specified_max_size(
     await stop_crawler(crawler)
 
 
-@pytest.mark.parametrize("initial_max_len,end_max_len", [(5, 2), (5, 10), (5, 5)])
+@pytest.mark.parametrize(("initial_max_len", "end_max_len"), [(5, 2), (5, 10), (5, 5)])
 @deferred_f_from_coro_f
 async def test_spider_update_stats_history_queue_max_size(
     test_settings,

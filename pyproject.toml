@@ -154,6 +154,14 @@ ignore = [
     "COM812",
     # Missing docstring in public module
     "D100",
+    # Missing docstring in public class
+    "D101",
+    # Missing docstring in public method
+    "D102",
+    # Missing docstring in public package
+    "D104",
+    # Missing docstring in __init__
+    "D107",
 ]
 
 [tool.ruff.lint.isort]
@@ -162,6 +170,7 @@ split-on-trailing-comma = false
 [tool.ruff.lint.per-file-ignores]
 "conftest.py" = ["D"]
 "examples/**" = ["D"]
+"!tests/**" = ["PT0"]
 "tests/**" = ["D"]
 
 [tool.ruff.lint.pydocstyle]
