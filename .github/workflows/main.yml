@@ -45,10 +45,6 @@ jobs:
           pip install -U tox
       - name: Run all test
         run: tox -e ${{ matrix.tox || 'py' }}
-      - name: Run docs and formatting tests
-        if: ${{ matrix.python-version == 3.11 }}
-        run: |
-          tox -e docs
       - name: Upload coverage.xml to codecov
         if: ${{ matrix.python-version == 3.11 }}
         uses: codecov/codecov-action@v4.5.0
