@@ -7,7 +7,20 @@ Release notes
 -   Dropped support for Python 3.8 and 3.9, added support for Python 3.13 and
     3.14.
 
--   The ``monitoring`` extra now requires Scrapy 2.7.0+.
+-   Set minimum versions for dependencies, now covered by CI tests:
+
+    -   ``python-slugify >= 5.0.0`` is now required.
+
+    -   | The ``monitoring`` extra now requires:
+        | ``boto >= 2.32.1``
+        | ``boto3 >= 1.10.0``
+        | ``itemadapter >= 0.1.0``
+        | ``jinja2 >= 3.0.0``
+        | ``premailer >= 2.7.0``
+        | ``requests >= 2.19.0``
+        | ``scrapinghub >= 2.4.0``
+        | ``scrapinghub-entrypoint-scrapy >= 0.11.2``
+        | ``scrapy >= 2.7.0``
 
 1.24.0 (2025-04-11)
 -------------------

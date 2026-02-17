@@ -29,7 +29,7 @@ classifiers = [
 ]
 dependencies = [
     "jsonschema[format]>=4.21.0",
-    "python-slugify",
+    "python-slugify>=5.0.0",
 ]
 
 
@@ -41,14 +41,14 @@ Tracker = "https://github.com/scrapinghub/spidermon/issues"
 
 [project.optional-dependencies]
 monitoring = [
-    "Jinja2",
-    "boto",
-    "boto3",
-    "itemadapter",
-    "premailer",
-    "requests",
-    "scrapinghub",
-    "scrapinghub-entrypoint-scrapy",
+    "boto>=2.32.1",
+    "boto3>=1.10.0",
+    "itemadapter>=0.1.0",
+    "jinja2>=3.0.0",
+    "premailer>=2.7.0",
+    "requests>=2.19.0",
+    "scrapinghub>=2.4.0",
+    "scrapinghub-entrypoint-scrapy>=0.11.2",
     "scrapy>=2.7.0",
     "sentry_sdk",
     "slack_sdk",
