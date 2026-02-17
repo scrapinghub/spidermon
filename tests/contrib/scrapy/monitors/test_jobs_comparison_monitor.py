@@ -109,13 +109,7 @@ def mock_suite_and_zyte_client(
 
 
 @pytest.mark.parametrize(
-    [
-        "number_of_jobs",
-        "threshold",
-        "item_count",
-        "previous_counts",
-        "expected_to_be_enabled",
-    ],
+    ("number_of_jobs", "threshold", "item_count", "previous_counts", "expected_to_be_enabled"),
     [
         (0, 0, 1, [1], False),
         (0, 0.5, 1, [1], False),
@@ -365,7 +359,7 @@ def test_jobs_comparison_monitor_get_jobs():
 
 
 @pytest.mark.parametrize(
-    ["item_count", "previous_counts", "threshold", "should_raise"],
+    ("item_count", "previous_counts", "threshold", "should_raise"),
     [
         (90, [100], 0.9, False),
         (80, [100, 101, 99], 0.8, False),
@@ -394,7 +388,7 @@ def test_jobs_comparison_monitor_threshold(
 
 
 @pytest.mark.parametrize(
-    ["states", "number_of_jobs", "tags", "threshold"],
+    ("states", "number_of_jobs", "tags", "threshold"),
     [
         (("finished",), 5, ("tag1", "tag2"), 0.5),
         (("foo", "bar"), 10, ("tag3",), 0.5),

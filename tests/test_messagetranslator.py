@@ -18,7 +18,7 @@ def message_translator():
 
 
 @pytest.mark.parametrize(
-    "original_message,translated_message",
+    ("original_message", "translated_message"),
     [
         ("Simple Message", "Translated Simple Message"),
         ("email is a required property", "Missing Required Property"),

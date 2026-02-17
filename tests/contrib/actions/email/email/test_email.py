@@ -16,7 +16,7 @@ def mock_render_template(mocker):
 
 
 @pytest.mark.parametrize(
-    "settings_to, expected_to",
+    ("settings_to", "expected_to"),
     [
         ("to.someone@somewhere.com", "to.someone@somewhere.com"),
         (
@@ -56,7 +56,7 @@ def test_email_message_to(mock_render_template, settings_to, expected_to):
 
 
 @pytest.mark.parametrize(
-    "settings_cc, expected_cc",
+    ("settings_cc", "expected_cc"),
     [
         ("cc.someone@somewhere.com", "cc.someone@somewhere.com"),
         (
@@ -97,7 +97,7 @@ def test_email_message_cc(mock_render_template, settings_cc, expected_cc):
 
 
 @pytest.mark.parametrize(
-    "settings_bcc, expected_bcc",
+    ("settings_bcc", "expected_bcc"),
     [
         ("bcc.someone@somewhere.com", "bcc.someone@somewhere.com"),
         (

@@ -110,7 +110,12 @@ def item_count_suite():
 
 
 @pytest.mark.parametrize(
-    "item_scraped_count,prev_item_scraped_count,spidermon_item_count_increase,expected_status",
+    (
+        "item_scraped_count",
+        "prev_item_scraped_count",
+        "spidermon_item_count_increase",
+        "expected_status",
+    ),
     [
         # Failure since item should increase by 100
         (109, 10, 100, settings.MONITOR.STATUS.FAILURE),

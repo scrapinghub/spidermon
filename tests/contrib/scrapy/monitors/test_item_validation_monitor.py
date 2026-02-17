@@ -32,7 +32,7 @@ def test_skip_monitor_if_stat_not_in_job_stats(make_data, item_validation_suite)
 
 
 @pytest.mark.parametrize(
-    "value,threshold,expected_status",
+    ("value", "threshold", "expected_status"),
     [
         (0, 100, settings.MONITOR.STATUS.SUCCESS),
         (50, 100, settings.MONITOR.STATUS.SUCCESS),

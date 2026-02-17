@@ -21,7 +21,7 @@ def test_needs_to_configure_item_count_monitor(make_data, item_count_suite):
 
 
 @pytest.mark.parametrize(
-    "value,threshold,expected_status",
+    ("value", "threshold", "expected_status"),
     [
         (0, 100, settings.MONITOR.STATUS.FAILURE),
         (50, 100, settings.MONITOR.STATUS.FAILURE),

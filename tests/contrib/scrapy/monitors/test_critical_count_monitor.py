@@ -21,7 +21,7 @@ def test_needs_to_configure_critical_count_monitor(make_data, critical_count_sui
 
 
 @pytest.mark.parametrize(
-    "value,threshold,expected_status",
+    ("value", "threshold", "expected_status"),
     [
         (0, 100, settings.MONITOR.STATUS.SUCCESS),
         (50, 100, settings.MONITOR.STATUS.SUCCESS),

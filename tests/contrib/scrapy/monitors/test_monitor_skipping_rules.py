@@ -35,7 +35,7 @@ class monitorSuite(SpiderCloseMonitorSuite):
 
 
 @pytest.mark.parametrize(
-    "value,threshold,expected_status,rules",
+    ("value", "threshold", "expected_status", "rules"),
     [
         (100, 100, settings.MONITOR.STATUS.SUCCESS, None),
         (1000, 1, settings.MONITOR.STATUS.SUCCESS, None),
@@ -88,7 +88,7 @@ def test_skipping_rule_on_stats_value(
 
 
 @pytest.mark.parametrize(
-    "value,threshold,expected_status,rules",
+    ("value", "threshold", "expected_status", "rules"),
     [
         (0, 10, None, {"Extracted Items Monitor": [always_skip]}),
         (

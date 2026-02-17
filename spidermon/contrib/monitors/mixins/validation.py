@@ -153,10 +153,8 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             self.fail("\n".join(msgs))
 
     def check_missing_required_field(self, field_name, allowed_count=0):
-        """
-        Checks that the number of "missing_required_field" errors for the ``field_name`` field is less or equal than
-        ``allowed_count``.
-        """
+        """Check that the number of "missing_required_field" errors for the
+        ``field_name`` field is less or equal than ``allowed_count``."""
         missing_count = (
             self.validation.fields[field_name].errors["missing_required_field"].count
         )
@@ -180,12 +178,16 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         field_names=None,
         allowed_percent=0,
     ):
-        """
-        Checks that the number of "missing_required_field" errors for the ``field_names`` fields divided by the number
-        of items is less or equal than ``allowed_percent`` and raises an error with all problematic fields.
-        If ``field_names`` is None and ``self.correct_field_list_handling`` is True, checks all fields.
-        If ``field_names`` is None and ``self.correct_field_list_handling`` is False, checks that the total number of
-        "missing_required_field" errors is less or equal than ``allowed_count``.
+        """Check that the number of "missing_required_field" errors for the
+        ``field_names`` fields divided by the number of items is less or equal
+        than ``allowed_percent`` and raise an error with all problematic
+        fields.
+
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is
+        True, checks all fields. If ``field_names`` is None and
+        ``self.correct_field_list_handling`` is False, checks that the total
+        number of "missing_required_field" errors is less or equal than
+        ``allowed_count``.
         """
         if not self.correct_field_list_handling and not field_names:
             self._warn_list_handling()
@@ -247,12 +249,14 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         return msg
 
     def check_fields_errors(self, field_names=None, errors=None, allowed_count=0):
-        """
-        Checks that the number of errors for the ``field_names`` fields is less or equal than ``allowed_count`` and
-        raises an error with all problematic fields.
-        If ``field_names`` is None and ``self.correct_field_list_handling`` is True, checks all fields.
-        If ``field_names`` is None and ``self.correct_field_list_handling`` is False, checks that the total number of errors is less or
-        equal than ``allowed_count``.
+        """Check that the number of errors for the ``field_names`` fields is
+        less or equal than ``allowed_count`` and raise an error with all
+        problematic fields.
+
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is
+        True, checks all fields. If ``field_names`` is None and
+        ``self.correct_field_list_handling`` is False, checks that the total
+        number of errors is less or equal than ``allowed_count``.
         """
         if not self.correct_field_list_handling and not field_names:
             self._warn_list_handling()
@@ -283,9 +287,8 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             self.fail("\n".join(msgs))
 
     def check_field_errors(self, field_name, errors=None, allowed_count=0):
-        """
-        Checks that the number of errors for the ``field_name`` field is less or equal than ``allowed_count``.
-        """
+        """Check that the number of errors for the ``field_name`` field is less
+        or equal than ``allowed_count``."""
         errors_count = self._get_errors_count(errors, field_name)
         msg = self._get_msg_for_field_errors(field_name, errors_count, allowed_count)
         self.assertLessEqual(errors_count, allowed_count, msg)
@@ -313,12 +316,15 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         errors=None,
         allowed_percent=0,
     ):
-        """
-        Checks that the number of errors for the ``field_names`` fields divided by the number of items is less or equal
-        than ``allowed_percent`` and raises an error with all problematic fields.
-        If ``field_names`` is None and ``self.correct_field_list_handling`` is True, checks all fields.
-        If ``field_names`` is None and ``self.correct_field_list_handling`` is False, checks that the total number of errors divided by the
-        number of items is less or equal than ``allowed_count``
+        """Check that the number of errors for the ``field_names`` fields
+        divided by the number of items is less or equal than
+        ``allowed_percent`` and raise an error with all problematic fields.
+
+        If ``field_names`` is None and ``self.correct_field_list_handling`` is
+        True, checks all fields. If ``field_names`` is None and
+        ``self.correct_field_list_handling`` is False, checks that the total
+        number of errors divided by the number of items is less or equal than
+        ``allowed_count``
         """
         if not self.correct_field_list_handling and not field_names:
             self._warn_list_handling()

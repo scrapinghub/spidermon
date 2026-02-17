@@ -109,7 +109,7 @@ def test_use_configured_smtp_enforce_ssl_when_provided(smtp_action_settings):
 
 
 @pytest.mark.parametrize(
-    "setting,attribute",
+    ("setting", "attribute"),
     [
         ("SPIDERMON_SMTP_HOST", "smtp_host"),
         ("SPIDERMON_SMTP_USER", "smtp_user"),
@@ -125,7 +125,7 @@ def test_set_provided_smtp_settings(setting, attribute, smtp_action_settings):
 
 
 @pytest.mark.parametrize(
-    "settings_subject, expected_subject",
+    ("settings_subject", "expected_subject"),
     [
         ("Test Subject", "Test Subject"),
         ("Test Subject2", "Test Subject2"),

@@ -35,7 +35,7 @@ def test_skip_monitor_if_stat_not_in_job_stats(make_data, downloader_exception_s
 
 
 @pytest.mark.parametrize(
-    "value,threshold,expected_status",
+    ("value", "threshold", "expected_status"),
     [
         (0, 100, settings.MONITOR.STATUS.SUCCESS),
         (50, 100, settings.MONITOR.STATUS.SUCCESS),

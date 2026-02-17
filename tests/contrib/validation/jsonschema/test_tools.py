@@ -24,7 +24,7 @@ def test_get_schema_from_file_fails(caplog, mocker):
 
 
 @pytest.mark.parametrize(
-    "url, expected_result",
+    ("url", "expected_result"),
     [
         ("https://example.com", False),
         ("example.com/file.json", False),

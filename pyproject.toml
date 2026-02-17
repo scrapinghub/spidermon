@@ -168,6 +168,8 @@ ignore = [
     "D107",
     # 1 blank line required between summary line and description
     "D205",
+    # Multi-line docstring closing quotes should be on a separate line
+    "D209",
 ]
 
 [tool.ruff.lint.isort]

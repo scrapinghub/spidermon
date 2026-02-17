@@ -8,7 +8,7 @@ from spidermon.exceptions import NotConfigured
 
 
 @pytest.mark.parametrize(
-    "assertion_type,stat_value,threshold,expected_status",
+    ("assertion_type", "stat_value", "threshold", "expected_status"),
     [
         ("==", 90, 100, settings.MONITOR.STATUS.FAILURE),
         ("==", 100, 100, settings.MONITOR.STATUS.SUCCESS),
