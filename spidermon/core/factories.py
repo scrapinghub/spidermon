@@ -25,6 +25,7 @@ class MonitorFactory:
         if isinstance(monitor, (Monitor, MonitorSuite)):
             return monitor
         cls.raise_invalid_monitor()
+        return None
 
     @classmethod
     def load_monitor_from_class(cls, monitor_class, name=None):
@@ -86,6 +87,7 @@ class ActionFactory:
         if isinstance(action, Action):
             return action
         cls.raise_invalid_action()
+        return None
 
     @classmethod
     def load_action_from_class(cls, action_class, crawler=None):

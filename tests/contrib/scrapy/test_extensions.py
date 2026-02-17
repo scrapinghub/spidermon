@@ -83,21 +83,21 @@ class ExpressionMonitorsTesting(TestCase):
 
         try:
             spidermon.spider_opened(spider)
-        except AssertionError as e:
-            failures, errors = e.args[0]
+        except AssertionError as ae:
+            failures, errors = ae.args[0]
             for f in failures:
                 _, trace = f
-                raise AssertionError(trace)
-            for e in errors:
-                _, trace = e
+                raise AssertionError(trace) from ae
+            for err in errors:
+                _, trace = err
                 if dt.expected_error and dt.expected_error in trace:
                     dt.expected_error = None
                 else:
-                    raise AssertionError(trace)
+                    raise AssertionError(trace) from ae
             if dt.expected_error:
                 raise AssertionError(
                     f"Expected error <{dt.expected_error}> was not raised",
-                )
+                ) from ae
 
     def test_stats_ready(self):
         self.run_test(

@@ -23,7 +23,9 @@ class PythonExpressionsMonitor(Monitor):
     @classmethod
     def generate_method_name(cls):
         cls._test_methods_counter += 1
-        return f"{cls._test_methods_prefix}_python_expression_{cls._test_methods_counter}"
+        return (
+            f"{cls._test_methods_prefix}_python_expression_{cls._test_methods_counter}"
+        )
 
     def get_context_data(self):
         raise NotConfigured("Context data needs to be set up")
@@ -36,16 +38,15 @@ def create_monitor_class_from_json(monitor_json, monitor_class=None):
 
 
 def create_monitor_class_from_dict(monitor_dict, monitor_class=None):
-    tests = []
-    for test in monitor_dict.get("tests", []):
-        tests.append(
-            (
-                test["expression"],
-                test.get("name", None),
-                test.get("description", None),
-                test.get("fail_message", None),
-            ),
+    tests = [
+        (
+            test["expression"],
+            test.get("name", None),
+            test.get("description", None),
+            test.get("fail_message", None),
         )
+        for test in monitor_dict.get("tests", [])
+    ]
     klass = _create_monitor_class(tests, monitor_class)
     klass.options.name = monitor_dict.get("name", settings.MONITOR.DEFAULT_NAME)
     klass.options.description = monitor_dict.get(
@@ -78,9 +79,11 @@ def _create_test_method(expression, name=None, description=None, fail_reason=Non
         if result is not None:
             self.assertTrue(
                 bool(result),
-                msg=(f'Expression not safisfied: "{expression}"'
-                if not fail_reason
-                else interpreter.eval(fail_reason, context=context)),
+                msg=(
+                    f'Expression not safisfied: "{expression}"'
+                    if not fail_reason
+                    else interpreter.eval(fail_reason, context=context)
+                ),
             )
 
     test_method = _test_method

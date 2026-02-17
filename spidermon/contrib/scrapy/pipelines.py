@@ -52,9 +52,11 @@ class ItemValidationPipeline:
         def set_validators(loader, schema):
             if type(schema) in (list, tuple):
                 schema = {Item: schema}
-            for obj, paths in schema.items():
+            for obj, paths_value in schema.items():
                 key = obj.__name__
-                paths = paths if type(paths) in (list, tuple) else [paths]
+                paths = (
+                    paths_value if type(paths_value) in (list, tuple) else [paths_value]
+                )
                 objects = [loader(v) for v in paths]
                 validators[key].extend(objects)
 
@@ -140,18 +142,17 @@ class ItemValidationPipeline:
 
     def _drop_item(self, item, errors):
         """
-        This method drops the item after detecting validation errors. Note
-        that you could override it to add more details about the item that
-        is being dropped or to drop the item only when some specific errors
-        are detected.
+        Drop the item after detecting validation errors. Note that you could
+        override it to add more details about the item that is being dropped
+        or to drop the item only when some specific errors are detected.
         """
         self.stats.add_dropped_item()
         raise DropItem("Validation failed!")
 
     def _add_error_stats(self, errors):
         """
-        This method adds validation error stats that can be later used to
-        detect alert conditions in the monitors.
+        Add validation error stats that can be later used to detect alert
+        conditions in the monitors.
         """
         for field_name, messages in errors.items():
             for message in messages:

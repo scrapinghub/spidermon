@@ -41,28 +41,21 @@ def mock_suite(mock_jobs, monkeypatch):
 
 
 def get_paginated_jobs(**kwargs):
-    mocked_job_meta = []
-    for _ in range(kwargs["count"]):
-        mocked_job_meta.append({"spider_args": {}})
-    return mocked_job_meta
+    return [{"spider_args": {}} for _ in range(kwargs["count"])]
 
 
 def get_paginated_jobs_with_one_args(**kwargs):
-    mocked_job_meta = []
-    for _ in range(kwargs["count"]):
-        mocked_job_meta.append(
-            {"spider_args": {"args1": True}, "close_reason": "finished"},
-        )
-    return mocked_job_meta
+    return [
+        {"spider_args": {"args1": True}, "close_reason": "finished"}
+        for _ in range(kwargs["count"])
+    ]
 
 
 def get_paginated_jobs_arg_finished(**kwargs):
-    mocked_job_meta = []
-    for _ in range(kwargs["count"]):
-        mocked_job_meta.append(
-            {"spider_args": {"finished": True}, "close_reason": "finished"},
-        )
-    return mocked_job_meta
+    return [
+        {"spider_args": {"finished": True}, "close_reason": "finished"}
+        for _ in range(kwargs["count"])
+    ]
 
 
 def get_paginated_jobs_with_finished_close_reason(**kwargs):
@@ -71,7 +64,6 @@ def get_paginated_jobs_with_finished_close_reason(**kwargs):
         obj = Mock()
         obj.get.return_value = "finished"
         objs.append(obj)
-
     return objs
 
 
@@ -175,7 +167,7 @@ def test_jobs_comparison_monitor_get_tags_to_filter(monkeypatch):
     assert monitor._get_tags_to_filter() == ["tag1", "tag2"]
 
 
-def test_jobs_comparison_monitor_get_jobs():
+def test_jobs_comparison_monitor_get_jobs():  # noqa: PLR0915
     mock_client = Mock()
     with patch(
         "spidermon.contrib.scrapy.monitors.monitors.Client",

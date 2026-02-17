@@ -203,8 +203,9 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
             unwanted_http_codes = dict.fromkeys(unwanted_http_codes, errors_max_count)
 
         requests = self.stats.get("downloader/request_count", 0)
-        for code, max_errors in unwanted_http_codes.items():
-            code = int(code)
+        for code_key, max_errors_orig in unwanted_http_codes.items():
+            code = int(code_key)
+            max_errors = max_errors_orig
             count = self.stats.get(f"downloader/response_status_count/{code}", 0)
 
             percentage_trigger = False
@@ -715,3 +716,4 @@ class PeriodicItemCountMonitor(BaseStatMonitor):
             return prev_item_scraped_count + (
                 prev_item_scraped_count * threshold_increase
             )
+        return None

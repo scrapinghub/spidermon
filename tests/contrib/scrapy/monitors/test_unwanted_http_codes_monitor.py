@@ -14,7 +14,7 @@ def new_suite():
     return MonitorSuite(monitors=[UnwantedHTTPCodesMonitor])
 
 
-def test_unwanted_httpcodes_should_fail(make_data):
+def test_unwanted_httpcodes_should_fail(make_data):  # noqa: PLR0915
     """Unwanted HTTP Code should fail if # off responses with error status
     codes is higher than expected
     """
@@ -186,7 +186,7 @@ def test_unwanted_httpcodes_should_fail(make_data):
     assert "50.0%" in runner.result.monitor_results[0].error
 
 
-def test_unwanted_httpcodes_should_pass(make_data):
+def test_unwanted_httpcodes_should_pass(make_data):  # noqa: PLR0915
     """Unwanted HTTP Code should pass if # off responses with error status
     codes is lower than expected
     """

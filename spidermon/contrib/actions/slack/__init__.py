@@ -122,6 +122,7 @@ class SlackMessageManager:
                 attachments=attachments,
                 **kwargs,
             )
+        return None
 
     def _send_channel_message(
         self,
