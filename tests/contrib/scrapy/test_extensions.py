@@ -32,7 +32,12 @@ def _test_run_suites(self, spider, suites):
 class TestData:
     __test__ = False
 
-    def __init__(self, expression, stats={}, settings={}, expected_error=None):
+    def __init__(self, expression, stats=None, settings=None, expected_error=None):
+        if stats is None:
+            stats = {}
+        if settings is None:
+            settings = {}
+
         self.stats = stats
         self.expression = expression
         self.settings = settings

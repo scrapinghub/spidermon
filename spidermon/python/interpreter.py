@@ -106,7 +106,7 @@ class Interpreter:
     def eval(self, expression, context=None, check=True):
         if check:
             self.check(expression)
-        return eval(expression, context)
+        return eval(expression, context)  # noqa: S307
 
     def _check_node(self, node):
         if isinstance(node, list):

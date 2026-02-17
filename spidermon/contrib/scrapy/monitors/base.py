@@ -3,9 +3,8 @@ import operator
 from typing import Any, ClassVar
 
 from spidermon import Monitor
+from spidermon.contrib.monitors.mixins.spider import SpiderMonitorMixin
 from spidermon.exceptions import NotConfigured
-
-from ...monitors.mixins.spider import SpiderMonitorMixin
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +41,7 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
         ):
             skip_rules = self.skip_rules[self.monitor_name]
             for rule in skip_rules:
-                if hasattr(rule, "__call__"):
+                if callable(rule):
                     if rule(self):
                         return True
                     continue

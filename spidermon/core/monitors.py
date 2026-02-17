@@ -16,7 +16,7 @@ class Monitor(TestCase, metaclass=MonitorOptionsMetaclass):
 
     @property
     def name(self):
-        return "/".join([self.monitor_name, self.method_name])
+        return f"{self.monitor_name}/{self.method_name}"
 
     @property
     def full_name(self):

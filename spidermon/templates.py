@@ -38,9 +38,9 @@ GLOBALS = {"datetime": datetime, "str": str}
 
 def get_environment(paths):
     loader = FileSystemLoader(paths)
-    environment = Environment(loader=loader, lstrip_blocks=True, trim_blocks=True)
-    for filter_name, filter in FILTERS.items():
-        environment.filters[filter_name] = filter
+    environment = Environment(loader=loader, lstrip_blocks=True, trim_blocks=True)  # noqa: S701
+    for filter_name, filter_ in FILTERS.items():
+        environment.filters[filter_name] = filter_
 
     for global_name, global_value in GLOBALS.items():
         environment.globals[global_name] = global_value
@@ -69,7 +69,8 @@ class TemplateLoader:
 
     def discover_folder(self, candidate_folder):
         for folder in [
-            str(Path(candidate_folder) / dir) for dir in DEFAULT_TEMPLATE_FOLDERS
+            str(Path(candidate_folder) / subfolder)
+            for subfolder in DEFAULT_TEMPLATE_FOLDERS
         ]:
             self.add_path(folder)
 

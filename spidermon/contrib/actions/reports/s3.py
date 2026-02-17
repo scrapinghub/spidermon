@@ -1,4 +1,4 @@
-import hashlib
+import secrets
 from pathlib import Path
 
 from boto.s3.connection import S3Connection
@@ -11,7 +11,6 @@ from . import CreateReport
 
 DEFAULT_S3_REGION_ENDPOINT = "s3.amazonaws.com"
 DEFAULT_S3_CONTENT_TYPE = "text/html"
-URL_SECRET_KEY = "The secret to life the universe and everything"
 
 
 class S3Uploader:
@@ -104,6 +103,7 @@ class CreateS3Report(CreateReport):
         self.s3_filename = s3_filename or self.s3_filename
         self.make_public = make_public or self.make_public
         self.content_type = content_type or self.content_type
+        self._url_secret = secrets.token_hex(16)
         if not self.aws_access_key:
             raise NotConfigured(
                 "You must provide a value for SPIDERMON_AWS_ACCESS_KEY_ID setting.",
@@ -161,11 +161,8 @@ class CreateS3Report(CreateReport):
         return f"https://{self.s3_region_endpoint}/{self.s3_bucket}/{self.get_s3_filename()}"
 
     def get_url_secret(self):
-        secret = URL_SECRET_KEY
-        if self.data.job:
-            secret += str(self.data.job.key.split("/")[0])
-        return hashlib.md5(secret.encode()).hexdigest()
+        return self._url_secret
 
     def get_meta(self):
         report_url = self.get_s3_report_url()
-        return {"reports_links": self.data.meta.get("reports", []) + [report_url]}
+        return {"reports_links": [*self.data.meta.get("reports", []), report_url]}

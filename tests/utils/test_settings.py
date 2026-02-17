@@ -29,7 +29,7 @@ def test_spidermon_aws_credentials(mocker):
 
     assert aws_access_key_id == "aws_access_key"
     assert aws_secret_access_key == "aws_secret_key"
-    warn_mock.assert_called_with(mocker.ANY, DeprecationWarning)
+    warn_mock.assert_called_with(mocker.ANY, DeprecationWarning, stacklevel=2)
 
 
 def test_spidermon_aws_credentials_scrapy_like():

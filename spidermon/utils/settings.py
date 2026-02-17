@@ -26,6 +26,7 @@ def get_aws_credentials(settings):
             "Please update them to SPIDERMON_AWS_ACCESS_KEY_ID and SPIDERMON_AWS_SECRET_ACCESS_KEY. "
             "Scrapy settings AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are also valid.",
             DeprecationWarning,
+            stacklevel=2,
         )
 
     if not aws_access_key_id and not aws_secret_access_key:

@@ -33,10 +33,7 @@ class MonitorRunner:
         data = data or {}
         new_data_dict = {}
         for attr_name, attr in data.items():
-            if attr_name in self.data_immutable_dicts:
-                new_data = Data(attr)
-            else:
-                new_data = attr
+            new_data = Data(attr) if attr_name in self.data_immutable_dicts else attr
             new_data_dict[attr_name] = new_data
         return Data(new_data_dict)
 

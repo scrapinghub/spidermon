@@ -31,7 +31,7 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
 
         if stats_location.is_file():
             with stats_location.open("rb") as stats_file:
-                _stats_history = pickle.load(stats_file)
+                _stats_history = pickle.load(stats_file)  # noqa: S301
         else:
             _stats_history = deque(maxlen=max_stored_stats)
 

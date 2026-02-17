@@ -247,5 +247,7 @@ def _generate_full_names(suite):
 
 def _check_names(generated_names, expected_names):
     assert len(generated_names) == len(expected_names)
-    for generated_name, expected_name in zip(generated_names, expected_names):
+    for generated_name, expected_name in zip(
+        generated_names, expected_names, strict=True
+    ):
         assert generated_name == expected_name

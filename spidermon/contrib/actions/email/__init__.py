@@ -70,16 +70,10 @@ class SendEmail(ActionWithTemplates):
                 self.body_html_template,
             ],
         ):
-            body_settings = ", ".join(
-                [
-                    "SPIDERMON_BODY_TEXT",
-                    "SPIDERMON_BODY_TEXT_TEMPLATE",
-                    "SPIDERMON_BODY_HTML",
-                    "SPIDERMON_BODY_HTML_TEMPLATE",
-                ],
-            )
             raise NotConfigured(
-                f"You must provide a value for one of these settings: {body_settings}",
+                "You must provide a value for one of these settings: "
+                "SPIDERMON_BODY_TEXT, SPIDERMON_BODY_TEXT_TEMPLATE, "
+                "SPIDERMON_BODY_HTML, SPIDERMON_BODY_HTML_TEMPLATE",
             )
 
     @classmethod

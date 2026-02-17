@@ -27,10 +27,10 @@ def test_fail_get_absolute_template_that_does_not_exist(tmpdir):
     template_loader = TemplateLoader()
     test_template = Path(tmpdir) / "i_do_not_exist.template"
     with pytest.raises(jinja2.exceptions.TemplateNotFound):
-        template = template_loader.get_template(test_template)  # noqa
+        template_loader.get_template(test_template)
 
 
 def test_fail_get_template_that_does_not_exist(tmpdir):
     template_loader = TemplateLoader()
     with pytest.raises(jinja2.exceptions.TemplateNotFound):
-        template = template_loader.get_template("i_do_not_exist.template")  # noqa
+        template_loader.get_template("i_do_not_exist.template")

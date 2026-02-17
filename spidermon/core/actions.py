@@ -7,9 +7,7 @@ from .options import ActionOptionsMetaclass
 
 
 class Action(metaclass=ActionOptionsMetaclass):
-    """
-    Base class for actions.
-    """
+    """Base class for actions."""
 
     fallback = None
 

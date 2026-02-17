@@ -17,7 +17,7 @@ def traverse_nested(obj: ItemAdapter, keys: list[str]) -> ItemAdapter:
             current_obj = ItemAdapter(current_obj[key])
         # KeyError: Key does not exist
         # TypeError: Key is not compatible with ItemAdapter (None or unsupported type)
-        except (KeyError, TypeError) as err:
+        except (KeyError, TypeError) as err:  # noqa: PERF203
             raise KeyError(f'Invalid key "{key}" for {current_obj} in {obj}') from err
 
     return current_obj

@@ -28,9 +28,8 @@ class MonitorLoader(TestLoader):
             class_name=monitor_class,
             prefix=self.testMethodPrefix,
         ):
-            return attrname.startswith(prefix) and hasattr(
-                getattr(class_name, attrname),
-                "__call__",
+            return attrname.startswith(prefix) and callable(
+                getattr(class_name, attrname)
             )
 
         test_function_names = list(filter(is_test_method, dir(monitor_class)))

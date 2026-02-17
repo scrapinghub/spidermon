@@ -17,7 +17,7 @@ class ValidationStatsManager:
         self.prefix = prefix or STATS_DEFAULT_VALIDATION_PREFIX
         self.slugify = slugify
 
-    def add_validator(self, type, class_name):
+    def add_validator(self, type, class_name):  # noqa: A002
         self.stats.inc_value(self._get_stats_name(NAMES.VALIDATORS))
         self.stats.set_value(
             self._get_stats_name(NAMES.VALIDATORS, type, class_name),
@@ -44,7 +44,7 @@ class ValidationStatsManager:
         self.stats.inc_value(self._get_stats_name(NAMES.ITEMS, NAMES.ERRORS))
 
     def _get_stats_name(self, *names):
-        return "/".join([self.prefix] + list([self._get_name(n) for n in names]))
+        return "/".join([self.prefix, *map(self._get_name, names)])
 
     def _get_name(self, name):
         return slugify(text=name, separator="_").lower() if self.slugify else name

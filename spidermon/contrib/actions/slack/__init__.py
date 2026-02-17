@@ -77,10 +77,7 @@ class SlackMessageManager:
                 **kwargs,
             )
         if use_mention:
-            if to.startswith("#"):
-                text = "@channel: " + text
-            else:
-                text = "@group: " + text
+            text = "@channel: " + text if to.startswith("#") else "@group: " + text
         return self._send_channel_message(
             channel=to,
             text=text,
@@ -96,12 +93,10 @@ class SlackMessageManager:
         return user["id"] if user else None
 
     def _get_users_info(self):
-        return dict(
-            [
-                (member["name"].lower(), member)
-                for member in self._client.users_list()["members"]
-            ],
-        )
+        return {
+            member["name"].lower(): member
+            for member in self._client.users_list()["members"]
+        }
 
     def _send_user_message(
         self,

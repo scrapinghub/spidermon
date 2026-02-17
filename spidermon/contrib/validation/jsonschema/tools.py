@@ -39,7 +39,7 @@ def is_schema_url(path):
 
 def get_contents(url):
     try:
-        with urlopen(url) as f:
+        with urlopen(url) as f:  # noqa: S310
             return f.read().decode("utf-8")
     except Exception as e:
         logger.exception(str(e) + f"\nFailed to get '{url}'")

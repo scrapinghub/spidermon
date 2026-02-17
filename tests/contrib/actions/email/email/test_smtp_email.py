@@ -12,7 +12,7 @@ from spidermon.contrib.actions.email.smtp import (
 )
 from spidermon.exceptions import NotConfigured
 
-sent_subject = None
+sent_subject = []
 
 
 @pytest.fixture
@@ -149,7 +149,7 @@ def test_email_sent(
         debug=True,
         _callback=_catch_mail_sent,
     )
-    assert sent_subject == expected_subject
+    assert sent_subject[-1] == expected_subject
 
 
 @pytest.mark.parametrize(
@@ -173,5 +173,4 @@ def test_raise_not_configured_if_required_setting_not_provided(
 
 
 def _catch_mail_sent(to, subject, body, cc, attach, msg):  # noqa: PLR0913
-    global sent_subject
-    sent_subject = subject
+    sent_subject.append(subject)
