@@ -678,8 +678,7 @@ class ZyteJobsComparisonMonitor(BaseStatMonitor):
 
         previous_count = sum(job.get("items", 0) for job in jobs) / len(jobs)
 
-        expected_item_extracted = math.ceil(previous_count * threshold)
-        return expected_item_extracted
+        return math.ceil(previous_count * threshold)
 
 
 @monitors.name("Periodic Item Count Increase Monitor")

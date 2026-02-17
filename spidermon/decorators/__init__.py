@@ -17,9 +17,7 @@ class DecoratorWithAttributes:
                 "Invalid {attribute} '{name}', allowed values: {values}".format(
                     attribute=self.name,
                     name=name,
-                    values=", ".join(
-                        [f"'{attr}'" for attr in self.attributes.keys()],
-                    ),
+                    values=", ".join([f"'{attr}'" for attr in self.attributes]),
                 ),
             )
         return self.attributes[name]

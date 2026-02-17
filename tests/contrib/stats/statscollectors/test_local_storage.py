@@ -125,8 +125,8 @@ async def test_spider_has_two_last_stats_history_when_opened_third_time(
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
     assert len(crawler.spider.stats_history) == 2
-    assert "second_execution" in crawler.spider.stats_history[0].keys()
-    assert "first_execution" in crawler.spider.stats_history[1].keys()
+    assert "second_execution" in crawler.spider.stats_history[0]
+    assert "first_execution" in crawler.spider.stats_history[1]
     await stop_crawler(crawler)
 
 
@@ -154,8 +154,8 @@ async def test_spider_limit_number_of_stored_stats(
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
     assert len(crawler.spider.stats_history) == 2
-    assert "third_execution" in crawler.spider.stats_history[0].keys()
-    assert "second_execution" in crawler.spider.stats_history[1].keys()
+    assert "third_execution" in crawler.spider.stats_history[0]
+    assert "second_execution" in crawler.spider.stats_history[1]
     await stop_crawler(crawler)
 
 

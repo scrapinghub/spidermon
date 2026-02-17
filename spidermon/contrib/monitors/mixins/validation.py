@@ -128,7 +128,11 @@ class ValidationMonitorMixin(StatsMonitorMixin):
                 allowed_count,
                 msg=(
                     f"{missing_count} required field{'s' if missing_count != 1 else ''} are missing!"
-                    + (f" (maximum allowed {allowed_count})" if allowed_count > 0 else "")
+                    + (
+                        f" (maximum allowed {allowed_count})"
+                        if allowed_count > 0
+                        else ""
+                    )
                 ),
             )
             return
@@ -167,11 +171,9 @@ class ValidationMonitorMixin(StatsMonitorMixin):
 
     @staticmethod
     def _get_msg_for_missing_required_count(field_name, missing_count, allowed_count):
-        msg = (
-            f"Required field {field_name} is missing in {missing_count} items!"
-            + (f" (maximum allowed {allowed_count})" if allowed_count > 0 else "")
+        return f"Required field {field_name} is missing in {missing_count} items!" + (
+            f" (maximum allowed {allowed_count})" if allowed_count > 0 else ""
         )
-        return msg
 
     def check_missing_required_fields_percent(
         self,
@@ -197,7 +199,11 @@ class ValidationMonitorMixin(StatsMonitorMixin):
                 allowed_percent,
                 msg=(
                     f"{missing_percent * 100}% of required fields are missing!"
-                    + (f" (maximum allowed {allowed_percent * 100:.0f}%)" if allowed_percent > 0 else "")
+                    + (
+                        f" (maximum allowed {allowed_percent * 100:.0f}%)"
+                        if allowed_percent > 0
+                        else ""
+                    )
                 ),
             )
             return
@@ -242,11 +248,14 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         missing_percent,
         allowed_percent,
     ):
-        msg = (
+        return (
             f"{missing_percent * 100}% of required field {field_name} are missing!"
-            + (f" (maximum allowed {allowed_percent * 100:.0f}%)" if allowed_percent > 0 else "")
+            + (
+                f" (maximum allowed {allowed_percent * 100:.0f}%)"
+                if allowed_percent > 0
+                else ""
+            )
         )
-        return msg
 
     def check_fields_errors(self, field_names=None, errors=None, allowed_count=0):
         """Check that the number of errors for the ``field_names`` fields is
@@ -266,7 +275,11 @@ class ValidationMonitorMixin(StatsMonitorMixin):
                 allowed_count,
                 msg=(
                     f"{errors_count} field{'s' if errors_count != 1 else ''} {'has' if errors_count == 1 else 'have'} validation errors!"
-                    + (f" (maximum allowed {allowed_count})" if allowed_count > 0 else "")
+                    + (
+                        f" (maximum allowed {allowed_count})"
+                        if allowed_count > 0
+                        else ""
+                    )
                 ),
             )
             return
@@ -304,11 +317,9 @@ class ValidationMonitorMixin(StatsMonitorMixin):
 
     @staticmethod
     def _get_msg_for_field_errors(field_name, errors_count, allowed_count):
-        msg = (
-            f"Field {field_name} has {errors_count} validation errors!"
-            + (f" (maximum allowed {allowed_count})" if allowed_count > 0 else "")
+        return f"Field {field_name} has {errors_count} validation errors!" + (
+            f" (maximum allowed {allowed_count})" if allowed_count > 0 else ""
         )
-        return msg
 
     def check_fields_errors_percent(
         self,
@@ -382,11 +393,10 @@ class ValidationMonitorMixin(StatsMonitorMixin):
 
     @staticmethod
     def _get_msg_for_field_errors_percent(field_name, errors_percent, allowed_percent):
-        msg = "{percent}% of field {field} have validation errors!{threshold_info}".format(
+        return "{percent}% of field {field} have validation errors!{threshold_info}".format(
             percent=errors_percent * 100,
             field=field_name,
             threshold_info=(" (maximum allowed %.0f%%)" % (allowed_percent * 100))
             if allowed_percent > 0
             else "",
         )
-        return msg

@@ -22,8 +22,7 @@ class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
         collections = project.collections
         spider_name = get_spider_name(spider)
         stats_location = f"{spider_name}_stats_history"
-        store = collections.get_store(stats_location)
-        return store
+        return collections.get_store(stats_location)
 
     def open_spider(self, spider=None):
         args = [spider] if spider else []

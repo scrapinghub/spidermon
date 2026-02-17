@@ -21,9 +21,7 @@ def spider():
     }
     crawler = get_crawler(settings_dict=settings)
 
-    spider = Spider.from_crawler(crawler, "example.com")
-
-    return spider
+    return Spider.from_crawler(crawler, "example.com")
 
 
 async def send_item_scraped(spider, item):
