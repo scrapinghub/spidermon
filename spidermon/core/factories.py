@@ -16,7 +16,7 @@ MONITOR_TUPLE_LENGTH = 2
 class MonitorFactory:
     @classmethod
     def load_monitor(cls, monitor, name=None):
-        from .suites import MonitorSuite
+        from .suites import MonitorSuite  # noqa: PLC0415
 
         if inspect.isclass(monitor):
             return cls.load_monitor_from_class(monitor_class=monitor, name=name)
@@ -28,10 +28,10 @@ class MonitorFactory:
 
     @classmethod
     def load_monitor_from_class(cls, monitor_class, name=None):
-        from .suites import MonitorSuite
+        from .suites import MonitorSuite  # noqa: PLC0415
 
         if issubclass(monitor_class, Monitor):
-            from spidermon.loaders import MonitorLoader
+            from spidermon.loaders import MonitorLoader  # noqa: PLC0415
 
             loader = MonitorLoader()
             monitor = loader.load_suite_from_monitor(

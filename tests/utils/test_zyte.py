@@ -1,3 +1,5 @@
+import sys
+from importlib import reload
 from unittest import mock
 
 import pytest
@@ -91,8 +93,6 @@ def test_client_close(mock_module, settings):
 
 @pytest.mark.parametrize("expected", [False, True])
 def test_has_client(monkeypatch, expected):
-    import sys
-    from importlib import reload
 
     if not expected:
         monkeypatch.setitem(sys.modules, "scrapinghub", None)

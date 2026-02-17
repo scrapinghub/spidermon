@@ -172,7 +172,7 @@ def test_able_to_import_deprecated_local_storage_stats_collector_module():
     spidermon.contrib.stats.statscollectors.local_storage.LocalStorageStatsHistoryCollector
     """
     try:
-        from spidermon.contrib.stats.statscollectors import (
+        from spidermon.contrib.stats.statscollectors import (  # noqa: PLC0415
             LocalStorageStatsHistoryCollector,  # noqa: F401
         )
     except ModuleNotFoundError:
