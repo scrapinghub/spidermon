@@ -71,11 +71,27 @@ filename = "setup.py"
 [tool.coverage.run]
 branch = true
 
-[tool.hatch.build.targets.sdist]
-include = ["spidermon/VERSION"]
+[tool.hatch.build]
+include = [
+    "spidermon/VERSION",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["spidermon"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "docs/**",
+    "examples/**",
+    "spidermon/**",
+    "tests/**",
+    "CHANGES.rst",
+    "CONTRIBUTING.rst",
+    "LICENSE",
+    "pyproject.toml",
+    "README.rst",
+    "tox.ini",
+]
 
 [tool.mypy]
 ignore_missing_imports = true
