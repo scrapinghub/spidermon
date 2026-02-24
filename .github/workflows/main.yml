@@ -23,6 +23,8 @@ jobs:
           tox: mypy
         - python-version: "3.13"  # https://github.com/scrapy/scrapy/issues/7087
           tox: docs
+        - python-version: "3.14"
+          tox: twinecheck
         - python-version: "3.10"
           tox: min
         - python-version: "3.10"
