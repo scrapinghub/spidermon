@@ -55,7 +55,6 @@ monitoring = [
 ]
 
 [tool.bumpversion]
-current_version = "1.24.0"
 commit = true
 tag = true
 tag_name = "{new_version}"
