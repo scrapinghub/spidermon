@@ -87,9 +87,6 @@ include = [
     "tests/**",
     "CHANGES.rst",
     "CONTRIBUTING.rst",
-    "LICENSE",
-    "pyproject.toml",
-    "README.rst",
     "tox.ini",
 ]
 
