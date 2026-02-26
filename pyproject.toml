@@ -1,0 +1,210 @@
+[build-system]
+requires = ["hatchling>=1.28.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "spidermon"
+version = "1.24.0"
+description = "Spidermon is a framework to build monitors for Scrapy spiders."
+readme = "README.rst"
+requires-python = ">=3.10"
+license = "BSD-3-Clause"
+authors = [ { name = "Zyte", email = "opensource@zyte.com" } ]
+keywords = ["scrapy", "monitoring", "spidermon"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: Scrapy",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: System :: Monitoring",
+]
+dependencies = [
+    "jsonschema[format]>=4.21.0",
+    "python-slugify>=5.0.0",
+]
+
+
+[project.urls]
+Documentation = "https://spidermon.readthedocs.io/"
+Source = "https://github.com/scrapinghub/spidermon"
+Tracker = "https://github.com/scrapinghub/spidermon/issues"
+"Release notes" = "https://spidermon.readthedocs.io/en/latest/changelog.html"
+
+[project.optional-dependencies]
+monitoring = [
+    "boto>=2.32.1",
+    "boto3>=1.10.0",
+    "itemadapter>=0.1.0",
+    "jinja2>=3.0.0",
+    "premailer>=2.7.0",
+    "requests>=2.19.0",
+    "scrapinghub>=2.4.0",
+    "scrapinghub-entrypoint-scrapy>=0.11.2",
+    "scrapy>=2.7.0",
+    "sentry_sdk",
+    "slack_sdk",
+]
+
+[tool.bumpversion]
+commit = true
+tag = true
+tag_name = "{new_version}"
+
+[[tool.bumpversion.files]]
+filename = "spidermon/VERSION"
+
+[[tool.bumpversion.files]]
+filename = "spidermon/__init__.py"
+
+[[tool.bumpversion.files]]
+filename = "setup.py"
+
+[tool.coverage.run]
+branch = true
+
+[tool.hatch.build]
+include = [
+    "spidermon/VERSION",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["spidermon"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "docs/**",
+    "examples/**",
+    "spidermon/**",
+    "tests/**",
+    "CHANGES.rst",
+    "CONTRIBUTING.rst",
+    "tox.ini",
+]
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.ruff.lint]
+allowed-confusables = ["’"]
+extend-select = [
+    # flake8-builtins
+    "A",
+    # flake8-async
+    "ASYNC",
+    # flake8-bugbear
+    "B",
+    # flake8-comprehensions
+    "C4",
+    # flake8-commas
+    "COM",
+    # pydocstyle
+    "D",
+    # flake8-future-annotations
+    "FA",
+    # flynt
+    "FLY",
+    # refurb
+    "FURB",
+    # isort
+    "I",
+    # flake8-implicit-str-concat
+    "ISC",
+    # flake8-logging
+    "LOG",
+    # Perflint
+    "PERF",
+    # pygrep-hooks
+    "PGH",
+    # flake8-pie
+    "PIE",
+    # pylint
+    "PL",
+    # flake8-pytest-style
+    "PT",
+    # flake8-use-pathlib
+    "PTH",
+    # flake8-pyi
+    "PYI",
+    # flake8-quotes
+    "Q",
+    # flake8-return
+    "RET",
+    # flake8-raise
+    "RSE",
+    # Ruff-specific rules
+    "RUF",
+    # flake8-bandit
+    "S",
+    # flake8-simplify
+    "SIM",
+    # flake8-slots
+    "SLOT",
+    # flake8-debugger
+    "T10",
+    # flake8-type-checking
+    "TC",
+    # flake8-tidy-imports
+    "TID",
+    # pyupgrade
+    "UP",
+    # pycodestyle warnings
+    "W",
+    # flake8-2020
+    "YTT",
+]
+ignore = [
+    # Trailing comma missing
+    "COM812",
+    # Missing docstring in public module
+    "D100",
+    # Missing docstring in public class
+    "D101",
+    # Missing docstring in public method
+    "D102",
+    # Missing docstring in public function
+    "D103",
+    # Missing docstring in public package
+    "D104",
+    # Missing docstring in magic method
+    "D105",
+    # Missing docstring in public nested class
+    "D106",
+    # Missing docstring in __init__
+    "D107",
+    # 1 blank line required between summary line and description
+    "D205",
+    # Multi-line docstring closing quotes should be on a separate line
+    "D209",
+]
+
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
+
+[tool.ruff.lint.per-file-ignores]
+"conftest.py" = ["D"]
+"examples/**" = ["D"]
+"!tests/**" = ["PT0"]
+"tests/**" = ["D", "PLR2004", "S"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.pytest]
+filterwarnings = [
+    'error',
+    # resource warnings from sockets
+    'ignore::pytest.PytestUnraisableExceptionWarning',
+    # scrapy's reactor unclosed sockets
+    'ignore::ResourceWarning:scrapy.utils.reactor',
+    # https://github.com/scrapinghub/python-scrapinghub/pull/183
+    'ignore:datetime\.datetime\.utcfromtimestamp\(\) is deprecated:DeprecationWarning:scrapinghub\..*',
+]

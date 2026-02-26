@@ -1,7 +1,7 @@
 import copy
 import json
-from collections import OrderedDict
 import warnings
+from collections import OrderedDict
 
 
 def getdictorlist(crawler, name, default=None):
@@ -23,9 +23,10 @@ def get_aws_credentials(settings):
     if aws_access_key_id and aws_secret_access_key:
         warnings.warn(
             "SPIDERMON_AWS_ACCESS_KEY and SPIDERMON_AWS_SECRET_KEY are deprecated. "
-            "Please update them to SPIDERMON_AWS_ACCESS_KEY_ID and SPIDERMON_AWS_SECRET_ACCESS_KEY. "  # noqa
+            "Please update them to SPIDERMON_AWS_ACCESS_KEY_ID and SPIDERMON_AWS_SECRET_ACCESS_KEY. "
             "Scrapy settings AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are also valid.",
             DeprecationWarning,
+            stacklevel=2,
         )
 
     if not aws_access_key_id and not aws_secret_access_key:

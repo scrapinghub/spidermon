@@ -1,17 +1,21 @@
-from unittest.mock import patch, MagicMock
-from spidermon.contrib.actions.email.ses import SendSESEmail
+from unittest.mock import MagicMock, patch
 
 import pytest
-from scrapy.utils.test import get_crawler
+
+pytest.importorskip("scrapy")
+
 from scrapy import Spider
+from scrapy.utils.test import get_crawler
+
+from spidermon.contrib.actions.email.ses import SendSESEmail
 
 
 @pytest.fixture
 def test_settings():
     return {
         "SPIDERMON_AWS_REGION_NAME": "fake",
-        "SPIDERMON_AWS_ACCESS_KEY": "fake",
-        "SPIDERMON_AWS_SECRET_KEY": "fake",
+        "SPIDERMON_AWS_ACCESS_KEY_ID": "fake",
+        "SPIDERMON_AWS_SECRET_ACCESS_KEY": "fake",
         "SPIDERMON_EMAIL_TO": "fake@test.com",
         "SPIDERMON_EMAIL_SUBJECT": "fake",
         "SPIDERMON_BODY_TEXT_TEMPLATE": "fake",

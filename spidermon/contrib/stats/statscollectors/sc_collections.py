@@ -16,24 +16,26 @@ class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
         proj_id = os.environ.get("SCRAPY_PROJECT_ID")
         if proj_id is None:
             # not running on dash
-            return
+            return None
 
         project = sh_client.get_project(proj_id)
         collections = project.collections
         spider_name = get_spider_name(spider)
         stats_location = f"{spider_name}_stats_history"
-        store = collections.get_store(stats_location)
-        return store
+        return collections.get_store(stats_location)
 
-    def open_spider(self, spider):
-        super().open_spider(spider)
+    def open_spider(self, spider=None):
+        args = [spider] if spider else []
+        super().open_spider(*args)
+        spider = spider or self._crawler.spider
         self.store = self._open_collection(spider)
         # note that the _open_collection method does not error if collection does not exist yet
         if self.store is None:
             return
 
         max_stored_stats = spider.crawler.settings.getint(
-            "SPIDERMON_MAX_STORED_STATS", default=100
+            "SPIDERMON_MAX_STORED_STATS",
+            default=100,
         )
 
         try:
@@ -41,13 +43,14 @@ class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
             stats_history = deque(stats_history, maxlen=max_stored_stats)
         except scrapinghub.client.exceptions.NotFound:
             # this happens if the stats store has not been created yet
-            stats_history = deque([], maxlen=max_stored_stats)
+            stats_history = deque(maxlen=max_stored_stats)
 
         spider.stats_history = stats_history
 
-    def _persist_stats(self, stats, spider):
+    def _persist_stats(self, stats, spider=None):
         if self.store is None:
             return
+        spider = spider or self._crawler.spider
         stats_history = spider.stats_history
         stats_history.appendleft(self._stats)
         for index, data in enumerate(stats_history):

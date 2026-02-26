@@ -1,15 +1,16 @@
 import sys
+from typing import Any, ClassVar
 
 from spidermon.core.suites import MonitorSuite
+from spidermon.data import Data
+from spidermon.exceptions import InvalidMonitor, InvalidResult
 from spidermon.results.monitor import MonitorResult
 from spidermon.results.text import TextMonitorResult
-from spidermon.exceptions import InvalidMonitor, InvalidResult
-from spidermon.data import Data
 
 
 class MonitorRunner:
-    data_immutable_dicts = ["stats"]
-    data_default_data = {"meta": {}}
+    data_immutable_dicts: ClassVar[list[str]] = ["stats"]
+    data_default_data: ClassVar[dict[str, Any]] = {"meta": {}}
 
     def __init__(self):
         self.suite = None
@@ -32,10 +33,7 @@ class MonitorRunner:
         data = data or {}
         new_data_dict = {}
         for attr_name, attr in data.items():
-            if attr_name in self.data_immutable_dicts:
-                new_data = Data(attr)
-            else:
-                new_data = attr
+            new_data = Data(attr) if attr_name in self.data_immutable_dicts else attr
             new_data_dict[attr_name] = new_data
         return Data(new_data_dict)
 
@@ -63,7 +61,8 @@ class MonitorRunner:
             self.run_monitors_passed()
         else:
             self.result.skip_all_step_actions(
-                actions=self.suite.monitors_passed_actions, reason="A Monitor failed"
+                actions=self.suite.monitors_passed_actions,
+                reason="A Monitor failed",
             )
         self.result.finish_step()
 
@@ -73,7 +72,8 @@ class MonitorRunner:
             self.run_monitors_failed()
         else:
             self.result.skip_all_step_actions(
-                actions=self.suite.monitors_failed_actions, reason="No Monitors failed"
+                actions=self.suite.monitors_failed_actions,
+                reason="No Monitors failed",
             )
         self.result.finish_step()
 

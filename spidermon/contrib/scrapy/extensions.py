@@ -1,22 +1,19 @@
-import os
-
+from itemadapter import ItemAdapter
 from scrapy import signals
 from scrapy.exceptions import NotConfigured
 from scrapy.utils.misc import load_object
 from twisted.internet.task import LoopingCall
-from itemadapter import ItemAdapter
 
 from spidermon import MonitorSuite
-from spidermon.contrib.utils.spider import get_spider_name
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
-from spidermon.python import factory
+from spidermon.contrib.utils.spider import get_spider_name
 from spidermon.python.monitors import ExpressionsMonitor
 from spidermon.utils.field_coverage import calculate_field_coverage
 from spidermon.utils.zyte import Client
 
 
 class Spidermon:
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         crawler,
         spider_opened_suites=None,
@@ -74,8 +71,12 @@ class Spidermon:
             monitor_class = load_object(monitor_class)
         else:
             monitor_class = ExpressionsMonitor
+
+        from spidermon.python import factory  # noqa: PLC0415
+
         monitor = factory.create_monitor_class_from_dict(
-            monitor_dict=suite_to_load, monitor_class=monitor_class
+            monitor_dict=suite_to_load,
+            monitor_class=monitor_class,
         )
         suite = MonitorSuite(crawler=self.crawler)
         suite.add_monitor(monitor)
@@ -86,25 +87,25 @@ class Spidermon:
         ext = cls(
             crawler=crawler,
             spider_opened_suites=crawler.settings.getlist(
-                "SPIDERMON_SPIDER_OPEN_MONITORS"
+                "SPIDERMON_SPIDER_OPEN_MONITORS",
             ),
             spider_closed_suites=crawler.settings.getlist(
-                "SPIDERMON_SPIDER_CLOSE_MONITORS"
+                "SPIDERMON_SPIDER_CLOSE_MONITORS",
             ),
             engine_stopped_suites=crawler.settings.getlist(
-                "SPIDERMON_ENGINE_STOP_MONITORS"
+                "SPIDERMON_ENGINE_STOP_MONITORS",
             ),
             spider_opened_expression_suites=crawler.settings.getlist(
-                "SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS"
+                "SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS",
             ),
             spider_closed_expression_suites=crawler.settings.getlist(
-                "SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS"
+                "SPIDERMON_SPIDER_CLOSE_EXPRESSION_MONITORS",
             ),
             engine_stopped_expression_suites=crawler.settings.getlist(
-                "SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS"
+                "SPIDERMON_ENGINE_STOP_EXPRESSION_MONITORS",
             ),
             expressions_monitor_class=crawler.settings.get(
-                "SPIDERMON_EXPRESSIONS_MONITOR_CLASS"
+                "SPIDERMON_EXPRESSIONS_MONITOR_CLASS",
             ),
             periodic_suites=crawler.settings.getdict("SPIDERMON_PERIODIC_MONITORS"),
         )
@@ -138,7 +139,7 @@ class Spidermon:
         spider = self.crawler.spider
         self._run_suites(spider, self.engine_stopped_suites)
 
-    def _count_item(
+    def _count_item(  # noqa: PLR0913
         self,
         item,
         skip_none_values,
@@ -165,7 +166,7 @@ class Spidermon:
                 if max_dict_nesting_level == -1:
                     self._count_item(value, skip_none_values, field_item_count_stat)
                     continue
-                elif (
+                if (
                     max_dict_nesting_level > -1
                     and nesting_level < max_dict_nesting_level
                 ):
@@ -207,13 +208,16 @@ class Spidermon:
 
     def item_scraped(self, item, response, spider):
         skip_none_values = spider.crawler.settings.getbool(
-            "SPIDERMON_FIELD_COVERAGE_SKIP_NONE", False
+            "SPIDERMON_FIELD_COVERAGE_SKIP_NONE",
+            False,
         )
         list_field_coverage_levels = spider.crawler.settings.getint(
-            "SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS", 0
+            "SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS",
+            0,
         )
         dict_field_coverage_levels = spider.crawler.settings.getint(
-            "SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS", -1
+            "SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS",
+            -1,
         )
         self.crawler.stats.inc_value("spidermon_item_scraped_count")
         self._count_item(
@@ -235,7 +239,7 @@ class Spidermon:
 
     def _generate_data_for_spider(self, spider):
         return {
-            "stats": self.crawler.stats.get_stats(spider),
+            "stats": self.crawler.stats.get_stats(),
             "stats_history": spider.stats_history
             if hasattr(spider, "stats_history")
             else [],

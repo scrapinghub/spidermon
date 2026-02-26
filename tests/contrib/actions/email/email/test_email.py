@@ -1,4 +1,7 @@
 import pytest
+
+pytest.importorskip("scrapy")
+
 from scrapy.utils.test import get_crawler
 
 from spidermon.contrib.actions.email import SendEmail
@@ -13,7 +16,7 @@ def mock_render_template(mocker):
 
 
 @pytest.mark.parametrize(
-    "settings_to, expected_to",
+    ("settings_to", "expected_to"),
     [
         ("to.someone@somewhere.com", "to.someone@somewhere.com"),
         (
@@ -43,7 +46,7 @@ def test_email_message_to(mock_render_template, settings_to, expected_to):
             "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
             "SPIDERMON_BODY_HTML": "some html",
             "SPIDERMON_BODY_TEXT": "some text",
-        }
+        },
     )
     send_email = SendEmail.from_crawler(crawler)
 
@@ -53,7 +56,7 @@ def test_email_message_to(mock_render_template, settings_to, expected_to):
 
 
 @pytest.mark.parametrize(
-    "settings_cc, expected_cc",
+    ("settings_cc", "expected_cc"),
     [
         ("cc.someone@somewhere.com", "cc.someone@somewhere.com"),
         (
@@ -84,7 +87,7 @@ def test_email_message_cc(mock_render_template, settings_cc, expected_cc):
             "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
             "SPIDERMON_BODY_HTML": "some html",
             "SPIDERMON_BODY_TEXT": "some text",
-        }
+        },
     )
     send_email = SendEmail.from_crawler(crawler)
 
@@ -94,7 +97,7 @@ def test_email_message_cc(mock_render_template, settings_cc, expected_cc):
 
 
 @pytest.mark.parametrize(
-    "settings_bcc, expected_bcc",
+    ("settings_bcc", "expected_bcc"),
     [
         ("bcc.someone@somewhere.com", "bcc.someone@somewhere.com"),
         (
@@ -125,7 +128,7 @@ def test_email_message_bcc(mock_render_template, settings_bcc, expected_bcc):
             "SPIDERMON_EMAIL_REPLY_TO": "reply.to@somewhere.com",
             "SPIDERMON_BODY_HTML": "some html",
             "SPIDERMON_BODY_TEXT": "some text",
-        }
+        },
     )
     send_email = SendEmail.from_crawler(crawler)
 

@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from unittest import TestCase
 
 from spidermon import settings
+
 from .options import MonitorOptions, MonitorOptionsMetaclass
 
 
@@ -15,7 +16,7 @@ class Monitor(TestCase, metaclass=MonitorOptionsMetaclass):
 
     @property
     def name(self):
-        return "/".join([self.monitor_name, self.method_name])
+        return f"{self.monitor_name}/{self.method_name}"
 
     @property
     def full_name(self):
@@ -100,13 +101,14 @@ class Monitor(TestCase, metaclass=MonitorOptionsMetaclass):
         return level * "\t" + repr(self) + "\n"
 
     def _init_method(self):
-        MonitorOptions.add_or_create(self.method.__func__)
+        if hasattr(self, self._testMethodName):
+            MonitorOptions.add_or_create(self.method.__func__)
 
     def utc_now_with_timezone(self):
         return datetime.utcnow().replace(tzinfo=timezone.utc)
 
     def __repr__(self):
-        return "<MONITOR:({}) at {}>".format(self.name, hex(id(self)))
+        return f"<MONITOR:({self.name}) at {hex(id(self))}>"
 
     def __str__(self):
         return self.name

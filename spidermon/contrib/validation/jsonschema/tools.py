@@ -1,9 +1,10 @@
-import logging
-
 import json
-from scrapy.utils.misc import load_object
+import logging
+from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import urlopen
+
+from scrapy.utils.misc import load_object
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +17,7 @@ def get_schema_from(source):
         except Exception as e:
             logger.exception(str(e) + f"\nCould not parse schema from '{source}'")
     elif source.endswith(".json"):
-        with open(source) as f:
+        with Path(source).open() as f:
             try:
                 return json.load(f)
             except Exception as e:
@@ -38,7 +39,7 @@ def is_schema_url(path):
 
 def get_contents(url):
     try:
-        with urlopen(url) as f:
+        with urlopen(url) as f:  # noqa: S310
             return f.read().decode("utf-8")
     except Exception as e:
         logger.exception(str(e) + f"\nFailed to get '{url}'")

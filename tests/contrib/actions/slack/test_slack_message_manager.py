@@ -1,9 +1,13 @@
 import pytest
 
+pytest.importorskip("scrapy")
+
+from typing import ClassVar
+
 from scrapy.utils.test import get_crawler
 from slack_sdk.errors import SlackApiError
 
-from spidermon.contrib.actions.slack import SlackMessageManager, SendSlackMessage
+from spidermon.contrib.actions.slack import SendSlackMessage, SlackMessageManager
 
 
 @pytest.fixture
@@ -26,7 +30,7 @@ def test_load_recipients_list_from_crawler_settings(recipients):
 
 def test_get_valid_icon_url(mock_webclient):
     mock_webclient().users_list.return_value = {
-        "members": [{"name": "test_valid_user", "profile": {"image_48": "fake.jpg"}}]
+        "members": [{"name": "test_valid_user", "profile": {"image_48": "fake.jpg"}}],
     }
     manager = SlackMessageManager(sender_token="Fake", sender_name="test_valid_user")
     url = manager._get_icon_url()
@@ -35,7 +39,7 @@ def test_get_valid_icon_url(mock_webclient):
 
 def test_get_invalid_user_icon_url(mock_webclient):
     mock_webclient().users_list.return_value = {
-        "members": [{"name": "test_valid_user", "profile": {"image_48": "fake.jpg"}}]
+        "members": [{"name": "test_valid_user", "profile": {"image_48": "fake.jpg"}}],
     }
     manager = SlackMessageManager(sender_token="Fake", sender_name="test_invalid_user")
     url = manager._get_icon_url()
@@ -44,7 +48,10 @@ def test_get_invalid_user_icon_url(mock_webclient):
 
 def test_get_invalid_permissions_icon_url(mock_webclient):
     class FakeResponse:
-        data = {"error": "missing_scope", "needed": "users:read"}
+        data: ClassVar[dict[str, str]] = {
+            "error": "missing_scope",
+            "needed": "users:read",
+        }
 
     fake_error = SlackApiError("message", FakeResponse())
     mock_webclient().users_list.side_effect = fake_error
@@ -55,7 +62,7 @@ def test_get_invalid_permissions_icon_url(mock_webclient):
 
 def test_get_invalid_unknown_slack_error_icon_url(mock_webclient):
     class FakeResponse:
-        data = {"error": "unknown", "needed": "unknown"}
+        data: ClassVar[dict[str, str]] = {"error": "unknown", "needed": "unknown"}
 
     fake_error = SlackApiError("mocked error", FakeResponse())
     mock_webclient().users_list.side_effect = fake_error

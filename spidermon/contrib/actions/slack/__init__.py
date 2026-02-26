@@ -19,13 +19,13 @@ class SlackMessageManager:
         sender_token = sender_token or self.sender_token
         if not sender_token:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_SLACK_SENDER_TOKEN setting."
+                "You must provide a value for SPIDERMON_SLACK_SENDER_TOKEN setting.",
             )
 
         self.sender_name = sender_name or self.sender_name
         if not self.sender_name:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_SLACK_SENDER_NAME setting."
+                "You must provide a value for SPIDERMON_SLACK_SENDER_NAME setting.",
             )
 
         self.fake = fake
@@ -38,7 +38,7 @@ class SlackMessageManager:
             self._users = self._get_users_info()
         return self._users
 
-    def send_message(
+    def send_message(  # noqa: PLR0913
         self,
         to,
         text,
@@ -52,7 +52,7 @@ class SlackMessageManager:
             logger.info(text)
             if attachments:
                 logger.info(attachments)
-            return
+            return None
 
         if isinstance(to, list):
             return [
@@ -67,7 +67,7 @@ class SlackMessageManager:
                 )
                 for recipient in to
             ]
-        elif to.startswith("@"):
+        if to.startswith("@"):
             return self._send_user_message(
                 username=to,
                 text=text,
@@ -76,36 +76,36 @@ class SlackMessageManager:
                 attachments=attachments,
                 **kwargs,
             )
-        else:
-            if use_mention:
-                if to.startswith("#"):
-                    text = "@channel: " + text
-                else:
-                    text = "@group: " + text
-            return self._send_channel_message(
-                channel=to,
-                text=text,
-                parse=parse,
-                link_names=link_names,
-                attachments=attachments,
-                **kwargs,
-            )
+        if use_mention:
+            text = "@channel: " + text if to.startswith("#") else "@group: " + text
+        return self._send_channel_message(
+            channel=to,
+            text=text,
+            parse=parse,
+            link_names=link_names,
+            attachments=attachments,
+            **kwargs,
+        )
 
     def _get_user_id(self, username):
-        name = username[1:] if username.startswith("@") else username
+        name = username.removeprefix("@")
         user = self.users.get(name, None)
         return user["id"] if user else None
 
     def _get_users_info(self):
-        return dict(
-            [
-                (member["name"].lower(), member)
-                for member in self._client.users_list()["members"]
-            ]
-        )
+        return {
+            member["name"].lower(): member
+            for member in self._client.users_list()["members"]
+        }
 
     def _send_user_message(
-        self, username, text, parse="full", link_names=1, attachments=None, **kwargs
+        self,
+        username,
+        text,
+        parse="full",
+        link_names=1,
+        attachments=None,
+        **kwargs,
     ):
         user_id = self._get_user_id(username)
         if user_id:
@@ -117,9 +117,16 @@ class SlackMessageManager:
                 attachments=attachments,
                 **kwargs,
             )
+        return None
 
     def _send_channel_message(
-        self, channel, text, parse="full", link_names=1, attachments=None, **kwargs
+        self,
+        channel,
+        text,
+        parse="full",
+        link_names=1,
+        attachments=None,
+        **kwargs,
     ):
         self._client.chat_postMessage(
             channel=channel,
@@ -133,8 +140,7 @@ class SlackMessageManager:
         )
 
     def _get_icon_url(self):
-        """
-        Looks up the icon url for the user set as the message sender
+        """Look up the icon url for the user set as the message sender.
 
         This will only return a URL if the slack app has users:read permission and
         bot appears in the organisation user list. A no frills bot intended to
@@ -149,7 +155,7 @@ class SlackMessageManager:
                 and e.response.data.get("needed") == "users:read"
             ):
                 logger.warning(
-                    f"bot does not have users:read permissions for slack org - default icon url used"
+                    "bot does not have users:read permissions for slack org - default icon url used",
                 )
                 # can be an expected outcome - will use its own icon
                 icon_url = None
@@ -159,7 +165,7 @@ class SlackMessageManager:
             # bot has read permissions for slack org but can't find sender in list
             # can be an expected outcome - will use its own icon
             logger.warning(
-                f"bot cannot finder user in slack org member list - default icon url used"
+                "bot cannot finder user in slack org member list - default icon url used",
             )
             icon_url = None
         return icon_url
@@ -167,9 +173,8 @@ class SlackMessageManager:
     def _parse_attachments(self, attachments):
         if not attachments:
             return None
-        else:
-            python_attachments = ast.literal_eval(attachments)
-            return json.dumps(python_attachments)
+        python_attachments = ast.literal_eval(attachments)
+        return json.dumps(python_attachments)
 
 
 class SendSlackMessage(ActionWithTemplates):
@@ -184,7 +189,7 @@ class SendSlackMessage(ActionWithTemplates):
     include_attachments = True
     fake = False
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         sender_token=None,
         sender_name=None,
@@ -224,7 +229,7 @@ class SendSlackMessage(ActionWithTemplates):
 
         if not self.fake and not self.recipients:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_SLACK_RECIPIENTS setting."
+                "You must provide a value for SPIDERMON_SLACK_RECIPIENTS setting.",
             )
 
     @classmethod
@@ -235,15 +240,15 @@ class SendSlackMessage(ActionWithTemplates):
             "recipients": crawler.settings.getlist("SPIDERMON_SLACK_RECIPIENTS"),
             "message": crawler.settings.get("SPIDERMON_SLACK_MESSAGE"),
             "message_template": crawler.settings.get(
-                "SPIDERMON_SLACK_MESSAGE_TEMPLATE"
+                "SPIDERMON_SLACK_MESSAGE_TEMPLATE",
             ),
             "attachments": crawler.settings.get("SPIDERMON_SLACK_ATTACHMENTS"),
             "attachments_template": crawler.settings.get(
-                "SPIDERMON_SLACK_ATTACHMENTS_TEMPLATE"
+                "SPIDERMON_SLACK_ATTACHMENTS_TEMPLATE",
             ),
             "include_message": crawler.settings.get("SPIDERMON_SLACK_INCLUDE_MESSAGE"),
             "include_attachments": crawler.settings.get(
-                "SPIDERMON_SLACK_INCLUDE_ATTACHMENTS"
+                "SPIDERMON_SLACK_INCLUDE_ATTACHMENTS",
             ),
             "fake": crawler.settings.getbool("SPIDERMON_SLACK_FAKE"),
         }
@@ -260,16 +265,12 @@ class SendSlackMessage(ActionWithTemplates):
         if self.include_message:
             if self.message:
                 return self.render_text_template(self.message)
-            else:
-                return self.render_template(self.message_template)
-        else:
-            return None
+            return self.render_template(self.message_template)
+        return None
 
     def get_attachments(self):
         if self.include_attachments:
             if self.attachments:
                 return self.render_text_template(self.attachments)
-            else:
-                return self.render_template(self.attachments_template)
-        else:
-            return None
+            return self.render_template(self.attachments_template)
+        return None

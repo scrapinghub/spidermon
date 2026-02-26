@@ -1,17 +1,17 @@
-import operator
 import logging
+import operator
+from typing import Any, ClassVar
 
 from spidermon import Monitor
+from spidermon.contrib.monitors.mixins.spider import SpiderMonitorMixin
 from spidermon.exceptions import NotConfigured
-
-from ...monitors.mixins.spider import SpiderMonitorMixin
 
 logger = logging.getLogger(__name__)
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
     longMessage = False
-    ops = {
+    ops: ClassVar[dict[str, Any]] = {
         ">": operator.gt,
         ">=": operator.ge,
         "<": operator.lt,
@@ -29,19 +29,19 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
     def run(self, result):
         if self.check_if_skip_rule_met():
             logger.info(f"Skipping {self.monitor_name} monitor")
-            return
+            return None
 
         return super().run(result)
 
     def check_if_skip_rule_met(self):
         if (
             hasattr(self, "skip_rules")
-            and getattr(self, "monitor_name")
+            and self.monitor_name
             and self.skip_rules.get(self.monitor_name)
         ):
             skip_rules = self.skip_rules[self.monitor_name]
             for rule in skip_rules:
-                if hasattr(rule, "__call__"):
+                if callable(rule):
                     if rule(self):
                         return True
                     continue
@@ -135,13 +135,13 @@ class BaseStatMonitor(BaseScrapyMonitor):
 
     def run(self, result):
         has_threshold_config = any(
-            [hasattr(self, "threshold_setting"), hasattr(self, "get_threshold")]
+            [hasattr(self, "threshold_setting"), hasattr(self, "get_threshold")],
         )
         if not has_threshold_config:
             raise NotConfigured(
                 f"{self.__class__.__name__} should include a a `threshold_setting` attribute "
                 "to be configured in your project settings with the desired threshold "
-                "or a `get_threshold` method that returns the desired threshold."
+                "or a `get_threshold` method that returns the desired threshold.",
             )
 
         if (
@@ -150,7 +150,7 @@ class BaseStatMonitor(BaseScrapyMonitor):
         ):
             raise NotConfigured(
                 f"Configure {self.threshold_setting} to your project "
-                f"settings to use {self.monitor_name}."
+                f"settings to use {self.monitor_name}.",
             )
 
         return super().run(result)
@@ -169,7 +169,7 @@ class BaseStatMonitor(BaseScrapyMonitor):
             "==": self.assertEqual,
             "!=": self.assertNotEqual,
         }
-        threshold = self._get_threshold_value()
+        threshold = float(self._get_threshold_value())
 
         if self.stat_name not in self.stats:
             message = f"Unable to find '{self.stat_name}' in job stats."
@@ -178,9 +178,10 @@ class BaseStatMonitor(BaseScrapyMonitor):
             else:
                 self.skipTest(message)
 
-        value = self.stats.get(self.stat_name)
+        value = float(self.stats.get(self.stat_name))
 
         assertion_method = assertions.get(self.assert_type)
+
         assertion_method(
             value,
             threshold,

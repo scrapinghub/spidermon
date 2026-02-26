@@ -81,8 +81,6 @@ Ready to contribute? Here's how to set up `spidermon` for local development.
 #. When you're done making changes, check that your changes pass the tests,
    including testing other Python versions with tox::
 
-    $ pip install -r requirements.txt
-    $ pip install -r requirements-docs.txt
     $ tox
 
 #. Install the git hook scripts from pre-commit::

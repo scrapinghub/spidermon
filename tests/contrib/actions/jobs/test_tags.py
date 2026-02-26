@@ -1,6 +1,9 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
+
+pytest.importorskip("scrapy")
+
 from scrapy.utils.test import get_crawler
 
 from spidermon.contrib.actions.jobs.tags import AddJobTags, JobTagsAction, RemoveJobTags
@@ -55,7 +58,7 @@ def test_remove_job_tags(test_settings):
 
     remove_job_tags.data = MagicMock()
     remove_job_tags.data.job.metadata = SettableDict(
-        {"tags": ["remove_foo", "remove_bar"]}
+        {"tags": ["remove_foo", "remove_bar"]},
     )
     remove_job_tags.run_action()
     assert remove_job_tags.data.job.metadata.get("tags") == []

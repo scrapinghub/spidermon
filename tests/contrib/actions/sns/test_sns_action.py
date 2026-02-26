@@ -1,12 +1,13 @@
 import pytest
 
-from scrapy.utils.test import get_crawler
-from spidermon.exceptions import NotConfigured
+pytest.importorskip("scrapy")
+
 from spidermon.contrib.actions.sns import SendSNSNotification
 from spidermon.contrib.actions.sns.notifiers import (
     SendSNSNotificationSpiderFinished,
     SendSNSNotificationSpiderStarted,
 )
+from spidermon.exceptions import NotConfigured
 
 
 @pytest.fixture

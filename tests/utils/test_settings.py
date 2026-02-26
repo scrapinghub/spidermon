@@ -1,3 +1,7 @@
+import pytest
+
+pytest.importorskip("scrapy")
+
 from scrapy.settings import Settings
 
 from spidermon.utils.settings import get_aws_credentials
@@ -18,14 +22,14 @@ def test_spidermon_aws_credentials(mocker):
         {
             "SPIDERMON_AWS_ACCESS_KEY": "aws_access_key",
             "SPIDERMON_AWS_SECRET_KEY": "aws_secret_key",
-        }
+        },
     )
 
     (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(settings)
 
     assert aws_access_key_id == "aws_access_key"
     assert aws_secret_access_key == "aws_secret_key"
-    warn_mock.assert_called_with(mocker.ANY, DeprecationWarning)
+    warn_mock.assert_called_with(mocker.ANY, DeprecationWarning, stacklevel=2)
 
 
 def test_spidermon_aws_credentials_scrapy_like():
@@ -33,7 +37,7 @@ def test_spidermon_aws_credentials_scrapy_like():
         {
             "SPIDERMON_AWS_ACCESS_KEY_ID": "aws_access_key_id",
             "SPIDERMON_AWS_SECRET_ACCESS_KEY": "aws_secret_access_key",
-        }
+        },
     )
 
     (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(settings)
@@ -47,7 +51,7 @@ def test_spidermon_aws_credentials_fall_back_to_scrapy():
         {
             "AWS_ACCESS_KEY_ID": "scrapy_aws_access_key_id",
             "AWS_SECRET_ACCESS_KEY": "scrapy_aws_secret_access_key",
-        }
+        },
     )
 
     (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(settings)
@@ -63,7 +67,7 @@ def test_spidermon_aws_credentials_are_preferred_over_scrapy_ones():
             "AWS_SECRET_ACCESS_KEY": "scrapy_aws_secret_access_key",
             "SPIDERMON_AWS_ACCESS_KEY_ID": "spidermon_aws_access_key_id",
             "SPIDERMON_AWS_SECRET_ACCESS_KEY": "spidermon_aws_secret_access_key",
-        }
+        },
     )
 
     (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(settings)
@@ -74,7 +78,7 @@ def test_spidermon_aws_credentials_are_preferred_over_scrapy_ones():
 
 def test_spidermon_old_aws_credentials_are_preferred_over_new_ones(mocker):
     mocker.patch(
-        "spidermon.utils.settings.warnings.warn"
+        "spidermon.utils.settings.warnings.warn",
     )  # avoid the warning in the tests
     settings = Settings(
         {
@@ -82,7 +86,7 @@ def test_spidermon_old_aws_credentials_are_preferred_over_new_ones(mocker):
             "SPIDERMON_AWS_SECRET_KEY": "old_aws_secret_key",
             "SPIDERMON_AWS_ACCESS_KEY_ID": "new_aws_access_key_id",
             "SPIDERMON_AWS_SECRET_ACCESS_KEY": "new_aws_secret_access_key",
-        }
+        },
     )
 
     (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(settings)

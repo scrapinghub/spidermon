@@ -1,14 +1,14 @@
 import pytest
-from spidermon.contrib.scrapy.monitors import (
-    BaseStatMonitor,
-)
-from spidermon import MonitorSuite
+
+pytest.importorskip("scrapy")
+
+from spidermon import MonitorSuite, settings
+from spidermon.contrib.scrapy.monitors import BaseStatMonitor
 from spidermon.exceptions import NotConfigured
-from spidermon import settings
 
 
 @pytest.mark.parametrize(
-    "assertion_type,stat_value,threshold,expected_status",
+    ("assertion_type", "stat_value", "threshold", "expected_status"),
     [
         ("==", 90, 100, settings.MONITOR.STATUS.FAILURE),
         ("==", 100, 100, settings.MONITOR.STATUS.SUCCESS),
@@ -33,7 +33,11 @@ from spidermon import settings
     ],
 )
 def test_base_stat_monitor_assertion_types(
-    make_data, assertion_type, stat_value, threshold, expected_status
+    make_data,
+    assertion_type,
+    stat_value,
+    threshold,
+    expected_status,
 ):
     class TestBaseStatMonitor(BaseStatMonitor):
         stat_name = "test_statistic"
@@ -101,8 +105,8 @@ def test_failure_message_describe_values_expected(make_data):
         threshold_setting = "THRESHOLD_SETTING"
         assert_type = "=="
 
-    expected_threshold = 100
-    obtained_value = 90
+    expected_threshold = 100.0
+    obtained_value = 90.0
     data = make_data({TestBaseStatMonitor.threshold_setting: expected_threshold})
 
     runner = data.pop("runner")
@@ -113,7 +117,7 @@ def test_failure_message_describe_values_expected(make_data):
     assert (
         runner.result.monitor_results[0].reason
         == f"Expecting '{TestBaseStatMonitor.stat_name}' to be '{TestBaseStatMonitor.assert_type}' "
-        f"to '{expected_threshold}'. Current value: '{obtained_value}'",
+        f"to '{expected_threshold}'. Current value: '{obtained_value}'"
     )
 
 

@@ -9,9 +9,9 @@ file as follows:
 .. code-block:: python
 
     # settings.py
-    SPIDERMON_SENTRY_DSN = '<SENTRY_DSN_URL>'
-    SPIDERMON_SENTRY_PROJECT_NAME = '<PROJECT_NAME>'
-    SPIDERMON_SENTRY_ENVIRONMENT_TYPE = '<ENVIRONMENT_TYPE>'
+    SPIDERMON_SENTRY_DSN = "<SENTRY_DSN_URL>"
+    SPIDERMON_SENTRY_PROJECT_NAME = "<PROJECT_NAME>"
+    SPIDERMON_SENTRY_ENVIRONMENT_TYPE = "<ENVIRONMENT_TYPE>"
 
 A notification on `Sentry`_ will look like the following one:
 
@@ -56,5 +56,5 @@ Default: ``False``
 
 If set `True`, the Sentry message will be in the logs but nothing will be sent.
 
-.. _`Sentry`: https://sentry.io/
+.. _`Sentry`: https://sentry.io/welcome/
 .. _`Sentry DSN`: https://docs.sentry.io/concepts/key-terms/dsn-explainer/#dsn-utilization

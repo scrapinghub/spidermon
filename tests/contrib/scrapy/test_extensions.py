@@ -1,8 +1,13 @@
 from functools import partial
 from unittest import TestCase
 
-from scrapy.utils.test import get_crawler
+import pytest
+
+pytest.importorskip("scrapy")
+
+
 from scrapy import Spider
+from scrapy.utils.test import get_crawler
 
 from spidermon.contrib.scrapy.extensions import Spidermon
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
@@ -27,7 +32,12 @@ def _test_run_suites(self, spider, suites):
 class TestData:
     __test__ = False
 
-    def __init__(self, expression, stats={}, settings={}, expected_error=None):
+    def __init__(self, expression, stats=None, settings=None, expected_error=None):
+        if stats is None:
+            stats = {}
+        if settings is None:
+            settings = {}
+
         self.stats = stats
         self.expression = expression
         self.settings = settings
@@ -63,12 +73,12 @@ class ExpressionMonitorsTesting(TestCase):
         settings = {
             "SPIDERMON_ENABLED": True,
             "SPIDERMON_SPIDER_OPEN_EXPRESSION_MONITORS": [
-                {"tests": [{"expression": dt.expression}]}
+                {"tests": [{"expression": dt.expression}]},
             ],
         }
         settings.update(dt.settings)
         crawler = get_crawler(settings_dict=settings)
-        crawler.stats.get_stats = lambda _: dt.stats
+        crawler.stats.get_stats = lambda: dt.stats
         spidermon = Spidermon.from_crawler(crawler)
         spider = Spider(name=self.spider_name)
 
@@ -78,30 +88,32 @@ class ExpressionMonitorsTesting(TestCase):
 
         try:
             spidermon.spider_opened(spider)
-        except AssertionError as e:
-            failures, errors = e.args[0]
+        except AssertionError as ae:
+            failures, errors = ae.args[0]
             for f in failures:
                 _, trace = f
-                raise AssertionError(trace)
-            for e in errors:
-                _, trace = e
+                raise AssertionError(trace) from ae
+            for err in errors:
+                _, trace = err
                 if dt.expected_error and dt.expected_error in trace:
                     dt.expected_error = None
                 else:
-                    raise AssertionError(trace)
+                    raise AssertionError(trace) from ae
             if dt.expected_error:
                 raise AssertionError(
-                    f"Expected error <{dt.expected_error}> was not raised"
-                )
+                    f"Expected error <{dt.expected_error}> was not raised",
+                ) from ae
 
     def test_stats_ready(self):
         self.run_test(
-            stats={"finish_reason": "dead"}, expression="stats.finish_reason == 'dead'"
+            stats={"finish_reason": "dead"},
+            expression="stats.finish_reason == 'dead'",
         )
 
     def test_stats_not_configured(self):
         self.run_test(
-            expression="stats.finish_reason == 'dead'", expected_error="NotConfigured"
+            expression="stats.finish_reason == 'dead'",
+            expected_error="NotConfigured",
         )
 
     def test_crawler_ready(self):
@@ -130,7 +142,8 @@ class ExpressionMonitorsTesting(TestCase):
 
     def test_validation_not_configured(self):
         self.run_test(
-            expression="validation.items.count == 0", expected_error="NotConfigured"
+            expression="validation.items.count == 0",
+            expected_error="NotConfigured",
         )
 
     def test_job_not_configured(self):

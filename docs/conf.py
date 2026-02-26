@@ -13,11 +13,12 @@
 
 import os
 import sys
+from pathlib import Path
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath("../.."))
+# documentation root, use Path.resolve() to make it absolute, like shown here.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 # -- General configuration ------------------------------------------------
 
@@ -47,7 +48,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Spidermon"
-copyright = "2021, Zyte"
+project_copyright = "2021, Zyte"
 author = "Zyte"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -75,6 +76,8 @@ language = "en"
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 exclude_patterns = []
+
+linkcheck_ignore = [r"https://github\.com/scrapinghub/spidermon/.*"]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -219,7 +222,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "spidermon.tex", "Spidermon Documentation", "Zyte", "manual")
+    (master_doc, "spidermon.tex", "Spidermon Documentation", "Zyte", "manual"),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -267,7 +270,7 @@ texinfo_documents = [
         "spidermon",
         "One line description of project.",
         "Miscellaneous",
-    )
+    ),
 ]
 
 # Documents to append as an appendix to all manuals.

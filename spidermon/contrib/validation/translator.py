@@ -1,8 +1,9 @@
 import re
+from typing import ClassVar
 
 
 class MessageTranslator:
-    messages = {}
+    messages: ClassVar[dict[str, str]] = {}
 
     def __init__(self):
         self.compiled_messages = {m: re.compile(m) for m in self.messages}

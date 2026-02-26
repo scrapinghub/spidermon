@@ -12,7 +12,7 @@ the first step is to enable the built-in item pipeline in your project settings:
 
     # tutorial/settings.py
     ITEM_PIPELINES = {
-        'spidermon.contrib.scrapy.pipelines.ItemValidationPipeline': 800,
+        "spidermon.contrib.scrapy.pipelines.ItemValidationPipeline": 800,
     }
 
 .. warning::
@@ -122,9 +122,9 @@ A `list` containing the location of the item schema. Could be a local path or a 
     # settings.py
 
     SPIDERMON_VALIDATION_SCHEMAS = [
-        '/path/to/schema.json',
-        's3://bucket/schema.json',
-        'https://example.com/schema.json',
+        "/path/to/schema.json",
+        "s3://bucket/schema.json",
+        "https://example.com/schema.json",
     ]
 
 If you are working on a spider that produces multiple items types, you can define it
@@ -137,8 +137,8 @@ as a `dict`:
     from tutorial.items import DummyItem, OtherItem
 
     SPIDERMON_VALIDATION_SCHEMAS = {
-        DummyItem: '/path/to/dummyitem_schema.json',
-        OtherItem: '/path/to/otheritem_schema.json',
+        DummyItem: "/path/to/dummyitem_schema.json",
+        OtherItem: "/path/to/otheritem_schema.json",
     }
 
 Validation in Monitors
@@ -174,14 +174,14 @@ Some examples:
 .. code-block:: python
 
     # checks that each of field2 and field3 is missing in no more than 10 items
-    self.check_missing_required_fields(field_names=['field2', 'field3'], allowed_count=10)
+    self.check_missing_required_fields(field_names=["field2", "field3"], allowed_count=10)
 
     # checks that field2 has errors in no more than 15% of items
-    self.check_field_errors_percent(field_name='field2', allowed_percent=0.15)
+    self.check_field_errors_percent(field_name="field2", allowed_percent=0.15)
 
     # checks that no errors is present in any fields
     self.check_field_errors_percent()
 
 .. _`JSON Schema`: https://json-schema.org/
-.. _`guide`: http://json-schema.org/learn/getting-started-step-by-step.html
+.. _`guide`: https://json-schema.org/learn/getting-started-step-by-step
 .. _`jsonschema`: https://pypi.org/project/jsonschema/

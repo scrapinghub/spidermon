@@ -1,10 +1,12 @@
+from typing import ClassVar
+
 from spidermon.core.actions import Action
 from spidermon.exceptions import NotConfigured
 
 
 class JobTagsAction(Action):
-    tags = []
-    tag_settings = None
+    tags: ClassVar[list[str]] = []
+    tag_settings: str | None = None
 
     def __init__(self, tags=None):
         super().__init__()

@@ -1,16 +1,18 @@
+from __future__ import annotations
+
 import abc
+
 from spidermon import settings
 
 
 class OptionsMetaclassBase(abc.ABCMeta):
-    __options_class__ = None
+    __options_class__: type[OptionsBase] | None = None
 
     def __new__(mcs, name, bases, attrs):
         cls = super().__new__(mcs, name, bases, attrs)
         if not cls.__options_class__:
             raise TypeError(
-                "Options class not defined! "
-                "are you trying to use OptionsMetaclassBase?"
+                "Options class not defined! are you trying to use OptionsMetaclassBase?",
             )
         cls.options = cls.__options_class__()
         return cls
@@ -33,8 +35,7 @@ class OptionsBase:
         return "<{name}:({attributes})>".format(
             name=self.__class__.__name__,
             attributes=", ".join(
-                "{}={}".format(attr, getattr(self, attr))
-                for attr in self._get_attributes()
+                f"{attr}={getattr(self, attr)}" for attr in self._get_attributes()
             ),
         )
 

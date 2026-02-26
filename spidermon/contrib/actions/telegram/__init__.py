@@ -1,5 +1,6 @@
 import json
 import logging
+
 import requests
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
@@ -16,12 +17,15 @@ class SimplyTelegramClient:
 
     def send_message(self, message, recipient):
         api_url = self.send_message_api.format(
-            token=self.token, chat_id=recipient, text=message
+            token=self.token,
+            chat_id=recipient,
+            text=message,
         )
-        r = requests.get(api_url).json()
+        r = requests.get(api_url, timeout=60).json()
         if r.get("ok") is False:
             logger.error(
-                "Failed to send message. Telegram api error: %s", json.dumps(r)
+                "Failed to send message. Telegram api error: %s",
+                json.dumps(r),
             )
 
 
@@ -32,7 +36,7 @@ class TelegramMessageManager:
         sender_token = sender_token or self.sender_token
         if not sender_token:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_TELEGRAM_SENDER_TOKEN setting."
+                "You must provide a value for SPIDERMON_TELEGRAM_SENDER_TOKEN setting.",
             )
 
         self.fake = fake
@@ -65,7 +69,8 @@ class SendTelegramMessage(ActionWithTemplates):
 
         self.fake = fake or self.fake
         self.manager = TelegramMessageManager(
-            sender_token=sender_token or self.sender_token, fake=self.fake
+            sender_token=sender_token or self.sender_token,
+            fake=self.fake,
         )
 
         self.recipients = recipients or self.recipients
@@ -73,7 +78,7 @@ class SendTelegramMessage(ActionWithTemplates):
         self.message_template = message_template or self.message_template
         if not self.recipients:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_TELEGRAM_RECIPIENTS setting."
+                "You must provide a value for SPIDERMON_TELEGRAM_RECIPIENTS setting.",
             )
 
     @classmethod
@@ -83,7 +88,7 @@ class SendTelegramMessage(ActionWithTemplates):
             "recipients": crawler.settings.getlist("SPIDERMON_TELEGRAM_RECIPIENTS"),
             "message": crawler.settings.get("SPIDERMON_TELEGRAM_MESSAGE"),
             "message_template": crawler.settings.get(
-                "SPIDERMON_TELEGRAM_MESSAGE_TEMPLATE"
+                "SPIDERMON_TELEGRAM_MESSAGE_TEMPLATE",
             ),
             "fake": crawler.settings.getbool("SPIDERMON_TELEGRAM_FAKE"),
         }
@@ -94,5 +99,4 @@ class SendTelegramMessage(ActionWithTemplates):
     def get_message(self):
         if self.message:
             return self.render_text_template(self.message)
-        else:
-            return self.render_template(self.message_template)
+        return self.render_template(self.message_template)

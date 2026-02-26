@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from spidermon import MonitorSuite
 
 from .monitors import (
@@ -18,7 +20,9 @@ from .monitors import (
 
 
 class SpiderCloseMonitorSuite(MonitorSuite):
-    """This Monitor Suite implements the following monitors:
+    """Spider close monitor suite.
+
+    This monitor suite implements the following monitors:
 
     * :class:`.monitors.ItemCountMonitor`
     * :class:`.monitors.ItemValidationMonitor`
@@ -34,12 +38,12 @@ class SpiderCloseMonitorSuite(MonitorSuite):
 
     You can easily enable this monitor *after* enabling Spidermon::
 
-            SPIDERMON_SPIDER_CLOSE_MONITORS = (
-                'spidermon.contrib.scrapy.monitors.SpiderCloseMonitorSuite',
-            )
+        SPIDERMON_SPIDER_CLOSE_MONITORS = (
+            'spidermon.contrib.scrapy.monitors.SpiderCloseMonitorSuite',
+        )
     """
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         name=None,
         monitors=None,
@@ -63,7 +67,7 @@ class SpiderCloseMonitorSuite(MonitorSuite):
             for monitor in self.monitors:
                 monitor.skip_rules = skip_rules
 
-    monitors = [
+    monitors: ClassVar[list[type]] = [
         ItemCountMonitor,
         ItemValidationMonitor,
         ErrorCountMonitor,
@@ -79,7 +83,9 @@ class SpiderCloseMonitorSuite(MonitorSuite):
 
 
 class PeriodicMonitorSuite(MonitorSuite):
-    """This Monitor Suite implements the following monitors:
+    """Periodic monitor suite.
+
+    This Monitor Suite implements the following monitors:
 
     * :class:`.monitors.PeriodicExecutionTimeMonitor`
 
@@ -90,11 +96,13 @@ class PeriodicMonitorSuite(MonitorSuite):
             }
     """
 
-    monitors = [PeriodicExecutionTimeMonitor]
+    monitors: ClassVar[list[type]] = [PeriodicExecutionTimeMonitor]
 
 
 class PeriodicItemCountMonitorSuite(MonitorSuite):
-    """This Monitor Suite implements the following monitors:
+    """Periodic item count monitor suite.
+
+    This Monitor Suite implements the following monitors:
 
     * :class:`.monitors.PeriodicExecutionTimeMonitor`
 
@@ -105,4 +113,4 @@ class PeriodicItemCountMonitorSuite(MonitorSuite):
             }
     """
 
-    monitors = [PeriodicItemCountMonitor]
+    monitors: ClassVar[list[type]] = [PeriodicItemCountMonitor]

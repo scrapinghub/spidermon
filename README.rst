@@ -29,12 +29,11 @@ Spidermon
 Overview
 ========
 
-Spidermon is an extension for Scrapy spiders. The package provides useful tools for data validation, stats monitoring, and notification messages. This way you leave the monitoring task to Spidermon and just check the reports/notifications.
+Spidermon is a Python 3.10+ Scrapy extension.
 
-Requirements
-============
-
-* Python Version: 3.8, 3.9, 3.10, 3.11 or 3.12
+The package provides useful tools for data validation, stats monitoring, and
+notification messages. This way you leave the monitoring task to Spidermon and
+just check the reports/notifications.
 
 Install
 =======

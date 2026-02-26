@@ -1,6 +1,6 @@
 from spidermon import settings
 
-from .fixtures.levels import *
+from .fixtures.levels import Monitors, Suites
 
 HIGH = settings.MONITOR.LEVEL.HIGH
 NORMAL = settings.MONITOR.LEVEL.NORMAL
@@ -83,7 +83,7 @@ LEVEL_TESTS = [
 
 
 def test_levels():
-    for suite, monitor, expected_level in LEVEL_TESTS:
-        suite = suite()
+    for suite_cls, monitor, expected_level in LEVEL_TESTS:
+        suite = suite_cls()
         suite.add_monitor(monitor)
         assert suite.all_monitors[0].level == expected_level

@@ -1,11 +1,13 @@
-from spidermon.contrib.monitors.mixins import ValidationMonitorMixin, SpiderMonitorMixin
+from spidermon.contrib.monitors.mixins import SpiderMonitorMixin, ValidationMonitorMixin
 
-from .factory import PythonExpressionsMonitor
 from .context import Context
+from .factory import PythonExpressionsMonitor
 
 
 class ExpressionsMonitor(
-    PythonExpressionsMonitor, ValidationMonitorMixin, SpiderMonitorMixin
+    PythonExpressionsMonitor,
+    ValidationMonitorMixin,
+    SpiderMonitorMixin,
 ):
     def get_context_data(self):
         context = Context()

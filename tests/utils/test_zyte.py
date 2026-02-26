@@ -1,7 +1,13 @@
+import sys
+from importlib import reload
 from unittest import mock
 
 import pytest
+
+pytest.importorskip("scrapy")
+
 from scrapy.utils.test import get_crawler
+
 from spidermon.utils import zyte
 
 
@@ -48,7 +54,7 @@ def test_client_property_project(mock_module, settings):
     client = mock_module.Client(settings)
 
     assert client._project is None
-    client.project
+    assert client.project is not None
     assert client._project is not None
     client._client.get_project.assert_called_with("123")
 
@@ -57,7 +63,7 @@ def test_client_property_job(mock_module, settings):
     client = mock_module.Client(settings)
 
     assert client._job is None
-    client.job
+    assert client.job is not None
     assert client._job is not None
     client._client.get_job.assert_called_with("123/456/789")
 
@@ -68,7 +74,7 @@ def test_client_property_spider(mock_module, settings):
     client._job.metadata.get.return_value = "my_awesome_spider"
 
     assert client._spider is None
-    client.spider
+    assert client.spider is not None
     assert client._project is not None
     assert client._job is not None
     assert client._spider is not None
@@ -79,22 +85,19 @@ def test_client_property_spider(mock_module, settings):
 
 def test_client_close(mock_module, settings):
     client = mock_module.Client(settings)
-
-    client.client
+    assert client.client is not None
     client.close()
     client._client.close.assert_called()
 
 
 @pytest.mark.parametrize("expected", [False, True])
 def test_has_client(monkeypatch, expected):
-    import sys
-    from importlib import reload
 
     if not expected:
         monkeypatch.setitem(sys.modules, "scrapinghub", None)
 
     reload(zyte)
-    assert zyte.HAS_CLIENT == expected
+    assert expected == zyte.HAS_CLIENT
 
 
 def test_client_settings_priority(mock_module, monkeypatch):

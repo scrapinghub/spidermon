@@ -1,12 +1,12 @@
 import re
 from collections import defaultdict
-
+from typing import Any
 
 RE_PATTERN_INSTANCE = type(re.compile(""))
 
 
 class Validator:
-    default_translator = None
+    default_translator: Any = None
     name = "validator"
 
     def __init__(self, translator=None, use_default_translator=True):
@@ -34,11 +34,10 @@ class Validator:
     def errors(self):
         if not self._translator:
             return self._errors
-        else:
-            return {
-                field_name: self._translator.translate_messages(messages)
-                for field_name, messages in self._errors.items()
-            }
+        return {
+            field_name: self._translator.translate_messages(messages)
+            for field_name, messages in self._errors.items()
+        }
 
     def _add_errors(self, errors):
         for field_name, messages in errors.items():

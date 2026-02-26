@@ -22,13 +22,13 @@ filled. Using that we can create a monitor that enforces our validation rule:
  from spidermon import Monitor
  from spidermon.contrib.monitors.mixins import ValidationMonitorMixin
 
+
  class CoverageValidationMonitor(Monitor, ValidationMonitorMixin):
 
      def test_required_fields_with_minimum_coverage(self):
          allowed_missing_percentage = 0.2
          self.check_missing_required_fields_percent(
-            field_names=["author"],
-            allowed_percent=allowed_missing_percentage
+             field_names=["author"], allowed_percent=allowed_missing_percentage
          )
 
 We also have the option to set an absolute amount of items that we want to allow
@@ -43,8 +43,7 @@ have the **author** field filled.
      def test_required_fields_with_minimum_coverage(self):
          allowed_missing_items = 10
          self.check_missing_required_fields(
-            field_names=["author"],
-            allowed_count=allowed_missing_items
+             field_names=["author"], allowed_count=allowed_missing_items
          )
 
 Multiple fields
@@ -61,11 +60,11 @@ validation method as follows:
  class CoverageValidationMonitor(Monitor, ValidationMonitorMixin):
 
      def test_required_fields_with_minimum_coverage(self):
-        allowed_missing_percentage = 0.2
-        self.check_missing_required_fields_percent(
-            field_names=["author", "author_url"],
-            allowed_percent=allowed_missing_percentage
-        )
+         allowed_missing_percentage = 0.2
+         self.check_missing_required_fields_percent(
+             field_names=["author", "author_url"],
+             allowed_percent=allowed_missing_percentage,
+         )
 
 However, if you want a different rule for different fields, you need to create a new
 monitor for each field:
@@ -77,13 +76,11 @@ monitor for each field:
      def test_min_coverage_author_field(self):
          allowed_missing_percentage = 0.2
          self.check_missing_required_fields_percent(
-             field_names=["author"],
-             allowed_percent=allowed_missing_percentage
+             field_names=["author"], allowed_percent=allowed_missing_percentage
          )
 
      def test_min_coverage_author_url_field(self):
          allowed_missing_items = 10
          self.check_missing_required_fields(
-             field_names=["author_url"],
-             allowed_count=allowed_missing_items
+             field_names=["author_url"], allowed_count=allowed_missing_items
          )

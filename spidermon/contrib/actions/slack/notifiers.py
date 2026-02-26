@@ -21,7 +21,7 @@ class SendSlackMessageSpiderFinished(SendSlackMessage):
         include_report_link=None,
         report_index=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.include_ok_attachments = (
@@ -41,18 +41,18 @@ class SendSlackMessageSpiderFinished(SendSlackMessage):
         kwargs.update(
             {
                 "include_ok_attachments": crawler.settings.get(
-                    "SPIDERMON_SLACK_NOTIFIER_INCLUDE_OK_ATTACHMENTS"
+                    "SPIDERMON_SLACK_NOTIFIER_INCLUDE_OK_ATTACHMENTS",
                 ),
                 "include_error_attachments": crawler.settings.get(
-                    "SPIDERMON_SLACK_NOTIFIER_INCLUDE_ERROR_ATTACHMENTS"
+                    "SPIDERMON_SLACK_NOTIFIER_INCLUDE_ERROR_ATTACHMENTS",
                 ),
                 "include_report_link": crawler.settings.get(
-                    "SPIDERMON_SLACK_NOTIFIER_INCLUDE_REPORT_LINK"
+                    "SPIDERMON_SLACK_NOTIFIER_INCLUDE_REPORT_LINK",
                 ),
                 "report_index": crawler.settings.get(
-                    "SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX"
+                    "SPIDERMON_SLACK_NOTIFIER_REPORT_INDEX",
                 ),
-            }
+            },
         )
         return kwargs
 
@@ -61,8 +61,7 @@ class SendSlackMessageSpiderFinished(SendSlackMessage):
             self.monitors_passed and self.include_ok_attachments
         ):
             return super().get_attachments()
-        else:
-            return None
+        return None
 
     def get_template_context(self):
         context = super().get_template_context()
@@ -72,7 +71,7 @@ class SendSlackMessageSpiderFinished(SendSlackMessage):
                 "include_error_attachments": self.include_error_attachments,
                 "include_report_link": self.include_report_link,
                 "report_index": self.report_index,
-            }
+            },
         )
         return context
 

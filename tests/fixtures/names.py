@@ -1,4 +1,7 @@
-from spidermon import monitors, Monitor, MonitorSuite
+from collections.abc import Sequence
+from typing import ClassVar
+
+from spidermon import Monitor, MonitorSuite, monitors
 
 
 # ----------------------------------
@@ -27,7 +30,11 @@ class NamedMonitor(Monitor):
 # Child Suites
 # ----------------------------------
 class BaseChildSuite(MonitorSuite):
-    monitors = [
+    monitors: ClassVar[
+        Sequence[
+            type[MonitorSuite | Monitor] | tuple[str, type[MonitorSuite | Monitor]]
+        ]
+    ] = [
         UnnamedMonitor,
         NamedMonitor,
         ("Instance Monitor", UnnamedMonitor),
@@ -48,7 +55,11 @@ class ChildNamedSuite(BaseChildSuite):
 # Top Suites
 # ----------------------------------
 class BaseTopSuite(MonitorSuite):
-    monitors = [
+    monitors: ClassVar[
+        Sequence[
+            type[MonitorSuite | Monitor] | tuple[str, type[MonitorSuite | Monitor]]
+        ]
+    ] = [
         ChildUnnamedSuite,
         ChildNamedSuite,
         ("Instance Suite Name", ChildUnnamedSuite),

@@ -1,14 +1,22 @@
-from unittest import TestCase
-from slugify import slugify
-from scrapy.utils.test import get_crawler
-from scrapy import Item
+from __future__ import annotations
+
+from typing import ClassVar
+
+import pytest
+
+pytest.importorskip("scrapy")
+
 from functools import partial
+from unittest import TestCase
+
 from itemadapter import ItemAdapter
+from scrapy import Item
+from scrapy.utils.test import get_crawler
+from slugify import slugify
 
 from spidermon.contrib.scrapy.pipelines import ItemValidationPipeline
-from tests.fixtures.items import TreeItem, TestItem
-from tests.fixtures.validators import tree_schema, test_schema, test_schema_string
-
+from tests.fixtures.items import TestItem, TreeItem
+from tests.fixtures.validators import test_schema, test_schema_string, tree_schema
 
 STATS_AMOUNTS = "spidermon/validation/validators"
 STATS_ITEM_ERRORS = "spidermon/validation/items/errors"
@@ -54,34 +62,32 @@ class PipelineTestCaseMetaclass(type):
 
         cls = super().__new__(mcs, name, bases, attrs)
         for dt in getattr(cls, "data_tests", []):
-            function_name = "test_%s" % slugify(dt.name, separator="_").lower()
+            function_name = f"test_{slugify(dt.name, separator='_').lower()}"
             setattr(cls, function_name, _test_function(dt))
         return cls
 
 
 class PipelineTest(TestCase, metaclass=PipelineTestCaseMetaclass):
-    data_tests = []
+    data_tests: ClassVar[list[DataTest]] = []
 
 
 class DataTest:
-    def __init__(self, name, item, cases, settings=dict(), spidermon_enabled=True):
+    def __init__(self, name, item, cases, settings=None, spidermon_enabled=True):
         self.name = name
         self.item = item
         self.cases = cases
-        self.settings = settings
+        self.settings = {} if settings is None else settings
         self.settings["SPIDERMON_ENABLED"] = spidermon_enabled
 
 
 def assert_type_in_stats(validator_type, obj):
-    return "'{}' in {{stats}}".format(
-        STATS_TYPES.format(obj.__name__.lower(), validator_type)
-    )
+    return f"'{STATS_TYPES.format(obj.__name__.lower(), validator_type)}' in {{stats}}"
 
 
 class PipelineJSONSchemaValidator(PipelineTest):
     assert_type_in_stats = partial(assert_type_in_stats, "jsonschema")
 
-    data_tests = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name="processing usual items without errors",
             item=TestItem({"url": "example.com"}),
@@ -105,9 +111,7 @@ class PipelineJSONSchemaValidator(PipelineTest):
             cases=f"'{STATS_MISSINGS}' in {{stats}}",
         ),
         DataTest(
-            name="validator is {} type, loads from path to a python dict".format(
-                Item.__name__
-            ),
+            name=f"validator is {Item.__name__} type, loads from path to a python dict",
             item=TestItem(),
             settings={SETTING_SCHEMAS: ["tests.fixtures.validators.test_schema"]},
             cases=[
@@ -116,12 +120,10 @@ class PipelineJSONSchemaValidator(PipelineTest):
             ],
         ),
         DataTest(
-            name="validator is {} type, loads from object path to a JSON string".format(
-                Item.__name__
-            ),
+            name=f"validator is {Item.__name__} type, loads from object path to a JSON string",
             item=TestItem(),
             settings={
-                SETTING_SCHEMAS: ["tests.fixtures.validators.test_schema_string"]
+                SETTING_SCHEMAS: ["tests.fixtures.validators.test_schema_string"],
             },
             cases=[
                 assert_type_in_stats(Item),
@@ -129,9 +131,7 @@ class PipelineJSONSchemaValidator(PipelineTest):
             ],
         ),
         DataTest(
-            name="validator is {} type, loads from a python dict".format(
-                TestItem.__name__
-            ),
+            name=f"validator is {TestItem.__name__} type, loads from a python dict",
             item=TestItem(),
             settings={SETTING_SCHEMAS: {TestItem: test_schema}},
             cases=[
@@ -140,12 +140,10 @@ class PipelineJSONSchemaValidator(PipelineTest):
             ],
         ),
         DataTest(
-            name="validator is {} type, loads from path to a python dict".format(
-                TestItem.__name__
-            ),
+            name=f"validator is {TestItem.__name__} type, loads from path to a python dict",
             item=TestItem(),
             settings={
-                SETTING_SCHEMAS: {TestItem: "tests.fixtures.validators.test_schema"}
+                SETTING_SCHEMAS: {TestItem: "tests.fixtures.validators.test_schema"},
             },
             cases=[
                 assert_type_in_stats(TestItem),
@@ -153,14 +151,12 @@ class PipelineJSONSchemaValidator(PipelineTest):
             ],
         ),
         DataTest(
-            name="validator is {} type, loads from object path to a JSON string".format(
-                TestItem.__name__
-            ),
+            name=f"validator is {TestItem.__name__} type, loads from object path to a JSON string",
             item=TestItem(),
             settings={
                 SETTING_SCHEMAS: {
-                    TestItem: "tests.fixtures.validators.test_schema_string"
-                }
+                    TestItem: "tests.fixtures.validators.test_schema_string",
+                },
             },
             cases=[
                 assert_type_in_stats(TestItem),
@@ -168,9 +164,7 @@ class PipelineJSONSchemaValidator(PipelineTest):
             ],
         ),
         DataTest(
-            name="validator is {} type, validators are in a list repr".format(
-                TestItem.__name__
-            ),
+            name=f"validator is {TestItem.__name__} type, validators are in a list repr",
             item=TestItem(),
             settings={SETTING_SCHEMAS: {TestItem: [test_schema]}},
             cases=[
@@ -207,7 +201,7 @@ class PipelineJSONSchemaValidator(PipelineTest):
 
 
 def test_validator_from_url(mocker):
-    mocked_get_contents = mocker.patch(
+    mocker.patch(
         "spidermon.contrib.validation.jsonschema.tools.get_contents",
         return_value=test_schema_string,
     )
@@ -219,7 +213,6 @@ def test_validator_from_url(mocker):
     crawler = get_crawler(settings_dict=settings)
     pipe = ItemValidationPipeline.from_crawler(crawler)
     pipe.process_item(test_item, None)
-    kwargs = {"stats": "pipe.stats.stats.get_stats()"}
     stats = pipe.stats.stats.get_stats()
     assert "spidermon/validation/items/errors" in stats
     assert stats.get("spidermon/validation/validators/testitem/jsonschema", False)
@@ -245,7 +238,7 @@ class TestAddErrors:
 
     def test_add_errors_to_item_prefilled(self):
         test_item = TestItem(
-            {"url": "http://example.com", "error_test": {"some_error": ["prefilled"]}}
+            {"url": "http://example.com", "error_test": {"some_error": ["prefilled"]}},
         )
         self._run_pipeline(test_item)
         assert test_item.get("error_test")["some_error"] == [

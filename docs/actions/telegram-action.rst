@@ -9,8 +9,8 @@ To use this action you need to provide the `Telegram bot token`_ in your ``setti
 .. code-block:: python
 
     # settings.py
-    SPIDERMON_TELEGRAM_SENDER_TOKEN = '<TELEGRAM_SENDER_TOKEN>'
-    SPIDERMON_TELEGRAM_RECIPIENTS = ['chatid', 'groupid' '@channelname']
+    SPIDERMON_TELEGRAM_SENDER_TOKEN = "<TELEGRAM_SENDER_TOKEN>"
+    SPIDERMON_TELEGRAM_RECIPIENTS = ["chatid", "groupid" "@channelname"]
 
 A notification will look like the following:
 

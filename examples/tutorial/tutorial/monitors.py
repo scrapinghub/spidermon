@@ -1,8 +1,9 @@
 # monitors.py
+from typing import ClassVar
+
 from spidermon import Monitor, MonitorSuite, monitors
 from spidermon.contrib.actions.slack.notifiers import SendSlackMessageSpiderFinished
 from spidermon.contrib.monitors.mixins import StatsMonitorMixin
-
 from tutorial.actions import CloseSpiderAction
 
 
@@ -23,15 +24,15 @@ class ItemValidationMonitor(Monitor, StatsMonitorMixin):
     @monitors.name("No item validation errors")
     def test_no_item_validation_errors(self):
         validation_errors = getattr(
-            self.data.stats, "spidermon/validation/fields/errors", 0
+            self.data.stats,
+            "spidermon/validation/fields/errors",
+            0,
         )
         self.assertEqual(
             validation_errors,
             0,
             msg=f"Found validation errors in {validation_errors} fields",
         )
-
-        self.data.stats
 
 
 @monitors.name("Periodic job stats monitor")
@@ -46,11 +47,15 @@ class PeriodicJobStatsMonitor(Monitor, StatsMonitorMixin):
 
 
 class PeriodicMonitorSuite(MonitorSuite):
-    monitors = [PeriodicJobStatsMonitor]
-    monitors_failed_actions = [CloseSpiderAction]
+    monitors: ClassVar[list[type]] = [PeriodicJobStatsMonitor]
+    monitors_failed_actions: ClassVar[list[type]] = [CloseSpiderAction]
 
 
 class SpiderCloseMonitorSuite(MonitorSuite):
-    monitors = [ItemCountMonitor, ItemValidationMonitor, PeriodicJobStatsMonitor]
+    monitors: ClassVar[list[type]] = [
+        ItemCountMonitor,
+        ItemValidationMonitor,
+        PeriodicJobStatsMonitor,
+    ]
 
-    monitors_failed_actions = [SendSlackMessageSpiderFinished]
+    monitors_failed_actions: ClassVar[list[type]] = [SendSlackMessageSpiderFinished]

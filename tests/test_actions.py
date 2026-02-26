@@ -1,6 +1,9 @@
+from unittest.mock import MagicMock
+
+import pytest
+
 from spidermon.core.actions import Action
 from spidermon.exceptions import NotConfigured, SkipAction
-from unittest.mock import MagicMock
 
 
 def test_action_success():
@@ -86,9 +89,5 @@ def test_fallback_not_configured():
         def run_action(self):
             pass
 
-    try:
+    with pytest.raises(NotConfigured):
         TestAction()
-    except NotConfigured:
-        assert True
-    else:
-        assert False

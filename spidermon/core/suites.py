@@ -1,21 +1,31 @@
-from unittest import TestSuite
+from __future__ import annotations
+
 import collections
+from typing import TYPE_CHECKING, ClassVar
+from unittest import TestSuite
 
-from spidermon.exceptions import InvalidMonitorIterable, NotAllowedMethod
 from spidermon import settings
+from spidermon.exceptions import InvalidMonitorIterable, NotAllowedMethod
 
+from .factories import ActionFactory, MonitorFactory
 from .monitors import Monitor
 from .options import MonitorOptionsMetaclass
-from .factories import MonitorFactory, ActionFactory
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
-    monitors = []
-    monitors_finished_actions = []
-    monitors_passed_actions = []
-    monitors_failed_actions = []
+    monitors: ClassVar[
+        Sequence[
+            type[MonitorSuite | Monitor] | tuple[str, type[MonitorSuite | Monitor]]
+        ]
+    ] = []
+    monitors_finished_actions: ClassVar[list[str]] = []
+    monitors_passed_actions: ClassVar[list[str]] = []
+    monitors_failed_actions: ClassVar[list[str]] = []
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         name=None,
         monitors=None,
@@ -99,7 +109,7 @@ class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
             [
                 1 if isinstance(monitor, Monitor) else monitor.number_of_monitors
                 for monitor in self
-            ]
+            ],
         )
 
     @property
@@ -171,7 +181,7 @@ class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
         show_description=True,
     ):
         def debug_attribute(condition, name, value):
-            return "{:>12}: {}\n".format(name, str(value)) if condition else ""
+            return f"{name:>12}: {value!s}\n" if condition else ""
 
         s = "-" * 80 + "\n"
         for t in self.all_monitors:
@@ -180,7 +190,9 @@ class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
             s += debug_attribute(show_level, "LEVEL", t.level)
             s += debug_attribute(show_order, "ORDER", t.order)
             s += debug_attribute(
-                show_description, "DESCRIPTION", t.method_description or "..."
+                show_description,
+                "DESCRIPTION",
+                t.method_description or "...",
             )
             s += "-" * 80 + "\n"
         return s
@@ -189,12 +201,7 @@ class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
         self._tests = sorted(self._tests, key=lambda x: x.order, reverse=False)
 
     def __repr__(self):
-        return "<SUITE:%s[%d,%s] at %s>" % (
-            self.name,
-            len(self._tests),
-            self.number_of_monitors,
-            hex(id(self)),
-        )
+        return f"<SUITE:{self.name}[{len(self._tests)},{self.number_of_monitors}] at {hex(id(self))}>"
 
     def __str__(self):
         return self.name

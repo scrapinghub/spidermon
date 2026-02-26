@@ -20,9 +20,9 @@ class Context(dict):
         return super().__getitem__(item)
 
     def extend_via_attrs(self, obj, attrs):
-        """Extend context with names of object attributes and their values"""
+        """Extend context with names of object attributes and their values."""
         for attr in attrs:
             try:
                 super().__setitem__(attr, getattr(obj, attr))
-            except NotConfigured:
+            except NotConfigured:  # noqa: PERF203
                 self._notconfigured.append(attr)

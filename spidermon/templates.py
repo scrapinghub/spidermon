@@ -1,16 +1,16 @@
 import datetime
 import inspect
-import os
 import pprint as pretty_print
+from pathlib import Path
 
-import jinja2
 from jinja2 import Environment, FileSystemLoader
 
 DEFAULT_TEMPLATE_FOLDERS = ["templates"]
+LOG_ERROR_LEVEL = 40
 
 
 def get_log_errors(logs):
-    return [e for e in logs.list() if e["level"] >= 40]
+    return [e for e in logs.list() if e["level"] >= LOG_ERROR_LEVEL]
 
 
 def make_list(obj):
@@ -38,9 +38,9 @@ GLOBALS = {"datetime": datetime, "str": str}
 
 def get_environment(paths):
     loader = FileSystemLoader(paths)
-    environment = Environment(loader=loader, lstrip_blocks=True, trim_blocks=True)
-    for filter_name, filter in FILTERS.items():
-        environment.filters[filter_name] = filter
+    environment = Environment(loader=loader, lstrip_blocks=True, trim_blocks=True)  # noqa: S701
+    for filter_name, filter_ in FILTERS.items():
+        environment.filters[filter_name] = filter_
 
     for global_name, global_value in GLOBALS.items():
         environment.globals[global_name] = global_value
@@ -54,22 +54,23 @@ class TemplateLoader:
         self.reload_env()
 
     def add_path(self, path):
-        if path not in self.paths and os.path.isdir(path):
-            self.paths.append(path)
+        if str(path) not in self.paths and Path(path).is_dir():
+            self.paths.append(str(path))
             self.reload_env()
 
     def auto_discover(self, path=None, folder=None):
-        caller_folder = os.path.dirname(inspect.stack()[1][1])
+        caller_folder = Path(inspect.stack()[1][1]).parent
         if path:
-            caller_folder = os.path.join(caller_folder, path)
+            caller_folder = caller_folder / path
         if folder:
-            self.add_path(os.path.join(caller_folder, folder))
+            self.add_path(str(caller_folder / folder))
         else:
-            self.discover_folder(caller_folder)
+            self.discover_folder(str(caller_folder))
 
     def discover_folder(self, candidate_folder):
         for folder in [
-            os.path.join(candidate_folder, dir) for dir in DEFAULT_TEMPLATE_FOLDERS
+            str(Path(candidate_folder) / subfolder)
+            for subfolder in DEFAULT_TEMPLATE_FOLDERS
         ]:
             self.add_path(folder)
 
@@ -77,11 +78,11 @@ class TemplateLoader:
         self.env = get_environment(self.paths)
 
     def get_template(self, name):
-        if os.path.isabs(name):  # If provided an absolute path to a template
-            environment = get_environment(os.path.dirname(name))
-            template = environment.get_template(os.path.basename(name))
+        if Path(name).is_absolute():  # If provided an absolute path to a template
+            environment = get_environment(str(Path(name).parent))
+            template = environment.get_template(Path(name).name)
         else:
-            template = self.env.get_template(name)
+            template = self.env.get_template(str(name))
         return template
 
 

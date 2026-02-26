@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 import pytest
 
 from spidermon.contrib.validation.translator import MessageTranslator
@@ -6,7 +8,7 @@ from spidermon.contrib.validation.translator import MessageTranslator
 @pytest.fixture
 def message_translator():
     class FixtureMessageTranslator(MessageTranslator):
-        messages = {
+        messages: ClassVar[dict[str, str]] = {
             r"Simple Message": "Translated Simple Message",
             r"^.+ is a required property$": "Missing Required Property",
             r"Options: (?P<options>.*)": "Translated With Options: {options}",
@@ -16,7 +18,7 @@ def message_translator():
 
 
 @pytest.mark.parametrize(
-    "original_message,translated_message",
+    ("original_message", "translated_message"),
     [
         ("Simple Message", "Translated Simple Message"),
         ("email is a required property", "Missing Required Property"),

@@ -5,33 +5,39 @@ from spidermon.exceptions import (
     InvalidMonitorClass,
     InvalidMonitorTuple,
 )
-from .monitors import Monitor
+
 from .actions import Action
+from .monitors import Monitor
+
+# Length of a valid monitor tuple (name, monitor)
+MONITOR_TUPLE_LENGTH = 2
 
 
 class MonitorFactory:
     @classmethod
     def load_monitor(cls, monitor, name=None):
-        from .suites import MonitorSuite
+        from .suites import MonitorSuite  # noqa: PLC0415
 
         if inspect.isclass(monitor):
             return cls.load_monitor_from_class(monitor_class=monitor, name=name)
-        elif isinstance(monitor, tuple):
+        if isinstance(monitor, tuple):
             return cls.load_monitor_from_tuple(monitor_tuple=monitor)
-        elif isinstance(monitor, (Monitor, MonitorSuite)):
+        if isinstance(monitor, (Monitor, MonitorSuite)):
             return monitor
         cls.raise_invalid_monitor()
+        return None
 
     @classmethod
     def load_monitor_from_class(cls, monitor_class, name=None):
-        from .suites import MonitorSuite
+        from .suites import MonitorSuite  # noqa: PLC0415
 
         if issubclass(monitor_class, Monitor):
-            from spidermon.loaders import MonitorLoader
+            from spidermon.loaders import MonitorLoader  # noqa: PLC0415
 
             loader = MonitorLoader()
             monitor = loader.load_suite_from_monitor(
-                monitor_class=monitor_class, name=name
+                monitor_class=monitor_class,
+                name=name,
             )
         elif issubclass(monitor_class, MonitorSuite):
             monitor = monitor_class(name=name)
@@ -41,7 +47,7 @@ class MonitorFactory:
 
     @classmethod
     def load_monitor_from_tuple(cls, monitor_tuple):
-        if len(monitor_tuple) != 2:
+        if len(monitor_tuple) != MONITOR_TUPLE_LENGTH:
             cls.raise_invalid_tuple()
         name, monitor = monitor_tuple
         if not isinstance(name, str):
@@ -55,21 +61,21 @@ class MonitorFactory:
             "- an instance of a Monitor/MonitorSuite object.\n"
             "- a subclass of Monitor/MonitorSuite.\n"
             "- a tuple with the format (name, monitor).\n"
-            "- a string containing an evaluable python expression."
+            "- a string containing an evaluable python expression.",
         )
 
     @classmethod
     def raise_invalid_class(cls):
         raise InvalidMonitorClass(
             "Wrong Monitor class definition, it should be "
-            "an instance of a Monitor/MonitorSuite object."
+            "an instance of a Monitor/MonitorSuite object.",
         )
 
     @classmethod
     def raise_invalid_tuple(cls):
         raise InvalidMonitorTuple(
             "Wrong Monitor tuple definition, it should be "
-            "a tuple with the format (name, monitor)"
+            "a tuple with the format (name, monitor)",
         )
 
 
@@ -78,9 +84,10 @@ class ActionFactory:
     def load_action(cls, action, crawler=None):
         if inspect.isclass(action):
             return cls.load_action_from_class(action_class=action, crawler=crawler)
-        elif isinstance(action, Action):
+        if isinstance(action, Action):
             return action
         cls.raise_invalid_action()
+        return None
 
     @classmethod
     def load_action_from_class(cls, action_class, crawler=None):
@@ -88,8 +95,7 @@ class ActionFactory:
             cls.raise_invalid_class()
         if crawler and hasattr(action_class, "from_crawler"):
             return action_class.from_crawler(crawler)
-        else:
-            return action_class()
+        return action_class()
 
     @classmethod
     def raise_invalid_action(cls):
@@ -99,7 +105,7 @@ class ActionFactory:
             "- an instance of a Monitor/MonitorSuite object.\n"
             "- a subclass of Monitor/MonitorSuite.\n"
             "- a tuple with the format (name, monitor).\n"
-            "- a string containing an evaluable python expression."
+            "- a string containing an evaluable python expression.",
         )
 
     @classmethod
@@ -107,5 +113,5 @@ class ActionFactory:
         raise Exception
         raise InvalidMonitorClass(
             "Wrong Monitor class definition, it should be "
-            "an instance of a Monitor/MonitorSuite object."
+            "an instance of a Monitor/MonitorSuite object.",
         )

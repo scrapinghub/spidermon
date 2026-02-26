@@ -1,6 +1,7 @@
-import sys
-
 import pytest
+
+pytest.importorskip("scrapy")
+
 from scrapy import signals
 from scrapy.spiders import Spider
 from scrapy.utils.test import get_crawler
@@ -32,7 +33,9 @@ def test_spider_closed_connect_signal(mocker, spidermon_enabled_settings):
     crawler = get_crawler(settings_dict=spidermon_enabled_settings)
     spider = Spider.from_crawler(crawler, "example.com")
     crawler.signals.send_catch_log(
-        signal=signals.spider_closed, spider=spider, reason=None
+        signal=signals.spider_closed,
+        spider=spider,
+        reason=None,
     )
 
     assert spider_closed_method.called, "spider_closed not called"
@@ -44,14 +47,17 @@ def test_engine_stopped_connect_signal(mocker, spidermon_enabled_settings):
     crawler = get_crawler(settings_dict=spidermon_enabled_settings)
     spider = Spider.from_crawler(crawler, "example.com")
     crawler.signals.send_catch_log(
-        signal=signals.engine_stopped, spider=spider, reason=None
+        signal=signals.engine_stopped,
+        spider=spider,
+        reason=None,
     )
 
     assert engine_stopped.called, "engine_stopped not called"
 
 
 def test_item_scraped_connect_signal_if_field_coverage_settings_enabled(
-    mocker, spidermon_enabled_settings
+    mocker,
+    spidermon_enabled_settings,
 ):
     item_scraped_method = mocker.patch.object(Spidermon, "item_scraped")
 
@@ -65,7 +71,8 @@ def test_item_scraped_connect_signal_if_field_coverage_settings_enabled(
 
 
 def test_item_scraped_do_not_connect_signal_if_field_coverage_settings_disabled(
-    mocker, spidermon_enabled_settings
+    mocker,
+    spidermon_enabled_settings,
 ):
     item_scraped_method = mocker.patch.object(Spidermon, "item_scraped")
 
@@ -80,7 +87,8 @@ def test_item_scraped_do_not_connect_signal_if_field_coverage_settings_disabled(
 
 
 def test_item_scraped_do_not_connect_signal_if_do_not_have_field_coverage_settings(
-    mocker, spidermon_enabled_settings
+    mocker,
+    spidermon_enabled_settings,
 ):
     item_scraped_method = mocker.patch.object(Spidermon, "item_scraped")
 

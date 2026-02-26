@@ -14,7 +14,7 @@ you will need a Discord webhook which would send notifications to Discord from S
 Steps
 -----
 
-#. Create a Discord webhook <https://discord.com/developers/docs/resources/webhook>`_.
+#. Create a `Discord webhook <https://docs.discord.com/developers/resources/webhook>`_.
 
 #. Once your webhook is created, you will receive its URL. This is what we use for ``SPIDERMON_DISCORD_WEBHOOK_URL``.
 

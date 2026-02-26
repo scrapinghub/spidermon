@@ -1,9 +1,9 @@
-from typing import Any, List
+from typing import Any
 
 from itemadapter import ItemAdapter
 
 
-def traverse_nested(obj: ItemAdapter, keys: List[str]) -> ItemAdapter:
+def traverse_nested(obj: ItemAdapter, keys: list[str]) -> ItemAdapter:
     """
     Get the last nested attribute from a list of keys within an ItemAdapter object.
     Raises:
@@ -17,8 +17,8 @@ def traverse_nested(obj: ItemAdapter, keys: List[str]) -> ItemAdapter:
             current_obj = ItemAdapter(current_obj[key])
         # KeyError: Key does not exist
         # TypeError: Key is not compatible with ItemAdapter (None or unsupported type)
-        except (KeyError, TypeError):
-            raise KeyError(f'Invalid key "{key}" for {current_obj} in {obj}')
+        except (KeyError, TypeError) as err:  # noqa: PERF203
+            raise KeyError(f'Invalid key "{key}" for {current_obj} in {obj}') from err
 
     return current_obj
 

@@ -11,7 +11,7 @@ class CreateReport(ActionWithTemplates):
         self.report = ""
         if not self.template:
             raise NotConfigured(
-                "You must provide a value for SPIDERMON_REPORT_TEMPLATE setting."
+                "You must provide a value for SPIDERMON_REPORT_TEMPLATE setting.",
             )
 
     @classmethod
@@ -21,7 +21,7 @@ class CreateReport(ActionWithTemplates):
             {
                 "template": crawler.settings.get("SPIDERMON_REPORT_TEMPLATE"),
                 "context": crawler.settings.getdict("SPIDERMON_REPORT_CONTEXT"),
-            }
+            },
         )
         return kwargs
 

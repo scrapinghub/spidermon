@@ -1,6 +1,9 @@
+from typing import ClassVar
+
+
 class DecoratorWithAttributes:
-    name = None
-    attributes = {}
+    name: str | None = None
+    attributes: ClassVar[dict[str, str]] = {}
 
     def __init__(self):
         if not self.name:
@@ -14,13 +17,10 @@ class DecoratorWithAttributes:
                 "Invalid {attribute} '{name}', allowed values: {values}".format(
                     attribute=self.name,
                     name=name,
-                    values=", ".join(
-                        ["'%s'" % attr for attr in self.attributes.keys()]
-                    ),
-                )
+                    values=", ".join([f"'{attr}'" for attr in self.attributes]),
+                ),
             )
-        else:
-            return self.attributes[name]
+        return self.attributes[name]
 
 
 class OptionsDecorator:

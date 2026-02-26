@@ -1,7 +1,11 @@
+import pytest
+
+pytest.importorskip("scrapy")
+
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.monitors import (
-    FinishReasonMonitor,
     SPIDERMON_EXPECTED_FINISH_REASONS,
+    FinishReasonMonitor,
 )
 
 
@@ -11,7 +15,8 @@ def new_suite():
 
 def test_finished_reason_monitor_should_fail(make_data):
     """FinishedReason should fail when spider finished with unexpected
-    reason"""
+    reason
+    """
     data = make_data()
     runner = data.pop("runner")
     suite = new_suite()
@@ -25,7 +30,8 @@ def test_finished_reason_monitor_should_fail(make_data):
 
 def test_finished_reason_monitor_should_pass(make_data):
     """FinishedReason should succeed when spider finished with expected
-    reason"""
+    reason
+    """
     data = make_data({SPIDERMON_EXPECTED_FINISH_REASONS: "special_reason"})
     runner = data.pop("runner")
     suite = new_suite()

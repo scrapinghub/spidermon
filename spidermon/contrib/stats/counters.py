@@ -13,11 +13,10 @@ class PercentCounterBase:
     def percent(self):
         if self._total <= 0 or self.count <= 0:
             return 0
-        else:
-            return float(self.count) / float(self._total)
+        return float(self.count) / float(self._total)
 
     def __str__(self):
-        return "(count=%d, percent=%.2f)" % (self.count, self.percent)
+        return f"(count={self.count:d}, percent={self.percent:.2f})"
 
     def __repr__(self):
         return self.__str__()
@@ -37,11 +36,11 @@ class PercentCounter(PercentCounterBase):
 
 
 class DictPercentCounter(PercentCounterBase, collections.abc.MutableMapping):
-    __items_class__ = PercentCounter
+    __items_class__: type[PercentCounterBase] = PercentCounter
 
     def __init__(self, total):
         super().__init__(total)
-        self._dict = dict()
+        self._dict = {}
 
     @property
     def count(self):
@@ -58,8 +57,7 @@ class DictPercentCounter(PercentCounterBase, collections.abc.MutableMapping):
     def __getitem__(self, key):
         if key not in self._dict:
             return self.__items_class__(total=self._total)
-        else:
-            return self._dict[self.__keytransform__(key)]
+        return self._dict[self.__keytransform__(key)]
 
     def __iter__(self):
         return iter(self._dict)
@@ -74,11 +72,7 @@ class DictPercentCounter(PercentCounterBase, collections.abc.MutableMapping):
         raise TypeError
 
     def __str__(self):
-        return "(count=%d, percent=%.2f, %s)" % (
-            self.count,
-            self.percent,
-            str(self._dict),
-        )
+        return f"(count={self.count:d}, percent={self.percent:.2f}, {self._dict!s})"
 
     __setitem__ = _immutable
     __delitem__ = _immutable
@@ -103,11 +97,9 @@ class AttributeDictPercentCounter(PercentCounterBase):
         self.attribute_dict.add_value(key, value)
 
     def __str__(self):
-        return "(count=%d, percent=%.2f, %s=%s)" % (
-            self.count,
-            self.percent,
-            self.__attribute_dict_name__,
-            str(self.attribute_dict),
+        return (
+            f"(count={self.count:d}, percent={self.percent:.2f}, "
+            f"{self.__attribute_dict_name__}={self.attribute_dict!s})"
         )
 
     def __repr__(self):

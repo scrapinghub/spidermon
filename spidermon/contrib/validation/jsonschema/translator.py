@@ -1,9 +1,11 @@
-from spidermon.contrib.validation.translator import MessageTranslator
+from typing import ClassVar
+
 from spidermon.contrib.validation import messages
+from spidermon.contrib.validation.translator import MessageTranslator
 
 
 class JSONSchemaMessageTranslator(MessageTranslator):
-    messages = {
+    messages: ClassVar[dict[str, str]] = {
         r"^.+ is a required property$": messages.MISSING_REQUIRED_FIELD,
         r"^.+ is not of type u?'array'$": messages.INVALID_ARRAY,
         r"^.+ is not of type u?'boolean'$": messages.INVALID_BOOLEAN,

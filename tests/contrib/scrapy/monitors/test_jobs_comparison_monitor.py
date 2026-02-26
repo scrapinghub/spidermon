@@ -2,34 +2,35 @@ import math
 from unittest.mock import Mock, call, patch
 
 import pytest
+
+pytest.importorskip("scrapy")
+
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.monitors import (
     SPIDERMON_JOBS_COMPARISON,
+    SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS,
     SPIDERMON_JOBS_COMPARISON_STATES,
     SPIDERMON_JOBS_COMPARISON_TAGS,
     SPIDERMON_JOBS_COMPARISON_THRESHOLD,
-    SPIDERMON_JOBS_COMPARISON_ARGUMENTS,
-    SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS,
     ZyteJobsComparisonMonitor,
     monitors,
 )
-from spidermon.core.factories import MonitorFactory
 from spidermon.exceptions import NotConfigured
 
 
 @pytest.fixture
 def mock_jobs(previous_counts):
-    return Mock(return_value=[dict(items=c) for c in previous_counts])
+    return Mock(return_value=[{"items": c} for c in previous_counts])
 
 
 @pytest.fixture
 def mock_jobs_with_close_reason(previous_job_objs, close_reasons):
     return Mock(
         return_value=[
-            dict(items=j["items"], close_reason=j["close_reason"])
+            {"items": j["items"], "close_reason": j["close_reason"]}
             for j in previous_job_objs
             if j["close_reason"] in close_reasons
-        ]
+        ],
     )
 
 
@@ -40,28 +41,21 @@ def mock_suite(mock_jobs, monkeypatch):
 
 
 def get_paginated_jobs(**kwargs):
-    mocked_job_meta = []
-    for _ in range(kwargs["count"]):
-        mocked_job_meta.append({"spider_args": {}})
-    return mocked_job_meta
+    return [{"spider_args": {}} for _ in range(kwargs["count"])]
 
 
 def get_paginated_jobs_with_one_args(**kwargs):
-    mocked_job_meta = []
-    for _ in range(kwargs["count"]):
-        mocked_job_meta.append(
-            {"spider_args": {"args1": True}, "close_reason": "finished"}
-        )
-    return mocked_job_meta
+    return [
+        {"spider_args": {"args1": True}, "close_reason": "finished"}
+        for _ in range(kwargs["count"])
+    ]
 
 
 def get_paginated_jobs_arg_finished(**kwargs):
-    mocked_job_meta = []
-    for _ in range(kwargs["count"]):
-        mocked_job_meta.append(
-            {"spider_args": {"finished": True}, "close_reason": "finished"}
-        )
-    return mocked_job_meta
+    return [
+        {"spider_args": {"finished": True}, "close_reason": "finished"}
+        for _ in range(kwargs["count"])
+    ]
 
 
 def get_paginated_jobs_with_finished_close_reason(**kwargs):
@@ -70,7 +64,6 @@ def get_paginated_jobs_with_finished_close_reason(**kwargs):
         obj = Mock()
         obj.get.return_value = "finished"
         objs.append(obj)
-
     return objs
 
 
@@ -87,7 +80,9 @@ def get_paginated_jobs_with_cancel_close_reason(**kwargs):
 @pytest.fixture
 def mock_suite_with_close_reason(mock_jobs_with_close_reason, monkeypatch):
     monkeypatch.setattr(
-        ZyteJobsComparisonMonitor, "_get_jobs", mock_jobs_with_close_reason
+        ZyteJobsComparisonMonitor,
+        "_get_jobs",
+        mock_jobs_with_close_reason,
     )
     return MonitorSuite(monitors=[ZyteJobsComparisonMonitor])
 
@@ -106,13 +101,13 @@ def mock_suite_and_zyte_client(
 
 
 @pytest.mark.parametrize(
-    [
+    (
         "number_of_jobs",
         "threshold",
         "item_count",
         "previous_counts",
         "expected_to_be_enabled",
-    ],
+    ),
     [
         (0, 0, 1, [1], False),
         (0, 0.5, 1, [1], False),
@@ -125,14 +120,19 @@ def mock_suite_and_zyte_client(
         (5, 1.1, 1, [1], True),
     ],
 )
-def test_jobs_comparison_monitor_is_enabled(
-    make_data, mock_suite, item_count, number_of_jobs, expected_to_be_enabled, threshold
+def test_jobs_comparison_monitor_is_enabled(  # noqa: PLR0913
+    make_data,
+    mock_suite,
+    item_count,
+    number_of_jobs,
+    expected_to_be_enabled,
+    threshold,
 ):
     data = make_data(
         {
             SPIDERMON_JOBS_COMPARISON: number_of_jobs,
             SPIDERMON_JOBS_COMPARISON_THRESHOLD: threshold,
-        }
+        },
     )
     data["stats"]["item_scraped_count"] = item_count
     runner = data.pop("runner")
@@ -147,15 +147,10 @@ def test_jobs_comparison_monitor_is_enabled(
             runner.run(mock_suite, **data)
 
 
-class TestZyteJobsComparisonMonitor(ZyteJobsComparisonMonitor):
-    def runTest():
-        pass
-
-
 def test_jobs_comparison_monitor_get_tags_to_filter(monkeypatch):
     mock_data = Mock()
 
-    monitor = TestZyteJobsComparisonMonitor()
+    monitor = ZyteJobsComparisonMonitor()
     monitor.data = mock_data
 
     # Empty SPIDERMON_JOBS_COMPARISON_TAGS
@@ -172,13 +167,13 @@ def test_jobs_comparison_monitor_get_tags_to_filter(monkeypatch):
     assert monitor._get_tags_to_filter() == ["tag1", "tag2"]
 
 
-def test_jobs_comparison_monitor_get_jobs():
+def test_jobs_comparison_monitor_get_jobs():  # noqa: PLR0915
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = None
@@ -192,10 +187,10 @@ def test_jobs_comparison_monitor_get_jobs():
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = None
@@ -209,10 +204,10 @@ def test_jobs_comparison_monitor_get_jobs():
         mock_client.spider.jobs.list.assert_called_once()
 
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = None
@@ -226,16 +221,16 @@ def test_jobs_comparison_monitor_get_jobs():
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = ["finished"]
         monitor.crawler.settings.getbool.return_value = False
         mock_client.spider.jobs.list = Mock(
-            side_effect=get_paginated_jobs_with_finished_close_reason
+            side_effect=get_paginated_jobs_with_finished_close_reason,
         )
 
         # Return exact number of jobs
@@ -244,16 +239,16 @@ def test_jobs_comparison_monitor_get_jobs():
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getlist.return_value = ["finished"]
         monitor.crawler.settings.getbool.return_value = False
         mock_client.spider.jobs.list = Mock(
-            side_effect=get_paginated_jobs_with_cancel_close_reason
+            side_effect=get_paginated_jobs_with_cancel_close_reason,
         )
 
         # Return no jobs as all will be filtered due to close reaseon
@@ -262,10 +257,10 @@ def test_jobs_comparison_monitor_get_jobs():
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getdict.return_value = {}
@@ -280,10 +275,10 @@ def test_jobs_comparison_monitor_get_jobs():
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getdict.return_value = {"finished": True}
@@ -298,10 +293,10 @@ def test_jobs_comparison_monitor_get_jobs():
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
         monitor.crawler.settings.getdict.return_value = {"finished": False}
@@ -316,10 +311,10 @@ def test_jobs_comparison_monitor_get_jobs():
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
 
@@ -342,10 +337,10 @@ def test_jobs_comparison_monitor_get_jobs():
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client"
+        "spidermon.contrib.scrapy.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
-        monitor = TestZyteJobsComparisonMonitor()
+        monitor = ZyteJobsComparisonMonitor()
         monitor._get_tags_to_filter = Mock(side_effect=lambda: None)
         monitor.data = Mock()
 
@@ -362,7 +357,7 @@ def test_jobs_comparison_monitor_get_jobs():
 
 
 @pytest.mark.parametrize(
-    ["item_count", "previous_counts", "threshold", "should_raise"],
+    ("item_count", "previous_counts", "threshold", "should_raise"),
     [
         (90, [100], 0.9, False),
         (80, [100, 101, 99], 0.8, False),
@@ -374,10 +369,14 @@ def test_jobs_comparison_monitor_get_jobs():
     ],
 )
 def test_jobs_comparison_monitor_threshold(
-    make_data, mock_suite, item_count, threshold, should_raise
+    make_data,
+    mock_suite,
+    item_count,
+    threshold,
+    should_raise,
 ):
     data = make_data(
-        {SPIDERMON_JOBS_COMPARISON: 1, SPIDERMON_JOBS_COMPARISON_THRESHOLD: threshold}
+        {SPIDERMON_JOBS_COMPARISON: 1, SPIDERMON_JOBS_COMPARISON_THRESHOLD: threshold},
     )
     data["stats"]["item_scraped_count"] = item_count
     runner = data.pop("runner")
@@ -387,7 +386,7 @@ def test_jobs_comparison_monitor_threshold(
 
 
 @pytest.mark.parametrize(
-    ["states", "number_of_jobs", "tags", "threshold"],
+    ("states", "number_of_jobs", "tags", "threshold"),
     [
         (("finished",), 5, ("tag1", "tag2"), 0.5),
         (("foo", "bar"), 10, ("tag3",), 0.5),
@@ -395,7 +394,7 @@ def test_jobs_comparison_monitor_threshold(
         (("foo", "bar"), 2000, ("tag3",), 0.5),
     ],
 )
-def test_arguments_passed_to_zyte_client(
+def test_arguments_passed_to_zyte_client(  # noqa: PLR0913
     make_data,
     mock_suite_and_zyte_client,
     states,
@@ -409,7 +408,7 @@ def test_arguments_passed_to_zyte_client(
             SPIDERMON_JOBS_COMPARISON_STATES: states,
             SPIDERMON_JOBS_COMPARISON_TAGS: tags,
             SPIDERMON_JOBS_COMPARISON_THRESHOLD: threshold,
-        }
+        },
     )
     suite, mock_client = mock_suite_and_zyte_client
     runner = data.pop("runner")
@@ -424,7 +423,7 @@ def test_arguments_passed_to_zyte_client(
             has_tag=list(tags),
         )
         # One call to api every 1000 expected jobs
-        for n in range(0, math.ceil(number_of_jobs / 1000))
+        for n in range(math.ceil(number_of_jobs / 1000))
     ]
 
     mock_client.spider.jobs.list.assert_has_calls(calls)

@@ -8,10 +8,10 @@ To use this action, you need to provide the AWS credentials and the SNS topic AR
 .. code-block:: python
 
     # settings.py
-    SPIDERMON_SNS_TOPIC_ARN = '<SNS_TOPIC_ARN>'
-    SPIDERMON_AWS_ACCESS_KEY_ID = '<AWS_ACCESS_KEY>'
-    SPIDERMON_AWS_SECRET_ACCESS_KEY = '<AWS_SECRET_KEY>'
-    SPIDERMON_AWS_REGION_NAME = '<AWS_REGION_NAME>'  # Default is 'us-east-1'
+    SPIDERMON_SNS_TOPIC_ARN = "<SNS_TOPIC_ARN>"
+    SPIDERMON_AWS_ACCESS_KEY_ID = "<AWS_ACCESS_KEY>"
+    SPIDERMON_AWS_SECRET_ACCESS_KEY = "<AWS_SECRET_KEY>"
+    SPIDERMON_AWS_REGION_NAME = "<AWS_REGION_NAME>"  # Default is 'us-east-1'
 
 A notification sent to the SNS topic can be further integrated with other AWS services or third-party applications.
 

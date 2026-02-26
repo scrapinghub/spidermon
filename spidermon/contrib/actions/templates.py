@@ -1,8 +1,10 @@
-import os
 import inspect
+from pathlib import Path
+from typing import Any, ClassVar
 
 from jinja2 import Template
-from spidermon.core.actions import ActionOptionsMetaclass, Action
+
+from spidermon.core.actions import Action, ActionOptionsMetaclass
 from spidermon.templates import template_loader
 
 
@@ -15,16 +17,16 @@ class ActionWithTemplatesMetaclass(ActionOptionsMetaclass):
     @classmethod
     def add_class_templates(mcs, cls):
         class_file = inspect.getfile(cls)
-        class_path = os.path.dirname(class_file)
-        template_loader.discover_folder(class_path)
+        class_path = Path(class_file).parent
+        template_loader.discover_folder(str(class_path))
         for path in cls.template_paths:
-            template_path = os.path.join(class_path, path)
-            template_loader.add_path(template_path)
+            template_path = class_path / path
+            template_loader.add_path(str(template_path))
 
 
 class ActionWithTemplates(Action, metaclass=ActionWithTemplatesMetaclass):
-    template_paths = []
-    context = None
+    template_paths: ClassVar[list[str]] = []
+    context: dict[str, Any] | None = None
 
     def __init__(self, context=None):
         super().__init__()

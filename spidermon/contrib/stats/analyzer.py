@@ -23,6 +23,5 @@ class StatsAnalyzer:
 
     def _get_pattern(self, pattern):
         if self.prefix:
-            return "/".join([self.prefix, pattern])
-        else:
-            return pattern
+            return f"{self.prefix}/{pattern}"
+        return pattern

@@ -7,9 +7,7 @@ from .options import ActionOptionsMetaclass
 
 
 class Action(metaclass=ActionOptionsMetaclass):
-    """
-    Base class for actions.
-    """
+    """Base class for actions."""
 
     fallback = None
 
@@ -39,7 +37,7 @@ class Action(metaclass=ActionOptionsMetaclass):
             self.run_action()
         except SkipAction as e:
             result.add_action_skip(self, e.args[0])
-        except:
+        except:  # noqa: E722
             result.add_action_error(self, traceback.format_exc())
             if self.fallback is not None:
                 self.fallback.run(self.result, self.data)
@@ -63,7 +61,7 @@ class Action(metaclass=ActionOptionsMetaclass):
         return {}
 
     def __repr__(self):
-        return "<ACTION:({}) at {}>".format(self.name, hex(id(self)))
+        return f"<ACTION:({self.name}) at {hex(id(self))}>"
 
     def __str__(self):
         return repr(self)
