@@ -91,6 +91,16 @@ include = [
 ]
 
 [tool.mypy]
+ignore_missing_imports = false
+implicit_reexport = false
+
+[[tool.mypy.overrides]]
+module = [
+    "boto.*",
+    "premailer",
+    "scrapinghub",
+    "sh_scrapy.*",
+]
 ignore_missing_imports = true
 
 [tool.ruff.lint]
@@ -184,6 +194,8 @@ ignore = [
     "D205",
     # Multi-line docstring closing quotes should be on a separate line
     "D209",
+    # Use of `assert` detected
+    "S101",
 ]
 
 [tool.ruff.lint.isort]
