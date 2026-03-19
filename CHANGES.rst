@@ -4,23 +4,27 @@ Release notes
 1.25.0 (unreleased)
 -------------------
 
--   Dropped support for Python 3.8 and 3.9, added support for Python 3.13 and
-    3.14.
+- bug: Improve compatibility with Scrapy 2.14+ by adapting stats access and
+  stats history collection internals to Scrapy's updated stats collector API.
+- bug: Improve ``BaseStatMonitor`` comparisons by coercing both stat values and
+  threshold values to floats.
+- bug: Improve email format validation handling for quoted local parts.
+- chore: Drop support for Python 3.8 and 3.9. Add support for Python 3.13 and
+  3.14.
+- chore: Set minimum versions for dependencies, now covered by CI tests:
 
--   Set minimum versions for dependencies, now covered by CI tests:
+  - ``python-slugify >= 5.0.0`` is now required.
 
-    -   ``python-slugify >= 5.0.0`` is now required.
-
-    -   | The ``monitoring`` extra now requires:
-        | ``boto >= 2.32.1``
-        | ``boto3 >= 1.10.0``
-        | ``itemadapter >= 0.1.0``
-        | ``jinja2 >= 3.0.0``
-        | ``premailer >= 2.7.0``
-        | ``requests >= 2.19.0``
-        | ``scrapinghub >= 2.4.0``
-        | ``scrapinghub-entrypoint-scrapy >= 0.11.2``
-        | ``scrapy >= 2.7.0``
+  - | The ``monitoring`` extra now requires:
+    | ``boto >= 2.32.1``
+    | ``boto3 >= 1.10.0``
+    | ``itemadapter >= 0.1.0``
+    | ``jinja2 >= 3.0.0``
+    | ``premailer >= 2.7.0``
+    | ``requests >= 2.19.0``
+    | ``scrapinghub >= 2.4.0``
+    | ``scrapinghub-entrypoint-scrapy >= 0.11.2``
+    | ``scrapy >= 2.7.0``
 
 1.24.0 (2025-04-11)
 -------------------
