@@ -1,7 +1,7 @@
 Release notes
 =============
 
-1.25.0 (unreleased)
+1.25.0 (2026-03-20)
 -------------------
 
 - bug: Improve compatibility with Scrapy 2.14+ by adapting stats access and
