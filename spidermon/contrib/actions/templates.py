@@ -4,7 +4,8 @@ from typing import Any, ClassVar
 
 from jinja2 import Template
 
-from spidermon.core.actions import Action, ActionOptionsMetaclass
+from spidermon.core.actions import Action
+from spidermon.core.options import ActionOptionsMetaclass
 from spidermon.templates import template_loader
 
 

@@ -24,6 +24,8 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
         spider = spider or self._crawler.spider
         stats_location = self._stats_location(spider)
 
+        assert spider
+        assert spider.crawler
         max_stored_stats = spider.crawler.settings.getint(
             "SPIDERMON_MAX_STORED_STATS",
             default=100,
@@ -38,7 +40,7 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
         if _stats_history.maxlen != max_stored_stats:
             _stats_history = deque(_stats_history, maxlen=max_stored_stats)
 
-        spider.stats_history = _stats_history
+        spider.stats_history = _stats_history  # type: ignore[attr-defined]
 
     def _persist_stats(self, stats, spider=None):
         spider = spider or self._crawler.spider
