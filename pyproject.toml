@@ -65,9 +65,6 @@ filename = "spidermon/VERSION"
 [[tool.bumpversion.files]]
 filename = "spidermon/__init__.py"
 
-[[tool.bumpversion.files]]
-filename = "setup.py"
-
 [tool.coverage.run]
 branch = true
 
