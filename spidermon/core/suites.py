@@ -45,6 +45,11 @@ class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
         self.add_monitors(self.monitors)
         self.add_monitors(monitors or [])
 
+        if crawler and dict(crawler.settings).get("SPIDERMON_MONITOR_SKIPPING_RULES"):
+            skip_rules = crawler.settings.get("SPIDERMON_MONITOR_SKIPPING_RULES")
+            for monitor in self.all_monitors:
+                monitor.skip_rules = skip_rules
+
         declarative_monitors_finished_actions = self.monitors_finished_actions
         self.monitors_finished_actions = []
         self.add_monitors_finished_actions(declarative_monitors_finished_actions)
