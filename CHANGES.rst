@@ -1,6 +1,12 @@
 Release notes
 =============
 
+1.25.1 (unreleased)
+-------------------
+
+- bug: Fix compatibility with Scrapy 2.14+ where ``process_item`` was
+  called without the ``spider`` argument (#473).
+
 1.25.0 (2026-03-20)
 -------------------
 
