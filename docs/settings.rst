@@ -200,47 +200,51 @@ Considering your spider returns the following items:
 .. code-block:: python
 
    [
-     {
-       "field_1": "",
-       "field_2": "value",
-       "field_3": [],
-       "field_4": 0,
-     },
-     {
-       "field_1": "value",
-       "field_2": "value",
-       "field_3": ["item1"],
-       "field_4": 42,
-     },
+       {
+           "field_1": "",
+           "field_2": "value",
+           "field_3": [],
+           "field_4": 0,
+       },
+       {
+           "field_1": "value",
+           "field_2": "value",
+           "field_3": ["item1"],
+           "field_4": 42,
+       },
    ]
 
 If this setting is set to ``True``, spider statistics will be:
 
 .. code-block:: python
 
-   'spidermon_item_scraped_count/dict': 2,
-   'spidermon_item_scraped_count/dict/field_1': 1,  # Ignored empty string
-   'spidermon_item_scraped_count/dict/field_2': 2,
-   'spidermon_item_scraped_count/dict/field_3': 1,  # Ignored empty list
-   'spidermon_item_scraped_count/dict/field_4': 1,  # Ignored zero
-   'spidermon_field_coverage/dict/field_1': 0.5,  # Ignored empty string
-   'spidermon_field_coverage/dict/field_2': 1.0,
-   'spidermon_field_coverage/dict/field_3': 0.5,  # Ignored empty list
-   'spidermon_field_coverage/dict/field_4': 0.5,  # Ignored zero
+    {
+        "spidermon_item_scraped_count/dict": 2,
+        "spidermon_item_scraped_count/dict/field_1": 1,  # Ignored empty string
+        "spidermon_item_scraped_count/dict/field_2": 2,
+        "spidermon_item_scraped_count/dict/field_3": 1,  # Ignored empty list
+        "spidermon_item_scraped_count/dict/field_4": 1,  # Ignored zero
+        "spidermon_field_coverage/dict/field_1": 0.5,  # Ignored empty string
+        "spidermon_field_coverage/dict/field_2": 1.0,
+        "spidermon_field_coverage/dict/field_3": 0.5,  # Ignored empty list
+        "spidermon_field_coverage/dict/field_4": 0.5,  # Ignored zero
+    }
 
 If this setting is not provided or set to ``False``, spider statistics will be:
 
 .. code-block:: python
 
-   'spidermon_item_scraped_count/dict': 2,
-   'spidermon_item_scraped_count/dict/field_1': 2,  # Did not ignore empty string
-   'spidermon_item_scraped_count/dict/field_2': 2,
-   'spidermon_item_scraped_count/dict/field_3': 2,  # Did not ignore empty list
-   'spidermon_item_scraped_count/dict/field_4': 2,  # Did not ignore zero
-   'spidermon_field_coverage/dict/field_1': 1.0,  # Did not ignore empty string
-   'spidermon_field_coverage/dict/field_2': 1.0,
-   'spidermon_field_coverage/dict/field_3': 1.0,  # Did not ignore empty list
-   'spidermon_field_coverage/dict/field_4': 1.0,  # Did not ignore zero
+    {
+        "spidermon_item_scraped_count/dict": 2,
+        "spidermon_item_scraped_count/dict/field_1": 2,  # Did not ignore empty string
+        "spidermon_item_scraped_count/dict/field_2": 2,
+        "spidermon_item_scraped_count/dict/field_3": 2,  # Did not ignore empty list
+        "spidermon_item_scraped_count/dict/field_4": 2,  # Did not ignore zero
+        "spidermon_field_coverage/dict/field_1": 1.0,  # Did not ignore empty string
+        "spidermon_field_coverage/dict/field_2": 1.0,
+        "spidermon_field_coverage/dict/field_3": 1.0,  # Did not ignore empty list
+        "spidermon_field_coverage/dict/field_4": 1.0,  # Did not ignore zero
+    }
 
 SPIDERMON_FIELD_COVERAGE_SKIP_VALUES
 ------------------------------------
@@ -263,47 +267,51 @@ Considering your spider returns the following items:
 .. code-block:: python
 
    [
-     {
-       "field_1": "N/A",
-       "field_2": "value",
-       "field_3": "-",
-       "field_4": "TBD",
-     },
-     {
-       "field_1": "actual_value",
-       "field_2": "value",
-       "field_3": "data",
-       "field_4": "completed",
-     },
+       {
+           "field_1": "N/A",
+           "field_2": "value",
+           "field_3": "-",
+           "field_4": "TBD",
+       },
+       {
+           "field_1": "actual_value",
+           "field_2": "value",
+           "field_3": "data",
+           "field_4": "completed",
+       },
    ]
 
 If this setting is set to ``["N/A", "-", "TBD"]``, spider statistics will be:
 
 .. code-block:: python
 
-   'spidermon_item_scraped_count/dict': 2,
-   'spidermon_item_scraped_count/dict/field_1': 1,  # Ignored "N/A"
-   'spidermon_item_scraped_count/dict/field_2': 2,
-   'spidermon_item_scraped_count/dict/field_3': 1,  # Ignored "-"
-   'spidermon_item_scraped_count/dict/field_4': 1,  # Ignored "TBD"
-   'spidermon_field_coverage/dict/field_1': 0.5,  # Ignored "N/A"
-   'spidermon_field_coverage/dict/field_2': 1.0,
-   'spidermon_field_coverage/dict/field_3': 0.5,  # Ignored "-"
-   'spidermon_field_coverage/dict/field_4': 0.5,  # Ignored "TBD"
+    {
+        "spidermon_item_scraped_count/dict": 2,
+        "spidermon_item_scraped_count/dict/field_1": 1,  # Ignored "N/A"
+        "spidermon_item_scraped_count/dict/field_2": 2,
+        "spidermon_item_scraped_count/dict/field_3": 1,  # Ignored "-"
+        "spidermon_item_scraped_count/dict/field_4": 1,  # Ignored "TBD"
+        "spidermon_field_coverage/dict/field_1": 0.5,  # Ignored "N/A"
+        "spidermon_field_coverage/dict/field_2": 1.0,
+        "spidermon_field_coverage/dict/field_3": 0.5,  # Ignored "-"
+        "spidermon_field_coverage/dict/field_4": 0.5,  # Ignored "TBD"
+    }
 
 If you want to override the default skip values, you can set this to a custom list. If set to an empty list ``[]``, no custom skip values will be used (only falsy values will be skipped if ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` is enabled). If not provided, the default values will be used. Without the default skip values, spider statistics would be:
 
 .. code-block:: python
 
-   'spidermon_item_scraped_count/dict': 2,
-   'spidermon_item_scraped_count/dict/field_1': 2,  # Did not ignore "N/A"
-   'spidermon_item_scraped_count/dict/field_2': 2,
-   'spidermon_item_scraped_count/dict/field_3': 2,  # Did not ignore "-"
-   'spidermon_item_scraped_count/dict/field_4': 2,  # Did not ignore "TBD"
-   'spidermon_field_coverage/dict/field_1': 1.0,  # Did not ignore "N/A"
-   'spidermon_field_coverage/dict/field_2': 1.0,
-   'spidermon_field_coverage/dict/field_3': 1.0,  # Did not ignore "-"
-   'spidermon_field_coverage/dict/field_4': 1.0,  # Did not ignore "TBD"
+    {
+        "spidermon_item_scraped_count/dict": 2,
+        "spidermon_item_scraped_count/dict/field_1": 2,  # Did not ignore "N/A"
+        "spidermon_item_scraped_count/dict/field_2": 2,
+        "spidermon_item_scraped_count/dict/field_3": 2,  # Did not ignore "-"
+        "spidermon_item_scraped_count/dict/field_4": 2,  # Did not ignore "TBD"
+        "spidermon_field_coverage/dict/field_1": 1.0,  # Did not ignore "N/A"
+        "spidermon_field_coverage/dict/field_2": 1.0,
+        "spidermon_field_coverage/dict/field_3": 1.0,  # Did not ignore "-"
+        "spidermon_field_coverage/dict/field_4": 1.0,  # Did not ignore "TBD"
+    }
 
 SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS
 -------------------------------------
