@@ -147,6 +147,7 @@ class Spidermon:
         max_list_nesting_level=0,
         max_dict_nesting_level=-1,
         nesting_level=0,
+        per_field_dict_levels=None,
     ):
         if item_count_stat is None:
             item_type = type(item).__name__
@@ -160,23 +161,35 @@ class Spidermon:
             field_item_count_stat = f"{item_count_stat}/{field_name}"
             self.crawler.stats.inc_value(field_item_count_stat)
 
+            # Resolve per-field level at the top nesting level only
+            if per_field_dict_levels is not None and nesting_level == 0:
+                effective_max_dict = per_field_dict_levels.get(
+                    field_name,
+                    per_field_dict_levels.get("default", -1),
+                )
+            else:
+                effective_max_dict = max_dict_nesting_level
+
             if isinstance(value, dict):
                 # if there's no max (set to -1), we just proceed indefinitely (all levels)
                 # this is for backwards compatibility
-                if max_dict_nesting_level == -1:
-                    self._count_item(value, skip_none_values, field_item_count_stat)
+                if effective_max_dict == -1:
+                    self._count_item(
+                        value,
+                        skip_none_values,
+                        field_item_count_stat,
+                        max_list_nesting_level=max_list_nesting_level,
+                        max_dict_nesting_level=effective_max_dict,
+                    )
                     continue
-                if (
-                    max_dict_nesting_level > -1
-                    and nesting_level < max_dict_nesting_level
-                ):
+                if effective_max_dict > -1 and nesting_level < effective_max_dict:
                     self._count_item(
                         value,
                         skip_none_values,
                         field_item_count_stat,
                         nesting_level=nesting_level + 1,
                         max_list_nesting_level=max_list_nesting_level,
-                        max_dict_nesting_level=max_dict_nesting_level,
+                        max_dict_nesting_level=effective_max_dict,
                     )
                     continue
 
@@ -196,7 +209,7 @@ class Spidermon:
                             skip_none_values,
                             items_count_stat,
                             max_list_nesting_level=max_list_nesting_level,
-                            max_dict_nesting_level=max_dict_nesting_level,
+                            max_dict_nesting_level=effective_max_dict,
                             nesting_level=nesting_level + 1,
                         )
                         continue
@@ -215,16 +228,23 @@ class Spidermon:
             "SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS",
             0,
         )
-        dict_field_coverage_levels = spider.crawler.settings.getint(
+        dict_field_coverage_setting = spider.crawler.settings.get(
             "SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS",
             -1,
         )
+        if isinstance(dict_field_coverage_setting, dict):
+            per_field_dict_levels = dict_field_coverage_setting
+            dict_field_coverage_levels = -1
+        else:
+            per_field_dict_levels = None
+            dict_field_coverage_levels = int(dict_field_coverage_setting)
         self.crawler.stats.inc_value("spidermon_item_scraped_count")
         self._count_item(
             item,
             skip_none_values,
             max_list_nesting_level=list_field_coverage_levels,
             max_dict_nesting_level=dict_field_coverage_levels,
+            per_field_dict_levels=per_field_dict_levels,
         )
 
     def _run_periodic_suites(self, spider, suites):

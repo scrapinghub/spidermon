@@ -769,3 +769,153 @@ async def test_item_scraped_count_list_of_dicts_two_nesting_levels(spider):
         )
         == 1
     )
+
+
+@deferred_f_from_coro_f
+async def test_item_scraped_count_per_field_dict_levels():
+    """Per-field SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS: field1 uses level 0 (no nesting),
+    all others fall back to default level 1."""
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS": {
+            "default": 1,
+            "field1": 0,
+        },
+    }
+    returned_items = [
+        {
+            "field1": {"field1.1": "value1.1"},
+            "field2": "value2",
+            "field3": {"field3.1": "value3.1"},
+            "field4": {
+                "field4.1": {
+                    "field4.1.1": "value",
+                    "field4.1.2": "value",
+                    "field4.1.3": {"field4.1.3.1": "value"},
+                },
+            },
+        },
+        {
+            "field1": {
+                "field1.1": "value1.1",
+                "field1.2": "value1.2",
+            },
+            "field2": "value2",
+        },
+    ]
+    crawler = get_crawler(settings_dict=settings)
+    spider = Spider.from_crawler(crawler, "example.com")
+    for item in returned_items:
+        await send_item_scraped(spider, item)
+
+    stats = spider.crawler.stats.get_stats()
+
+    assert stats.get("spidermon_item_scraped_count/dict") == 2
+    # field1 has level 0 → nested fields are NOT tracked
+    assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/field1/field1.1") is None
+    assert stats.get("spidermon_item_scraped_count/dict/field1/field1.2") is None
+    # field2 is a plain string → no nesting
+    assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
+    # field3 uses default level 1 → one level tracked
+    assert stats.get("spidermon_item_scraped_count/dict/field3") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field3/field3.1") == 1
+    # field4 uses default level 1 → one level tracked but no deeper
+    assert stats.get("spidermon_item_scraped_count/dict/field4") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field4/field4.1") == 1
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field4/field4.1/field4.1.1")
+        is None
+    )
+
+
+@deferred_f_from_coro_f
+async def test_item_scraped_count_per_field_dict_levels_no_default():
+    """Per-field config without 'default' key: unlisted fields fall back to -1 (unlimited)."""
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS": {
+            "field1": 0,
+        },
+    }
+    returned_items = [
+        {
+            "field1": {"field1.1": "value1.1"},
+            "field4": {
+                "field4.1": {
+                    "field4.1.1": "value",
+                },
+            },
+        },
+    ]
+    crawler = get_crawler(settings_dict=settings)
+    spider = Spider.from_crawler(crawler, "example.com")
+    for item in returned_items:
+        await send_item_scraped(spider, item)
+
+    stats = spider.crawler.stats.get_stats()
+
+    # field1 has level 0 → no nesting tracked
+    assert stats.get("spidermon_item_scraped_count/dict/field1") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field1/field1.1") is None
+    # field4 uses default -1 (unlimited) → all levels tracked
+    assert stats.get("spidermon_item_scraped_count/dict/field4") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field4/field4.1") == 1
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field4/field4.1/field4.1.1") == 1
+    )
+
+
+@deferred_f_from_coro_f
+async def test_item_scraped_count_per_field_dict_levels_specific_field_higher_level():
+    """Per-field config: specific field uses a higher level than the default."""
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS": {
+            "default": 0,
+            "field4": 2,
+        },
+    }
+    returned_items = [
+        {
+            "field1": {"field1.1": "value1.1"},
+            "field4": {
+                "field4.1": {
+                    "field4.1.1": "value",
+                    "field4.1.3": {"field4.1.3.1": "value"},
+                },
+            },
+        },
+    ]
+    crawler = get_crawler(settings_dict=settings)
+    spider = Spider.from_crawler(crawler, "example.com")
+    for item in returned_items:
+        await send_item_scraped(spider, item)
+
+    stats = spider.crawler.stats.get_stats()
+
+    # field1 uses default level 0 → no nesting
+    assert stats.get("spidermon_item_scraped_count/dict/field1") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field1/field1.1") is None
+    # field4 uses level 2 → two levels of nesting tracked
+    assert stats.get("spidermon_item_scraped_count/dict/field4") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field4/field4.1") == 1
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field4/field4.1/field4.1.1") == 1
+    )
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3") == 1
+    )
+    # three levels deep → not tracked (level 2 means max 2 levels)
+    assert (
+        stats.get(
+            "spidermon_item_scraped_count/dict/field4/field4.1/field4.1.3/field4.1.3.1"
+        )
+        is None
+    )
