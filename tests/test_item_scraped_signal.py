@@ -774,13 +774,13 @@ async def test_item_scraped_count_list_of_dicts_two_nesting_levels(spider):
 @deferred_f_from_coro_f
 async def test_item_scraped_count_per_field_dict_levels():
     """Per-field SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS: field1 uses level 0 (no nesting),
-    all others fall back to default level 1."""
+    all others fall back to wildcard level 1."""
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
         "SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS": {
-            "default": 1,
+            "*": 1,
             "field1": 0,
         },
     }
@@ -819,10 +819,10 @@ async def test_item_scraped_count_per_field_dict_levels():
     assert stats.get("spidermon_item_scraped_count/dict/field1/field1.2") is None
     # field2 is a plain string → no nesting
     assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
-    # field3 uses default level 1 → one level tracked
+    # field3 uses wildcard level 1 → one level tracked
     assert stats.get("spidermon_item_scraped_count/dict/field3") == 1
     assert stats.get("spidermon_item_scraped_count/dict/field3/field3.1") == 1
-    # field4 uses default level 1 → one level tracked but no deeper
+    # field4 uses wildcard level 1 → one level tracked but no deeper
     assert stats.get("spidermon_item_scraped_count/dict/field4") == 1
     assert stats.get("spidermon_item_scraped_count/dict/field4/field4.1") == 1
     assert (
@@ -833,7 +833,7 @@ async def test_item_scraped_count_per_field_dict_levels():
 
 @deferred_f_from_coro_f
 async def test_item_scraped_count_per_field_dict_levels_no_default():
-    """Per-field config without 'default' key: unlisted fields fall back to -1 (unlimited)."""
+    """Per-field config without '*' key: unlisted fields fall back to -1 (unlimited)."""
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -878,7 +878,7 @@ async def test_item_scraped_count_per_field_dict_levels_specific_field_higher_le
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
         "SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS": {
-            "default": 0,
+            "*": 0,
             "field4": 2,
         },
     }

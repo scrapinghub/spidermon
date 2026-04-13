@@ -163,9 +163,11 @@ class Spidermon:
 
             # Resolve per-field level at the top nesting level only
             if per_field_dict_levels is not None and nesting_level == 0:
-                effective_max_dict = per_field_dict_levels.get(
-                    field_name,
-                    per_field_dict_levels.get("default", -1),
+                effective_max_dict = int(
+                    per_field_dict_levels.get(
+                        field_name,
+                        per_field_dict_levels.get("*", -1),
+                    )
                 )
             else:
                 effective_max_dict = max_dict_nesting_level
@@ -180,6 +182,7 @@ class Spidermon:
                         field_item_count_stat,
                         max_list_nesting_level=max_list_nesting_level,
                         max_dict_nesting_level=effective_max_dict,
+                        nesting_level=nesting_level + 1,
                     )
                     continue
                 if effective_max_dict > -1 and nesting_level < effective_max_dict:
