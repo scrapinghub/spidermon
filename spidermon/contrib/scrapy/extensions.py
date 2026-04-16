@@ -211,8 +211,6 @@ class Spidermon:
         if skip_values is None:
             skip_values = []
 
-        default_skip_values = self._get_default_skip_values()
-
         for field_name, value in ItemAdapter(item).items():
             if skip_none_values and value is None:
                 continue
