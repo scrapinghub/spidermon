@@ -193,7 +193,7 @@ SPIDERMON_FIELD_COVERAGE_SKIP_FALSY
 -----------------------------------
 Default: ``True``
 
-When enabled, returned fields that have falsy values (empty strings, empty lists, empty tuples, empty dictionaries, zero, False, etc.) will not be counted as fields with a value.
+When enabled, returned fields whose values are falsy in the Python sense (for example empty strings, empty lists, empty tuples, empty dicts, numeric zero, ``False``) will not be counted as fields with a value. ``None`` is not affected by this setting; use ``SPIDERMON_FIELD_COVERAGE_SKIP_NONE`` to exclude ``None``. Truthy placeholders such as ``"N/A"`` or ``"-"`` are skipped via ``SPIDERMON_FIELD_COVERAGE_SKIP_VALUES`` (they are included in its default list).
 
 Considering your spider returns the following items:
 
@@ -250,9 +250,9 @@ SPIDERMON_FIELD_COVERAGE_SKIP_VALUES
 ------------------------------------
 Default: ``["", [], {}, "N/A", "-"]``
 
-A list of custom values that should not be counted as valid field values when calculating field coverage. By default, this includes empty string, empty list, empty dict, "N/A", and "-". You can override this to customize which values should be skipped. This is useful when your items contain placeholder values like "TBD", etc. that indicate missing data but are not Python falsy values. You can also skip numeric values like ``0`` or ``-1`` if they represent missing data in your use case.
+A list of values that should not be counted as valid field values when calculating field coverage, matched by exact equality (``==``) after falsy-based skipping (when ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` is enabled). By default, this list includes empty string, empty list, empty dict, ``"N/A"``, and ``"-"``. Those first three overlap with falsy skipping; the string placeholders are truthy in Python, so they rely on this list. Override the setting to add custom sentinels (for example ``"TBD"``) or numeric markers such as ``-1`` that are not falsy and therefore are not skipped by ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` alone. Integer ``0`` is already skipped when falsy skipping is on (the default); you do not need to list it here unless you disable falsy skipping and still want to treat ``0`` as missing.
 
-This setting works in addition to ``SPIDERMON_FIELD_COVERAGE_SKIP_NONE`` and ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY``. Values are matched using exact equality (``==``), so type matters (e.g., the string ``"0"`` is different from the integer ``0``).
+This setting works together with ``SPIDERMON_FIELD_COVERAGE_SKIP_NONE`` and ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY``. Type matters (e.g., the string ``"0"`` is different from the integer ``0``).
 
 The setting can be provided in several formats:
 
@@ -297,7 +297,7 @@ If this setting is set to ``["N/A", "-", "TBD"]``, spider statistics will be:
         "spidermon_field_coverage/dict/field_4": 0.5,  # Ignored "TBD"
     }
 
-If you want to override the default skip values, you can set this to a custom list. If set to an empty list ``[]``, no custom skip values will be used (only falsy values will be skipped if ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` is enabled). If not provided, the default values will be used. Without the default skip values, spider statistics would be:
+If you want to override the default skip values, you can set this to a custom list. If set to an empty list ``[]``, the default placeholder list is not used and falsy-based skipping is also turned off for this feature, so all non-``None`` values are counted unless ``SPIDERMON_FIELD_COVERAGE_SKIP_NONE`` excludes ``None``. If not provided, the default values will be used. Without the default skip values, spider statistics would be:
 
 .. code-block:: python
 

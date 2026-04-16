@@ -693,7 +693,7 @@ async def test_item_scraped_count_skip_values_json_non_list_uses_getlist():
 
     returned_items = [
         {"field1": "42", "field2": 42},
-        {"field1": "x", "field2": 0},
+        {"field1": "x", "field2": 99},
     ]
 
     for item in returned_items:
@@ -752,6 +752,49 @@ def test_count_item_skip_values_none_defaults_to_empty_list():
 
     stats = crawler.stats.get_stats()
     assert stats.get("spidermon_item_scraped_count/dict/field1") == 1
+
+
+@deferred_f_from_coro_f
+async def test_item_scraped_count_skip_falsy_uses_python_truthiness():
+    """0, False, and empty tuple are skipped; None is not (use SKIP_NONE); N/A via skip values."""
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_FIELD_COVERAGE_SKIP_FALSY": True,
+        "SPIDERMON_FIELD_COVERAGE_SKIP_NONE": False,
+    }
+
+    crawler = get_crawler(settings_dict=settings)
+    spider = Spider.from_crawler(crawler, "example.com")
+
+    returned_items = [
+        {
+            "int_zero": 0,
+            "bool_false": False,
+            "empty_tuple": (),
+            "none_val": None,
+            "placeholder": "N/A",
+        },
+        {
+            "int_zero": 1,
+            "bool_false": True,
+            "empty_tuple": (1,),
+            "none_val": "set",
+            "placeholder": "ok",
+        },
+    ]
+
+    for item in returned_items:
+        await send_item_scraped(spider, item)
+
+    stats = spider.crawler.stats.get_stats()
+
+    assert stats.get("spidermon_item_scraped_count/dict/int_zero") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/bool_false") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/empty_tuple") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/none_val") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/placeholder") == 1
 
 
 @deferred_f_from_coro_f

@@ -61,9 +61,11 @@ class Spidermon:
 
     @staticmethod
     def _get_default_skip_values():
-        """Get the default skip values array.
+        """Default ``SPIDERMON_FIELD_COVERAGE_SKIP_VALUES`` when the setting is unset.
 
-        Default skip values: empty string, empty list, empty dict, 'N/A', '-'
+        Includes values that are also Python-falsy (``""``, ``[]``, ``{}``) and
+        truthy placeholders (``"N/A"``, ``"-"``) that must be matched explicitly.
+        Falsy skipping is controlled separately by ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY``.
         """
         return ["", [], {}, "N/A", "-"]
 
@@ -215,7 +217,7 @@ class Spidermon:
             if skip_none_values and value is None:
                 continue
 
-            if skip_falsy_values and value in default_skip_values:
+            if skip_falsy_values and value is not None and not value:
                 continue
 
             if value in skip_values:
