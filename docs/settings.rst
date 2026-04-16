@@ -254,7 +254,7 @@ Default: ``["", [], {}, "N/A", "-"]``
 
 A list of values that should not be counted as valid field values when calculating field coverage, matched by exact equality (``==``). Processing applies falsy-based skipping first (when ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` is enabled), then this list, so entries here are skipped even when falsy skipping is off. By default, this list includes empty string, empty list, empty dict, ``"N/A"``, and ``"-"``. Those first three overlap with falsy skipping; the string placeholders are truthy in Python, so they rely on this list. Override the setting to add custom sentinels (for example ``"TBD"``) or numeric markers such as ``-1`` that are not falsy and therefore are not skipped by ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` alone. Integer ``0`` is already skipped when falsy skipping is on (the default); you do not need to list it here unless you disable falsy skipping and still want to treat ``0`` as missing.
 
-This setting works together with ``SPIDERMON_FIELD_COVERAGE_SKIP_NONE`` and ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY``. Type matters (e.g., the string ``"0"`` is different from the integer ``0``).
+This setting works together with ``SPIDERMON_FIELD_COVERAGE_SKIP_NONE`` and ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY``. Matching is type-strict as well as by value: the field value must have the same type as an entry in the skip list (e.g., the string ``"0"`` does not match the integer ``0``). In particular, ``bool`` is not treated as ``int`` even though ``False == 0`` in plain Python, so listing ``0`` does not skip boolean ``False`` unless you also list ``False``.
 
 The setting can be provided in several formats:
 

@@ -69,6 +69,17 @@ class Spidermon:
         """
         return ["", [], {}, "N/A", "-"]
 
+    @staticmethod
+    def _value_matches_skip_entry(value, candidate):
+        """Exact match for skip list: same type and equal value.
+
+        Plain ``==`` / ``in`` would conflate ``bool`` with ``int`` (``False == 0``).
+        """
+        return type(value) is type(candidate) and value == candidate
+
+    def _value_in_skip_values(self, value, skip_values):
+        return any(self._value_matches_skip_entry(value, s) for s in skip_values)
+
     def _get_skip_values_list(self, settings):
         """Get skip values list, supporting Python lists, JSON strings, and
         comma-separated strings.
@@ -218,7 +229,7 @@ class Spidermon:
             if skip_falsy_values and value is not None and not value:
                 continue
 
-            if value in skip_values:
+            if self._value_in_skip_values(value, skip_values):
                 continue
 
             field_item_count_stat = f"{item_count_stat}/{field_name}"
