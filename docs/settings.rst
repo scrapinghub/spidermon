@@ -230,27 +230,29 @@ If this setting is set to ``True``, spider statistics will be:
         "spidermon_field_coverage/dict/field_4": 0.5,  # Ignored zero
     }
 
-If this setting is not provided or set to ``False``, spider statistics will be:
+If this setting is not provided or set to ``False``, falsy-based skipping is turned off, but ``SPIDERMON_FIELD_COVERAGE_SKIP_VALUES`` still applies with its default (which still lists ``""``, ``[]``, and ``{}``). For the same items as above, empty string and empty list therefore stay skipped, while integer ``0`` is counted on both items because ``0`` is not in the default skip list:
 
 .. code-block:: python
 
     {
         "spidermon_item_scraped_count/dict": 2,
-        "spidermon_item_scraped_count/dict/field_1": 2,  # Did not ignore empty string
+        "spidermon_item_scraped_count/dict/field_1": 1,  # Still skipped (default SKIP_VALUES)
         "spidermon_item_scraped_count/dict/field_2": 2,
-        "spidermon_item_scraped_count/dict/field_3": 2,  # Did not ignore empty list
-        "spidermon_item_scraped_count/dict/field_4": 2,  # Did not ignore zero
-        "spidermon_field_coverage/dict/field_1": 1.0,  # Did not ignore empty string
+        "spidermon_item_scraped_count/dict/field_3": 1,  # Still skipped (default SKIP_VALUES)
+        "spidermon_item_scraped_count/dict/field_4": 2,  # Counted (not in default SKIP_VALUES)
+        "spidermon_field_coverage/dict/field_1": 0.5,  # Still skipped (default SKIP_VALUES)
         "spidermon_field_coverage/dict/field_2": 1.0,
-        "spidermon_field_coverage/dict/field_3": 1.0,  # Did not ignore empty list
-        "spidermon_field_coverage/dict/field_4": 1.0,  # Did not ignore zero
+        "spidermon_field_coverage/dict/field_3": 0.5,  # Still skipped (default SKIP_VALUES)
+        "spidermon_field_coverage/dict/field_4": 1.0,  # Counted on both items
     }
+
+To count empty strings or empty lists with falsy skipping off, narrow ``SPIDERMON_FIELD_COVERAGE_SKIP_VALUES`` (for example to only ``["N/A", "-"]``) or set it to an empty value as described under that setting (which also disables falsy skipping for field coverage).
 
 SPIDERMON_FIELD_COVERAGE_SKIP_VALUES
 ------------------------------------
 Default: ``["", [], {}, "N/A", "-"]``
 
-A list of values that should not be counted as valid field values when calculating field coverage, matched by exact equality (``==``) after falsy-based skipping (when ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` is enabled). By default, this list includes empty string, empty list, empty dict, ``"N/A"``, and ``"-"``. Those first three overlap with falsy skipping; the string placeholders are truthy in Python, so they rely on this list. Override the setting to add custom sentinels (for example ``"TBD"``) or numeric markers such as ``-1`` that are not falsy and therefore are not skipped by ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` alone. Integer ``0`` is already skipped when falsy skipping is on (the default); you do not need to list it here unless you disable falsy skipping and still want to treat ``0`` as missing.
+A list of values that should not be counted as valid field values when calculating field coverage, matched by exact equality (``==``). Processing applies falsy-based skipping first (when ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` is enabled), then this list, so entries here are skipped even when falsy skipping is off. By default, this list includes empty string, empty list, empty dict, ``"N/A"``, and ``"-"``. Those first three overlap with falsy skipping; the string placeholders are truthy in Python, so they rely on this list. Override the setting to add custom sentinels (for example ``"TBD"``) or numeric markers such as ``-1`` that are not falsy and therefore are not skipped by ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` alone. Integer ``0`` is already skipped when falsy skipping is on (the default); you do not need to list it here unless you disable falsy skipping and still want to treat ``0`` as missing.
 
 This setting works together with ``SPIDERMON_FIELD_COVERAGE_SKIP_NONE`` and ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY``. Type matters (e.g., the string ``"0"`` is different from the integer ``0``).
 
