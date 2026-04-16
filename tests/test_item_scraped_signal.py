@@ -798,6 +798,49 @@ async def test_item_scraped_count_skip_falsy_uses_python_truthiness():
 
 
 @deferred_f_from_coro_f
+async def test_item_scraped_count_falsy_not_skipped_when_skip_falsy_false():
+    """With SKIP_FALSY off and SKIP_VALUES not listing empties, falsy values count."""
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_FIELD_COVERAGE_SKIP_FALSY": False,
+        "SPIDERMON_FIELD_COVERAGE_SKIP_VALUES": ["N/A"],
+    }
+
+    crawler = get_crawler(settings_dict=settings)
+    spider = Spider.from_crawler(crawler, "example.com")
+
+    returned_items = [
+        {
+            "empty_str": "",
+            "empty_list": [],
+            "empty_dict": {},
+            "int_zero": 0,
+            "placeholder": "N/A",
+        },
+        {
+            "empty_str": "text",
+            "empty_list": [1],
+            "empty_dict": {"k": "v"},
+            "int_zero": 1,
+            "placeholder": "ok",
+        },
+    ]
+
+    for item in returned_items:
+        await send_item_scraped(spider, item)
+
+    stats = spider.crawler.stats.get_stats()
+
+    assert stats.get("spidermon_item_scraped_count/dict/empty_str") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/empty_list") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/empty_dict") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/int_zero") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/placeholder") == 1
+
+
+@deferred_f_from_coro_f
 async def test_item_scraped_count_skip_values_works_with_nested_fields():
     settings = {
         "SPIDERMON_ENABLED": True,
