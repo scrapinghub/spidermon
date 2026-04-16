@@ -649,6 +649,34 @@ async def test_item_scraped_count_skip_values_bool_distinct_from_int_zero():
 
 
 @deferred_f_from_coro_f
+async def test_item_scraped_count_skip_values_bool_distinct_from_int_one():
+    """Integer 1 in SKIP_VALUES does not skip bool True (``True == 1`` without type check)."""
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_FIELD_COVERAGE_SKIP_FALSY": False,
+        "SPIDERMON_FIELD_COVERAGE_SKIP_VALUES": [1],
+    }
+
+    crawler = get_crawler(settings_dict=settings)
+    spider = Spider.from_crawler(crawler, "example.com")
+
+    returned_items = [
+        {"as_bool": True, "as_int": 1},
+        {"as_bool": False, "as_int": 2},
+    ]
+
+    for item in returned_items:
+        await send_item_scraped(spider, item)
+
+    stats = spider.crawler.stats.get_stats()
+
+    assert stats.get("spidermon_item_scraped_count/dict/as_bool") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/as_int") == 1
+
+
+@deferred_f_from_coro_f
 async def test_item_scraped_count_skip_integer_values():
     """Test that integer values like 0 and -1 can be skipped"""
     settings = {
