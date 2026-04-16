@@ -297,7 +297,7 @@ If this setting is set to ``["N/A", "-", "TBD"]``, spider statistics will be:
         "spidermon_field_coverage/dict/field_4": 0.5,  # Ignored "TBD"
     }
 
-If you want to override the default skip values, you can set this to a custom list. If set to an empty list ``[]``, the default placeholder list is not used and falsy-based skipping is also turned off for this feature, so all non-``None`` values are counted unless ``SPIDERMON_FIELD_COVERAGE_SKIP_NONE`` excludes ``None``. If not provided, the default values will be used. Without the default skip values, spider statistics would be:
+If you want to override the default skip values, you can set this to a custom list. If you set it to an empty list in any supported form (Python ``[]``, JSON ``'[]'``, or another value that normalizes to no skip entries, such as an empty string), the default placeholder list is not used and falsy-based skipping is also turned off for this feature, so all non-``None`` values are counted unless ``SPIDERMON_FIELD_COVERAGE_SKIP_NONE`` excludes ``None``. If the setting is not provided at all, the default values will be used. Without the default skip values, spider statistics would be:
 
 .. code-block:: python
 

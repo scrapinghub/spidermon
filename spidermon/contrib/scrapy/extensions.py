@@ -288,20 +288,13 @@ class Spidermon:
         skip_falsy_values = spider.crawler.settings.getbool(
             "SPIDERMON_FIELD_COVERAGE_SKIP_FALSY", True
         )
-        # Check if SPIDERMON_FIELD_COVERAGE_SKIP_VALUES was explicitly set
-        # to empty list. If so, disable default skip values check.
+        # If skip values are explicitly configured but normalize to an empty
+        # list (e.g. [], JSON "[]", ""), do not apply falsy skipping either.
         skip_values_setting = spider.crawler.settings.get(
             "SPIDERMON_FIELD_COVERAGE_SKIP_VALUES"
         )
         skip_values = self._get_skip_values_list(spider.crawler.settings)
-        if (
-            skip_values_setting is not None
-            and isinstance(skip_values_setting, list)
-            and skip_values_setting == []
-            and skip_values == []
-        ):
-            # Setting was explicitly set to empty list, disable default
-            # skip values (skip_falsy_values should not apply)
+        if skip_values == [] and skip_values_setting is not None:
             skip_falsy_values = False
 
         list_field_coverage_levels = spider.crawler.settings.getint(

@@ -566,6 +566,33 @@ async def test_item_scraped_count_do_not_ignore_custom_skip_values_when_empty_li
 
 
 @deferred_f_from_coro_f
+async def test_item_scraped_count_empty_json_skip_values_disables_falsy_like_empty_list():
+    """Explicit JSON '[]' normalizes to no skip values and disables falsy skipping."""
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_FIELD_COVERAGE_SKIP_VALUES": "[]",
+    }
+
+    crawler = get_crawler(settings_dict=settings)
+    spider = Spider.from_crawler(crawler, "example.com")
+
+    returned_items = [
+        {"field1": "value1", "field2": "N/A"},
+        {"field1": "value1", "field2": "-"},
+    ]
+
+    for item in returned_items:
+        await send_item_scraped(spider, item)
+
+    stats = spider.crawler.stats.get_stats()
+
+    assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
+
+
+@deferred_f_from_coro_f
 async def test_item_scraped_count_skip_values_type_sensitive():
     """Test that skip_values matching is type-sensitive (string "0" != int 0)"""
     settings = {
