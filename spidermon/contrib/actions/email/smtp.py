@@ -10,17 +10,23 @@ DEFAULT_SMTP_PORT = 25
 
 
 class SendSmtpEmail(SendEmail):
-    def __init__(  # noqa: PLR0913
-        self,
-        smtp_host=None,
-        smtp_port=None,
-        smtp_user=None,
-        smtp_password=None,
-        smtp_enforce_tls=None,
-        smtp_enforce_ssl=None,
-        *args,
-        **kwargs,
-    ):
+    def __init__(self, smtp_settings=None, *args, **kwargs):
+        smtp_host = kwargs.pop("smtp_host", None)
+        smtp_port = kwargs.pop("smtp_port", None)
+        smtp_user = kwargs.pop("smtp_user", None)
+        smtp_password = kwargs.pop("smtp_password", None)
+        smtp_enforce_tls = kwargs.pop("smtp_enforce_tls", None)
+        smtp_enforce_ssl = kwargs.pop("smtp_enforce_ssl", None)
+        if smtp_settings:
+            smtp_host = smtp_host or smtp_settings.get("smtp_host")
+            smtp_port = smtp_port or smtp_settings.get("smtp_port")
+            smtp_user = smtp_user or smtp_settings.get("smtp_user")
+            smtp_password = smtp_password or smtp_settings.get("smtp_password")
+            if smtp_enforce_tls is None:
+                smtp_enforce_tls = smtp_settings.get("smtp_enforce_tls")
+            if smtp_enforce_ssl is None:
+                smtp_enforce_ssl = smtp_settings.get("smtp_enforce_ssl")
+
         super().__init__(*args, **kwargs)
 
         self.smtp_host = smtp_host
