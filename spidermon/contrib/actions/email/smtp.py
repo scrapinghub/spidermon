@@ -18,10 +18,14 @@ class SendSmtpEmail(SendEmail):
         smtp_enforce_tls = kwargs.pop("smtp_enforce_tls", None)
         smtp_enforce_ssl = kwargs.pop("smtp_enforce_ssl", None)
         if smtp_settings:
-            smtp_host = smtp_host or smtp_settings.get("smtp_host")
-            smtp_port = smtp_port or smtp_settings.get("smtp_port")
-            smtp_user = smtp_user or smtp_settings.get("smtp_user")
-            smtp_password = smtp_password or smtp_settings.get("smtp_password")
+            if smtp_host is None:
+                smtp_host = smtp_settings.get("smtp_host")
+            if smtp_port is None:
+                smtp_port = smtp_settings.get("smtp_port")
+            if smtp_user is None:
+                smtp_user = smtp_settings.get("smtp_user")
+            if smtp_password is None:
+                smtp_password = smtp_settings.get("smtp_password")
             if smtp_enforce_tls is None:
                 smtp_enforce_tls = smtp_settings.get("smtp_enforce_tls")
             if smtp_enforce_ssl is None:
