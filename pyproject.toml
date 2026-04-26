@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "spidermon"
-version = "1.24.0"
+version = "1.25.1"
 description = "Spidermon is a framework to build monitors for Scrapy spiders."
 readme = "README.rst"
 requires-python = ">=3.10"
@@ -60,13 +60,16 @@ tag = true
 tag_name = "{new_version}"
 
 [[tool.bumpversion.files]]
+filename = "CHANGES.rst"
+search = "\\(unreleased\\)$"
+replace = "({now:%Y-%m-%d})"
+regex = true
+
+[[tool.bumpversion.files]]
 filename = "spidermon/VERSION"
 
 [[tool.bumpversion.files]]
 filename = "spidermon/__init__.py"
-
-[[tool.bumpversion.files]]
-filename = "setup.py"
 
 [tool.coverage.run]
 branch = true

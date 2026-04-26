@@ -218,6 +218,18 @@ def test_validator_from_url(mocker):
     assert stats.get("spidermon/validation/validators/testitem/jsonschema", False)
 
 
+def test_process_item_without_spider_argument():
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        SETTING_SCHEMAS: [test_schema],
+    }
+    test_item = TestItem({"url": "example.com"})
+    crawler = get_crawler(settings_dict=settings)
+    pipe = ItemValidationPipeline.from_crawler(crawler)
+    result = pipe.process_item(test_item)
+    assert result == test_item
+
+
 class TestAddErrors:
     def _run_pipeline(self, test_item):
         settings = {
