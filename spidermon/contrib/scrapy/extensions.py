@@ -250,7 +250,7 @@ class Spidermon:
             if isinstance(value, dict):
                 # if there's no max (set to -1), we just proceed indefinitely (all levels)
                 # this is for backwards compatibility
-                if max_dict_nesting_level == -1:
+                if effective_max_dict == -1:
                     self._count_item(
                         value,
                         skip_none_values,
