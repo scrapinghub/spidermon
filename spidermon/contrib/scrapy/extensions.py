@@ -139,6 +139,63 @@ class Spidermon:
         spider = self.crawler.spider
         self._run_suites(spider, self.engine_stopped_suites)
 
+    def _count_dict_fields(  # noqa: PLR0913
+        self,
+        value,
+        skip_none_values,
+        field_item_count_stat,
+        *,
+        max_list_nesting_level,
+        max_dict_nesting_level,
+        nesting_level,
+    ):
+        if not isinstance(value, dict):
+            return False
+
+        if max_dict_nesting_level == -1 or nesting_level < max_dict_nesting_level:
+            self._count_item(
+                value,
+                skip_none_values,
+                field_item_count_stat,
+                max_list_nesting_level=max_list_nesting_level,
+                max_dict_nesting_level=max_dict_nesting_level,
+                nesting_level=nesting_level + 1,
+            )
+
+        return True
+
+    def _count_list_items(  # noqa: PLR0913
+        self,
+        value,
+        skip_none_values,
+        field_item_count_stat,
+        *,
+        max_list_nesting_level,
+        max_dict_nesting_level,
+        nesting_level,
+    ):
+        if not (
+            isinstance(value, list)
+            and max_list_nesting_level > 0
+            and nesting_level < max_list_nesting_level
+        ):
+            return
+
+        items_count_stat = f"{field_item_count_stat}/_items"
+        for list_item in value:
+            self.crawler.stats.inc_value(items_count_stat)
+            if not isinstance(list_item, dict):
+                continue
+
+            self._count_item(
+                list_item,
+                skip_none_values,
+                items_count_stat,
+                max_list_nesting_level=max_list_nesting_level,
+                max_dict_nesting_level=max_dict_nesting_level,
+                nesting_level=nesting_level + 1,
+            )
+
     def _count_item(  # noqa: PLR0913
         self,
         item,
@@ -172,50 +229,24 @@ class Spidermon:
             else:
                 effective_max_dict = max_dict_nesting_level
 
-            if isinstance(value, dict):
-                # if there's no max (set to -1), we just proceed indefinitely (all levels)
-                # this is for backwards compatibility
-                if effective_max_dict == -1:
-                    self._count_item(
-                        value,
-                        skip_none_values,
-                        field_item_count_stat,
-                        max_list_nesting_level=max_list_nesting_level,
-                        max_dict_nesting_level=effective_max_dict,
-                        nesting_level=nesting_level + 1,
-                    )
-                    continue
-                if effective_max_dict > -1 and nesting_level < effective_max_dict:
-                    self._count_item(
-                        value,
-                        skip_none_values,
-                        field_item_count_stat,
-                        nesting_level=nesting_level + 1,
-                        max_list_nesting_level=max_list_nesting_level,
-                        max_dict_nesting_level=effective_max_dict,
-                    )
-                    continue
-
+            if self._count_dict_fields(
+                value,
+                skip_none_values,
+                field_item_count_stat,
+                max_list_nesting_level=max_list_nesting_level,
+                max_dict_nesting_level=effective_max_dict,
+                nesting_level=nesting_level,
+            ):
                 continue
 
-            if (
-                isinstance(value, list)
-                and max_list_nesting_level > 0
-                and nesting_level < max_list_nesting_level
-            ):
-                items_count_stat = f"{field_item_count_stat}/_items"
-                for list_item in value:
-                    self.crawler.stats.inc_value(items_count_stat)
-                    if isinstance(list_item, dict):
-                        self._count_item(
-                            list_item,
-                            skip_none_values,
-                            items_count_stat,
-                            max_list_nesting_level=max_list_nesting_level,
-                            max_dict_nesting_level=effective_max_dict,
-                            nesting_level=nesting_level + 1,
-                        )
-                        continue
+            self._count_list_items(
+                value,
+                skip_none_values,
+                field_item_count_stat,
+                max_list_nesting_level=max_list_nesting_level,
+                max_dict_nesting_level=effective_max_dict,
+                nesting_level=nesting_level,
+            )
 
     def _add_field_coverage_to_stats(self):
         stats = self.crawler.stats.get_stats()
