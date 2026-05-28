@@ -203,7 +203,7 @@ class Spidermon:
         spider = self.crawler.spider
         self._run_suites(spider, self.engine_stopped_suites)
 
-    def _count_item(  # noqa: PLR0913
+    def _count_item(  # noqa: PLR0913,PLR0912
         self,
         item,
         skip_none_values,

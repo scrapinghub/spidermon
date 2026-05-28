@@ -12,6 +12,8 @@ from scrapy.utils.test import get_crawler
 from spidermon.contrib.scrapy import extensions as ext_module
 from spidermon.contrib.scrapy.extensions import Spidermon
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
+from spidermon.python import factory
+from spidermon.python.monitors import ExpressionsMonitor
 
 
 class TestSpiderMonitorRunner(SpiderMonitorRunner):
@@ -164,14 +166,17 @@ def test_skip_values_helpers_cover_all_normalization_paths():
     assert ext._get_skip_values_list(
         get_crawler(settings_dict={"SPIDERMON_ENABLED": True}).settings
     ) == ["", [], {}, "N/A", "-"]
-    assert ext._get_skip_values_list(
-        get_crawler(
-            settings_dict={
-                "SPIDERMON_ENABLED": True,
-                "SPIDERMON_FIELD_COVERAGE_SKIP_VALUES": [],
-            }
-        ).settings
-    ) == []
+    assert (
+        ext._get_skip_values_list(
+            get_crawler(
+                settings_dict={
+                    "SPIDERMON_ENABLED": True,
+                    "SPIDERMON_FIELD_COVERAGE_SKIP_VALUES": [],
+                }
+            ).settings
+        )
+        == []
+    )
     assert ext._get_skip_values_list(
         get_crawler(
             settings_dict={
@@ -234,8 +239,8 @@ def test_load_suite_error_paths(monkeypatch):
     with pytest.raises(RuntimeError, match="boom"):
         ext.load_suite("x.y.Suite")
 
-    monkeypatch.setattr(ext_module, "load_object", lambda _suite: dict)
-    with pytest.raises(Exception):
+    monkeypatch.setattr(ext_module, "load_object", lambda _suite: 1)
+    with pytest.raises(TypeError):
         ext.load_suite("x.y.NotAMonitorSuite")
 
 
@@ -243,11 +248,7 @@ def test_load_expression_suite_with_custom_monitor_class(monkeypatch):
     ext = Spidermon.__new__(Spidermon)
     ext.crawler = get_crawler(settings_dict={"SPIDERMON_ENABLED": True})
 
-    from spidermon.python.monitors import ExpressionsMonitor
-
     monkeypatch.setattr(ext_module, "load_object", lambda _path: ExpressionsMonitor)
-
-    from spidermon.python import factory
 
     monkeypatch.setattr(
         factory,
