@@ -410,6 +410,19 @@ If -1, all levels of nested dictionaries will have their cover computed.
 
 If larger than -1, field coverage will be computed for that many levels of nested dictionaries.
 
+This setting also accepts a dictionary to configure coverage levels per top-level field. The
+``*`` key sets the fallback level for fields not explicitly listed. If ``*`` is not
+provided, unlisted fields fall back to ``-1`` (unlimited).
+
+Example per-field configuration:
+
+.. code-block:: python
+
+    SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS = {
+        "*": 1,  # all other fields use level 1
+        "field1": 0,  # field1: do not recurse into nested dicts
+    }
+
 Considering the spider returns the following items:
 
   .. code-block:: python
