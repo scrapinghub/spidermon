@@ -179,7 +179,7 @@ class Spidermon:
             and max_list_nesting_level > 0
             and nesting_level < max_list_nesting_level
         ):
-            return
+            return False
 
         items_count_stat = f"{field_item_count_stat}/_items"
         for list_item in value:
@@ -195,6 +195,8 @@ class Spidermon:
                 max_dict_nesting_level=max_dict_nesting_level,
                 nesting_level=nesting_level + 1,
             )
+
+        return True
 
     def _count_item(  # noqa: PLR0913
         self,
@@ -239,14 +241,15 @@ class Spidermon:
             ):
                 continue
 
-            self._count_list_items(
+            if self._count_list_items(
                 value,
                 skip_none_values,
                 field_item_count_stat,
                 max_list_nesting_level=max_list_nesting_level,
                 max_dict_nesting_level=effective_max_dict,
                 nesting_level=nesting_level,
-            )
+            ):
+                continue
 
     def _add_field_coverage_to_stats(self):
         stats = self.crawler.stats.get_stats()
