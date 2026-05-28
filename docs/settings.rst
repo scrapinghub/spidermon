@@ -246,7 +246,7 @@ If this setting is not provided or set to ``False``, falsy-based skipping is tur
         "spidermon_field_coverage/dict/field_4": 1.0,  # Counted on both items
     }
 
-To count empty strings or empty lists with falsy skipping off, narrow ``SPIDERMON_FIELD_COVERAGE_SKIP_VALUES`` (for example to only ``["N/A", "-"]``) or set it to an empty value as described under that setting (which also disables falsy skipping for field coverage).
+To count empty strings or empty lists, disable falsy skipping with ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY = False`` and narrow ``SPIDERMON_FIELD_COVERAGE_SKIP_VALUES`` (for example to only ``["N/A", "-"]``) or set it to an empty value as described under that setting.
 
 SPIDERMON_FIELD_COVERAGE_SKIP_VALUES
 ------------------------------------
@@ -299,7 +299,7 @@ If this setting is set to ``["N/A", "-", "TBD"]``, spider statistics will be:
         "spidermon_field_coverage/dict/field_4": 0.5,  # Ignored "TBD"
     }
 
-If you want to override the default skip values, you can set this to a custom list. If you set it to an empty list in any supported form (Python ``[]``, JSON ``'[]'``, or another value that normalizes to no skip entries, such as an empty string), the default placeholder list is not used and falsy-based skipping is also turned off for this feature, so all non-``None`` values are counted unless ``SPIDERMON_FIELD_COVERAGE_SKIP_NONE`` excludes ``None``. If the setting is not provided at all, the default values will be used. Without the default skip values, spider statistics would be:
+If you want to override the default skip values, you can set this to a custom list. If you set it to an empty list in any supported form (Python ``[]``, JSON ``'[]'``, or another value that normalizes to no skip entries, such as an empty string), the default placeholder list is not used. This does not change ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY``: falsy values are still skipped when that setting is enabled. If the setting is not provided at all, the default values will be used. Without the default skip values, spider statistics would be:
 
 .. code-block:: python
 

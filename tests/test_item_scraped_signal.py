@@ -540,7 +540,7 @@ async def test_item_scraped_count_ignore_default_skip_values():
 
 @deferred_f_from_coro_f
 async def test_item_scraped_count_do_not_ignore_custom_skip_values_when_empty_list():
-    """Test that setting skip_values to empty list disables default skip values"""
+    """Empty skip list removes default sentinels but does not disable falsy skipping."""
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -552,8 +552,8 @@ async def test_item_scraped_count_do_not_ignore_custom_skip_values_when_empty_li
     spider = Spider.from_crawler(crawler, "example.com")
 
     returned_items = [
-        {"field1": "value1", "field2": "N/A"},
-        {"field1": "value1", "field2": "-"},
+        {"field1": "value1", "field2": "N/A", "field3": ""},
+        {"field1": "value1", "field2": "-", "field3": "x"},
     ]
 
     for item in returned_items:
@@ -563,11 +563,12 @@ async def test_item_scraped_count_do_not_ignore_custom_skip_values_when_empty_li
 
     assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
     assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/field3") == 1
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_empty_json_skip_values_disables_falsy_like_empty_list():
-    """Explicit JSON '[]' normalizes to no skip values and disables falsy skipping."""
+async def test_item_scraped_count_empty_json_skip_values_keeps_falsy_skipping():
+    """Explicit JSON '[]' normalizes to no skip values but keeps falsy skipping on."""
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -579,8 +580,8 @@ async def test_item_scraped_count_empty_json_skip_values_disables_falsy_like_emp
     spider = Spider.from_crawler(crawler, "example.com")
 
     returned_items = [
-        {"field1": "value1", "field2": "N/A"},
-        {"field1": "value1", "field2": "-"},
+        {"field1": "value1", "field2": "N/A", "field3": 0},
+        {"field1": "value1", "field2": "-", "field3": 1},
     ]
 
     for item in returned_items:
@@ -590,6 +591,7 @@ async def test_item_scraped_count_empty_json_skip_values_disables_falsy_like_emp
 
     assert stats.get("spidermon_item_scraped_count/dict/field1") == 2
     assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
+    assert stats.get("spidermon_item_scraped_count/dict/field3") == 1
 
 
 @deferred_f_from_coro_f
