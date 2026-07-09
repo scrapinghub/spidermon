@@ -210,4 +210,7 @@ filterwarnings = [
     'ignore::ResourceWarning:scrapy.utils.reactor',
     # https://github.com/scrapinghub/python-scrapinghub/pull/183
     'ignore:datetime\.datetime\.utcfromtimestamp\(\) is deprecated:DeprecationWarning:scrapinghub\..*',
+    # scrapy.mail is deprecated upstream but still used by SendSmtpEmail;
+    # warning is attributed to our import site because scrapy raises it with stacklevel=2
+    'ignore:The scrapy\.mail module is deprecated.*:scrapy.exceptions.ScrapyDeprecationWarning:spidermon\.contrib\.actions\.email\.smtp',
 ]
