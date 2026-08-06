@@ -102,7 +102,7 @@ class ItemValidationPipeline:
             )
         return JSONSchemaValidator(schema)
 
-    def process_item(self, item, _):
+    def process_item(self, item, spider=None):
         validators = self.find_validators(item)
         if not validators:
             # No validators match this specific item type
