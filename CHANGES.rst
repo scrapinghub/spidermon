@@ -1,7 +1,7 @@
 Release notes
 =============
 
-1.26.0 (unreleased)
+1.26.0 (2026-08-06)
 -------------------
 
 - feature: Add the ``SPIDERMON_FIELD_COVERAGE_TOLERANCE`` setting, which makes
