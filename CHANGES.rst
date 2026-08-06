@@ -1,6 +1,17 @@
 Release notes
 =============
 
+1.26.0 (2026-08-06)
+-------------------
+
+- feature: Add the ``SPIDERMON_FIELD_COVERAGE_TOLERANCE`` setting, which makes
+  ``FieldCoverageMonitor`` tolerate small decimal precision differences between
+  the actual and the expected coverage (#464).
+- feature: ``SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS`` can now be a dict, to set
+  the nesting level per top-level field (#475).
+- chore: Ignore the ``scrapy.mail`` deprecation warning in tests, and pin
+  Twisted in the minimum-version test environment (#479).
+
 1.25.1 (2026-04-08)
 -------------------
 

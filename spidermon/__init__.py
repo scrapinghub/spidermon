@@ -1,4 +1,4 @@
-__version__ = "1.25.1"
+__version__ = "1.26.0"
 
 from .core.actions import Action, DummyAction
 from .core.monitors import Monitor
