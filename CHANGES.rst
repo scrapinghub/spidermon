@@ -1,6 +1,17 @@
 Release notes
 =============
 
+1.27.0 (unreleased)
+-------------------
+
+- feature: Add the ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` and
+  ``SPIDERMON_FIELD_COVERAGE_SKIP_VALUES`` settings, which exclude falsy values
+  and placeholder values, respectively, from field coverage stats (#465).
+- backward-incompatible: Field coverage stats no longer count falsy values
+  (``""``, ``[]``, ``0``, ``False``…) or the ``"N/A"`` and ``"-"`` placeholders.
+  Set ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` to ``False`` and
+  ``SPIDERMON_FIELD_COVERAGE_SKIP_VALUES`` to ``[]`` for the old behavior (#465).
+
 1.26.0 (2026-08-06)
 -------------------
 
