@@ -189,6 +189,132 @@ If this setting is not provided or set to ``False``, spider statistics will be:
         "spidermon_item_scraped_count/dict/field_2": 1,
     }
 
+SPIDERMON_FIELD_COVERAGE_SKIP_FALSY
+-----------------------------------
+Default: ``True``
+
+When enabled, returned fields whose values are falsy in the Python sense (for example empty strings, empty lists, empty tuples, empty dicts, numeric zero, ``False``) will not be counted as fields with a value. ``None`` is not affected by this setting; use ``SPIDERMON_FIELD_COVERAGE_SKIP_NONE`` to exclude ``None``. Truthy placeholders such as ``"N/A"`` or ``"-"`` are skipped via ``SPIDERMON_FIELD_COVERAGE_SKIP_VALUES`` (they are included in its default list).
+
+Considering your spider returns the following items:
+
+.. code-block:: python
+
+   [
+       {
+           "field_1": "",
+           "field_2": "value",
+           "field_3": [],
+           "field_4": 0,
+       },
+       {
+           "field_1": "value",
+           "field_2": "value",
+           "field_3": ["item1"],
+           "field_4": 42,
+       },
+   ]
+
+If this setting is set to ``True``, spider statistics will be:
+
+.. code-block:: python
+
+    {
+        "spidermon_item_scraped_count/dict": 2,
+        "spidermon_item_scraped_count/dict/field_1": 1,  # Ignored empty string
+        "spidermon_item_scraped_count/dict/field_2": 2,
+        "spidermon_item_scraped_count/dict/field_3": 1,  # Ignored empty list
+        "spidermon_item_scraped_count/dict/field_4": 1,  # Ignored zero
+        "spidermon_field_coverage/dict/field_1": 0.5,  # Ignored empty string
+        "spidermon_field_coverage/dict/field_2": 1.0,
+        "spidermon_field_coverage/dict/field_3": 0.5,  # Ignored empty list
+        "spidermon_field_coverage/dict/field_4": 0.5,  # Ignored zero
+    }
+
+If this setting is not provided or set to ``False``, falsy-based skipping is turned off, but ``SPIDERMON_FIELD_COVERAGE_SKIP_VALUES`` still applies with its default (which still lists ``""``, ``[]``, and ``{}``). For the same items as above, empty string and empty list therefore stay skipped, while integer ``0`` is counted on both items because ``0`` is not in the default skip list:
+
+.. code-block:: python
+
+    {
+        "spidermon_item_scraped_count/dict": 2,
+        "spidermon_item_scraped_count/dict/field_1": 1,  # Still skipped (default SKIP_VALUES)
+        "spidermon_item_scraped_count/dict/field_2": 2,
+        "spidermon_item_scraped_count/dict/field_3": 1,  # Still skipped (default SKIP_VALUES)
+        "spidermon_item_scraped_count/dict/field_4": 2,  # Counted (not in default SKIP_VALUES)
+        "spidermon_field_coverage/dict/field_1": 0.5,  # Still skipped (default SKIP_VALUES)
+        "spidermon_field_coverage/dict/field_2": 1.0,
+        "spidermon_field_coverage/dict/field_3": 0.5,  # Still skipped (default SKIP_VALUES)
+        "spidermon_field_coverage/dict/field_4": 1.0,  # Counted on both items
+    }
+
+To count empty strings or empty lists, disable falsy skipping with ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY = False`` and narrow ``SPIDERMON_FIELD_COVERAGE_SKIP_VALUES`` (for example to only ``["N/A", "-"]``) or set it to an empty value as described under that setting.
+
+SPIDERMON_FIELD_COVERAGE_SKIP_VALUES
+------------------------------------
+Default: ``["", [], {}, "N/A", "-"]``
+
+A list of values that should not be counted as valid field values when calculating field coverage, matched by exact equality (``==``). Processing applies falsy-based skipping first (when ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` is enabled), then this list, so entries here are skipped even when falsy skipping is off. By default, this list includes empty string, empty list, empty dict, ``"N/A"``, and ``"-"``. Those first three overlap with falsy skipping; the string placeholders are truthy in Python, so they rely on this list. Override the setting to add custom sentinels (for example ``"TBD"``) or numeric markers such as ``-1`` that are not falsy and therefore are not skipped by ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` alone. Integer ``0`` is already skipped when falsy skipping is on (the default); you do not need to list it here unless you disable falsy skipping and still want to treat ``0`` as missing.
+
+This setting works together with ``SPIDERMON_FIELD_COVERAGE_SKIP_NONE`` and ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY``. Matching is type-strict as well as by value: the field value must have the same type as an entry in the skip list (e.g., the string ``"0"`` does not match the integer ``0``). In particular, ``bool`` is not treated as ``int`` even though ``False == 0`` in plain Python, so listing ``0`` does not skip boolean ``False`` unless you also list ``False``.
+
+The setting can be provided in several formats:
+
+* As a Python list in your settings file (recommended for mixed types): ``[0, -1, "N/A"]``
+* As a JSON string (preserves types): ``'[0, -1, "N/A"]'``
+* As a comma-separated string (converts all values to strings): ``"0,-1,N/A"``
+
+For non-string values (like integers), use a Python list or JSON string to preserve the types. Comma-separated strings will convert all values to strings.
+
+Considering your spider returns the following items:
+
+.. code-block:: python
+
+   [
+       {
+           "field_1": "N/A",
+           "field_2": "value",
+           "field_3": "-",
+           "field_4": "TBD",
+       },
+       {
+           "field_1": "actual_value",
+           "field_2": "value",
+           "field_3": "data",
+           "field_4": "completed",
+       },
+   ]
+
+If this setting is set to ``["N/A", "-", "TBD"]``, spider statistics will be:
+
+.. code-block:: python
+
+    {
+        "spidermon_item_scraped_count/dict": 2,
+        "spidermon_item_scraped_count/dict/field_1": 1,  # Ignored "N/A"
+        "spidermon_item_scraped_count/dict/field_2": 2,
+        "spidermon_item_scraped_count/dict/field_3": 1,  # Ignored "-"
+        "spidermon_item_scraped_count/dict/field_4": 1,  # Ignored "TBD"
+        "spidermon_field_coverage/dict/field_1": 0.5,  # Ignored "N/A"
+        "spidermon_field_coverage/dict/field_2": 1.0,
+        "spidermon_field_coverage/dict/field_3": 0.5,  # Ignored "-"
+        "spidermon_field_coverage/dict/field_4": 0.5,  # Ignored "TBD"
+    }
+
+If you want to override the default skip values, you can set this to a custom list. If you set it to an empty list in any supported form (Python ``[]``, JSON ``'[]'``, or another value that normalizes to no skip entries, such as an empty string), the default placeholder list is not used. This does not change ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY``: falsy values are still skipped when that setting is enabled. If the setting is not provided at all, the default values will be used. Without the default skip values, spider statistics would be:
+
+.. code-block:: python
+
+    {
+        "spidermon_item_scraped_count/dict": 2,
+        "spidermon_item_scraped_count/dict/field_1": 2,  # Did not ignore "N/A"
+        "spidermon_item_scraped_count/dict/field_2": 2,
+        "spidermon_item_scraped_count/dict/field_3": 2,  # Did not ignore "-"
+        "spidermon_item_scraped_count/dict/field_4": 2,  # Did not ignore "TBD"
+        "spidermon_field_coverage/dict/field_1": 1.0,  # Did not ignore "N/A"
+        "spidermon_field_coverage/dict/field_2": 1.0,
+        "spidermon_field_coverage/dict/field_3": 1.0,  # Did not ignore "-"
+        "spidermon_field_coverage/dict/field_4": 1.0,  # Did not ignore "TBD"
+    }
+
 SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS
 -------------------------------------
 Default: ``0``
