@@ -1,7 +1,7 @@
 Release notes
 =============
 
-1.27.0 (unreleased)
+1.27.0 (2026-08-10)
 -------------------
 
 - feature: Add the ``SPIDERMON_FIELD_COVERAGE_SKIP_FALSY`` and
