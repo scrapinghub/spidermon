@@ -1,6 +1,7 @@
+from spidermon import MonitorSuite
+
 from .fixtures.ordering import (
     EqualOrderedMethodsMonitor,
-    MonitorSuite,
     Ordered,
     OrderedMethodsMonitor,
     Unordered,
