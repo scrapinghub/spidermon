@@ -22,7 +22,7 @@ def test_action_success():
 def test_action_fail():
     class TestAction(Action):
         def run_action(self):
-            raise Exception
+            raise RuntimeError
 
     result_mock = MagicMock()
     action = TestAction()
@@ -53,7 +53,7 @@ def test_fallback_action():
         fallback = fallback_mock
 
         def run_action(self):
-            raise Exception
+            raise RuntimeError
 
     action = TestAction()
     action.run(MagicMock(), MagicMock())
