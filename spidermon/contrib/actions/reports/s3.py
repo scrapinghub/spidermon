@@ -1,8 +1,7 @@
 import secrets
 from pathlib import Path
 
-from boto.s3.connection import S3Connection
-from boto.s3.key import Key
+import boto3
 
 from spidermon.exceptions import NotConfigured
 from spidermon.utils.settings import get_aws_credentials
@@ -12,10 +11,13 @@ from . import CreateReport
 DEFAULT_S3_REGION_ENDPOINT = "s3.amazonaws.com"
 DEFAULT_S3_CONTENT_TYPE = "text/html"
 
+_HEADER_TO_EXTRA_ARG = {"Content-Type": "ContentType"}
+
 
 class S3Uploader:
     def __init__(self, aws_key, aws_secret):
-        self.connection = S3Connection(
+        self.client = boto3.client(
+            "s3",
             aws_access_key_id=aws_key,
             aws_secret_access_key=aws_secret,
         )
@@ -28,12 +30,11 @@ class S3Uploader:
         headers=None,
         make_public=False,
     ):
-        with Path(source_filename).open() as f:
-            self._upload_with_method(
+        with Path(source_filename).open("rb") as f:
+            self._upload(
                 bucket=s3_bucket,
-                method_name="set_contents_from_file",
                 filename=s3_filename,
-                content=f,
+                body=f,
                 headers=headers,
                 make_public=make_public,
             )
@@ -46,31 +47,25 @@ class S3Uploader:
         headers=None,
         make_public=False,
     ):
-        self._upload_with_method(
+        if isinstance(content, str):
+            content = content.encode("utf-8")
+        self._upload(
             bucket=s3_bucket,
-            method_name="set_contents_from_string",
             filename=s3_filename,
-            content=content,
+            body=content,
             headers=headers,
             make_public=make_public,
         )
 
-    def _upload_with_method(  # noqa: PLR0913
-        self,
-        bucket,
-        method_name,
-        filename,
-        content,
-        headers=None,
-        make_public=False,
-    ):
-        # Get bucket without validation (Needed to be used with credentials w/o listing perms)
-        bucket = self.connection.get_bucket(bucket, validate=False)
-        f = Key(bucket)
-        f.key = filename
-        getattr(f, method_name)(content, headers=headers)
+    def _upload(self, bucket, filename, body, headers=None, make_public=False):
+        extra_args = {
+            _HEADER_TO_EXTRA_ARG[name]: value
+            for name, value in (headers or {}).items()
+            if name in _HEADER_TO_EXTRA_ARG
+        }
         if make_public:
-            f.make_public()
+            extra_args["ACL"] = "public-read"
+        self.client.put_object(Bucket=bucket, Key=filename, Body=body, **extra_args)
 
 
 class CreateS3Report(CreateReport):
