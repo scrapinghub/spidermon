@@ -141,6 +141,38 @@ def test_email_sent(
     assert f"Subject: {expected_subject}" in sent_message
 
 
+def test_starttls_called_when_enforce_tls(
+    mock_render_template,
+    mock_smtp,
+    smtp_action_settings,
+):
+    smtp_action_settings["SPIDERMON_SMTP_ENFORCE_TLS"] = True
+
+    crawler = get_crawler(settings_dict=smtp_action_settings)
+    send_email = SendSmtpEmail.from_crawler(crawler)
+    send_email.send_message(send_email.get_message())
+
+    mock_smtp.starttls.assert_called_once()
+
+
+def test_uses_smtp_ssl_when_enforce_ssl(
+    mock_render_template,
+    mocker,
+    smtp_action_settings,
+):
+    smtp_action_settings["SPIDERMON_SMTP_ENFORCE_SSL"] = True
+    mock_smtp_ssl_cls = mocker.patch(
+        "spidermon.contrib.actions.email.smtp.smtplib.SMTP_SSL",
+    )
+    mock_smtp_ssl = mock_smtp_ssl_cls.return_value.__enter__.return_value
+
+    crawler = get_crawler(settings_dict=smtp_action_settings)
+    send_email = SendSmtpEmail.from_crawler(crawler)
+    send_email.send_message(send_email.get_message())
+
+    mock_smtp_ssl.sendmail.assert_called_once()
+
+
 @pytest.mark.parametrize(
     "missing_setting",
     [
