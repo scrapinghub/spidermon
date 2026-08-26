@@ -4,6 +4,7 @@ import logging
 
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+from slack_sdk.http_retry.builtin_handlers import RateLimitErrorRetryHandler
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
@@ -30,6 +31,7 @@ class SlackMessageManager:
 
         self.fake = fake
         self._client = WebClient(sender_token)
+        self._client.retry_handlers.append(RateLimitErrorRetryHandler())
         self._users = None
 
     @property
