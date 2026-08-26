@@ -12,7 +12,7 @@ from scrapy import Spider
 from scrapy.utils.defer import deferred_f_from_coro_f
 from scrapy.utils.test import get_crawler
 
-from spidermon.contrib.stats.statscollectors.sc_collections import (
+from spidermon.contrib.zyte.statscollectors.sc_collections import (
     ScrapyCloudCollectionsStatsHistoryCollector,
 )
 from tests import SCRAPY_VERSION
@@ -64,12 +64,12 @@ def stats_collection_not_exist(monkeypatch):
 def test_settings():
     return {
         "STATS_CLASS": (
-            "spidermon.contrib.stats.statscollectors.sc_collections.ScrapyCloudCollectionsStatsHistoryCollector"
+            "spidermon.contrib.zyte.statscollectors.sc_collections.ScrapyCloudCollectionsStatsHistoryCollector"
         ),
     }
 
 
-@patch("spidermon.contrib.stats.statscollectors.sc_collections.scrapinghub")
+@patch("spidermon.contrib.zyte.statscollectors.sc_collections.scrapinghub")
 def test_open_spider_without_api(scrapinghub_mock, test_settings):
     crawler = get_crawler(Spider, test_settings)
     pipe = ScrapyCloudCollectionsStatsHistoryCollector(crawler)
@@ -80,8 +80,8 @@ def test_open_spider_without_api(scrapinghub_mock, test_settings):
     assert pipe.store is None
 
 
-@patch("spidermon.contrib.stats.statscollectors.sc_collections.scrapinghub")
-@patch("spidermon.contrib.stats.statscollectors.sc_collections.os.environ.get")
+@patch("spidermon.contrib.zyte.statscollectors.sc_collections.scrapinghub")
+@patch("spidermon.contrib.zyte.statscollectors.sc_collections.os.environ.get")
 def test_open_collection_with_api(scrapinghub_mock, os_environ_mock, test_settings):
     mock_spider = MagicMock()
     mock_spider.name = "test"
@@ -211,7 +211,7 @@ async def test_spider_limit_number_of_stored_stats(test_settings, stats_collecti
 
 
 @deferred_f_from_coro_f
-@patch("spidermon.contrib.stats.statscollectors.sc_collections.os.environ.get")
+@patch("spidermon.contrib.zyte.statscollectors.sc_collections.os.environ.get")
 async def test_job_id_added(mock_os_enviorn_get, test_settings, stats_collection):
     mock_os_enviorn_get.return_value = "test/test/test"
     crawler = get_crawler(Spider, test_settings)
@@ -226,7 +226,7 @@ async def test_job_id_added(mock_os_enviorn_get, test_settings, stats_collection
 
 
 @deferred_f_from_coro_f
-@patch("spidermon.contrib.stats.statscollectors.sc_collections.os.environ.get")
+@patch("spidermon.contrib.zyte.statscollectors.sc_collections.os.environ.get")
 async def test_job_id_not_available(
     mock_os_enviorn_get,
     test_settings,
@@ -241,7 +241,7 @@ async def test_job_id_not_available(
     assert "job_url" not in crawler.spider.stats_history[0]
 
 
-@patch("spidermon.contrib.stats.statscollectors.sc_collections.os.environ.get")
+@patch("spidermon.contrib.zyte.statscollectors.sc_collections.os.environ.get")
 def test_stats_history_when_no_collection(
     os_enviorn_mock,
     stats_collection_not_exist,

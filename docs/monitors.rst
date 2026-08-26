@@ -155,6 +155,16 @@ Spidermon has some batteries included :)
 .. automodule:: spidermon.contrib.scrapy.monitors.monitors
     :members:
 
+Zyte monitors
+-------------
+
+These monitors require running the spider on `Zyte's Scrapy Cloud`_.
+
+.. automodule:: spidermon.contrib.zyte.monitors.monitors
+    :members:
+
+.. _Zyte's Scrapy Cloud: https://www.zyte.com/scrapy-cloud/
+
 Is there a **Basic Scrapy Suite** ready to use?
 ------------------------------------------------
 

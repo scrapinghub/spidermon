@@ -8,7 +8,7 @@ pytest.importorskip("scrapy")
 
 from scrapy.utils.test import get_crawler
 
-from spidermon.utils import zyte
+from spidermon.contrib.zyte import utils as zyte
 
 
 @pytest.fixture

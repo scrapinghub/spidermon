@@ -13,7 +13,7 @@ for failed jobs.
 .. code-block:: python
 
     # monitors.py
-    from spidermon.contrib.actions.jobs.tags import AddJobTags, RemoveJobTags
+    from spidermon.contrib.zyte.actions.jobs.tags import AddJobTags, RemoveJobTags
 
 
     class DummyMonitorSuite(MonitorSuite):
@@ -58,7 +58,7 @@ of the setting that will contain the list of tags that will be included in the j
 .. code-block:: python
 
     # monitors.py
-    from spidermon.contrib.actions.jobs.tags import AddJobTags
+    from spidermon.contrib.zyte.actions.jobs.tags import AddJobTags
 
 
     class AddJobTagsPassed(AddJobTags):

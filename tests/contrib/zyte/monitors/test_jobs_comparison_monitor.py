@@ -6,7 +6,7 @@ import pytest
 pytest.importorskip("scrapy")
 
 from spidermon import MonitorSuite
-from spidermon.contrib.scrapy.monitors import (
+from spidermon.contrib.zyte.monitors import (
     SPIDERMON_JOBS_COMPARISON,
     SPIDERMON_JOBS_COMPARISON_CLOSE_REASONS,
     SPIDERMON_JOBS_COMPARISON_STATES,
@@ -170,7 +170,7 @@ def test_jobs_comparison_monitor_get_tags_to_filter(monkeypatch):
 def test_jobs_comparison_monitor_get_jobs():  # noqa: PLR0915
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client",
+        "spidermon.contrib.zyte.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = ZyteJobsComparisonMonitor()
@@ -187,7 +187,7 @@ def test_jobs_comparison_monitor_get_jobs():  # noqa: PLR0915
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client",
+        "spidermon.contrib.zyte.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = ZyteJobsComparisonMonitor()
@@ -204,7 +204,7 @@ def test_jobs_comparison_monitor_get_jobs():  # noqa: PLR0915
         mock_client.spider.jobs.list.assert_called_once()
 
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client",
+        "spidermon.contrib.zyte.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = ZyteJobsComparisonMonitor()
@@ -221,7 +221,7 @@ def test_jobs_comparison_monitor_get_jobs():  # noqa: PLR0915
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client",
+        "spidermon.contrib.zyte.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = ZyteJobsComparisonMonitor()
@@ -239,7 +239,7 @@ def test_jobs_comparison_monitor_get_jobs():  # noqa: PLR0915
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client",
+        "spidermon.contrib.zyte.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = ZyteJobsComparisonMonitor()
@@ -257,7 +257,7 @@ def test_jobs_comparison_monitor_get_jobs():  # noqa: PLR0915
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client",
+        "spidermon.contrib.zyte.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = ZyteJobsComparisonMonitor()
@@ -275,7 +275,7 @@ def test_jobs_comparison_monitor_get_jobs():  # noqa: PLR0915
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client",
+        "spidermon.contrib.zyte.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = ZyteJobsComparisonMonitor()
@@ -293,7 +293,7 @@ def test_jobs_comparison_monitor_get_jobs():  # noqa: PLR0915
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client",
+        "spidermon.contrib.zyte.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = ZyteJobsComparisonMonitor()
@@ -311,7 +311,7 @@ def test_jobs_comparison_monitor_get_jobs():  # noqa: PLR0915
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client",
+        "spidermon.contrib.zyte.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = ZyteJobsComparisonMonitor()
@@ -337,7 +337,7 @@ def test_jobs_comparison_monitor_get_jobs():  # noqa: PLR0915
 
     mock_client = Mock()
     with patch(
-        "spidermon.contrib.scrapy.monitors.monitors.Client",
+        "spidermon.contrib.zyte.monitors.monitors.Client",
     ) as mock_client_class:
         mock_client_class.return_value = mock_client
         monitor = ZyteJobsComparisonMonitor()

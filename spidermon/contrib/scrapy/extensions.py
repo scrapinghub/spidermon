@@ -9,9 +9,9 @@ from twisted.internet.task import LoopingCall
 from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 from spidermon.contrib.utils.spider import get_spider_name
+from spidermon.contrib.zyte.utils import Client
 from spidermon.python.monitors import ExpressionsMonitor
 from spidermon.utils.field_coverage import calculate_field_coverage
-from spidermon.utils.zyte import Client
 
 
 class Spidermon:

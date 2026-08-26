@@ -6,7 +6,11 @@ pytest.importorskip("scrapy")
 
 from scrapy.utils.test import get_crawler
 
-from spidermon.contrib.actions.jobs.tags import AddJobTags, JobTagsAction, RemoveJobTags
+from spidermon.contrib.zyte.actions.jobs.tags import (
+    AddJobTags,
+    JobTagsAction,
+    RemoveJobTags,
+)
 from spidermon.exceptions import NotConfigured
 
 
