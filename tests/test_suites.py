@@ -132,6 +132,14 @@ def test_not_allowed_methods():
         suite.addTests()
 
 
+def test_debug_monitors():
+    suite = EmptySuite(monitors=[Monitor01])
+    output = suite.debug_monitors()
+    assert "MONITOR: Monitor01" in output
+    assert "METHOD: test_a" in output
+    assert "LEVEL: ERROR" in output
+
+
 def _test_creation_from_add_monitors(definition):
     suite = definition.suite_class()
     suite.add_monitors(definition.monitors)
