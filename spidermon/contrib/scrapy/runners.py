@@ -107,10 +107,7 @@ class SpiderMonitorResult(MonitorResult):
                 msg.write_line(f"{item.status}: {item.item.name}")
                 msg.write_light_separator()
                 msg.write(item.error)
-                self.log_error(msg)
-
-    def log_error(self, msg):
-        self.log(msg, level=logging.ERROR)
+                self.log(msg, level=item.item.level)
 
     def log_info(self, msg):
         self.log(msg, level=logging.INFO)
