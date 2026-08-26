@@ -42,6 +42,16 @@ def test_run_action(test_settings):
         job_tags_action.run_action()
 
 
+def test_run_action_without_tags(test_settings):
+    crawler = get_crawler(settings_dict=test_settings)
+    job_tags_action = JobTagsAction.from_crawler(crawler)
+
+    job_tags_action.tags = []
+    job_tags_action.data = MagicMock()
+    job_tags_action.data.job = None
+    job_tags_action.run_action()
+
+
 def test_add_job_tags(test_settings):
     crawler = get_crawler(settings_dict=test_settings)
     add_job_tags = AddJobTags.from_crawler(crawler)

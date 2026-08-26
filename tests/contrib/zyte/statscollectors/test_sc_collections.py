@@ -241,6 +241,13 @@ async def test_job_id_not_available(
     assert "job_url" not in crawler.spider.stats_history[0]
 
 
+def test_persist_stats_without_collection(test_settings):
+    crawler = get_crawler(Spider, test_settings)
+    pipe = ScrapyCloudCollectionsStatsHistoryCollector(crawler)
+    pipe.store = None
+    pipe._persist_stats({}, spider=MagicMock())
+
+
 @patch("spidermon.contrib.zyte.statscollectors.sc_collections.os.environ.get")
 def test_stats_history_when_no_collection(
     os_enviorn_mock,
