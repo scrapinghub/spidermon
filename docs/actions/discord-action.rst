@@ -54,6 +54,7 @@ SPIDERMON_DISCORD_MESSAGE_TEMPLATE
 ----------------------------------
 
 Path to a Jinja2 template file to format messages sent by the Discord Action.
+See :ref:`custom-templates` to use your own.
 
 .. _`Discord`: https://docs.discord.com/
 .. _`Discord webhook URL`: https://docs.discord.com/developers/resources/webhook
