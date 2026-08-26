@@ -155,7 +155,7 @@ def test_add_error_to_items_undefined_validation_field(dummy_schema):
         item = pipeline.process_item(item, None)
 
 
-def test_not_configured():
+def test_misconfigured():
     # No validators
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -163,10 +163,7 @@ def test_not_configured():
         "SPIDERMON_VALIDATION_ERRORS_FIELD": "custom_validation_field",
     }
     crawler = get_crawler(settings_dict=settings)
-    with pytest.raises(
-        scrapy.exceptions.NotConfigured,
-        match="No validators were found",
-    ):
+    with pytest.raises(ValueError, match="No validators were found"):
         ItemValidationPipeline.from_crawler(crawler)
 
     # Invalid validator type
@@ -177,10 +174,7 @@ def test_not_configured():
         "SPIDERMON_VALIDATION_ERRORS_FIELD": "custom_validation_field",
     }
     crawler = get_crawler(settings_dict=settings)
-    with pytest.raises(
-        scrapy.exceptions.NotConfigured,
-        match=r"Invalid <.*> type for <.*> settings",
-    ):
+    with pytest.raises(TypeError, match=r"Invalid <.*> type for <.*> settings"):
         ItemValidationPipeline.from_crawler(crawler)
 
     # Invalid schema type
@@ -192,7 +186,7 @@ def test_not_configured():
     }
     crawler = get_crawler(settings_dict=settings)
     with pytest.raises(
-        scrapy.exceptions.NotConfigured,
+        TypeError,
         match=r"Invalid schema, jsonschemas must be defined as:.*",
     ):
         ItemValidationPipeline.from_crawler(crawler)
