@@ -30,6 +30,7 @@ SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED = (
 )
 SPIDERMON_ITEM_COUNT_INCREASE = "SPIDERMON_ITEM_COUNT_INCREASE"
 SPIDERMON_FIELD_COVERAGE_TOLERANCE = "SPIDERMON_FIELD_COVERAGE_TOLERANCE"
+SPIDERMON_MAX_FEED_EXPORT_FAILURES = "SPIDERMON_MAX_FEED_EXPORT_FAILURES"
 
 
 @monitors.name("Extracted Items Monitor")
@@ -249,6 +250,35 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
 
             msg = f"Found {count} Responses with status code={code} - " + stat_message
             self.assertTrue(count <= max_errors, msg=msg)
+
+
+@monitors.name("Feed Export Monitor")
+class FeedExportMonitor(BaseScrapyMonitor):
+    """Check if any feed export failed.
+
+    You can configure the maximum number of failed feed exports allowed with
+    the ``SPIDERMON_MAX_FEED_EXPORT_FAILURES`` setting. Defaults to ``0``.
+
+    This relies on the ``feedexport/failed_count/<storage>`` stats that
+    Scrapy sets for each configured feed storage.
+    """
+
+    @monitors.name("Should not exceed the maximum number of failed feed exports")
+    def test_should_not_have_failed_feed_exports(self):
+        max_failures = self.crawler.settings.getint(
+            SPIDERMON_MAX_FEED_EXPORT_FAILURES,
+            0,
+        )
+        failures = sum(
+            count
+            for key, count in self.stats.items()
+            if key.startswith("feedexport/failed_count/")
+        )
+        self.assertLessEqual(
+            failures,
+            max_failures,
+            msg=f"Found {failures} failed feed export(s), the limit is {max_failures}",
+        )
 
 
 @monitors.name("Downloader Exceptions monitor")
