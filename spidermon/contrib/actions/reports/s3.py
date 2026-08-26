@@ -77,7 +77,7 @@ class CreateS3Report(CreateReport):
     make_public = True
     content_type = DEFAULT_S3_CONTENT_TYPE
 
-    def __init__(  # noqa: PLR0913
+    def __init__(  # noqa: PLR0913, PLR0917
         self,
         aws_access_key=None,
         aws_secret_key=None,

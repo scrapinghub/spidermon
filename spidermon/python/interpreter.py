@@ -83,10 +83,7 @@ class Interpreter:
         if not expression:
             raise InvalidExpression("Empty python expression")
 
-        try:
-            tree = ast.parse(expression)
-        except SyntaxError as e:
-            raise e
+        tree = ast.parse(expression)
 
         if not tree.body:
             raise InvalidExpression("Empty python expression")

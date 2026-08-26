@@ -15,7 +15,7 @@ from spidermon.utils.zyte import Client
 
 
 class Spidermon:
-    def __init__(  # noqa: PLR0913
+    def __init__(  # noqa: PLR0913, PLR0917
         self,
         crawler,
         spider_opened_suites=None,
@@ -122,12 +122,9 @@ class Spidermon:
         return list(value) if value else []
 
     def load_suite(self, suite_to_load):
-        try:
-            suite_class = load_object(suite_to_load)
-        except Exception as e:
-            raise e  # TO-DO
+        suite_class = load_object(suite_to_load)
         if not issubclass(suite_class, MonitorSuite):
-            raise Exception  # TO-DO
+            raise TypeError(f"{suite_to_load} is not a MonitorSuite subclass")
         return suite_class(crawler=self.crawler)
 
     def load_expression_suite(self, suite_to_load, monitor_class=None):
@@ -203,7 +200,7 @@ class Spidermon:
         spider = self.crawler.spider
         self._run_suites(spider, self.engine_stopped_suites)
 
-    def _count_item(  # noqa: PLR0913,PLR0912
+    def _count_item(  # noqa: PLR0913,PLR0912,PLR0917
         self,
         item,
         skip_none_values,
