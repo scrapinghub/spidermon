@@ -194,7 +194,8 @@ class Spidermon:
 
         self._run_suites(spider, self.spider_closed_suites)
         for task in self.periodic_tasks[spider]:
-            task.stop()
+            if task.running:
+                task.stop()
 
     def engine_stopped(self):
         spider = self.crawler.spider
