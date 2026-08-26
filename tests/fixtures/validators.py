@@ -15,3 +15,11 @@ test_schema = {
 }
 
 test_schema_string = json.dumps(test_schema)
+
+custom_type_schema = {
+    "$schema": "http://json-schema.org/draft-04/schema",
+    "type": "object",
+    "properties": {"title": {"type": "custom"}},
+}
+
+custom_types = {"custom": lambda checker, instance: instance == "ok"}
