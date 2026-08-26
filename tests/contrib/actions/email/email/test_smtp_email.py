@@ -12,8 +12,6 @@ from spidermon.contrib.actions.email.smtp import (
 )
 from spidermon.exceptions import NotConfigured
 
-sent_subject: list[str] = []
-
 
 @pytest.fixture
 def mock_render_template(mocker):
@@ -24,17 +22,9 @@ def mock_render_template(mocker):
 
 
 @pytest.fixture(autouse=True)
-def mock_mail_sender(mocker):
-
-    class DummyMailSender:
-        def __init__(self, *a, **kw):
-            pass
-
-        def send(self, to, subject, body, cc=None, _callback=None, **kwargs):
-            if _callback:
-                _callback(to, subject, body, cc, None, None)
-
-    mocker.patch("spidermon.contrib.actions.email.smtp.MailSender", DummyMailSender)
+def mock_smtp(mocker):
+    mock_smtp_cls = mocker.patch("spidermon.contrib.actions.email.smtp.smtplib.SMTP")
+    return mock_smtp_cls.return_value.__enter__.return_value
 
 
 @pytest.fixture
@@ -136,6 +126,7 @@ def test_set_provided_smtp_settings(setting, attribute, smtp_action_settings):
 )
 def test_email_sent(
     mock_render_template,
+    mock_smtp,
     settings_subject,
     expected_subject,
     smtp_action_settings,
@@ -144,12 +135,10 @@ def test_email_sent(
 
     crawler = get_crawler(settings_dict=smtp_action_settings)
     send_email = SendSmtpEmail.from_crawler(crawler)
-    send_email.send_message(
-        send_email.get_message(),
-        debug=True,
-        _callback=_catch_mail_sent,
-    )
-    assert sent_subject[-1] == expected_subject
+    send_email.send_message(send_email.get_message())
+
+    sent_message = mock_smtp.sendmail.call_args.args[2]
+    assert f"Subject: {expected_subject}" in sent_message
 
 
 @pytest.mark.parametrize(
@@ -170,7 +159,3 @@ def test_raise_not_configured_if_required_setting_not_provided(
     crawler = get_crawler(settings_dict=smtp_action_settings)
     with pytest.raises(NotConfigured):
         SendSmtpEmail.from_crawler(crawler)
-
-
-def _catch_mail_sent(to, subject, body, cc, attach, msg):  # noqa: PLR0913, PLR0917
-    sent_subject.append(subject)
