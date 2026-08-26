@@ -38,7 +38,7 @@ class SlackMessageManager:
             self._users = self._get_users_info()
         return self._users
 
-    def send_message(  # noqa: PLR0913
+    def send_message(  # noqa: PLR0913, PLR0917
         self,
         to,
         text,
@@ -160,7 +160,7 @@ class SlackMessageManager:
                 # can be an expected outcome - will use its own icon
                 icon_url = None
             else:
-                raise e
+                raise
         except KeyError:
             # bot has read permissions for slack org but can't find sender in list
             # can be an expected outcome - will use its own icon
@@ -189,7 +189,7 @@ class SendSlackMessage(ActionWithTemplates):
     include_attachments = True
     fake = False
 
-    def __init__(  # noqa: PLR0913
+    def __init__(  # noqa: PLR0913, PLR0917
         self,
         sender_token=None,
         sender_name=None,

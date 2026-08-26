@@ -99,7 +99,6 @@ class ActionFactory:
 
     @classmethod
     def raise_invalid_action(cls):
-        raise Exception
         raise InvalidMonitor(
             "Wrong Monitor definition, it should be:\n"
             "- an instance of a Monitor/MonitorSuite object.\n"
@@ -110,7 +109,6 @@ class ActionFactory:
 
     @classmethod
     def raise_invalid_class(cls):
-        raise Exception
         raise InvalidMonitorClass(
             "Wrong Monitor class definition, it should be "
             "an instance of a Monitor/MonitorSuite object.",

@@ -542,7 +542,7 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
         if start_time.tzinfo:
             now = self.utc_now_with_timezone()
         else:
-            now = datetime.datetime.utcnow()
+            now = datetime.datetime.utcnow()  # noqa: DTZ003 -- naive to match naive start_time
 
         duration = now - start_time
 

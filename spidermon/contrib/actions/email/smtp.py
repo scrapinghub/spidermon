@@ -10,7 +10,7 @@ DEFAULT_SMTP_PORT = 25
 
 
 class SendSmtpEmail(SendEmail):
-    def __init__(  # noqa: PLR0913
+    def __init__(  # noqa: PLR0913, PLR0917
         self,
         smtp_host=None,
         smtp_port=None,

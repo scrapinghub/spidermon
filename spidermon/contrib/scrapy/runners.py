@@ -116,7 +116,7 @@ class SpiderMonitorResult(MonitorResult):
         self.log(msg, level=logging.INFO)
 
     def log(self, msg, level=logging.DEBUG):
-        self.spider.log(f"[{LOG_MESSAGE_HEADER}] {msg}", level=level)
+        self.spider.logger.log(level, f"[{LOG_MESSAGE_HEADER}] {msg}")
 
 
 class SpiderMonitorRunner(MonitorRunner):

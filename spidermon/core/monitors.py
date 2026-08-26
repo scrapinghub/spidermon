@@ -105,7 +105,7 @@ class Monitor(TestCase, metaclass=MonitorOptionsMetaclass):
             MonitorOptions.add_or_create(self.method.__func__)
 
     def utc_now_with_timezone(self):
-        return datetime.utcnow().replace(tzinfo=timezone.utc)
+        return datetime.now(timezone.utc)
 
     def __repr__(self):
         return f"<MONITOR:({self.name}) at {hex(id(self))}>"
