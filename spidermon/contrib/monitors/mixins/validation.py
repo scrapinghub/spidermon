@@ -89,6 +89,9 @@ class ValidationInfo:
 
 
 class ValidationMonitorMixin(StatsMonitorMixin):
+    """Adds ``check_*`` methods to a monitor, for monitors that check item
+    validation errors."""
+
     correct_field_list_handling = False
 
     @property
