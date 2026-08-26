@@ -216,3 +216,6 @@ filterwarnings = [
     # that don't install scrapy at all (e.g. the plain py311-py314/min tox envs).
     'ignore:The scrapy\.mail module is deprecated.*:Warning:spidermon\.contrib\.actions\.email\.smtp',
 ]
+
+[tool.sphinx-scrapy]
+python-version = "3.14"  # Keep in sync with .github/workflows/main.yml.
