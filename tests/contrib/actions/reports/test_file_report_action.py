@@ -1,3 +1,7 @@
+import pytest
+
+pytest.importorskip("jinja2")
+
 from spidermon.contrib.actions.reports.files import CreateFileReport
 
 
