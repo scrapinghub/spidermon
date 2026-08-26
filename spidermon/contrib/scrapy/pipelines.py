@@ -1,3 +1,4 @@
+import datetime
 from collections import defaultdict
 
 from itemadapter import ItemAdapter
@@ -16,6 +17,17 @@ from .stats import ValidationStatsManager
 DEFAULT_ERRORS_FIELD = "_validation"
 DEFAULT_ADD_ERRORS_TO_ITEM = False
 DEFAULT_DROP_ITEMS_WITH_ERRORS = False
+DEFAULT_STRINGIFY_DATES = False
+
+
+def _stringify_dates(value):
+    if isinstance(value, (datetime.date, datetime.time)):
+        return value.isoformat()
+    if isinstance(value, dict):
+        return {k: _stringify_dates(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_stringify_dates(v) for v in value]
+    return value
 
 
 class PassThroughPipeline:
@@ -24,17 +36,19 @@ class PassThroughPipeline:
 
 
 class ItemValidationPipeline:
-    def __init__(
+    def __init__(  # noqa: PLR0913, PLR0917
         self,
         validators,
         stats,
         drop_items_with_errors=DEFAULT_DROP_ITEMS_WITH_ERRORS,
         add_errors_to_items=DEFAULT_ADD_ERRORS_TO_ITEM,
         errors_field=None,
+        stringify_dates=DEFAULT_STRINGIFY_DATES,
     ):
         self.drop_items_with_errors = drop_items_with_errors
         self.add_errors_to_items = add_errors_to_items or DEFAULT_ADD_ERRORS_TO_ITEM
         self.errors_field = errors_field or DEFAULT_ERRORS_FIELD
+        self.stringify_dates = stringify_dates
         self.validators = validators
         self.stats = ValidationStatsManager(stats)
         for _type, vals in validators.items():
@@ -86,6 +100,9 @@ class ItemValidationPipeline:
                 "SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS",
             ),
             errors_field=crawler.settings.get("SPIDERMON_VALIDATION_ERRORS_FIELD"),
+            stringify_dates=crawler.settings.getbool(
+                "SPIDERMON_VALIDATION_STRINGIFY_DATES",
+            ),
         )
 
     @classmethod
@@ -109,7 +126,7 @@ class ItemValidationPipeline:
             return item
 
         item_adapter = ItemAdapter(item)
-        item_dict = item_adapter.asdict()
+        item_dict = self._convert_item_to_dict(item_adapter)
         self.stats.add_item()
         self.stats.add_fields(len(item_dict.keys()))
         for validator in validators:
@@ -158,3 +175,9 @@ class ItemValidationPipeline:
             for message in messages:
                 self.stats.add_field_error(field_name, message)
         self.stats.add_item_with_errors()
+
+    def _convert_item_to_dict(self, item_adapter: ItemAdapter) -> dict:
+        item_dict = item_adapter.asdict()
+        if self.stringify_dates:
+            item_dict = _stringify_dates(item_dict)
+        return item_dict

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 from typing import ClassVar
 
 import pytest
@@ -257,3 +258,45 @@ class TestAddErrors:
             "prefilled",
             "some_message",
         ]
+
+    def test_convert_item_to_dict(self):
+        test_item = TestItem({"url": "http://example.com"})
+        pipe = ItemValidationPipeline.from_crawler(
+            get_crawler(
+                settings_dict={
+                    "SPIDERMON_ENABLED": True,
+                    SETTING_SCHEMAS: [test_schema],
+                }
+            ),
+        )
+        item_dict = pipe._convert_item_to_dict(ItemAdapter(test_item))
+        assert item_dict == {"url": "http://example.com"}
+
+    def test_convert_item_to_dict_stringify_dates(self):
+        a_date = datetime.date(2023, 9, 19)
+        test_item = TestItem({"url": "http://example.com", "date": a_date})
+        pipe = ItemValidationPipeline.from_crawler(
+            get_crawler(
+                settings_dict={
+                    "SPIDERMON_ENABLED": True,
+                    SETTING_SCHEMAS: [test_schema],
+                    "SPIDERMON_VALIDATION_STRINGIFY_DATES": True,
+                },
+            ),
+        )
+        item_dict = pipe._convert_item_to_dict(ItemAdapter(test_item))
+        assert item_dict == {"url": "http://example.com", "date": a_date.isoformat()}
+
+    def test_convert_item_to_dict_stringify_dates_disabled_by_default(self):
+        a_date = datetime.date(2023, 9, 19)
+        test_item = TestItem({"url": "http://example.com", "date": a_date})
+        pipe = ItemValidationPipeline.from_crawler(
+            get_crawler(
+                settings_dict={
+                    "SPIDERMON_ENABLED": True,
+                    SETTING_SCHEMAS: [test_schema],
+                }
+            ),
+        )
+        item_dict = pipe._convert_item_to_dict(ItemAdapter(test_item))
+        assert item_dict == {"url": "http://example.com", "date": a_date}
