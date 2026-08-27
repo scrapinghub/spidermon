@@ -16,7 +16,13 @@ from slugify import slugify
 
 from spidermon.contrib.scrapy.pipelines import ItemValidationPipeline
 from tests.fixtures.items import TestItem, TreeItem
-from tests.fixtures.validators import test_schema, test_schema_string, tree_schema
+from tests.fixtures.validators import (
+    custom_type_schema,
+    custom_types,
+    test_schema,
+    test_schema_string,
+    tree_schema,
+)
 
 STATS_AMOUNTS = "spidermon/validation/validators"
 STATS_ITEM_ERRORS = "spidermon/validation/items/errors"
@@ -216,6 +222,26 @@ def test_validator_from_url(mocker):
     stats = pipe.stats.stats.get_stats()
     assert "spidermon/validation/items/errors" in stats
     assert stats.get("spidermon/validation/validators/testitem/jsonschema", False)
+
+
+@pytest.mark.parametrize(
+    "schema_types",
+    [custom_types, "tests.fixtures.validators.custom_types"],
+)
+def test_schema_types_setting(schema_types):
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        SETTING_SCHEMAS: [custom_type_schema],
+        "SPIDERMON_VALIDATION_SCHEMA_TYPES": schema_types,
+    }
+    crawler = get_crawler(settings_dict=settings)
+    pipe = ItemValidationPipeline.from_crawler(crawler)
+
+    pipe.process_item(TestItem({"title": "ok"}), None)
+    assert "spidermon/validation/items/errors" not in pipe.stats.stats.get_stats()
+
+    pipe.process_item(TestItem({"title": "bad"}), None)
+    assert "spidermon/validation/items/errors" in pipe.stats.stats.get_stats()
 
 
 def test_process_item_without_spider_argument():
