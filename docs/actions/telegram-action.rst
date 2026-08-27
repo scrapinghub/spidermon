@@ -54,6 +54,7 @@ SPIDERMON_TELEGRAM_MESSAGE_TEMPLATE
 -----------------------------------
 
 Path to a Jinja2 template file to format messages sent by the Telegram Action.
+See :ref:`custom-templates` to use your own.
 
 .. _`Telegram`: https://telegram.org/
 .. _`Telegram bot token`: https://core.telegram.org/bots
