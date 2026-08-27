@@ -34,13 +34,12 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
         return super().run(result)
 
     def check_if_skip_rule_met(self):
-        if (
-            hasattr(self, "skip_rules")
-            and self.monitor_name
-            and self.skip_rules.get(self.monitor_name)
-        ):
-            skip_rules = self.skip_rules[self.monitor_name]
-            for rule in skip_rules:
+        crawler = self.data.get("crawler")
+        if not crawler:
+            return False
+        skip_rules = crawler.settings.get("SPIDERMON_MONITOR_SKIPPING_RULES") or {}
+        for key in (self.name, self.monitor_name):
+            for rule in skip_rules.get(key, []):
                 if callable(rule):
                     if rule(self):
                         return True
