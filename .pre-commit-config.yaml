@@ -16,6 +16,8 @@ repos:
   hooks:
   - id: end-of-file-fixer
   - id: trailing-whitespace
+  - id: mixed-line-ending
+    args: [--fix=lf]
 - repo: https://github.com/sphinx-contrib/sphinx-lint
   rev: v1.0.2
   hooks:
