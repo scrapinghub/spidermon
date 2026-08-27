@@ -535,6 +535,9 @@ Default: ``None``
 
 A dictionary where keys represent the names of the monitors to be skipped, and the corresponding values are lists containing either method names or lists defining skip conditions.
 
+.. versionchanged:: VERSION
+    A key can also target a single test method of a monitor, instead of every method in it, using the ``"<monitor name>/<method name>"`` format.
+
 When defining skip rules based on values, the list must follow the pattern:
 
 ``["stat_name", "comparison_operator", "threshold_value"]``.
