@@ -113,6 +113,26 @@ def test_skipping_rule_on_callable_function(
     assert runner.result.monitor_results[0].status == expected_status
 
 
+def test_skipping_rule_without_crawler(make_data):
+    data = make_data(
+        {
+            "SPIDERMON_MONITOR_SKIPPING_RULES": {
+                "MultiCheckMonitor/test_two": [always_skip],
+            },
+        },
+    )
+    runner = data.pop("runner")
+    data["crawler"] = None
+    suite = MonitorSuite(monitors=[MultiCheckMonitor])
+    runner.run(suite, **data)
+
+    results = runner.result.monitor_results
+    assert [result.monitor.name for result in results] == [
+        "MultiCheckMonitor/test_one",
+        "MultiCheckMonitor/test_two",
+    ]
+
+
 def test_skipping_rule_by_method_name(make_data):
     data = make_data(
         {
