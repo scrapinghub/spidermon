@@ -90,6 +90,7 @@ SPIDERMON_BODY_HTML_TEMPLATE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 String containing the location of the `Jinja2`_ template for the Spidermon email report.
+See :ref:`custom-templates` to use your own.
 
 Default :download:`reports/email/monitors/result.jinja <../../spidermon/contrib/actions/reports/templates/reports/email/monitors/result.jinja>`.
 
