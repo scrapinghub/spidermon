@@ -271,7 +271,7 @@ class FeedExportMonitor(BaseScrapyMonitor):
         )
         failures = sum(
             count
-            for key, count in self.stats.items()
+            for key, count in self.data.stats.items()
             if key.startswith("feedexport/failed_count/")
         )
         self.assertLessEqual(

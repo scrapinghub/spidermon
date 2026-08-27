@@ -24,6 +24,15 @@ def test_feed_export_monitor_passes_without_failures(make_data):
     assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.SUCCESS
 
 
+def test_feed_export_monitor_passes_without_feedexport_stats(make_data):
+    data = make_data()
+    runner = data.pop("runner")
+
+    runner.run(new_suite(), **data)
+
+    assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.SUCCESS
+
+
 def test_feed_export_monitor_fails_on_failure(make_data):
     data = make_data()
     runner = data.pop("runner")
