@@ -42,7 +42,7 @@ Tracker = "https://github.com/scrapinghub/spidermon/issues"
 [project.optional-dependencies]
 monitoring = [
     "boto3>=1.10.0",
-    "itemadapter>=0.1.0",
+    "itemadapter>=0.2.0",
     "jinja2>=3.0.0",
     "premailer>=2.7.0",
     "requests>=2.19.0",

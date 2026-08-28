@@ -244,7 +244,7 @@ class Spidermon:
             else:
                 effective_max_dict = max_dict_nesting_level
 
-            if isinstance(value, dict):
+            if ItemAdapter.is_item(value):
                 # if there's no max (set to -1), we just proceed indefinitely (all levels)
                 # this is for backwards compatibility
                 if effective_max_dict == -1:
@@ -282,7 +282,7 @@ class Spidermon:
                 items_count_stat = f"{field_item_count_stat}/_items"
                 for list_item in value:
                     self.crawler.stats.inc_value(items_count_stat)
-                    if isinstance(list_item, dict):
+                    if ItemAdapter.is_item(list_item):
                         self._count_item(
                             list_item,
                             skip_none_values,
