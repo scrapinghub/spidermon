@@ -7,6 +7,13 @@ from .options import MonitorOptions, MonitorOptionsMetaclass
 
 
 class Monitor(TestCase, metaclass=MonitorOptionsMetaclass):
+    """Base class for monitors, holding the monitoring logic as test methods,
+    the way a `unittest.TestCase` holds test methods.
+
+    *name* overrides the monitor name that would otherwise come from the
+    ``@monitors.name(...)`` decorator or the class name.
+    """
+
     def __init__(self, methodName="runTest", name=None):
         super().__init__(methodName)
         self._name = name
