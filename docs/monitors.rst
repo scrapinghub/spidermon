@@ -46,6 +46,26 @@ implement your monitors:
 
 .. autoclass:: spidermon.core.monitors.Monitor
 
+Monitor mixins
+--------------
+
+A mixin is a class that adds a feature to another class through multiple
+inheritance. Spidermon includes mixins that add the ``data.stats``,
+``data.job``, ``data.crawler`` and ``data.spider`` properties above as
+``stats``, ``job``, ``crawler`` and ``spider``, plus a breakdown of response
+status codes and, for item validation,
+:class:`~spidermon.contrib.monitors.mixins.validation.ValidationMonitorMixin`,
+covered in :ref:`item-validation:validation in monitors`.
+
+.. automodule:: spidermon.contrib.monitors.mixins.stats
+    :members: StatsMonitorMixin
+
+.. automodule:: spidermon.contrib.monitors.mixins.job
+    :members: JobMonitorMixin
+
+.. automodule:: spidermon.contrib.monitors.mixins.spider
+    :members: SpiderMonitorMixin, ResponsesInfo
+
 Monitor Suites
 --------------
 
