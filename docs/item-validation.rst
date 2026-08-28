@@ -141,6 +141,17 @@ as a `dict`:
         OtherItem: "/path/to/otheritem_schema.json",
     }
 
+SPIDERMON_VALIDATION_STRINGIFY_DATES
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Default: ``False``
+
+`jsonschema`_'s ``date``, ``time`` and ``date-time`` formats only match string values, while
+Scrapy items commonly hold :class:`datetime.date`, :class:`datetime.time` or
+:class:`datetime.datetime` instances. When set to ``True``, these values (including ones
+nested in dicts, lists or tuples) are converted to their ISO 8601 string representation
+before validation.
+
 Validation in Monitors
 ----------------------
 
