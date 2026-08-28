@@ -1,10 +1,11 @@
 {% macro render_result(result) -%}
-    •  _{{ result.monitor.name }}_\n
+•  _{{ result.monitor.name }}_{% if result.reason %}{{ "\n    " }}{{ result.reason }}{% endif %}{{ "\n" }}
 {%- endmacro %}
 
 {% macro render_results(color, results) %}
+    {% set text %}{% for result in results %}{{ render_result(result) }}{% endfor %}{% endset %}
     {
-        "text": "{% for result in results %}{{ render_result(result) }}{% endfor %}",
+        "text": {{ text|tojson }},
         "color": "{{ color }}",
         "mrkdwn_in": ["text", "pretext"]
     }
