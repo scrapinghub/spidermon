@@ -1,9 +1,10 @@
-from spidermon.exceptions import NotConfigured
+import warnings
 
+from spidermon.contrib.zyte.monitors.mixins.job import JobMonitorMixin  # noqa: F401
 
-class JobMonitorMixin:
-    @property
-    def job(self):
-        if not self.data.job:
-            raise NotConfigured("Job not available!")
-        return self.data.job
+warnings.warn(
+    "spidermon.contrib.monitors.mixins.job is deprecated, import "
+    "JobMonitorMixin from spidermon.contrib.zyte.monitors.mixins.job instead.",
+    DeprecationWarning,
+    stacklevel=2,
+)

@@ -1,8 +1,8 @@
 from spidermon.contrib.stats.analyzer import StatsAnalyzer
 from spidermon.contrib.stats.counters import DictPercentCounter, PercentCounter
+from spidermon.contrib.zyte.monitors.mixins.job import JobMonitorMixin
 from spidermon.exceptions import NotConfigured
 
-from .job import JobMonitorMixin
 from .stats import StatsMonitorMixin
 
 DOWNLOADER_RESPONSE_COUNT = "downloader/response_count"

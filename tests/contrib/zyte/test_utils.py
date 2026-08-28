@@ -8,7 +8,7 @@ pytest.importorskip("scrapy")
 
 from scrapy.utils.test import get_crawler
 
-from spidermon.utils import zyte
+from spidermon.contrib.zyte import utils as zyte
 
 
 @pytest.fixture
@@ -58,6 +58,10 @@ def test_client_property_project(mock_module, settings):
     assert client._project is not None
     client._client.get_project.assert_called_with("123")
 
+    project = client.project
+    assert project is client._project
+    client._client.get_project.assert_called_once()
+
 
 def test_client_property_job(mock_module, settings):
     client = mock_module.Client(settings)
@@ -66,6 +70,10 @@ def test_client_property_job(mock_module, settings):
     assert client.job is not None
     assert client._job is not None
     client._client.get_job.assert_called_with("123/456/789")
+
+    job = client.job
+    assert job is client._job
+    client._client.get_job.assert_called_once()
 
 
 def test_client_property_spider(mock_module, settings):
@@ -82,12 +90,26 @@ def test_client_property_spider(mock_module, settings):
     client._job.metadata.get.assert_called_with("spider")
     client._project.spiders.get.assert_called_with("my_awesome_spider")
 
+    spider = client.spider
+    assert spider is client._spider
+    client._project.spiders.get.assert_called_once()
+
+
+def test_client_property_caches_client(mock_module, settings):
+    client = mock_module.Client(settings)
+    assert client.client is client.client
+
 
 def test_client_close(mock_module, settings):
     client = mock_module.Client(settings)
     assert client.client is not None
     client.close()
     client._client.close.assert_called()
+
+
+def test_client_close_without_client(mock_module, settings):
+    client = mock_module.Client(settings)
+    client.close()
 
 
 @pytest.mark.parametrize("expected", [False, True])
