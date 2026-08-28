@@ -1471,26 +1471,14 @@ class Ref(SchemaTest):
             schema=schema_root,
             data={"bar": False},
             valid=False,
-            expected_errors={
-                "": [
-                    messages.UNEXPECTED_FIELDS.format(
-                        unexpected_fields="('bar' was unexpected)",
-                    ),
-                ],
-            },
+            expected_errors={"bar": [messages.UNEXPECTED_FIELD]},
         ),
         DataTest(
             name="root. recursive mismatch",
             schema=schema_root,
             data={"foo": {"bar": False}},
             valid=False,
-            expected_errors={
-                "foo": [
-                    messages.UNEXPECTED_FIELDS.format(
-                        unexpected_fields="('bar' was unexpected)",
-                    ),
-                ],
-            },
+            expected_errors={"foo.bar": [messages.UNEXPECTED_FIELD]},
         ),
         DataTest(
             name="relative. match",

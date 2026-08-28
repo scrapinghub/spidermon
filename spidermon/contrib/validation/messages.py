@@ -1,5 +1,4 @@
 UNEXPECTED_FIELD = "Unexpected field"
-UNEXPECTED_FIELDS = "Unexpected fields: {unexpected_fields}"
 MISSING_REQUIRED_FIELD = "Missing required field"
 VALUE_NOT_IN_CHOICES = "Value not in choices"
 FIELD_TOO_LONG = "Field too long"
