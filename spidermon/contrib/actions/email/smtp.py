@@ -1,4 +1,4 @@
-from scrapy.mail import MailSender
+import smtplib
 
 from spidermon.exceptions import NotConfigured
 
@@ -75,20 +75,12 @@ class SendSmtpEmail(SendEmail):
         return kwargs
 
     def send_message(self, message, **kwargs):
-        mail_sender = MailSender(
-            smtphost=self.smtp_host,
-            mailfrom=self.sender,
-            smtpuser=self.smtp_user,
-            smtppass=self.smtp_password,
-            smtpport=self.smtp_port,
-            smtptls=self.smtp_enforce_tls,
-            smtpssl=self.smtp_enforce_ssl,
-        )
+        recipients = [*self.to, *(self.cc or []), *(self.bcc or [])]
+        del message["Bcc"]
 
-        mail_sender.send(
-            to=self.to,
-            subject=message["Subject"],
-            body=message.as_string(),
-            cc=self.cc,
-            _callback=kwargs.get("_callback"),
-        )
+        smtp_cls = smtplib.SMTP_SSL if self.smtp_enforce_ssl else smtplib.SMTP
+        with smtp_cls(self.smtp_host, self.smtp_port) as smtp:
+            if self.smtp_enforce_tls:
+                smtp.starttls()
+            smtp.login(self.smtp_user, self.smtp_password)
+            smtp.sendmail(self.sender, recipients, message.as_string())
