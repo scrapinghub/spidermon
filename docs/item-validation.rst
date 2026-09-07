@@ -145,8 +145,12 @@ Validation in Monitors
 ----------------------
 
 You can build a monitor that checks the validation problems and raises errors if there are too many.
-You can base it on ``spidermon.contrib.monitors.mixins.ValidationMonitorMixin`` which provides methods
-that can be useful for this. There are 2 groups of methods, for checking all validation errors and
+You can base it on :class:`~spidermon.contrib.monitors.mixins.validation.ValidationMonitorMixin` which
+provides methods that can be useful for this.
+
+.. autoclass:: spidermon.contrib.monitors.mixins.validation.ValidationMonitorMixin
+
+There are 2 groups of methods, for checking all validation errors and
 specifically for checking ``missing_required_field`` errors. All of these methods rely on the job stats,
 reading ``spidermon/validation/fields/errors/*`` entries.
 
