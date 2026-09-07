@@ -13,6 +13,24 @@ file as follows:
     SPIDERMON_SENTRY_PROJECT_NAME = "<PROJECT_NAME>"
     SPIDERMON_SENTRY_ENVIRONMENT_TYPE = "<ENVIRONMENT_TYPE>"
 
+Setting these values alone does not send anything: you also need to add
+``SendSentryMessage`` to your monitor suite, for example to send a
+notification whenever your ``DummyMonitorSuite`` finishes:
+
+.. code-block:: python
+
+    from spidermon.contrib.actions.sentry import SendSentryMessage
+
+
+    class DummyMonitorSuite(MonitorSuite):
+        monitors = [
+            DummyMonitor,
+        ]
+
+        monitors_finished_actions = [
+            SendSentryMessage,
+        ]
+
 A notification on `Sentry`_ will look like the following one:
 
 .. image:: /_static/sentry_notification.png
