@@ -141,6 +141,37 @@ as a `dict`:
         OtherItem: "/path/to/otheritem_schema.json",
     }
 
+SPIDERMON_VALIDATION_SCHEMA_TYPES
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Default: ``None``
+
+By default, schemas can only use the types defined by JSON Schema itself
+(``string``, ``number``, ``object``, and so on). If your items hold values that are
+not natively representable in JSON when validation runs, such as ``arrow.Arrow`` or
+``datetime.datetime`` objects, use this setting to make `SPIDERMON_VALIDATION_SCHEMAS`_
+schemas recognize them as an extra type, e.g. ``datetime``.
+
+A `dict` mapping type names to their checker function, or an object path to such a
+`dict`:
+
+.. code-block:: python
+
+    # settings.py
+
+
+    def is_datetime(checker, instance):
+        return isinstance(instance, arrow.Arrow)
+
+
+    SPIDERMON_VALIDATION_SCHEMA_TYPES = {"datetime": is_datetime}
+
+.. note:: `Scrapy settings must be picklable
+   <https://docs.scrapy.org/en/latest/topics/settings.html#compatibility-with-pickle>`_,
+   so checker functions cannot be lambdas. If a checker cannot be made picklable, use
+   an object path to the `dict` instead, so that the `dict` itself, rather than the
+   setting, holds the unpicklable value.
+
 Validation in Monitors
 ----------------------
 

@@ -25,5 +25,5 @@ class CreateFileReport(CreateReport):
     def after_render_report(self):
         rendered_filename = self.render_text_template(self.filename)
 
-        with Path(rendered_filename).open("w") as f:
+        with Path(rendered_filename).open("w", encoding="utf-8") as f:
             f.write(self.report)
