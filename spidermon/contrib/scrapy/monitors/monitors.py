@@ -29,6 +29,8 @@ SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED = (
     "SPIDERMON_JOBS_COMPARISON_ARGUMENTS_ENABLED"
 )
 SPIDERMON_ITEM_COUNT_INCREASE = "SPIDERMON_ITEM_COUNT_INCREASE"
+SPIDERMON_FIELD_COVERAGE_TOLERANCE = "SPIDERMON_FIELD_COVERAGE_TOLERANCE"
+SPIDERMON_MAX_FEED_EXPORT_FAILURES = "SPIDERMON_MAX_FEED_EXPORT_FAILURES"
 
 
 @monitors.name("Extracted Items Monitor")
@@ -250,6 +252,35 @@ class UnwantedHTTPCodesMonitor(BaseScrapyMonitor):
             self.assertTrue(count <= max_errors, msg=msg)
 
 
+@monitors.name("Feed Export Monitor")
+class FeedExportMonitor(BaseScrapyMonitor):
+    """Check if any feed export failed.
+
+    You can configure the maximum number of failed feed exports allowed with
+    the ``SPIDERMON_MAX_FEED_EXPORT_FAILURES`` setting. Defaults to ``0``.
+
+    This relies on the ``feedexport/failed_count/<storage>`` stats that
+    Scrapy sets for each configured feed storage.
+    """
+
+    @monitors.name("Should not exceed the maximum number of failed feed exports")
+    def test_should_not_have_failed_feed_exports(self):
+        max_failures = self.crawler.settings.getint(
+            SPIDERMON_MAX_FEED_EXPORT_FAILURES,
+            0,
+        )
+        failures = sum(
+            count
+            for key, count in self.data.stats.items()
+            if key.startswith("feedexport/failed_count/")
+        )
+        self.assertLessEqual(
+            failures,
+            max_failures,
+            msg=f"Found {failures} failed feed export(s), the limit is {max_failures}",
+        )
+
+
 @monitors.name("Downloader Exceptions monitor")
 class DownloaderExceptionMonitor(BaseStatMonitor):
     """This monitor checks if the amount of downloader
@@ -447,6 +478,26 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
                "MyCustomItem/field_2": 1.0,
            }
 
+    You can also configure a tolerance setting to handle small decimal precision differences
+    in field coverage calculations. This is useful to avoid false alarms when coverage values
+    are very close to the expected threshold due to floating-point precision issues (e.g.,
+    49.999% vs 50.0%).
+
+    Use the ``SPIDERMON_FIELD_COVERAGE_TOLERANCE`` setting to define the absolute tolerance
+    as a small float value (default: 0, no tolerance). The tolerance is used with Python's
+    ``math.isclose()`` function to determine if the actual coverage is "close enough" to
+    the expected coverage.
+
+    .. note::
+       This setting is intended for handling decimal precision issues, not for creating
+       margins or error bars. If you want to allow larger variations in coverage, consider
+       adjusting the coverage thresholds directly in ``SPIDERMON_FIELD_COVERAGE_RULES``
+       instead of using this tolerance setting.
+
+    .. code-block:: python
+
+        SPIDERMON_FIELD_COVERAGE_TOLERANCE = 0.001  # Allow 0.1% difference for precision
+
     """
 
     def run(self, result):
@@ -470,6 +521,11 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
         if skip_no_items and int(items_scraped) == 0:
             self.skipTest("No items were scraped.")
 
+        tolerance = self.crawler.settings.getfloat(
+            SPIDERMON_FIELD_COVERAGE_TOLERANCE, 0
+        )
+        # Note: math.isclose() will raise ValueError if tolerance is negative
+
         failures = []
         field_coverage_rules = self.crawler.settings.getdict(
             "SPIDERMON_FIELD_COVERAGE_RULES",
@@ -479,10 +535,14 @@ class FieldCoverageMonitor(BaseScrapyMonitor):
                 f"spidermon_field_coverage/{field}",
                 0,
             )
-            if actual_coverage < expected_coverage:
-                failures.append(
-                    f"{field} (expected {expected_coverage}, got {actual_coverage})",
-                )
+            if actual_coverage > expected_coverage or math.isclose(
+                actual_coverage, expected_coverage, abs_tol=tolerance
+            ):
+                continue
+            failures.append(
+                f"{field} (expected {expected_coverage}, got {actual_coverage}, "
+                f"tolerance: {tolerance})",
+            )
 
         msg = "\nThe following items did not meet field coverage rules:\n{}".format(
             "\n".join(failures),
@@ -512,7 +572,7 @@ class PeriodicExecutionTimeMonitor(Monitor, StatsMonitorMixin):
         if start_time.tzinfo:
             now = self.utc_now_with_timezone()
         else:
-            now = datetime.datetime.utcnow()
+            now = datetime.datetime.utcnow()  # noqa: DTZ003 -- naive to match naive start_time
 
         duration = now - start_time
 

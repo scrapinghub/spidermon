@@ -35,7 +35,9 @@ def mock_datetime(mocker):
     mocked_datetime = mocker.patch(
         "spidermon.contrib.scrapy.monitors.monitors.datetime",
     )
-    fake_now_dt = datetime.datetime.fromtimestamp(FAKE_START_TS + FAKE_EXECUTION_TIME)
+    fake_now_dt = datetime.datetime.fromtimestamp(  # noqa: DTZ006 -- naive, matches naive start_time
+        FAKE_START_TS + FAKE_EXECUTION_TIME
+    )
 
     mocked_datetime.datetime.utcnow.return_value = fake_now_dt
     return mocked_datetime
@@ -53,7 +55,7 @@ def test_periodic_execution_monitor_should_fail(
     data["crawler"].spider = mock_spider
     data["crawler"].stats.set_value(
         "start_time",
-        datetime.datetime.fromtimestamp(FAKE_START_TS),
+        datetime.datetime.fromtimestamp(FAKE_START_TS),  # noqa: DTZ006 -- naive, matches naive "now"
     )
     error_expected = "AssertionError: 100.0 not less than 99 : The job has exceeded the maximum execution time"
 
@@ -74,7 +76,7 @@ def test_periodic_execution_monitor_should_pass(
     data["crawler"].spider = mock_spider
     data["crawler"].stats.set_value(
         "start_time",
-        datetime.datetime.fromtimestamp(FAKE_START_TS),
+        datetime.datetime.fromtimestamp(FAKE_START_TS),  # noqa: DTZ006 -- naive, matches naive "now"
     )
 
     runner.run(monitor_suite, **data)
@@ -129,7 +131,7 @@ def item_count_suite():
         (54, 50, 0.1, settings.MONITOR.STATUS.FAILURE),
     ],
 )
-def test_item_count_monitor_validation(  # noqa: PLR0913
+def test_item_count_monitor_validation(  # noqa: PLR0913, PLR0917
     make_data,
     item_count_suite,
     item_scraped_count,

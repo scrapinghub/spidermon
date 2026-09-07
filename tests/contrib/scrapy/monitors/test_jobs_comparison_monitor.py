@@ -120,7 +120,7 @@ def mock_suite_and_zyte_client(
         (5, 1.1, 1, [1], True),
     ],
 )
-def test_jobs_comparison_monitor_is_enabled(  # noqa: PLR0913
+def test_jobs_comparison_monitor_is_enabled(  # noqa: PLR0913, PLR0917
     make_data,
     mock_suite,
     item_count,
@@ -394,7 +394,7 @@ def test_jobs_comparison_monitor_threshold(
         (("foo", "bar"), 2000, ("tag3",), 0.5),
     ],
 )
-def test_arguments_passed_to_zyte_client(  # noqa: PLR0913
+def test_arguments_passed_to_zyte_client(  # noqa: PLR0913, PLR0917
     make_data,
     mock_suite_and_zyte_client,
     states,

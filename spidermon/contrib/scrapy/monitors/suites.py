@@ -43,7 +43,7 @@ class SpiderCloseMonitorSuite(MonitorSuite):
         )
     """
 
-    def __init__(  # noqa: PLR0913
+    def __init__(  # noqa: PLR0913, PLR0917
         self,
         name=None,
         monitors=None,
