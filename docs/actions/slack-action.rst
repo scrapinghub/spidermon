@@ -66,6 +66,7 @@ Default ``None``
 
 Absolute path to a `Jinja2`_ template from which slack messages will be constructed from.
 If None it will use the default template from `the notifier templates folder <https://github.com/scrapinghub/spidermon/tree/master/spidermon/contrib/actions/slack/templates/slack/spider/notifier>`_.
+See :ref:`custom-templates` to use your own.
 
 SPIDERMON_SLACK_FAKE
 --------------------
@@ -102,6 +103,7 @@ Default: ``None``
 
 Absolute path to a `Jinja2`_ template from which slack messages will be constructed from.
 If None it will use the default template from the `notifier templates folder`_.
+See :ref:`custom-templates` to use your own.
 
 
 SPIDERMON_SLACK_NOTIFIER_INCLUDE_ERROR_ATTACHMENTS
