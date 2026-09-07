@@ -28,7 +28,7 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
 
     def run(self, result):
         if self.check_if_skip_rule_met():
-            logger.info(f"Skipping {self.monitor_name} monitor")
+            logger.info(f"Skipping {self.name} monitor")
             return None
 
         return super().run(result)
