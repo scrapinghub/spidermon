@@ -44,6 +44,7 @@ SPIDERMON_REPORT_TEMPLATE
 -------------------------
 
 String containing the location of the template for the file report.
+See :ref:`custom-templates` to use your own.
 
 S3 Report action
 ================

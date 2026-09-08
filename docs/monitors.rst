@@ -8,9 +8,6 @@ Monitors
 Monitors are the main class where you include your monitoring logic. After defining
 them, you need to include them in a `MonitorSuite`, so they can be executed.
 
-As `spidermon.core.monitors.Monitor` inherits from Python `unittest.TestCase`, you
-can use all existing assertion methods in your monitors.
-
 In the following example, we define a monitor that will verify whether a minimum
 number of items were extracted and fails if it is less than the expected threshold.
 
@@ -31,20 +28,28 @@ number of items were extracted and fails if it is less than the expected thresho
                 msg="Extracted less than {} items".format(minimum_threshold),
             )
 
-A :class:`~spidermon.core.monitors.Monitor` instance defines a monitor that includes
-your monitoring logic and has the following properties that can be used to help you
-implement your monitors:
-
-``data.stats`` dict-like object containing the stats of the spider execution
-
-``data.crawler`` instance of actual `Crawler`_ object
-
-``data.spider`` instance of actual `Spider`_ object
-
-.. _`Crawler`: https://doc.scrapy.org/en/latest/topics/api.html#scrapy.crawler.Crawler
-.. _`Spider`: https://doc.scrapy.org/en/latest/topics/spiders.html?highlight=scrapy.Spider#scrapy.spiders.Spider
-
 .. autoclass:: spidermon.core.monitors.Monitor
+    :members:
+
+Monitor mixins
+--------------
+
+A mixin is a class that adds a feature to another class through multiple
+inheritance. Spidermon includes mixins that add the ``data.stats``,
+``data.job``, ``data.crawler`` and ``data.spider`` properties above as
+``stats``, ``job``, ``crawler`` and ``spider``, plus a breakdown of response
+status codes and, for item validation,
+:class:`~spidermon.contrib.monitors.mixins.validation.ValidationMonitorMixin`,
+covered in :ref:`item-validation:validation in monitors`.
+
+.. automodule:: spidermon.contrib.monitors.mixins.stats
+    :members: StatsMonitorMixin
+
+.. automodule:: spidermon.contrib.monitors.mixins.job
+    :members: JobMonitorMixin
+
+.. automodule:: spidermon.contrib.monitors.mixins.spider
+    :members: SpiderMonitorMixin, ResponsesInfo
 
 Monitor Suites
 --------------

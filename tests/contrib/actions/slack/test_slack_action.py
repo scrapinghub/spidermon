@@ -1,3 +1,5 @@
+import ast
+
 import pytest
 
 pytest.importorskip("jinja2")
@@ -5,6 +7,8 @@ pytest.importorskip("jinja2")
 from unittest.mock import MagicMock, patch
 
 from spidermon.contrib.actions.slack import SendSlackMessage, SlackMessageManager
+from spidermon.contrib.actions.slack.notifiers import SendSlackMessageSpiderFinished
+from spidermon.results.items import MonitorResult
 
 
 @pytest.fixture
@@ -130,3 +134,34 @@ def test_message_sender_pass_kwargs():
 
     _, kwargs = sender.manager._client.chat_postMessage.call_args_list[0]
     assert "a_new_arg" in kwargs
+
+
+class FakeMonitor:
+    name = "Field coverage monitor"
+
+
+class FakeSuiteResult:
+    all_monitors_passed = False
+
+    def __init__(self, failed_results):
+        self.monitors_passed_results = []
+        self.monitors_failed_results = failed_results
+
+
+def test_failed_attachments_include_reason():
+    result = MonitorResult(FakeMonitor())
+    result.reason = 'Field "name": expected in 5 items, got in 2'
+
+    sender = SendSlackMessageSpiderFinished(
+        sender_token="anything",
+        sender_name="@someone",
+        recipients=["user"],
+        include_error_attachments=True,
+    )
+    sender.result = FakeSuiteResult([result])
+    sender.data = None
+
+    attachments = sender.get_attachments()
+    parsed = ast.literal_eval(attachments)
+
+    assert result.reason in parsed[0]["text"]
