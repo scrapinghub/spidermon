@@ -31,6 +31,25 @@ number of items were extracted and fails if it is less than the expected thresho
                 msg="Extracted less than {} items".format(minimum_threshold),
             )
 
+Monitor failures are logged at the ``ERROR`` level by default. Decorate a
+test method, a monitor class or a monitor suite class with
+``@monitors.level.low`` to log its failures at ``WARNING`` instead, or with
+``@monitors.level.high`` to log them at ``CRITICAL``. ``@monitors.level.normal``
+restores the default for a method or class inside one with a different level.
+
+.. code-block:: python
+
+    from spidermon import Monitor, monitors
+
+
+    @monitors.level.low
+    class ItemCountMonitor(Monitor):
+
+        def test_minimum_number_of_items_extracted(self): ...
+
+        @monitors.level.high
+        def test_some_items_extracted(self): ...
+
 A :class:`~spidermon.core.monitors.Monitor` instance defines a monitor that includes
 your monitoring logic and has the following properties that can be used to help you
 implement your monitors:
