@@ -1,9 +1,11 @@
 import datetime
 from collections import defaultdict
+from functools import partial
 
 from itemadapter import ItemAdapter
 from scrapy import Item
 from scrapy.exceptions import DropItem, NotConfigured
+from scrapy.utils.misc import load_object
 
 from spidermon.contrib.utils.attributes import (
     get_nested_attribute,
@@ -74,8 +76,15 @@ class ItemValidationPipeline:
                 objects = [loader(v) for v in paths]
                 validators[key].extend(objects)
 
+        schema_types = crawler.settings.get("SPIDERMON_VALIDATION_SCHEMA_TYPES")
+        if isinstance(schema_types, str):
+            schema_types = load_object(schema_types)
+
         for loader, name in [
-            (cls._load_jsonschema_validator, "SPIDERMON_VALIDATION_SCHEMAS"),
+            (
+                partial(cls._load_jsonschema_validator, types=schema_types),
+                "SPIDERMON_VALIDATION_SCHEMAS",
+            ),
         ]:
             res = crawler.settings.get(name)
             if not res:
@@ -106,7 +115,7 @@ class ItemValidationPipeline:
         )
 
     @classmethod
-    def _load_jsonschema_validator(cls, schema):
+    def _load_jsonschema_validator(cls, schema, types=None):
         if isinstance(schema, str):
             schema = get_schema_from(schema)
         if not isinstance(schema, dict):
@@ -117,7 +126,7 @@ class ItemValidationPipeline:
                 "- an object path to a JSON string.\n"
                 "- a path to a JSON file.",
             )
-        return JSONSchemaValidator(schema)
+        return JSONSchemaValidator(schema, types=types)
 
     def process_item(self, item, spider=None):
         validators = self.find_validators(item)
