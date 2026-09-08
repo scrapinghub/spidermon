@@ -43,7 +43,7 @@ def create_monitor_class_from_dict(monitor_dict, monitor_class=None):
             test["expression"],
             test.get("name", None),
             test.get("description", None),
-            test.get("fail_message", None),
+            test.get("fail_reason", None),
         )
         for test in monitor_dict.get("tests", [])
     ]
