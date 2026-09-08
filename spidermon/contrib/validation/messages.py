@@ -1,3 +1,5 @@
+import warnings
+
 UNEXPECTED_FIELD = "Unexpected field"
 MISSING_REQUIRED_FIELD = "Missing required field"
 VALUE_NOT_IN_CHOICES = "Value not in choices"
@@ -44,3 +46,15 @@ NOT_MULTIPLE_OF = "Not multiple of"
 NOT_ALLOWED_VALUE = "Not allowed value"
 NOT_UNIQUE = "Not unique"
 SHOULD_BE_NON_EMPTY = "should be non-empty"
+
+
+def __getattr__(name):
+    if name == "UNEXPECTED_FIELDS":
+        warnings.warn(
+            f"{__name__}.UNEXPECTED_FIELDS is deprecated, "
+            f"use {__name__}.UNEXPECTED_FIELD instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return "Unexpected fields: {unexpected_fields}"
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

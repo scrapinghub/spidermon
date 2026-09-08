@@ -2,15 +2,20 @@ import re
 
 from jsonschema.validators import extend, validator_for
 
-from spidermon.contrib.validation import messages
 from spidermon.contrib.validation.validator import Validator
 
 from .formats import format_checker
 from .translator import JSONSchemaMessageTranslator
 
 REQUIRED_RE = re.compile("'(.+)' is a required property")
-UNEXPECTED_FIELDS_RE = re.compile(r"^Additional properties are not allowed \((.*)\)$")
-FIELD_NAME_RE = re.compile(r"'([^']*)'")
+
+
+def _unexpected_fields(error):
+    properties = error.schema.get("properties", {})
+    patterns = "|".join(error.schema.get("patternProperties", {}))
+    for field in error.instance:
+        if field not in properties and not (patterns and re.search(patterns, field)):
+            yield field
 
 
 class JSONSchemaValidator(Validator):
@@ -44,19 +49,16 @@ class JSONSchemaValidator(Validator):
         errors = validator.iter_errors(data)
 
         for error in errors:
-            absolute_path = list(error.absolute_path)
+            path = list(error.absolute_path)
             required_match = REQUIRED_RE.search(error.message)
             if required_match:
-                absolute_path.append(required_match.group(1))
-            base_field_name = ".".join([str(p) for p in absolute_path])
-            unexpected_match = UNEXPECTED_FIELDS_RE.search(error.message)
-            if unexpected_match:
-                # One stat entry per unexpected field, so monitors can alert
-                # on a specific field name.
-                for field in FIELD_NAME_RE.findall(unexpected_match.group(1)):
-                    field_name = (
-                        f"{base_field_name}.{field}" if base_field_name else field
-                    )
-                    self._add_errors({field_name: [messages.UNEXPECTED_FIELD]})
-                continue
-            self._add_errors({base_field_name: [error.message]})
+                path.append(required_match.group(1))
+            if error.validator == "additionalProperties":
+                # One error per unexpected field, so that stats and monitors
+                # can refer to a specific field name.
+                paths = [[*path, field] for field in _unexpected_fields(error)]
+            else:
+                paths = [path]
+            for path in paths:
+                field_name = ".".join([str(p) for p in path])
+                self._add_errors({field_name: [error.message]})
