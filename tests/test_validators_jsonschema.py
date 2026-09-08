@@ -57,6 +57,27 @@ class Formats(TestCase):
         assert not is_url("website.com")
 
 
+class CustomTypes(TestCase):
+    schema: ClassVar[dict[str, Any]] = {
+        "type": "object",
+        "properties": {"v": {"type": "custom"}},
+    }
+
+    def test_accepts_matching_type(self):
+        validator = JSONSchemaValidator(
+            self.schema, types={"custom": lambda checker, instance: instance == 42}
+        )
+        assert validator.validate({"v": 42}) == (True, {})
+
+    def test_rejects_non_matching_type(self):
+        validator = JSONSchemaValidator(
+            self.schema, types={"custom": lambda checker, instance: instance == 42}
+        )
+        valid, errors = validator.validate({"v": 43})
+        assert not valid
+        assert "v" in errors
+
+
 class AdditionalItems(SchemaTest):
     data_tests: ClassVar[list] = [
         DataTest(

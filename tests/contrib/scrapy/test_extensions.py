@@ -304,13 +304,16 @@ def test_periodic_monitor_paths(monkeypatch):
         def __init__(self, _func, *_args):
             self.started = False
             self.stopped = False
+            self.running = False
 
         def start(self, _time, now=False):
             self.started = True
+            self.running = True
             self.now = now
 
         def stop(self):
             self.stopped = True
+            self.running = False
 
     monkeypatch.setattr(ext_module, "LoopingCall", DummyLoopingCall)
 
@@ -320,6 +323,10 @@ def test_periodic_monitor_paths(monkeypatch):
 
     ext.spider_closed(spider)
     assert ext.periodic_tasks[spider][0].stopped is True
+
+    ext.periodic_tasks[spider][0].stopped = False
+    ext.spider_closed(spider)
+    assert ext.periodic_tasks[spider][0].stopped is False
 
     captured = {}
     ext.load_suite = lambda s: f"loaded:{s}"
