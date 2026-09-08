@@ -209,22 +209,17 @@ async def test_stats_location_regular_spider_name(test_settings):
     await stop_crawler(crawler)
 
 
-@deferred_f_from_coro_f
-async def test_stats_history_disabled_without_scrapy_cfg(
-    monkeypatch,
-    test_settings,
-):
+def test_error_without_scrapy_cfg(monkeypatch, test_settings):
+    message = "Unable to find scrapy.cfg file to infer project data dir"
     monkeypatch.setattr(
         LocalStorageStatsHistoryCollector,
         "_stats_location",
-        lambda self, spider: (_ for _ in ()).throw(
-            NotConfigured("Unable to find scrapy.cfg file to infer project data dir")
-        ),
+        lambda self, spider: (_ for _ in ()).throw(NotConfigured(message)),
     )
 
     crawler = get_crawler(Spider, test_settings)
-    crawler.crawl("foo_spider")
-    assert crawler.spider.stats_history == deque(maxlen=100)
-
-    crawler.stats.set_value("garbage", "value")
-    await stop_crawler(crawler)
+    crawler.spider = Spider.from_crawler(crawler, "foo_spider")
+    collector = LocalStorageStatsHistoryCollector(crawler)
+    with pytest.raises(NotConfigured, match=message) as excinfo:
+        collector.open_spider()
+    assert "STATS_CLASS" in str(excinfo.value)

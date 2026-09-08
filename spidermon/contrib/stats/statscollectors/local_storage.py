@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import pickle
 from collections import deque
 from pathlib import Path
@@ -14,8 +13,6 @@ from spidermon.contrib.utils.spider import get_spider_name
 
 if TYPE_CHECKING:
     from scrapy import Spider
-
-logger = logging.getLogger(__name__)
 
 
 class LocalStorageStatsHistoryCollector(StatsCollector):
@@ -36,13 +33,13 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
 
         try:
             stats_location = self._stats_location(spider)
-        except NotConfigured:
-            logger.warning(
-                "Could not find a scrapy.cfg file, so stats history will not "
-                "be persisted to disk for this run."
-            )
-            spider.stats_history = deque(maxlen=max_stored_stats)
-            return
+        except NotConfigured as error:
+            raise NotConfigured(
+                f"{error}. {type(self).__name__} stores stats history in the "
+                f"project data dir, so it needs a scrapy.cfg file in the "
+                f"working directory or one of its parents. Add one, or use a "
+                f"different STATS_CLASS."
+            ) from error
 
         if stats_location.is_file():
             with stats_location.open("rb") as stats_file:
@@ -57,11 +54,7 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
 
     def _persist_stats(self, stats, spider=None):
         spider = spider or self._crawler.spider
-
-        try:
-            stats_location = self._stats_location(spider)
-        except NotConfigured:
-            return
+        stats_location = self._stats_location(spider)
 
         spider.stats_history.appendleft(self._stats)
         with stats_location.open("wb") as stats_file:
