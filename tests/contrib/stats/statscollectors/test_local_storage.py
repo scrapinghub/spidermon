@@ -7,6 +7,7 @@ import pytest
 pytest.importorskip("scrapy")
 
 from scrapy import Spider
+from scrapy.exceptions import NotConfigured
 from scrapy.utils.defer import deferred_f_from_coro_f
 from scrapy.utils.project import data_path
 from scrapy.utils.test import get_crawler
@@ -206,3 +207,18 @@ async def test_stats_location_regular_spider_name(test_settings):
     expected = Path(statsdir) / "foo_spider_stats_history"
     assert actual == expected
     await stop_crawler(crawler)
+
+
+@deferred_f_from_coro_f
+async def test_error_without_scrapy_cfg(monkeypatch, test_settings):
+    message = "Unable to find scrapy.cfg file to infer project data dir"
+    monkeypatch.setattr(
+        LocalStorageStatsHistoryCollector,
+        "_stats_location",
+        lambda self, spider: (_ for _ in ()).throw(NotConfigured(message)),
+    )
+
+    crawler = get_crawler(Spider, test_settings)
+    with pytest.raises(NotConfigured, match=message) as excinfo:
+        await crawler.crawl("foo_spider")
+    assert "STATS_CLASS" in str(excinfo.value)

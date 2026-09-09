@@ -5,6 +5,7 @@ from collections import deque
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from scrapy.exceptions import NotConfigured
 from scrapy.statscollectors import StatsCollector
 from scrapy.utils.project import data_path
 
@@ -22,7 +23,6 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
 
     def open_spider(self, spider: Spider | None = None):
         spider = spider or self._crawler.spider
-        stats_location = self._stats_location(spider)
 
         assert spider
         assert spider.crawler
@@ -30,6 +30,16 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
             "SPIDERMON_MAX_STORED_STATS",
             default=100,
         )
+
+        try:
+            stats_location = self._stats_location(spider)
+        except NotConfigured as error:
+            raise NotConfigured(
+                f"{error}. {type(self).__name__} stores stats history in the "
+                f"project data dir, so it needs a scrapy.cfg file in the "
+                f"working directory or one of its parents. Add one, or use a "
+                f"different STATS_CLASS."
+            ) from error
 
         if stats_location.is_file():
             with stats_location.open("rb") as stats_file:
