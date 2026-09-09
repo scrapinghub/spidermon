@@ -4,13 +4,8 @@ import pytest
 
 pytest.importorskip("scrapy")
 
-from typing import ClassVar
-
-from scrapy.utils.test import get_crawler
-
-from spidermon import settings
-from spidermon.contrib.scrapy.monitors import ItemCountMonitor
-from spidermon.contrib.scrapy.monitors.suites import SpiderCloseMonitorSuite
+from spidermon import MonitorSuite, settings
+from spidermon.contrib.scrapy.monitors import BaseScrapyMonitor, ItemCountMonitor
 
 ops = {
     ">": operator.gt,
@@ -30,8 +25,12 @@ def never_skip(monitor):
     return False
 
 
-class monitorSuite(SpiderCloseMonitorSuite):
-    monitors: ClassVar[list[type]] = [ItemCountMonitor]
+class MultiCheckMonitor(BaseScrapyMonitor):
+    def test_one(self):
+        pass
+
+    def test_two(self):
+        self.fail("boom")
 
 
 @pytest.mark.parametrize(
@@ -57,30 +56,22 @@ class monitorSuite(SpiderCloseMonitorSuite):
     ],
 )
 def test_skipping_rule_on_stats_value(
-    make_data,
-    value,
-    threshold,
-    expected_status,
-    rules,
+    make_data, value, threshold, expected_status, rules
 ):
     data = make_data(
         {
             ItemCountMonitor.threshold_setting: threshold,
+            "SPIDERMON_MONITOR_SKIPPING_RULES": rules,
         },
     )
 
-    settings = {"SPIDERMON_MONITOR_SKIPPING_RULES": rules}
-    crawler = get_crawler(settings_dict=settings)
-    new_suite = monitorSuite(crawler=crawler)
-
     runner = data.pop("runner")
     data["stats"][ItemCountMonitor.stat_name] = value
-    runner.run(new_suite, **data)
+    runner.run(MonitorSuite(monitors=[ItemCountMonitor]), **data)
 
     if rules:
         rule = rules["Extracted Items Monitor"][0]
-        ops[rule[1]](value, rule[2])
-        if ops[rule[1]](value, rule[2]):  # Monitor didn't ran
+        if ops[rule[1]](value, rule[2]):  # Monitor didn't run
             assert runner.result.monitor_results == []
             return
 
@@ -100,25 +91,18 @@ def test_skipping_rule_on_stats_value(
     ],
 )
 def test_skipping_rule_on_callable_function(
-    make_data,
-    value,
-    threshold,
-    expected_status,
-    rules,
+    make_data, value, threshold, expected_status, rules
 ):
     data = make_data(
         {
             ItemCountMonitor.threshold_setting: threshold,
+            "SPIDERMON_MONITOR_SKIPPING_RULES": rules,
         },
     )
 
-    settings = {"SPIDERMON_MONITOR_SKIPPING_RULES": rules}
-    crawler = get_crawler(settings_dict=settings)
-    new_suite = monitorSuite(crawler=crawler)
-
     runner = data.pop("runner")
     data["stats"][ItemCountMonitor.stat_name] = value
-    runner.run(new_suite, **data)
+    runner.run(MonitorSuite(monitors=[ItemCountMonitor]), **data)
 
     if rules:
         rule = rules["Extracted Items Monitor"][0]
@@ -127,3 +111,41 @@ def test_skipping_rule_on_callable_function(
             return
 
     assert runner.result.monitor_results[0].status == expected_status
+
+
+def test_skipping_rule_without_crawler(make_data):
+    data = make_data(
+        {
+            "SPIDERMON_MONITOR_SKIPPING_RULES": {
+                "MultiCheckMonitor/test_two": [always_skip],
+            },
+        },
+    )
+    runner = data.pop("runner")
+    data["crawler"] = None
+    suite = MonitorSuite(monitors=[MultiCheckMonitor])
+    runner.run(suite, **data)
+
+    results = runner.result.monitor_results
+    assert [result.monitor.name for result in results] == [
+        "MultiCheckMonitor/test_one",
+        "MultiCheckMonitor/test_two",
+    ]
+
+
+def test_skipping_rule_by_method_name(make_data):
+    data = make_data(
+        {
+            "SPIDERMON_MONITOR_SKIPPING_RULES": {
+                "MultiCheckMonitor/test_two": [always_skip],
+            },
+        },
+    )
+    runner = data.pop("runner")
+    suite = MonitorSuite(monitors=[MultiCheckMonitor])
+    runner.run(suite, **data)
+
+    results = runner.result.monitor_results
+    assert len(results) == 1
+    assert results[0].monitor.name == "MultiCheckMonitor/test_one"
+    assert results[0].status == settings.MONITOR.STATUS.SUCCESS
