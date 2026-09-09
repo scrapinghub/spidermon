@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import collections
+import logging
 from typing import TYPE_CHECKING, ClassVar
 from unittest import TestSuite
 
@@ -187,7 +188,7 @@ class MonitorSuite(TestSuite, metaclass=MonitorOptionsMetaclass):
         for t in self.all_monitors:
             s += debug_attribute(show_monitor, "MONITOR", t.monitor_full_name)
             s += debug_attribute(show_method, "METHOD", t.method_name)
-            s += debug_attribute(show_level, "LEVEL", t.level)
+            s += debug_attribute(show_level, "LEVEL", logging.getLevelName(t.level))
             s += debug_attribute(show_order, "ORDER", t.order)
             s += debug_attribute(
                 show_description,
