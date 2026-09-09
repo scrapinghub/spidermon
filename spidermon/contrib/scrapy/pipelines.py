@@ -3,7 +3,7 @@ from functools import partial
 
 from itemadapter import ItemAdapter
 from scrapy import Item
-from scrapy.exceptions import DropItem, NotConfigured
+from scrapy.exceptions import DropItem
 from scrapy.utils.misc import load_object
 
 from spidermon.contrib.utils.attributes import (
@@ -76,14 +76,14 @@ class ItemValidationPipeline:
             if not res:
                 continue
             if type(res) not in allowed_types:
-                raise NotConfigured(
+                raise TypeError(
                     f"Invalid <{type(res)}> type for <{name}> settings, dict or list/tuple"
                     "is required",
                 )
             set_validators(loader, res)
 
         if not validators:
-            raise NotConfigured("No validators were found")
+            raise ValueError("No validators were found")
 
         return cls(
             validators=validators,
@@ -102,7 +102,7 @@ class ItemValidationPipeline:
         if isinstance(schema, str):
             schema = get_schema_from(schema)
         if not isinstance(schema, dict):
-            raise NotConfigured(
+            raise TypeError(
                 "Invalid schema, jsonschemas must be defined as:\n"
                 "- a python dict.\n"
                 "- an object path to a python dict.\n"
