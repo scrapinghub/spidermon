@@ -1278,6 +1278,31 @@ async def test_item_scraped_count_list_of_dicts_two_nesting_levels(spider):
 
 
 @deferred_f_from_coro_f
+async def test_item_scraped_count_list_with_non_item_values(spider):
+    settings = {
+        "SPIDERMON_ENABLED": True,
+        "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
+        "SPIDERMON_ADD_FIELD_COVERAGE": True,
+        "SPIDERMON_LIST_FIELDS_COVERAGE_LEVELS": 1,
+    }
+    crawler = get_crawler(settings_dict=settings)
+    spider = Spider.from_crawler(crawler, "example.com")
+    returned_items = [
+        {"field1": [1, "not an item", {"nested_field1": 1}]},
+    ]
+
+    for item in returned_items:
+        await send_item_scraped(spider, item)
+
+    stats = spider.crawler.stats.get_stats()
+
+    assert stats.get("spidermon_item_scraped_count/dict/field1/_items") == 3
+    assert (
+        stats.get("spidermon_item_scraped_count/dict/field1/_items/nested_field1") == 1
+    )
+
+
+@deferred_f_from_coro_f
 async def test_item_scraped_count_per_field_dict_levels():
     """Per-field SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS: field1 uses level 0 (no nesting),
     all others fall back to wildcard level 1."""
