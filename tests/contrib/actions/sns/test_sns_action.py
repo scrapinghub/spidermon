@@ -56,6 +56,16 @@ def test_fail_if_no_aws_secret_key() -> None:
         )
 
 
+def test_run_action_not_implemented() -> None:
+    notifier = SendSNSNotification(
+        topic_arn="arn:aws:sns:us-east-1:123456789012:MyTopic",
+        aws_access_key="ACCESS_KEY",
+        aws_secret_key="SECRET_KEY",
+    )
+    with pytest.raises(NotImplementedError):
+        notifier.run_action()
+
+
 def test_send_message(boto3_client: MockType, logger_info: MockType) -> None:
     notifier = SendSNSNotification(
         topic_arn="arn:aws:sns:us-east-1:123456789012:MyTopic",

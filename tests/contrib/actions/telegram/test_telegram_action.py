@@ -1,8 +1,13 @@
 import json
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pytest
 from pytest_mock import MockerFixture, MockType
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from scrapy.crawler import Crawler
 
 pytest.importorskip("scrapy")
 
@@ -10,6 +15,9 @@ from spidermon.contrib.actions.telegram import (
     SendTelegramMessage,
     SimplyTelegramClient,
     TelegramMessageManager,
+)
+from spidermon.contrib.actions.telegram.notifiers import (
+    SendTelegramMessageSpiderFinished,
 )
 from spidermon.exceptions import NotConfigured
 
@@ -99,3 +107,33 @@ def test_log_error_when_api_return_an_error(
     assert logger_error.call_count == 1
     assert error_message == logger_error.call_args[0][0]
     assert json.dumps(payload_error) == logger_error.call_args[0][1]
+
+
+def test_run_action_sends_message(mocker: MockerFixture) -> None:
+    action = SendTelegramMessage(sender_token="token", recipients=["1234"])
+    manager = action.manager = mocker.MagicMock()
+    mocker.patch.object(action, "get_message", return_value="Hello")
+    action.run_action()
+    manager.send_message.assert_called_once_with(to=["1234"], text="Hello")
+
+
+def test_spider_finished_notifier_settings(
+    get_crawler: "Callable[..., Crawler]", mocker: MockerFixture
+) -> None:
+    crawler = get_crawler(
+        {
+            "SPIDERMON_TELEGRAM_SENDER_TOKEN": "token",
+            "SPIDERMON_TELEGRAM_RECIPIENTS": ["1234"],
+            "SPIDERMON_TELEGRAM_NOTIFIER_INCLUDE_OK_MESSAGES": True,
+            "SPIDERMON_TELEGRAM_NOTIFIER_INCLUDE_ERROR_MESSAGES": False,
+        }
+    )
+    kwargs = SendTelegramMessageSpiderFinished.from_crawler_kwargs(crawler)
+    assert kwargs["include_ok_messages"] is True
+    assert kwargs["include_error_messages"] is False
+
+    action = SendTelegramMessageSpiderFinished(**kwargs)
+    action.result = mocker.MagicMock()
+    context = action.get_template_context()
+    assert context["include_ok_messages"] is True
+    assert context["include_error_messages"] is True

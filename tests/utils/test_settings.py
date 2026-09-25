@@ -1,11 +1,14 @@
+from collections.abc import Callable
+
 import pytest
 
 pytest.importorskip("scrapy")
 
 from pytest_mock import MockerFixture
+from scrapy.crawler import Crawler
 from scrapy.settings import Settings
 
-from spidermon.utils.settings import get_aws_credentials
+from spidermon.utils.settings import get_aws_credentials, getdictorlist
 
 
 def test_spidermon_aws_credentials_not_set() -> None:
@@ -96,3 +99,24 @@ def test_spidermon_old_aws_credentials_are_preferred_over_new_ones(
 
     assert aws_access_key_id == "old_aws_access_key"
     assert aws_secret_access_key == "old_aws_secret_key"
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [('{"a": 1}', {"a": 1}), ('["a", "b"]', ["a", "b"])],
+)
+def test_getdictorlist_json_string(
+    get_crawler: Callable[..., Crawler], value: str, expected: object
+) -> None:
+    crawler = get_crawler({"SETTING": value})
+    assert getdictorlist(crawler, "SETTING") == expected
+
+
+def test_getdictorlist_copies_non_string(get_crawler: Callable[..., Crawler]) -> None:
+    crawler = get_crawler({"SETTING": {"a": [1, 2]}})
+    value = crawler.settings["SETTING"]
+    result = getdictorlist(crawler, "SETTING")
+    assert isinstance(result, dict)
+    assert result == value
+    assert result is not value
+    assert result["a"] is not value["a"]

@@ -55,3 +55,13 @@ def _check_testcase_names(
 ) -> None:
     names = loader.get_testcase_names(monitor_class)
     assert names == expected_names
+
+
+def test_testcase_names_unsorted() -> None:
+    loader = MonitorLoader()
+    loader.sortTestMethodsUsing = None  # type: ignore[assignment]
+    assert sorted(loader.get_testcase_names(Monitor01)) == [
+        "test_a",
+        "test_b",
+        "test_c",
+    ]

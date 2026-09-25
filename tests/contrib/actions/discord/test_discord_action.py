@@ -1,9 +1,17 @@
+from typing import TYPE_CHECKING
+
 import pytest
 from pytest_mock import MockerFixture, MockType
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from scrapy.crawler import Crawler
 
 pytest.importorskip("jinja2")
 
 from spidermon.contrib.actions.discord import DiscordMessageManager
+from spidermon.contrib.actions.discord.notifiers import SendDiscordMessageSpiderFinished
 from spidermon.exceptions import NotConfigured
 
 
@@ -63,3 +71,24 @@ def test_log_error_when_api_return_an_error(
 
     assert logger_error.call_count == 1
     assert error_message == logger_error.call_args[0][0]
+
+
+def test_spider_finished_notifier_settings(
+    get_crawler: "Callable[..., Crawler]", mocker: MockerFixture
+) -> None:
+    crawler = get_crawler(
+        {
+            "SPIDERMON_DISCORD_WEBHOOK_URL": "discord-webhook-url",
+            "SPIDERMON_DISCORD_NOTIFIER_INCLUDE_OK_MESSAGES": True,
+            "SPIDERMON_DISCORD_NOTIFIER_INCLUDE_ERROR_MESSAGES": False,
+        }
+    )
+    kwargs = SendDiscordMessageSpiderFinished.from_crawler_kwargs(crawler)
+    assert kwargs["include_ok_messages"] is True
+    assert kwargs["include_error_messages"] is False
+
+    action = SendDiscordMessageSpiderFinished(**kwargs)
+    action.result = mocker.MagicMock()
+    context = action.get_template_context()
+    assert context["include_ok_messages"] is True
+    assert context["include_error_messages"] is True

@@ -138,3 +138,23 @@ def test_get_s3_report_url(mocker: MockerFixture) -> None:
     url = report.get_s3_report_url()
     assert url.startswith("https://s3.amazonaws.com/my-bucket/reports/")
     assert url.endswith("/report.html")
+
+
+def test_get_meta_appends_report_url(mocker: MockerFixture) -> None:
+    report = CreateS3Report(
+        template="report.jinja",
+        aws_access_key="ACCESS_KEY",
+        aws_secret_key="SECRET_KEY",
+        s3_bucket="my-bucket",
+        s3_filename="report.html",
+    )
+    report.result = mocker.MagicMock()
+    report.data = mocker.MagicMock(
+        meta={"reports": ["https://example.com/previous.html"]}
+    )
+    assert report.get_meta() == {
+        "reports_links": [
+            "https://example.com/previous.html",
+            report.get_s3_report_url(),
+        ]
+    }

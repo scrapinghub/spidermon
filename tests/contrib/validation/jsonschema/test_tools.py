@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 from pytest_mock import MockerFixture
 
@@ -61,3 +63,9 @@ def test_get_contents_fails(
             "Failed to get 'https://example.com/schema.json'",
         ),
     ]
+
+
+def test_get_contents(tmp_path: Path) -> None:
+    path = tmp_path / "schema.json"
+    path.write_text('{"type": "object"}')
+    assert schema_tools.get_contents(path.as_uri()) == '{"type": "object"}'
