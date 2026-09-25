@@ -1,22 +1,37 @@
+from __future__ import annotations
+
 import copy
 import json
 import warnings
 from collections import OrderedDict
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from scrapy.crawler import Crawler
+    from scrapy.settings import BaseSettings
 
 
-def getdictorlist(crawler, name, default=None):
+def getdictorlist(
+    crawler: Crawler,
+    name: str,
+    default: Any = None,
+) -> dict[Any, Any] | list[Any]:
     value = crawler.settings.get(name, default)
     if value is None:
         return {}
     if isinstance(value, str):
         try:
-            return json.loads(value, object_pairs_hook=OrderedDict)
+            loaded: dict[Any, Any] | list[Any] = json.loads(
+                value, object_pairs_hook=OrderedDict
+            )
         except ValueError:
             return value.split(",")
-    return copy.deepcopy(value)
+        return loaded
+    copied: dict[Any, Any] | list[Any] = copy.deepcopy(value)
+    return copied
 
 
-def get_aws_credentials(settings):
+def get_aws_credentials(settings: BaseSettings) -> tuple[str | None, str | None]:
     aws_access_key_id = settings.get("SPIDERMON_AWS_ACCESS_KEY")
     aws_secret_access_key = settings.get("SPIDERMON_AWS_SECRET_KEY")
 

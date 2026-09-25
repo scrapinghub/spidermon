@@ -5,7 +5,7 @@ from spidermon import Monitor, MonitorSuite, monitors
 # Monitors
 # ----------------------------------
 class BaseMonitor(Monitor):
-    def runTest(self):
+    def runTest(self) -> None:
         pass
 
 
@@ -52,16 +52,16 @@ class DescoratedDescriptedSuite2(MonitorSuite):
 # Methods
 # ----------------------------------
 class DescriptedMethodsMonitor(Monitor):
-    def test_not_descripted(self):
+    def test_not_descripted(self) -> None:
         pass
 
-    def test_docstring_descripted(self):
+    def test_docstring_descripted(self) -> None:
         """Docstring method description"""
 
     @monitors.description("decorator method description")
-    def test_decorator_descripted(self):
+    def test_decorator_descripted(self) -> None:
         pass
 
     @monitors.description("decorator method description")
-    def test_decorator_descripted2(self):
+    def test_decorator_descripted2(self) -> None:
         """Docstring method description"""

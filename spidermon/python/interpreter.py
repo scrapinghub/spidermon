@@ -1,4 +1,5 @@
 import ast
+from typing import Any, NoReturn
 
 from spidermon.exceptions import InvalidExpression
 
@@ -77,7 +78,7 @@ class Interpreter:
         bool,  # others
     )
 
-    def check(self, expression):
+    def check(self, expression: str) -> None:
         if not isinstance(expression, str):
             raise InvalidExpression("Python expressions must be defined as strings")
         if not expression:
@@ -100,12 +101,17 @@ class Interpreter:
 
         self._check_node(start_node)
 
-    def eval(self, expression, context=None, check=True):
+    def eval(
+        self,
+        expression: str,
+        context: dict[str, Any] | None = None,
+        check: bool = True,
+    ) -> Any:
         if check:
             self.check(expression)
         return eval(expression, context)  # noqa: S307
 
-    def _check_node(self, node):
+    def _check_node(self, node: object) -> None:
         if isinstance(node, list):
             self._check_node_list(node)
         elif isinstance(node, ast.AST):
@@ -115,18 +121,18 @@ class Interpreter:
         elif not isinstance(node, self.allowed_objects):
             self._raise_not_allowed_node(node)
 
-    def _check_node_list(self, node_list):
+    def _check_node_list(self, node_list: list[Any]) -> None:
         for node in node_list:
             self._check_node(node)
 
-    def _check_node_fields(self, node):
+    def _check_node_fields(self, node: ast.AST) -> None:
         for field in [f for _, f in ast.iter_fields(node)]:
             self._check_node(field)
 
-    def _is_allowed_ast_node(self, node):
+    def _is_allowed_ast_node(self, node: ast.AST) -> bool:
         return node.__class__.__name__.lower() in self.ast_allowed_nodes
 
-    def _raise_not_allowed_node(self, node):
+    def _raise_not_allowed_node(self, node: object) -> NoReturn:
         raise InvalidExpression(
             f"'{node.__class__.__name__}' definition not allowed in python expressions",
         )

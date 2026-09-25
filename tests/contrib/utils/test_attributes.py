@@ -12,7 +12,7 @@ from spidermon.contrib.utils.attributes import (
 )
 
 
-def test_get_nested_attribute():
+def test_get_nested_attribute() -> None:
     item = ItemAdapter({"foo": "bar", "attr1": {"attr2": {"attr3": "foobar"}}})
 
     assert get_nested_attribute(item, "foo") == "bar"
@@ -29,7 +29,7 @@ def test_get_nested_attribute():
         get_nested_attribute(item, "foo.missing_attribute")
 
 
-def test_set_nested_attribute():
+def test_set_nested_attribute() -> None:
     item = ItemAdapter({"foo": None, "attr1": {"attr2": {"attr3": None}}})
     set_nested_attribute(item, "foo", "foobar")
     assert item["foo"] == "foobar"

@@ -1,6 +1,6 @@
 import pytest
 
-from spidermon import MonitorLoader
+from spidermon import Monitor, MonitorLoader
 from spidermon.exceptions import InvalidMonitor
 
 from .fixtures.cases import EmptyMonitor, Monitor01, Monitor02
@@ -8,11 +8,11 @@ from .test_suites import check_suite
 
 
 @pytest.fixture
-def loader():
+def loader() -> MonitorLoader:
     return MonitorLoader()
 
 
-def test_loading(loader):
+def test_loading(loader: MonitorLoader) -> None:
     check_suite(
         suite=loader.load_suite_from_monitor(EmptyMonitor),
         expected_number_of_monitors=0,
@@ -27,16 +27,16 @@ def test_loading(loader):
     )
 
 
-def test_loading_errors(loader):
+def test_loading_errors(loader: MonitorLoader) -> None:
     with pytest.raises(InvalidMonitor):
-        loader.load_suite_from_monitor(None)
+        loader.load_suite_from_monitor(None)  # type: ignore[arg-type]
     with pytest.raises(InvalidMonitor):
-        loader.load_suite_from_monitor(10)
+        loader.load_suite_from_monitor(10)  # type: ignore[arg-type]
     with pytest.raises(InvalidMonitor):
-        loader.load_suite_from_monitor(object)
+        loader.load_suite_from_monitor(object)  # type: ignore[arg-type]
 
 
-def test_testcase_names(loader):
+def test_testcase_names(loader: MonitorLoader) -> None:
     _check_testcase_names(loader=loader, monitor_class=EmptyMonitor, expected_names=[])
     _check_testcase_names(
         loader=loader,
@@ -50,6 +50,8 @@ def test_testcase_names(loader):
     )
 
 
-def _check_testcase_names(loader, monitor_class, expected_names):
+def _check_testcase_names(
+    loader: MonitorLoader, monitor_class: type[Monitor], expected_names: list[str]
+) -> None:
     names = loader.get_testcase_names(monitor_class)
     assert names == expected_names

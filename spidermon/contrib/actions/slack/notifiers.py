@@ -1,4 +1,11 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 from . import SendSlackMessage
+
+if TYPE_CHECKING:
+    from scrapy.crawler import Crawler
 
 
 class SendSlackMessageSpiderStarted(SendSlackMessage):
@@ -16,13 +23,13 @@ class SendSlackMessageSpiderFinished(SendSlackMessage):
 
     def __init__(
         self,
-        include_ok_attachments=None,
-        include_error_attachments=None,
-        include_report_link=None,
-        report_index=None,
-        *args,
-        **kwargs,
-    ):
+        include_ok_attachments: bool | None = None,
+        include_error_attachments: bool | None = None,
+        include_report_link: bool | None = None,
+        report_index: int | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
         self.include_ok_attachments = (
             include_ok_attachments or self.include_ok_attachments
@@ -36,7 +43,7 @@ class SendSlackMessageSpiderFinished(SendSlackMessage):
         self.report_index = report_index or self.report_index
 
     @classmethod
-    def from_crawler_kwargs(cls, crawler):
+    def from_crawler_kwargs(cls, crawler: Crawler) -> dict[str, Any]:
         kwargs = super().from_crawler_kwargs(crawler)
         kwargs.update(
             {
@@ -56,14 +63,14 @@ class SendSlackMessageSpiderFinished(SendSlackMessage):
         )
         return kwargs
 
-    def get_attachments(self):
+    def get_attachments(self) -> str | None:
         if (self.monitors_failed and self.include_error_attachments) or (
             self.monitors_passed and self.include_ok_attachments
         ):
             return super().get_attachments()
         return None
 
-    def get_template_context(self):
+    def get_template_context(self) -> dict[str, Any]:
         context = super().get_template_context()
         context.update(
             {

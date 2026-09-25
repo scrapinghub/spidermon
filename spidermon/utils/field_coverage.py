@@ -1,8 +1,14 @@
+from __future__ import annotations
+
 import re
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 
-def calculate_field_coverage(stats):
-    coverage = {}
+def calculate_field_coverage(stats: Mapping[str, Any]) -> dict[str, float]:
+    coverage: dict[str, float] = {}
     for key, value in stats.items():
         if not key.startswith("spidermon_item_scraped_count"):
             continue

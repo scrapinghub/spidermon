@@ -20,12 +20,12 @@ stats = {
 
 
 class DummyValidationMonitor(BaseScrapyMonitor, ValidationMonitorMixin):
-    def runTest(self):
+    def runTest(self) -> None:
         pass
 
 
 @pytest.fixture
-def monitor():
+def monitor() -> DummyValidationMonitor:
     monitor = DummyValidationMonitor()
     monitor.correct_field_list_handling = True
     monitor.data = Data({"stats": stats})
@@ -33,7 +33,7 @@ def monitor():
 
 
 @pytest.fixture
-def old_monitor():
+def old_monitor() -> DummyValidationMonitor:
     monitor = DummyValidationMonitor()
     monitor.correct_field_list_handling = False
     monitor.data = Data({"stats": stats})
@@ -41,13 +41,15 @@ def old_monitor():
 
 
 @pytest.fixture
-def old_monitor_without_attr():
+def old_monitor_without_attr() -> DummyValidationMonitor:
     monitor = DummyValidationMonitor()
     monitor.data = Data({"stats": stats})
     return monitor
 
 
-def test_check_missing_required_fields_no_fields(monitor):
+def test_check_missing_required_fields_no_fields(
+    monitor: DummyValidationMonitor,
+) -> None:
     msg = """
 Required fields are missing:
 Required field field2 is missing in 5 items!
@@ -63,7 +65,9 @@ Required field field3 is missing in 10 items! (maximum allowed 7)
         monitor.check_missing_required_fields(allowed_count=7)
 
 
-def test_check_missing_required_fields_one_field(monitor):
+def test_check_missing_required_fields_one_field(
+    monitor: DummyValidationMonitor,
+) -> None:
     monitor.check_missing_required_fields(field_names=["field1"])
     msg = """
 Required fields are missing:
@@ -73,7 +77,9 @@ Required field field2 is missing in 5 items!
         monitor.check_missing_required_fields(field_names=["field2"])
 
 
-def test_check_missing_required_fields_multiple_fields(monitor):
+def test_check_missing_required_fields_multiple_fields(
+    monitor: DummyValidationMonitor,
+) -> None:
     msg = """
 Required fields are missing:
 Required field field2 is missing in 5 items!
@@ -83,7 +89,9 @@ Required field field3 is missing in 10 items!
         monitor.check_missing_required_fields(field_names=["field2", "field3"])
 
 
-def test_check_missing_required_fields_no_fields_old(old_monitor):
+def test_check_missing_required_fields_no_fields_old(
+    old_monitor: DummyValidationMonitor,
+) -> None:
     msg = "15 required fields are missing!"
     with (
         pytest.warns(DeprecationWarning, match="switch to per-field thresholds"),
@@ -93,8 +101,8 @@ def test_check_missing_required_fields_no_fields_old(old_monitor):
 
 
 def test_check_missing_required_fields_no_fields_old_without_attribute(
-    old_monitor_without_attr,
-):
+    old_monitor_without_attr: DummyValidationMonitor,
+) -> None:
     msg = "15 required fields are missing!"
     with (
         pytest.warns(DeprecationWarning, match="switch to per-field thresholds"),
@@ -103,14 +111,16 @@ def test_check_missing_required_fields_no_fields_old_without_attribute(
         old_monitor_without_attr.check_missing_required_fields()
 
 
-def check_missing_required_field(monitor):
+def check_missing_required_field(monitor: DummyValidationMonitor) -> None:
     monitor.check_missing_required_field(field_name="field1")
     msg = "Required field field2 is missing in 5 items!"
     with pytest.raises(AssertionError, match=msg):
         monitor.check_missing_required_field(field_name="field2")
 
 
-def test_check_missing_required_fields_percent_no_fields(monitor):
+def test_check_missing_required_fields_percent_no_fields(
+    monitor: DummyValidationMonitor,
+) -> None:
     msg = """
 Required fields are missing:
 50.0% of required field field2 are missing!
@@ -126,7 +136,9 @@ Required fields are missing:
         monitor.check_missing_required_fields_percent(allowed_percent=0.7)
 
 
-def test_check_missing_required_fields_percent_one_field(monitor):
+def test_check_missing_required_fields_percent_one_field(
+    monitor: DummyValidationMonitor,
+) -> None:
     monitor.check_missing_required_fields_percent(field_names=["field1"])
     msg = """
 Required fields are missing:
@@ -136,7 +148,9 @@ Required fields are missing:
         monitor.check_missing_required_fields_percent(field_names=["field2"])
 
 
-def test_check_missing_required_fields_percent_multiple_fields(monitor):
+def test_check_missing_required_fields_percent_multiple_fields(
+    monitor: DummyValidationMonitor,
+) -> None:
     msg = """
 Required fields are missing:
 50.0% of required field field2 are missing!
@@ -146,7 +160,9 @@ Required fields are missing:
         monitor.check_missing_required_fields_percent(field_names=["field2", "field3"])
 
 
-def test_check_missing_required_fields_percent_no_fields_old(old_monitor):
+def test_check_missing_required_fields_percent_no_fields_old(
+    old_monitor: DummyValidationMonitor,
+) -> None:
     msg = "150.0% of required fields are missing!"
     with (
         pytest.warns(DeprecationWarning, match="switch to per-field thresholds"),
@@ -155,14 +171,14 @@ def test_check_missing_required_fields_percent_no_fields_old(old_monitor):
         old_monitor.check_missing_required_fields_percent()
 
 
-def check_missing_required_field_percent(monitor):
+def check_missing_required_field_percent(monitor: DummyValidationMonitor) -> None:
     monitor.check_missing_required_field_percent(field_name="field1")
     msg = "50.0% of required field field2 are missing!"
     with pytest.raises(AssertionError, match=msg):
         monitor.check_missing_required_field_percent(field_name="field2")
 
 
-def test_check_fields_errors_no_fields(monitor):
+def test_check_fields_errors_no_fields(monitor: DummyValidationMonitor) -> None:
     msg = """
 There are field errors:
 Field field2 has 5 validation errors!
@@ -178,7 +194,7 @@ Field field3 has 10 validation errors! (maximum allowed 7)
         monitor.check_fields_errors(allowed_count=7)
 
 
-def test_check_fields_errors_one_field(monitor):
+def test_check_fields_errors_one_field(monitor: DummyValidationMonitor) -> None:
     monitor.check_fields_errors(field_names=["field1"])
     msg = """
 There are field errors:
@@ -188,7 +204,7 @@ Field field2 has 5 validation errors!
         monitor.check_fields_errors(field_names=["field2"])
 
 
-def test_check_fields_errors_multiple_fields(monitor):
+def test_check_fields_errors_multiple_fields(monitor: DummyValidationMonitor) -> None:
     msg = """
 There are field errors:
 Field field2 has 5 validation errors!
@@ -198,7 +214,7 @@ Field field3 has 10 validation errors!
         monitor.check_fields_errors(field_names=["field2", "field3"])
 
 
-def test_check_fields_errors_no_fields_old(old_monitor):
+def test_check_fields_errors_no_fields_old(old_monitor: DummyValidationMonitor) -> None:
     msg = "15 fields have validation errors!"
     with (
         pytest.warns(DeprecationWarning, match="switch to per-field thresholds"),
@@ -207,14 +223,14 @@ def test_check_fields_errors_no_fields_old(old_monitor):
         old_monitor.check_fields_errors()
 
 
-def test_check_field_errors(monitor):
+def test_check_field_errors(monitor: DummyValidationMonitor) -> None:
     monitor.check_field_errors(field_name="field1")
     msg = "Field field2 has 5 validation errors!"
     with pytest.raises(AssertionError, match=msg):
         monitor.check_field_errors(field_name="field2")
 
 
-def test_check_fields_errors_percent_no_fields(monitor):
+def test_check_fields_errors_percent_no_fields(monitor: DummyValidationMonitor) -> None:
     msg = """
 There are field errors:
 50.0% of field field2 have validation errors!
@@ -230,7 +246,7 @@ There are field errors:
         monitor.check_fields_errors_percent(allowed_percent=0.7)
 
 
-def test_check_fields_errors_percent_one_field(monitor):
+def test_check_fields_errors_percent_one_field(monitor: DummyValidationMonitor) -> None:
     monitor.check_fields_errors_percent(field_names=["field1"])
     msg = """
 There are field errors:
@@ -240,7 +256,9 @@ There are field errors:
         monitor.check_fields_errors_percent(field_names=["field2"])
 
 
-def test_check_fields_errors_percent_multiple_fields(monitor):
+def test_check_fields_errors_percent_multiple_fields(
+    monitor: DummyValidationMonitor,
+) -> None:
     msg = """
 There are field errors:
 50.0% of field field2 have validation errors!
@@ -250,7 +268,9 @@ There are field errors:
         monitor.check_fields_errors_percent(field_names=["field2", "field3"])
 
 
-def test_check_fields_errors_percent_no_fields_old(old_monitor):
+def test_check_fields_errors_percent_no_fields_old(
+    old_monitor: DummyValidationMonitor,
+) -> None:
     msg = "150.0% of fields have validation errors!"
     with (
         pytest.warns(DeprecationWarning, match="switch to per-field thresholds"),
@@ -259,7 +279,7 @@ def test_check_fields_errors_percent_no_fields_old(old_monitor):
         old_monitor.check_fields_errors_percent()
 
 
-def test_check_field_errors_percent(monitor):
+def test_check_field_errors_percent(monitor: DummyValidationMonitor) -> None:
     monitor.check_field_errors_percent(field_name="field1")
     msg = "50.0% of field field2 have validation errors!"
     with pytest.raises(AssertionError, match=msg):

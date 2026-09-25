@@ -1,3 +1,6 @@
+from collections.abc import Callable
+from typing import Any
+
 import pytest
 
 pytest.importorskip("scrapy")
@@ -9,11 +12,13 @@ from spidermon.contrib.scrapy.monitors import (
 )
 
 
-def new_suite():
+def new_suite() -> MonitorSuite:
     return MonitorSuite(monitors=[FinishReasonMonitor])
 
 
-def test_finished_reason_monitor_should_fail(make_data):
+def test_finished_reason_monitor_should_fail(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     """FinishedReason should fail when spider finished with unexpected
     reason
     """
@@ -28,7 +33,9 @@ def test_finished_reason_monitor_should_fail(make_data):
     )
 
 
-def test_finished_reason_monitor_should_pass(make_data):
+def test_finished_reason_monitor_should_pass(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     """FinishedReason should succeed when spider finished with expected
     reason
     """

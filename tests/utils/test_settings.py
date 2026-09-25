@@ -2,12 +2,13 @@ import pytest
 
 pytest.importorskip("scrapy")
 
+from pytest_mock import MockerFixture
 from scrapy.settings import Settings
 
 from spidermon.utils.settings import get_aws_credentials
 
 
-def test_spidermon_aws_credentials_not_set():
+def test_spidermon_aws_credentials_not_set() -> None:
     settings = Settings()
 
     (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(settings)
@@ -16,7 +17,7 @@ def test_spidermon_aws_credentials_not_set():
     assert aws_secret_access_key is None
 
 
-def test_spidermon_aws_credentials(mocker):
+def test_spidermon_aws_credentials(mocker: MockerFixture) -> None:
     warn_mock = mocker.patch("spidermon.utils.settings.warnings.warn")
     settings = Settings(
         {
@@ -32,7 +33,7 @@ def test_spidermon_aws_credentials(mocker):
     warn_mock.assert_called_with(mocker.ANY, DeprecationWarning, stacklevel=2)
 
 
-def test_spidermon_aws_credentials_scrapy_like():
+def test_spidermon_aws_credentials_scrapy_like() -> None:
     settings = Settings(
         {
             "SPIDERMON_AWS_ACCESS_KEY_ID": "aws_access_key_id",
@@ -46,7 +47,7 @@ def test_spidermon_aws_credentials_scrapy_like():
     assert aws_secret_access_key == "aws_secret_access_key"
 
 
-def test_spidermon_aws_credentials_fall_back_to_scrapy():
+def test_spidermon_aws_credentials_fall_back_to_scrapy() -> None:
     settings = Settings(
         {
             "AWS_ACCESS_KEY_ID": "scrapy_aws_access_key_id",
@@ -60,7 +61,7 @@ def test_spidermon_aws_credentials_fall_back_to_scrapy():
     assert aws_secret_access_key == "scrapy_aws_secret_access_key"
 
 
-def test_spidermon_aws_credentials_are_preferred_over_scrapy_ones():
+def test_spidermon_aws_credentials_are_preferred_over_scrapy_ones() -> None:
     settings = Settings(
         {
             "AWS_ACCESS_KEY_ID": "scrapy_aws_access_key_id",
@@ -76,7 +77,9 @@ def test_spidermon_aws_credentials_are_preferred_over_scrapy_ones():
     assert aws_secret_access_key == "spidermon_aws_secret_access_key"
 
 
-def test_spidermon_old_aws_credentials_are_preferred_over_new_ones(mocker):
+def test_spidermon_old_aws_credentials_are_preferred_over_new_ones(
+    mocker: MockerFixture,
+) -> None:
     mocker.patch(
         "spidermon.utils.settings.warnings.warn",
     )  # avoid the warning in the tests

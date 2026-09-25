@@ -1,3 +1,6 @@
+from collections.abc import Callable
+from typing import Any
+
 import pytest
 
 pytest.importorskip("scrapy")
@@ -9,11 +12,13 @@ from spidermon.contrib.scrapy.monitors import (
 )
 
 
-def new_suite():
+def new_suite() -> MonitorSuite:
     return MonitorSuite(monitors=[FeedExportMonitor])
 
 
-def test_feed_export_monitor_passes_without_failures(make_data):
+def test_feed_export_monitor_passes_without_failures(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     data = make_data()
     runner = data.pop("runner")
 
@@ -24,7 +29,9 @@ def test_feed_export_monitor_passes_without_failures(make_data):
     assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.SUCCESS
 
 
-def test_feed_export_monitor_passes_without_feedexport_stats(make_data):
+def test_feed_export_monitor_passes_without_feedexport_stats(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     data = make_data()
     runner = data.pop("runner")
 
@@ -33,7 +40,9 @@ def test_feed_export_monitor_passes_without_feedexport_stats(make_data):
     assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.SUCCESS
 
 
-def test_feed_export_monitor_fails_on_failure(make_data):
+def test_feed_export_monitor_fails_on_failure(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     data = make_data()
     runner = data.pop("runner")
 
@@ -45,7 +54,9 @@ def test_feed_export_monitor_fails_on_failure(make_data):
     assert "Found 1 failed feed export(s)" in runner.result.monitor_results[0].error
 
 
-def test_feed_export_monitor_sums_across_storages(make_data):
+def test_feed_export_monitor_sums_across_storages(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     data = make_data()
     runner = data.pop("runner")
 
@@ -57,7 +68,9 @@ def test_feed_export_monitor_sums_across_storages(make_data):
     assert "Found 3 failed feed export(s)" in runner.result.monitor_results[0].error
 
 
-def test_feed_export_monitor_respects_threshold_setting(make_data):
+def test_feed_export_monitor_respects_threshold_setting(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     data = make_data({SPIDERMON_MAX_FEED_EXPORT_FAILURES: 2})
     runner = data.pop("runner")
 

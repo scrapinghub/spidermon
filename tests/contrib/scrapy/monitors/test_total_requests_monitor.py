@@ -1,3 +1,6 @@
+from collections.abc import Callable
+from typing import Any
+
 import pytest
 
 pytest.importorskip("scrapy")
@@ -9,11 +12,13 @@ from spidermon.contrib.scrapy.monitors import (
 )
 
 
-def new_suite():
+def new_suite() -> MonitorSuite:
     return MonitorSuite(monitors=[TotalRequestsMonitor])
 
 
-def test_total_requests_monitor_should_fail(make_data):
+def test_total_requests_monitor_should_fail(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     """Total Requests should fail if the request count is higher than expected"""
     data = make_data({SPIDERMON_MAX_REQUESTS_ALLOWED: 10})
 
@@ -24,7 +29,9 @@ def test_total_requests_monitor_should_fail(make_data):
     assert "Too many (13) requests" in runner.result.monitor_results[0].error
 
 
-def test_total_requests_monitor_should_pass_disabled(make_data):
+def test_total_requests_monitor_should_pass_disabled(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     """Total Requests should pass if the limit is negative"""
     data = make_data({SPIDERMON_MAX_REQUESTS_ALLOWED: -1})
     runner = data.pop("runner")
@@ -34,7 +41,9 @@ def test_total_requests_monitor_should_pass_disabled(make_data):
     assert runner.result.monitor_results[0].error is None
 
 
-def test_total_requests_monitor_should_pass_default(make_data):
+def test_total_requests_monitor_should_pass_default(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     """Total Requests should pass if the limit is not set"""
     data = make_data({})
     runner = data.pop("runner")
@@ -44,7 +53,9 @@ def test_total_requests_monitor_should_pass_default(make_data):
     assert runner.result.monitor_results[0].error is None
 
 
-def test_total_requests_monitor_should_pass_under_limit(make_data):
+def test_total_requests_monitor_should_pass_under_limit(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     """Total Requests should pass if the request count is not higher than expected"""
     data = make_data({SPIDERMON_MAX_REQUESTS_ALLOWED: 10})
     runner = data.pop("runner")

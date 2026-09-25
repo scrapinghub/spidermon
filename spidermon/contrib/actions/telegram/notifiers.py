@@ -1,4 +1,11 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 from . import SendTelegramMessage
+
+if TYPE_CHECKING:
+    from scrapy.crawler import Crawler
 
 
 class SendTelegramMessageSpiderStarted(SendTelegramMessage):
@@ -12,11 +19,11 @@ class SendTelegramMessageSpiderFinished(SendTelegramMessage):
 
     def __init__(
         self,
-        include_ok_messages=None,
-        include_error_messages=None,
-        *args,
-        **kwargs,
-    ):
+        include_ok_messages: bool | None = None,
+        include_error_messages: bool | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
         self.include_ok_messages = include_ok_messages or self.include_ok_messages
         self.include_error_messages = (
@@ -24,7 +31,7 @@ class SendTelegramMessageSpiderFinished(SendTelegramMessage):
         )
 
     @classmethod
-    def from_crawler_kwargs(cls, crawler):
+    def from_crawler_kwargs(cls, crawler: Crawler) -> dict[str, Any]:
         kwargs = super().from_crawler_kwargs(crawler)
         kwargs.update(
             {
@@ -38,7 +45,7 @@ class SendTelegramMessageSpiderFinished(SendTelegramMessage):
         )
         return kwargs
 
-    def get_template_context(self):
+    def get_template_context(self) -> dict[str, Any]:
         context = super().get_template_context()
         context.update(
             {

@@ -1,3 +1,6 @@
+from collections.abc import Callable
+from typing import Any
+
 import pytest
 
 pytest.importorskip("scrapy")
@@ -8,14 +11,14 @@ from spidermon.exceptions import NotConfigured
 
 
 @pytest.fixture
-def downloader_exception_suite():
+def downloader_exception_suite() -> MonitorSuite:
     return MonitorSuite(monitors=[DownloaderExceptionMonitor])
 
 
 def test_needs_to_configure_downloader_exception_monitor(
-    make_data,
-    downloader_exception_suite,
-):
+    make_data: Callable[..., dict[str, Any]],
+    downloader_exception_suite: MonitorSuite,
+) -> None:
     data = make_data()
     runner = data.pop("runner")
     data["crawler"].stats.set_value(DownloaderExceptionMonitor.stat_name, 10)
@@ -23,7 +26,9 @@ def test_needs_to_configure_downloader_exception_monitor(
         runner.run(downloader_exception_suite, **data)
 
 
-def test_skip_monitor_if_stat_not_in_job_stats(make_data, downloader_exception_suite):
+def test_skip_monitor_if_stat_not_in_job_stats(
+    make_data: Callable[..., dict[str, Any]], downloader_exception_suite: MonitorSuite
+) -> None:
     data = make_data({DownloaderExceptionMonitor.threshold_setting: 100})
     runner = data.pop("runner")
     data["crawler"].stats.set_value("item_scraped_count", 10)
@@ -46,12 +51,12 @@ def test_skip_monitor_if_stat_not_in_job_stats(make_data, downloader_exception_s
     ],
 )
 def test_downloader_exception_monitor_validation(
-    make_data,
-    downloader_exception_suite,
-    value,
-    threshold,
-    expected_status,
-):
+    make_data: Callable[..., dict[str, Any]],
+    downloader_exception_suite: MonitorSuite,
+    value: Any,
+    threshold: Any,
+    expected_status: Any,
+) -> None:
     data = make_data({DownloaderExceptionMonitor.threshold_setting: threshold})
     runner = data.pop("runner")
 

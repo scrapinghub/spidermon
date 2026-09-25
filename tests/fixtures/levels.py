@@ -5,25 +5,25 @@ from spidermon import Monitor, MonitorSuite, monitors
 # Base Monitors
 # ----------------------------------
 class NoLevelMethodMonitor(Monitor):
-    def test(self):
+    def test(self) -> None:
         pass
 
 
 class HighLevelMethodMonitor(Monitor):
     @monitors.level.high
-    def test(self):
+    def test(self) -> None:
         pass
 
 
 class NormalLevelMethodMonitor(Monitor):
     @monitors.level.normal
-    def test(self):
+    def test(self) -> None:
         pass
 
 
 class LowLevelMethodMonitor(Monitor):
     @monitors.level.low
-    def test(self):
+    def test(self) -> None:
         pass
 
 

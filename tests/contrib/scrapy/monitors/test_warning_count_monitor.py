@@ -1,3 +1,6 @@
+from collections.abc import Callable
+from typing import Any
+
 import pytest
 
 pytest.importorskip("scrapy")
@@ -8,11 +11,13 @@ from spidermon.exceptions import NotConfigured
 
 
 @pytest.fixture
-def warning_count_suite():
+def warning_count_suite() -> MonitorSuite:
     return MonitorSuite(monitors=[WarningCountMonitor])
 
 
-def test_needs_to_configure_warning_count_monitor(make_data, warning_count_suite):
+def test_needs_to_configure_warning_count_monitor(
+    make_data: Callable[..., dict[str, Any]], warning_count_suite: MonitorSuite
+) -> None:
     data = make_data()
     runner = data.pop("runner")
     data["crawler"].stats.set_value(WarningCountMonitor.stat_name, 10)
@@ -32,12 +37,12 @@ def test_needs_to_configure_warning_count_monitor(make_data, warning_count_suite
     ],
 )
 def test_warning_count_monitor_validation(
-    make_data,
-    warning_count_suite,
-    value,
-    threshold,
-    expected_status,
-):
+    make_data: Callable[..., dict[str, Any]],
+    warning_count_suite: MonitorSuite,
+    value: Any,
+    threshold: Any,
+    expected_status: Any,
+) -> None:
     data = make_data({WarningCountMonitor.threshold_setting: threshold})
     runner = data.pop("runner")
 
@@ -49,7 +54,9 @@ def test_warning_count_monitor_validation(
     assert runner.result.monitor_results[0].status == expected_status
 
 
-def test_warning_count_skip_monitor_if_no_warnings(make_data, warning_count_suite):
+def test_warning_count_skip_monitor_if_no_warnings(
+    make_data: Callable[..., dict[str, Any]], warning_count_suite: MonitorSuite
+) -> None:
     data = make_data({WarningCountMonitor.threshold_setting: 100})
     runner = data.pop("runner")
 

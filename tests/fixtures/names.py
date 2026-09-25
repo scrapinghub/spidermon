@@ -8,21 +8,21 @@ from spidermon import Monitor, MonitorSuite, monitors
 # Monitors
 # ----------------------------------
 class UnnamedMonitor(Monitor):
-    def test_without_name(self):
+    def test_without_name(self) -> None:
         pass
 
     @monitors.name("A Test")
-    def test_with_name(self):
+    def test_with_name(self) -> None:
         pass
 
 
 @monitors.name("Class Monitor")
 class NamedMonitor(Monitor):
-    def test_without_name(self):
+    def test_without_name(self) -> None:
         pass
 
     @monitors.name("A Test")
-    def test_with_name(self):
+    def test_with_name(self) -> None:
         pass
 
 

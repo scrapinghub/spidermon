@@ -1,6 +1,8 @@
+from typing import Any
+
 SYNTAXERROR_EXPRESSIONS = ["?", "a string", "a="]
 
-INVALID_EXPRESSIONS = [
+INVALID_EXPRESSIONS: list[Any] = [
     None,
     0,
     "",

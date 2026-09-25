@@ -1,6 +1,9 @@
 import datetime
+from collections.abc import Callable
+from typing import Any
 
 import pytest
+from pytest_mock import MockerFixture
 
 pytest.importorskip("scrapy")
 
@@ -18,12 +21,12 @@ FAKE_START_TS = 1632834644
 
 
 @pytest.fixture
-def monitor_suite():
+def monitor_suite() -> MonitorSuite:
     return MonitorSuite(monitors=[PeriodicExecutionTimeMonitor])
 
 
 @pytest.fixture
-def mock_spider():
+def mock_spider() -> Any:
     class MockSpider:
         pass
 
@@ -31,7 +34,7 @@ def mock_spider():
 
 
 @pytest.fixture
-def mock_datetime(mocker):
+def mock_datetime(mocker: MockerFixture) -> Any:
     mocked_datetime = mocker.patch(
         "spidermon.contrib.scrapy.monitors.monitors.datetime",
     )
@@ -44,11 +47,11 @@ def mock_datetime(mocker):
 
 
 def test_periodic_execution_monitor_should_fail(
-    make_data,
-    mock_datetime,
-    monitor_suite,
-    mock_spider,
-):
+    make_data: Callable[..., dict[str, Any]],
+    mock_datetime: Any,
+    monitor_suite: MonitorSuite,
+    mock_spider: Any,
+) -> None:
     """PeriodicExecutionTimeMonitor should fail if start time was too long ago"""
     data = make_data({SPIDERMON_MAX_EXECUTION_TIME: FAKE_EXECUTION_TIME - 1})
     runner = data.pop("runner")
@@ -65,11 +68,11 @@ def test_periodic_execution_monitor_should_fail(
 
 
 def test_periodic_execution_monitor_should_pass(
-    make_data,
-    mock_datetime,
-    monitor_suite,
-    mock_spider,
-):
+    make_data: Callable[..., dict[str, Any]],
+    mock_datetime: Any,
+    monitor_suite: MonitorSuite,
+    mock_spider: Any,
+) -> None:
     """PeriodicExecutionTimeMonitor should pass if start time was not too long ago"""
     data = make_data({SPIDERMON_MAX_EXECUTION_TIME: FAKE_EXECUTION_TIME + 1})
     runner = data.pop("runner")
@@ -84,7 +87,11 @@ def test_periodic_execution_monitor_should_pass(
         assert r.error is None
 
 
-def test_periodic_execution_monitor_not_set(make_data, monitor_suite, mock_spider):
+def test_periodic_execution_monitor_not_set(
+    make_data: Callable[..., dict[str, Any]],
+    monitor_suite: MonitorSuite,
+    mock_spider: Any,
+) -> None:
     """PeriodicExecutionTimeMonitor should do nothing if threshold not set"""
     data = make_data()
     runner = data.pop("runner")
@@ -94,10 +101,10 @@ def test_periodic_execution_monitor_not_set(make_data, monitor_suite, mock_spide
 
 
 def test_periodic_execution_monitor_no_start_time(
-    make_data,
-    monitor_suite,
-    mock_spider,
-):
+    make_data: Callable[..., dict[str, Any]],
+    monitor_suite: MonitorSuite,
+    mock_spider: Any,
+) -> None:
     """PeriodicExecutionTimeMonitor should fail if start time was too long ago"""
     data = make_data({SPIDERMON_MAX_EXECUTION_TIME: 100})
     runner = data.pop("runner")
@@ -107,7 +114,7 @@ def test_periodic_execution_monitor_no_start_time(
 
 
 @pytest.fixture
-def item_count_suite():
+def item_count_suite() -> MonitorSuite:
     return MonitorSuite(monitors=[PeriodicItemCountMonitor])
 
 
@@ -132,13 +139,13 @@ def item_count_suite():
     ],
 )
 def test_item_count_monitor_validation(  # noqa: PLR0913, PLR0917
-    make_data,
-    item_count_suite,
-    item_scraped_count,
-    prev_item_scraped_count,
-    spidermon_item_count_increase,
-    expected_status,
-):
+    make_data: Callable[..., dict[str, Any]],
+    item_count_suite: MonitorSuite,
+    item_scraped_count: Any,
+    prev_item_scraped_count: Any,
+    spidermon_item_count_increase: Any,
+    expected_status: Any,
+) -> None:
     data = make_data({SPIDERMON_ITEM_COUNT_INCREASE: spidermon_item_count_increase})
     runner = data.pop("runner")
     data["stats"]["item_scraped_count"] = item_scraped_count
@@ -148,7 +155,9 @@ def test_item_count_monitor_validation(  # noqa: PLR0913, PLR0917
     assert runner.result.monitor_results[0].status == expected_status
 
 
-def test_item_count_monitor_undefined_stats(make_data, item_count_suite):
+def test_item_count_monitor_undefined_stats(
+    make_data: Callable[..., dict[str, Any]], item_count_suite: MonitorSuite
+) -> None:
     data = make_data({SPIDERMON_ITEM_COUNT_INCREASE: 0})
     data["stats"]["enable_stats"] = 1  # otherwise monitor wont run
     runner = data.pop("runner")

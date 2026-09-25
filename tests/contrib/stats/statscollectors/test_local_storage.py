@@ -1,12 +1,14 @@
 import os
 from collections import deque
 from pathlib import Path
+from typing import Any
 
 import pytest
 
 pytest.importorskip("scrapy")
 
 from scrapy import Spider
+from scrapy.crawler import Crawler
 from scrapy.exceptions import NotConfigured
 from scrapy.utils.defer import deferred_f_from_coro_f
 from scrapy.utils.project import data_path
@@ -17,15 +19,20 @@ from spidermon.contrib.stats.statscollectors.local_storage import (
 )
 
 
-async def stop_crawler(crawler):
+async def stop_crawler(crawler: Crawler) -> None:
     if hasattr(crawler, "stop_async"):
         await crawler.stop_async()
     else:
         await crawler.stop()
 
 
+def stats_history(crawler: Crawler) -> Any:
+    spider: Any = crawler.spider
+    return spider.stats_history
+
+
 @pytest.fixture
-def stats_temporary_location(monkeypatch, tmp_path):
+def stats_temporary_location(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.setattr(
         LocalStorageStatsHistoryCollector,
         "_stats_location",
@@ -34,7 +41,7 @@ def stats_temporary_location(monkeypatch, tmp_path):
 
 
 @pytest.fixture
-def test_settings():
+def test_settings() -> dict[str, Any]:
     return {
         "STATS_CLASS": (
             "spidermon.contrib.stats.statscollectors.local_storage.LocalStorageStatsHistoryCollector"
@@ -44,58 +51,58 @@ def test_settings():
 
 @deferred_f_from_coro_f
 async def test_spider_has_stats_history_attribute_when_opened_with_collector(
-    test_settings,
-    stats_temporary_location,
-):
+    test_settings: dict[str, Any],
+    stats_temporary_location: None,
+) -> None:
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
     crawler.stats.set_value("garbage", "value")
     assert hasattr(crawler.spider, "stats_history")
-    assert crawler.spider.stats_history == deque()
+    assert stats_history(crawler) == deque()
     await stop_crawler(crawler)
 
 
 @deferred_f_from_coro_f
 async def test_spider_has_stats_history_queue_with_specified_max_size(
-    test_settings,
-    stats_temporary_location,
-):
+    test_settings: dict[str, Any],
+    stats_temporary_location: None,
+) -> None:
     max_stored_stats = 2
     test_settings["SPIDERMON_MAX_STORED_STATS"] = max_stored_stats
 
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
-    assert crawler.spider.stats_history == deque()
-    assert crawler.spider.stats_history.maxlen == max_stored_stats
+    assert stats_history(crawler) == deque()
+    assert stats_history(crawler).maxlen == max_stored_stats
     await stop_crawler(crawler)
 
 
 @pytest.mark.parametrize(("initial_max_len", "end_max_len"), [(5, 2), (5, 10), (5, 5)])
 @deferred_f_from_coro_f
 async def test_spider_update_stats_history_queue_max_size(
-    test_settings,
-    stats_temporary_location,
-    initial_max_len,
-    end_max_len,
-):
+    test_settings: dict[str, Any],
+    stats_temporary_location: None,
+    initial_max_len: int,
+    end_max_len: int,
+) -> None:
     test_settings["SPIDERMON_MAX_STORED_STATS"] = initial_max_len
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
-    assert crawler.spider.stats_history.maxlen == initial_max_len
+    assert stats_history(crawler).maxlen == initial_max_len
     await stop_crawler(crawler)
 
     test_settings["SPIDERMON_MAX_STORED_STATS"] = end_max_len
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
-    assert crawler.spider.stats_history.maxlen == end_max_len
+    assert stats_history(crawler).maxlen == end_max_len
     await stop_crawler(crawler)
 
 
 @deferred_f_from_coro_f
 async def test_spider_has_last_stats_history_when_opened_again(
-    test_settings,
-    stats_temporary_location,
-):
+    test_settings: dict[str, Any],
+    stats_temporary_location: None,
+) -> None:
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
     crawler.stats.set_value("first_execution", "value")
@@ -103,16 +110,16 @@ async def test_spider_has_last_stats_history_when_opened_again(
 
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
-    assert len(crawler.spider.stats_history) == 1
-    assert crawler.spider.stats_history[0]["first_execution"] == "value"
+    assert len(stats_history(crawler)) == 1
+    assert stats_history(crawler)[0]["first_execution"] == "value"
     await stop_crawler(crawler)
 
 
 @deferred_f_from_coro_f
 async def test_spider_has_two_last_stats_history_when_opened_third_time(
-    test_settings,
-    stats_temporary_location,
-):
+    test_settings: dict[str, Any],
+    stats_temporary_location: None,
+) -> None:
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
     crawler.stats.set_value("first_execution", "value")
@@ -125,17 +132,17 @@ async def test_spider_has_two_last_stats_history_when_opened_third_time(
 
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
-    assert len(crawler.spider.stats_history) == 2
-    assert "second_execution" in crawler.spider.stats_history[0]
-    assert "first_execution" in crawler.spider.stats_history[1]
+    assert len(stats_history(crawler)) == 2
+    assert "second_execution" in stats_history(crawler)[0]
+    assert "first_execution" in stats_history(crawler)[1]
     await stop_crawler(crawler)
 
 
 @deferred_f_from_coro_f
 async def test_spider_limit_number_of_stored_stats(
-    test_settings,
-    stats_temporary_location,
-):
+    test_settings: dict[str, Any],
+    stats_temporary_location: None,
+) -> None:
     test_settings["SPIDERMON_MAX_STORED_STATS"] = 2
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
@@ -154,13 +161,13 @@ async def test_spider_limit_number_of_stored_stats(
 
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
-    assert len(crawler.spider.stats_history) == 2
-    assert "third_execution" in crawler.spider.stats_history[0]
-    assert "second_execution" in crawler.spider.stats_history[1]
+    assert len(stats_history(crawler)) == 2
+    assert "third_execution" in stats_history(crawler)[0]
+    assert "second_execution" in stats_history(crawler)[1]
     await stop_crawler(crawler)
 
 
-def test_able_to_import_deprecated_local_storage_stats_collector_module():
+def test_able_to_import_deprecated_local_storage_stats_collector_module() -> None:
     """
     To avoid an error when importing this stats collector with the old location
     in legacy code, we need to ensure that LocalStorageStatsHistoryCollector can
@@ -183,7 +190,7 @@ def test_able_to_import_deprecated_local_storage_stats_collector_module():
 
 
 @deferred_f_from_coro_f
-async def test_stats_location_env_spider_name(test_settings):
+async def test_stats_location_env_spider_name(test_settings: dict[str, Any]) -> None:
     statsdir = data_path("stats", createdir=False)
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
@@ -198,7 +205,9 @@ async def test_stats_location_env_spider_name(test_settings):
 
 
 @deferred_f_from_coro_f
-async def test_stats_location_regular_spider_name(test_settings):
+async def test_stats_location_regular_spider_name(
+    test_settings: dict[str, Any],
+) -> None:
     statsdir = data_path("stats", createdir=False)
     crawler = get_crawler(Spider, test_settings)
     crawler.crawl("foo_spider")
@@ -210,7 +219,9 @@ async def test_stats_location_regular_spider_name(test_settings):
 
 
 @deferred_f_from_coro_f
-async def test_error_without_scrapy_cfg(monkeypatch, test_settings):
+async def test_error_without_scrapy_cfg(
+    monkeypatch: pytest.MonkeyPatch, test_settings: dict[str, Any]
+) -> None:
     message = "Unable to find scrapy.cfg file to infer project data dir"
     monkeypatch.setattr(
         LocalStorageStatsHistoryCollector,

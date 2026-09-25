@@ -1,24 +1,18 @@
+from typing import Any, NoReturn
+
 from .exceptions import InvalidDataOperation
 
 
-class Data(dict):
-    """
-    Immutable dict class with attribute access.
+class Data(dict[str, Any]):
+    """Read-only dict whose keys can also be read as attributes, e.g.
+    ``data.stats`` for ``data["stats"]``."""
 
-    example:
-    >> s = Data({'scraped_items': 100})
-    >> s['scraped_items']
-    100
-    >> s.scraped_items
-    100
-    """
-
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         if name in self:
             return self[name]
         raise AttributeError(f"Key '{name}' not found.")
 
-    def _immutable(self, *args, **kws):
+    def _immutable(self, *args: Any, **kws: Any) -> NoReturn:
         raise InvalidDataOperation(
             "Immutable Data! You cannot add or modify read-only data.",
         )

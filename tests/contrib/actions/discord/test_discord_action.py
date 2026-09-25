@@ -1,4 +1,5 @@
 import pytest
+from pytest_mock import MockerFixture, MockType
 
 pytest.importorskip("jinja2")
 
@@ -7,16 +8,16 @@ from spidermon.exceptions import NotConfigured
 
 
 @pytest.fixture
-def logger_info(mocker):
+def logger_info(mocker: MockerFixture) -> MockType:
     return mocker.patch("spidermon.contrib.actions.discord.logger.info")
 
 
 @pytest.fixture
-def request_post(mocker):
+def request_post(mocker: MockerFixture) -> MockType:
     return mocker.patch("spidermon.contrib.actions.discord.requests.post")
 
 
-def test_log_text_when_fake_set(logger_info):
+def test_log_text_when_fake_set(logger_info: MockType) -> None:
     text_to_be_logged = "text to be logged"
 
     manager = DiscordMessageManager("discord-webhook-url", fake=True)
@@ -26,7 +27,9 @@ def test_log_text_when_fake_set(logger_info):
     assert text_to_be_logged in logger_info.call_args[0]
 
 
-def test_do_not_log_text_when_fake_is_not_set(request_post, logger_info):
+def test_do_not_log_text_when_fake_is_not_set(
+    request_post: MockType, logger_info: MockType
+) -> None:
     text_not_to_be_logged = "text not to be logged"
 
     manager = DiscordMessageManager("discord-webhook-url", fake=False)
@@ -35,18 +38,20 @@ def test_do_not_log_text_when_fake_is_not_set(request_post, logger_info):
     assert logger_info.call_count == 0
 
 
-def test_fail_if_no_webhook_url():
+def test_fail_if_no_webhook_url() -> None:
     with pytest.raises(NotConfigured):
         DiscordMessageManager(None, fake=False)
 
 
-def test_send_message(request_post):
+def test_send_message(request_post: MockType) -> None:
     manager = DiscordMessageManager("discord-webhook-url", fake=False)
     manager.send_message("message")
     assert request_post.call_count == 1
 
 
-def test_log_error_when_api_return_an_error(mocker, request_post):
+def test_log_error_when_api_return_an_error(
+    mocker: MockerFixture, request_post: MockType
+) -> None:
     request_post.return_value.ok = False
     request_post.return_value.reason = "Fail Reason"
 

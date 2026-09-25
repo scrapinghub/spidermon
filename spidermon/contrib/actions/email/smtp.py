@@ -1,8 +1,16 @@
+from __future__ import annotations
+
 import smtplib
+from typing import TYPE_CHECKING, Any
 
 from spidermon.exceptions import NotConfigured
 
 from . import SendEmail
+
+if TYPE_CHECKING:
+    from email.mime.multipart import MIMEMultipart
+
+    from scrapy.crawler import Crawler
 
 DEFAULT_SMTP_ENFORCE_TLS = False
 DEFAULT_SMTP_ENFORCE_SSL = False
@@ -12,15 +20,15 @@ DEFAULT_SMTP_PORT = 25
 class SendSmtpEmail(SendEmail):
     def __init__(  # noqa: PLR0913, PLR0917
         self,
-        smtp_host=None,
-        smtp_port=None,
-        smtp_user=None,
-        smtp_password=None,
-        smtp_enforce_tls=None,
-        smtp_enforce_ssl=None,
-        *args,
-        **kwargs,
-    ):
+        smtp_host: str | None = None,
+        smtp_port: int | None = None,
+        smtp_user: str | None = None,
+        smtp_password: str | None = None,
+        smtp_enforce_tls: bool | None = None,
+        smtp_enforce_ssl: bool | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
 
         self.smtp_host = smtp_host
@@ -52,7 +60,7 @@ class SendSmtpEmail(SendEmail):
             )
 
     @classmethod
-    def from_crawler_kwargs(cls, crawler):
+    def from_crawler_kwargs(cls, crawler: Crawler) -> dict[str, Any]:
         kwargs = super().from_crawler_kwargs(crawler)
         kwargs.update(
             {
@@ -74,7 +82,12 @@ class SendSmtpEmail(SendEmail):
         )
         return kwargs
 
-    def send_message(self, message, **kwargs):
+    def send_message(self, message: MIMEMultipart, **kwargs: Any) -> None:
+        assert self.to is not None
+        assert self.sender is not None
+        assert self.smtp_host is not None
+        assert self.smtp_user is not None
+        assert self.smtp_password is not None
         recipients = [*self.to, *(self.cc or []), *(self.bcc or [])]
         del message["Bcc"]
 

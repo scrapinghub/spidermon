@@ -1,7 +1,7 @@
 from spidermon.utils.field_coverage import calculate_field_coverage
 
 
-def test_calculate_field_coverage_from_stats():
+def test_calculate_field_coverage_from_stats() -> None:
     spider_stats = {
         "finish_reason": "finished",
         "spidermon_item_scraped_count": 100,
@@ -26,7 +26,7 @@ def test_calculate_field_coverage_from_stats():
     assert coverage == expected_coverage
 
 
-def test_calculate_field_coverage_from_stats_with_nested_fields():
+def test_calculate_field_coverage_from_stats_with_nested_fields() -> None:
     spider_stats = {
         "finish_reason": "finished",
         "spidermon_item_scraped_count": 100,
@@ -71,7 +71,7 @@ def test_calculate_field_coverage_from_stats_with_nested_fields():
     assert coverage == expected_coverage
 
 
-def test_calculate_field_coverage_field_ends_with_items():
+def test_calculate_field_coverage_field_ends_with_items() -> None:
     spider_stats = {
         "finish_reason": "finished",
         "spidermon_item_scraped_count": 100,

@@ -82,7 +82,7 @@ LEVEL_TESTS = [
 ]
 
 
-def test_levels():
+def test_levels() -> None:
     for suite_cls, monitor, expected_level in LEVEL_TESTS:
         suite = suite_cls()
         suite.add_monitor(monitor)

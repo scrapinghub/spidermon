@@ -14,28 +14,28 @@ from .fixtures.stats import STATS_TO_EVALUATE
 
 
 @pytest.fixture
-def interpreter():
+def interpreter() -> Interpreter:
     return Interpreter()
 
 
-def test_syntax_errors(interpreter):
+def test_syntax_errors(interpreter: Interpreter) -> None:
     for expression in SYNTAXERROR_EXPRESSIONS:
         with pytest.raises(SyntaxError):
             interpreter.check(expression)
 
 
-def test_invalid_expressions(interpreter):
+def test_invalid_expressions(interpreter: Interpreter) -> None:
     for expression in INVALID_EXPRESSIONS:
         with pytest.raises(InvalidExpression):
             interpreter.check(expression)
 
 
-def test_valid_expressions(interpreter):
+def test_valid_expressions(interpreter: Interpreter) -> None:
     for expression in VALID_EXPRESSIONS:
         interpreter.check(expression)
 
 
-def test_evaluated_expressions(interpreter):
+def test_evaluated_expressions(interpreter: Interpreter) -> None:
     data = Data({"stats": Data(STATS_TO_EVALUATE)})
     for expression, result in EXPRESSIONS_TO_EVALUATE:
         assert result == interpreter.eval(expression, data), (

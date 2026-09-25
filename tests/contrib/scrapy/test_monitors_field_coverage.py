@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 pytest.importorskip("scrapy")
@@ -11,7 +13,9 @@ from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 from spidermon.exceptions import NotConfigured
 
 
-def make_data_for_monitor(settings=None, stats=None):
+def make_data_for_monitor(
+    settings: dict[str, Any] | None = None, stats: dict[str, Any] | None = None
+) -> dict[str, Any]:
     crawler = get_crawler(settings_dict=settings or {})
     spider = Spider.from_crawler(crawler, "example.com")
     return {
@@ -24,13 +28,13 @@ def make_data_for_monitor(settings=None, stats=None):
 
 
 @pytest.fixture
-def field_coverage_monitor_suite():
+def field_coverage_monitor_suite() -> MonitorSuite:
     return MonitorSuite(monitors=[FieldCoverageMonitor])
 
 
 def test_raise_not_configured_if_add_field_coverage_setting_not_set(
-    field_coverage_monitor_suite,
-):
+    field_coverage_monitor_suite: MonitorSuite,
+) -> None:
     data = make_data_for_monitor()
     monitor_runner = data.pop("runner")
     with pytest.raises(NotConfigured):
@@ -38,15 +42,17 @@ def test_raise_not_configured_if_add_field_coverage_setting_not_set(
 
 
 def test_raise_not_configured_if_add_field_coverage_setting_set_false(
-    field_coverage_monitor_suite,
-):
+    field_coverage_monitor_suite: MonitorSuite,
+) -> None:
     data = make_data_for_monitor(settings={"SPIDERMON_ADD_FIELD_COVERAGE": False})
     monitor_runner = data.pop("runner")
     with pytest.raises(NotConfigured):
         monitor_runner.run(field_coverage_monitor_suite, **data)
 
 
-def test_no_error_if_add_field_coverage_setting_set_true(field_coverage_monitor_suite):
+def test_no_error_if_add_field_coverage_setting_set_true(
+    field_coverage_monitor_suite: MonitorSuite,
+) -> None:
     data = make_data_for_monitor(settings={"SPIDERMON_ADD_FIELD_COVERAGE": True})
     monitor_runner = data.pop("runner")
     try:
@@ -57,7 +63,9 @@ def test_no_error_if_add_field_coverage_setting_set_true(field_coverage_monitor_
         )
 
 
-def test_monitor_fail_if_coverage_less_than_expected(field_coverage_monitor_suite):
+def test_monitor_fail_if_coverage_less_than_expected(
+    field_coverage_monitor_suite: MonitorSuite,
+) -> None:
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
         "SPIDERMON_FIELD_COVERAGE_RULES": {
@@ -72,7 +80,9 @@ def test_monitor_fail_if_coverage_less_than_expected(field_coverage_monitor_suit
     assert not monitor_runner.result.wasSuccessful()
 
 
-def test_monitor_fail_if_no_coverage_from_expected_field(field_coverage_monitor_suite):
+def test_monitor_fail_if_no_coverage_from_expected_field(
+    field_coverage_monitor_suite: MonitorSuite,
+) -> None:
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
         "SPIDERMON_FIELD_COVERAGE_RULES": {
@@ -87,7 +97,9 @@ def test_monitor_fail_if_no_coverage_from_expected_field(field_coverage_monitor_
     assert not monitor_runner.result.wasSuccessful()
 
 
-def test_monitor_pass_if_coverage_equal_than_expected(field_coverage_monitor_suite):
+def test_monitor_pass_if_coverage_equal_than_expected(
+    field_coverage_monitor_suite: MonitorSuite,
+) -> None:
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
         "SPIDERMON_FIELD_COVERAGE_RULES": {
@@ -102,7 +114,9 @@ def test_monitor_pass_if_coverage_equal_than_expected(field_coverage_monitor_sui
     assert monitor_runner.result.wasSuccessful()
 
 
-def test_monitor_pass_if_coverage_greater_than_expected(field_coverage_monitor_suite):
+def test_monitor_pass_if_coverage_greater_than_expected(
+    field_coverage_monitor_suite: MonitorSuite,
+) -> None:
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
         "SPIDERMON_FIELD_COVERAGE_RULES": {
@@ -117,7 +131,9 @@ def test_monitor_pass_if_coverage_greater_than_expected(field_coverage_monitor_s
     assert monitor_runner.result.wasSuccessful()
 
 
-def test_monitor_skip_if_no_items_set_true(field_coverage_monitor_suite):
+def test_monitor_skip_if_no_items_set_true(
+    field_coverage_monitor_suite: MonitorSuite,
+) -> None:
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
         "SPIDERMON_FIELD_COVERAGE_RULES": {
@@ -133,7 +149,9 @@ def test_monitor_skip_if_no_items_set_true(field_coverage_monitor_suite):
     assert monitor_runner.result.wasSuccessful()
 
 
-def test_monitor_skip_if_no_items_set_false(field_coverage_monitor_suite):
+def test_monitor_skip_if_no_items_set_false(
+    field_coverage_monitor_suite: MonitorSuite,
+) -> None:
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
         "SPIDERMON_FIELD_COVERAGE_RULES": {
@@ -149,8 +167,8 @@ def test_monitor_skip_if_no_items_set_false(field_coverage_monitor_suite):
 
 
 def test_monitor_pass_with_tolerance_when_coverage_within_precision_range(
-    field_coverage_monitor_suite,
-):
+    field_coverage_monitor_suite: MonitorSuite,
+) -> None:
     """Test that coverage within tolerance (for decimal precision) passes."""
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
@@ -169,8 +187,8 @@ def test_monitor_pass_with_tolerance_when_coverage_within_precision_range(
 
 
 def test_monitor_fail_with_tolerance_when_coverage_outside_precision_range(
-    field_coverage_monitor_suite,
-):
+    field_coverage_monitor_suite: MonitorSuite,
+) -> None:
     """Test that coverage outside tolerance range still fails."""
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
@@ -189,8 +207,8 @@ def test_monitor_fail_with_tolerance_when_coverage_outside_precision_range(
 
 
 def test_monitor_pass_with_tolerance_when_coverage_exactly_at_threshold(
-    field_coverage_monitor_suite,
-):
+    field_coverage_monitor_suite: MonitorSuite,
+) -> None:
     """Test that coverage exactly at threshold passes."""
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
@@ -208,8 +226,8 @@ def test_monitor_pass_with_tolerance_when_coverage_exactly_at_threshold(
 
 
 def test_monitor_pass_with_tolerance_when_coverage_above_threshold(
-    field_coverage_monitor_suite,
-):
+    field_coverage_monitor_suite: MonitorSuite,
+) -> None:
     """Test that coverage above threshold passes regardless of tolerance."""
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
@@ -226,7 +244,9 @@ def test_monitor_pass_with_tolerance_when_coverage_above_threshold(
     assert monitor_runner.result.wasSuccessful()
 
 
-def test_monitor_default_tolerance_is_zero(field_coverage_monitor_suite):
+def test_monitor_default_tolerance_is_zero(
+    field_coverage_monitor_suite: MonitorSuite,
+) -> None:
     settings = {
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
         "SPIDERMON_FIELD_COVERAGE_RULES": {

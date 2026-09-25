@@ -1,5 +1,5 @@
-from functools import partial
-from unittest import TestCase
+from typing import Any, cast
+from unittest import TestCase, mock
 
 import pytest
 
@@ -9,6 +9,7 @@ pytest.importorskip("scrapy")
 from scrapy import Spider
 from scrapy.utils.test import get_crawler
 
+from spidermon import MonitorSuite
 from spidermon.contrib.scrapy import extensions as ext_module
 from spidermon.contrib.scrapy.extensions import Spidermon
 from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
@@ -19,13 +20,17 @@ from spidermon.python.monitors import ExpressionsMonitor
 class TestSpiderMonitorRunner(SpiderMonitorRunner):
     __test__ = False
 
-    def run_monitors(self):
+    def run_monitors(self) -> None:
+        assert self.result is not None
+        assert self.suite is not None
         self.result.next_step()
         res = self.suite.run(self.result)
         raise AssertionError((res.failures, res.errors))
 
 
-def _test_run_suites(self, spider, suites):
+def _test_run_suites(
+    self: Spidermon, spider: Spider, suites: list[MonitorSuite]
+) -> None:
     data = self._generate_data_for_spider(spider)
     for suite in suites:
         runner = TestSpiderMonitorRunner(spider=spider)
@@ -35,7 +40,13 @@ def _test_run_suites(self, spider, suites):
 class TestData:
     __test__ = False
 
-    def __init__(self, expression, stats=None, settings=None, expected_error=None):
+    def __init__(
+        self,
+        expression: Any,
+        stats: Any = None,
+        settings: Any = None,
+        expected_error: Any = None,
+    ) -> None:
         if stats is None:
             stats = {}
         if settings is None:
@@ -71,7 +82,7 @@ class ExpressionMonitorsTesting(TestCase):
 
     spider_name = "test"
 
-    def run_test(self, **kwargs):
+    def run_test(self, **kwargs: Any) -> None:
         dt = TestData(**kwargs)
         settings = {
             "SPIDERMON_ENABLED": True,
@@ -81,16 +92,19 @@ class ExpressionMonitorsTesting(TestCase):
         }
         settings.update(dt.settings)
         crawler = get_crawler(settings_dict=settings)
-        crawler.stats.get_stats = lambda: dt.stats
+        crawler.stats.set_stats(dt.stats)
         spidermon = Spidermon.from_crawler(crawler)
         spider = Spider(name=self.spider_name)
 
-        # mocking, to see test results via raising AssertionError exception
-        # with failures and errors as results
-        spidermon._run_suites = partial(_test_run_suites, spidermon)
-
         try:
-            spidermon.spider_opened(spider)
+            # mocking, to see test results via raising AssertionError exception
+            # with failures and errors as results
+            with mock.patch.object(
+                spidermon,
+                "_run_suites",
+                lambda spider, suites: _test_run_suites(spidermon, spider, suites),
+            ):
+                spidermon.spider_opened(spider)
         except AssertionError as ae:
             failures, errors = ae.args[0]
             for f in failures:
@@ -107,61 +121,61 @@ class ExpressionMonitorsTesting(TestCase):
                     f"Expected error <{dt.expected_error}> was not raised",
                 ) from ae
 
-    def test_stats_ready(self):
+    def test_stats_ready(self) -> None:
         self.run_test(
             stats={"finish_reason": "dead"},
             expression="stats.finish_reason == 'dead'",
         )
 
-    def test_stats_not_configured(self):
+    def test_stats_not_configured(self) -> None:
         self.run_test(
             expression="stats.finish_reason == 'dead'",
             expected_error="NotConfigured",
         )
 
-    def test_crawler_ready(self):
+    def test_crawler_ready(self) -> None:
         self.run_test(
             settings={"special_check": "12345"},
             expression="crawler.settings['special_check'] == '12345'",
         )
 
-    def test_spider_ready(self):
+    def test_spider_ready(self) -> None:
         self.run_test(expression=f"spider.name == '{self.spider_name}'")
 
-    def test_responses_ready(self):
+    def test_responses_ready(self) -> None:
         self.run_test(
             stats={"finish_reason": "dead"},  # any stats, responses created from stats
             expression="responses.count == 0",
         )
 
-    def test_responses_not_configured(self):
+    def test_responses_not_configured(self) -> None:
         self.run_test(expression="responses.count == 0", expected_error="NotConfigured")
 
-    def test_validation_ready(self):
+    def test_validation_ready(self) -> None:
         self.run_test(
             stats={"finish_reason": "dead"},  # any stats, validation created from stats
             expression="validation.items.count == 0",
         )
 
-    def test_validation_not_configured(self):
+    def test_validation_not_configured(self) -> None:
         self.run_test(
             expression="validation.items.count == 0",
             expected_error="NotConfigured",
         )
 
-    def test_job_not_configured(self):
+    def test_job_not_configured(self) -> None:
         # job is not configured, but existed in the context
         self.run_test(
             expression="job.metadata['finish_reason' == 'dead']",
             expected_error="NotConfigured",
         )
 
-    def test_inappropriate_context(self):
+    def test_inappropriate_context(self) -> None:
         # expected something like <NameError: name 'foo' is not defined>
         self.run_test(expression="foo.bar == 'boo'", expected_error="NameError")
 
 
-def test_skip_values_helpers_cover_all_normalization_paths():
+def test_skip_values_helpers_cover_all_normalization_paths() -> None:
     ext = Spidermon.__new__(Spidermon)
     assert ext._get_skip_values_list(
         get_crawler(settings_dict={"SPIDERMON_ENABLED": True}).settings
@@ -219,7 +233,7 @@ def test_skip_values_helpers_cover_all_normalization_paths():
     ) == [0, -1]
 
 
-def test_value_match_is_type_sensitive():
+def test_value_match_is_type_sensitive() -> None:
     ext = Spidermon.__new__(Spidermon)
     assert ext._value_matches_skip_entry(0, 0)
     assert not ext._value_matches_skip_entry(False, 0)
@@ -228,11 +242,11 @@ def test_value_match_is_type_sensitive():
     assert not ext._value_in_skip_values("N/A", [0, 1, "-"])
 
 
-def test_load_suite_error_paths(monkeypatch):
+def test_load_suite_error_paths(monkeypatch: pytest.MonkeyPatch) -> None:
     ext = Spidermon.__new__(Spidermon)
     ext.crawler = get_crawler(settings_dict={"SPIDERMON_ENABLED": True})
 
-    def raiser(_suite):
+    def raiser(_suite: Any) -> None:
         raise RuntimeError("boom")
 
     monkeypatch.setattr(ext_module, "load_object", raiser)
@@ -244,7 +258,9 @@ def test_load_suite_error_paths(monkeypatch):
         ext.load_suite("x.y.NotAMonitorSuite")
 
 
-def test_load_expression_suite_with_custom_monitor_class(monkeypatch):
+def test_load_expression_suite_with_custom_monitor_class(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     ext = Spidermon.__new__(Spidermon)
     ext.crawler = get_crawler(settings_dict={"SPIDERMON_ENABLED": True})
 
@@ -263,7 +279,7 @@ def test_load_expression_suite_with_custom_monitor_class(monkeypatch):
     assert suite is not None
 
 
-def test_count_item_skip_branches():
+def test_count_item_skip_branches() -> None:
     crawler = get_crawler(settings_dict={"SPIDERMON_ENABLED": True})
     ext = Spidermon.from_crawler(crawler)
 
@@ -291,27 +307,27 @@ def test_count_item_skip_branches():
     assert stats.get("spidermon_item_scraped_count/dict/ok2") == 1
 
 
-def test_periodic_monitor_paths(monkeypatch):
+def test_periodic_monitor_paths(monkeypatch: pytest.MonkeyPatch) -> None:
     ext = Spidermon.__new__(Spidermon)
     ext.periodic_suites = {"a.suite": 10}
     ext.periodic_tasks = {}
     ext.spider_opened_suites = []
     ext.spider_closed_suites = []
-    ext._run_suites = lambda spider, suites: None
-    ext._add_field_coverage_to_stats = lambda: None
+    monkeypatch.setattr(ext, "_run_suites", lambda spider, suites: None)
+    monkeypatch.setattr(ext, "_add_field_coverage_to_stats", lambda: None)
 
     class DummyLoopingCall:
-        def __init__(self, _func, *_args):
+        def __init__(self, _func: Any, *_args: Any) -> None:
             self.started = False
             self.stopped = False
             self.running = False
 
-        def start(self, _time, now=False):
+        def start(self, _time: Any, now: Any = False) -> None:
             self.started = True
             self.running = True
             self.now = now
 
-        def stop(self):
+        def stop(self) -> None:
             self.stopped = True
             self.running = False
 
@@ -319,23 +335,26 @@ def test_periodic_monitor_paths(monkeypatch):
 
     spider = Spider(name="periodic")
     ext.spider_opened(spider)
-    assert ext.periodic_tasks[spider][0].started is True
+    task = cast("DummyLoopingCall", ext.periodic_tasks[spider][0])
+    assert task.started is True
 
     ext.spider_closed(spider)
-    assert ext.periodic_tasks[spider][0].stopped is True
+    assert task.stopped is True
 
-    ext.periodic_tasks[spider][0].stopped = False
+    task.stopped = False
     ext.spider_closed(spider)
-    assert ext.periodic_tasks[spider][0].stopped is False
+    assert task.stopped is False
 
-    captured = {}
-    ext.load_suite = lambda s: f"loaded:{s}"
-    ext._run_suites = lambda spider, suites: captured.setdefault("suites", suites)
+    captured: dict[str, Any] = {}
+    monkeypatch.setattr(ext, "load_suite", lambda s: f"loaded:{s}")
+    monkeypatch.setattr(
+        ext, "_run_suites", lambda spider, suites: captured.setdefault("suites", suites)
+    )
     ext._run_periodic_suites(spider, ["x.suite"])
     assert captured["suites"] == ["loaded:x.suite"]
 
 
-def test_item_scraped_reads_skip_settings():
+def test_item_scraped_reads_skip_settings() -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "SPIDERMON_ADD_FIELD_COVERAGE": True,
@@ -345,14 +364,14 @@ def test_item_scraped_reads_skip_settings():
     spider = Spider.from_crawler(crawler, "example.com")
     ext = Spidermon.from_crawler(crawler)
 
-    observed = {}
+    observed: dict[str, Any] = {}
 
-    def fake_count_item(*args, **kwargs):
+    def fake_count_item(*args: Any, **kwargs: Any) -> None:
         observed["args"] = args
         observed["kwargs"] = kwargs
 
-    ext._count_item = fake_count_item
-    ext.item_scraped({"field1": "value1"}, None, spider)
+    with mock.patch.object(ext, "_count_item", fake_count_item):
+        ext.item_scraped({"field1": "value1"}, None, spider)
 
     # args: item, skip_none_values, skip_falsy_values, skip_values
     assert observed["args"][2] is True

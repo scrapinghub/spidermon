@@ -21,9 +21,9 @@ EMAIL_REGEX = re.compile(
 )
 
 
-def is_valid_url(url):
+def is_valid_url(url: str) -> bool:
     return URL_REGEX.match(url) is not None
 
 
-def is_valid_email(email):
+def is_valid_email(email: str) -> bool:
     return EMAIL_REGEX.match(email) is not None

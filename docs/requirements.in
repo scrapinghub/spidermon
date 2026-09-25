@@ -1,0 +1,4 @@
+s3cmd
+sphinx
+sphinx-rtd-theme
+sphinx-scrapy==0.12.0
