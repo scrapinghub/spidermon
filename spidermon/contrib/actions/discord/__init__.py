@@ -1,9 +1,15 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING, Any
 
 import requests
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
+
+if TYPE_CHECKING:
+    from scrapy.crawler import Crawler
 
 logger = logging.getLogger(__name__)
 
@@ -11,7 +17,7 @@ logger = logging.getLogger(__name__)
 class DiscordMessageManager:
     sender_token = None
 
-    def __init__(self, webhook_url, fake=False):
+    def __init__(self, webhook_url: str | None, fake: bool = False) -> None:
         if not webhook_url:
             raise NotConfigured(
                 "You must provide a value for SPIDERMON_DISCORD_WEBHOOK_URL setting.",
@@ -19,7 +25,7 @@ class DiscordMessageManager:
         self.webhook_url = webhook_url
         self.fake = fake
 
-    def send_message(self, text):
+    def send_message(self, text: str) -> None:
         if self.fake:
             logger.info(text)
             return
@@ -42,11 +48,11 @@ class SendDiscordMessage(ActionWithTemplates):
 
     def __init__(
         self,
-        webhook_url=None,
-        message=None,
-        message_template=None,
-        fake=None,
-    ):
+        webhook_url: str | None = None,
+        message: str | None = None,
+        message_template: str | None = None,
+        fake: bool | None = None,
+    ) -> None:
         super().__init__()
 
         self.fake = fake or self.fake
@@ -58,7 +64,7 @@ class SendDiscordMessage(ActionWithTemplates):
         self.message_template = message_template or self.message_template
 
     @classmethod
-    def from_crawler_kwargs(cls, crawler):
+    def from_crawler_kwargs(cls, crawler: Crawler) -> dict[str, Any]:
         return {
             "webhook_url": crawler.settings.get("SPIDERMON_DISCORD_WEBHOOK_URL"),
             "message": crawler.settings.get("SPIDERMON_DISCORD_MESSAGE"),
@@ -68,10 +74,10 @@ class SendDiscordMessage(ActionWithTemplates):
             "fake": crawler.settings.getbool("SPIDERMON_DISCORD_FAKE"),
         }
 
-    def run_action(self):
+    def run_action(self) -> None:
         self.manager.send_message(self.get_message())
 
-    def get_message(self):
+    def get_message(self) -> str:
         if self.message:
             return self.render_text_template(self.message)
         return self.render_template(self.message_template)

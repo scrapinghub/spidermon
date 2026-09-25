@@ -9,7 +9,7 @@ class ExpressionsMonitor(
     ValidationMonitorMixin,
     SpiderMonitorMixin,
 ):
-    def get_context_data(self):
+    def get_context_data(self) -> Context:
         context = Context()
         attrs = ["stats", "crawler", "spider", "job", "validation", "responses"]
         context.extend_via_attrs(self, attrs)

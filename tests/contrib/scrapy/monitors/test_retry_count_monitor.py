@@ -1,3 +1,6 @@
+from collections.abc import Callable
+from typing import Any
+
 import pytest
 
 pytest.importorskip("scrapy")
@@ -6,11 +9,13 @@ from spidermon import MonitorSuite
 from spidermon.contrib.scrapy.monitors import SPIDERMON_MAX_RETRIES, RetryCountMonitor
 
 
-def new_suite():
+def new_suite() -> MonitorSuite:
     return MonitorSuite(monitors=[RetryCountMonitor])
 
 
-def test_retry_count_monitor_should_fail(make_data):
+def test_retry_count_monitor_should_fail(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     """Retry Count should fail if the retry count is higher than expected"""
     data = make_data({SPIDERMON_MAX_RETRIES: 10})
 
@@ -24,7 +29,9 @@ def test_retry_count_monitor_should_fail(make_data):
     )
 
 
-def test_retry_count_monitor_should_pass_disabled(make_data):
+def test_retry_count_monitor_should_pass_disabled(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     """Retry Count should pass if the limit is negative"""
     data = make_data({SPIDERMON_MAX_RETRIES: -1})
 
@@ -35,7 +42,9 @@ def test_retry_count_monitor_should_pass_disabled(make_data):
     assert runner.result.monitor_results[0].error is None
 
 
-def test_retry_count_monitor_should_pass_default(make_data):
+def test_retry_count_monitor_should_pass_default(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     """Retry Count should pass if the limit is not set"""
     data = make_data()
 
@@ -46,7 +55,9 @@ def test_retry_count_monitor_should_pass_default(make_data):
     assert runner.result.monitor_results[0].error is None
 
 
-def test_retry_count_monitor_should_pass_under_limit(make_data):
+def test_retry_count_monitor_should_pass_under_limit(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     """Retry Count should pass if the retry count is not higher than expected"""
     data = make_data({SPIDERMON_MAX_RETRIES: 10})
 

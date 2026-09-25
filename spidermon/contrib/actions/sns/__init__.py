@@ -1,9 +1,15 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING, Any
 
 import boto3
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
+
+if TYPE_CHECKING:
+    from scrapy.crawler import Crawler
 
 logger = logging.getLogger(__name__)
 
@@ -16,13 +22,13 @@ class SendSNSNotification(ActionWithTemplates):
 
     def __init__(
         self,
-        topic_arn=None,
-        aws_access_key=None,
-        aws_secret_key=None,
-        aws_region_name=None,
-        *args,
-        **kwargs,
-    ):
+        topic_arn: str | None = None,
+        aws_access_key: str | None = None,
+        aws_secret_key: str | None = None,
+        aws_region_name: str | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
 
         self.topic_arn = topic_arn or self.topic_arn
@@ -43,10 +49,14 @@ class SendSNSNotification(ActionWithTemplates):
                 "You must provide a value for SPIDERMON_AWS_SECRET_ACCESS_KEY setting.",
             )
 
-    def run_action(self):
-        self.send_message()
+    def run_action(self) -> None:
+        raise NotImplementedError
 
-    def send_message(self, subject, attributes):
+    def send_message(
+        self,
+        subject: str,
+        attributes: dict[str, dict[str, str]],
+    ) -> None:
         client = boto3.client(
             service_name="sns",
             region_name=self.aws_region_name,
@@ -68,7 +78,7 @@ class SendSNSNotification(ActionWithTemplates):
         logger.info("SNS message sent successfully!")
 
     @classmethod
-    def from_crawler_kwargs(cls, crawler):
+    def from_crawler_kwargs(cls, crawler: Crawler) -> dict[str, Any]:
         return {
             "topic_arn": crawler.settings.get("SPIDERMON_SNS_TOPIC_ARN"),
             "aws_access_key": crawler.settings.get("SPIDERMON_AWS_ACCESS_KEY_ID"),

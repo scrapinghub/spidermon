@@ -1,4 +1,6 @@
 import operator
+from collections.abc import Callable
+from typing import Any
 
 import pytest
 
@@ -17,19 +19,19 @@ ops = {
 }
 
 
-def always_skip(monitor):
+def always_skip(monitor: Any) -> bool:
     return True
 
 
-def never_skip(monitor):
+def never_skip(monitor: Any) -> bool:
     return False
 
 
 class MultiCheckMonitor(BaseScrapyMonitor):
-    def test_one(self):
+    def test_one(self) -> None:
         pass
 
-    def test_two(self):
+    def test_two(self) -> None:
         self.fail("boom")
 
 
@@ -56,8 +58,12 @@ class MultiCheckMonitor(BaseScrapyMonitor):
     ],
 )
 def test_skipping_rule_on_stats_value(
-    make_data, value, threshold, expected_status, rules
-):
+    make_data: Callable[..., dict[str, Any]],
+    value: Any,
+    threshold: Any,
+    expected_status: Any,
+    rules: Any,
+) -> None:
     data = make_data(
         {
             ItemCountMonitor.threshold_setting: threshold,
@@ -91,8 +97,12 @@ def test_skipping_rule_on_stats_value(
     ],
 )
 def test_skipping_rule_on_callable_function(
-    make_data, value, threshold, expected_status, rules
-):
+    make_data: Callable[..., dict[str, Any]],
+    value: Any,
+    threshold: Any,
+    expected_status: Any,
+    rules: Any,
+) -> None:
     data = make_data(
         {
             ItemCountMonitor.threshold_setting: threshold,
@@ -113,7 +123,9 @@ def test_skipping_rule_on_callable_function(
     assert runner.result.monitor_results[0].status == expected_status
 
 
-def test_skipping_rule_without_crawler(make_data):
+def test_skipping_rule_without_crawler(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     data = make_data(
         {
             "SPIDERMON_MONITOR_SKIPPING_RULES": {
@@ -133,7 +145,7 @@ def test_skipping_rule_without_crawler(make_data):
     ]
 
 
-def test_skipping_rule_by_method_name(make_data):
+def test_skipping_rule_by_method_name(make_data: Callable[..., dict[str, Any]]) -> None:
     data = make_data(
         {
             "SPIDERMON_MONITOR_SKIPPING_RULES": {

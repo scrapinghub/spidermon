@@ -50,6 +50,8 @@ restores the default for a method or class inside one with a different level.
 .. autoclass:: spidermon.core.monitors.Monitor
     :members:
 
+.. autoclass:: spidermon.data.Data
+
 Monitor mixins
 --------------
 

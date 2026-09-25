@@ -1,4 +1,7 @@
+from unittest.mock import MagicMock
+
 import pytest
+from pytest_mock import MockerFixture, MockType
 
 pytest.importorskip("scrapy")
 
@@ -11,23 +14,23 @@ from spidermon.exceptions import NotConfigured
 
 
 @pytest.fixture
-def boto3_client(mocker):
+def boto3_client(mocker: MockerFixture) -> MockType:
     return mocker.patch("spidermon.contrib.actions.sns.boto3.client")
 
 
 @pytest.fixture
-def logger_info(mocker):
+def logger_info(mocker: MockerFixture) -> MockType:
     return mocker.patch("spidermon.contrib.actions.sns.logger.info")
 
 
 @pytest.fixture
-def logger_error(mocker):
+def logger_error(mocker: MockerFixture) -> MockType:
     return mocker.patch("spidermon.contrib.actions.sns.logger.error")
 
 
 @pytest.fixture
-def mock_notifier_data(mocker):
-    data = mocker.MagicMock()
+def mock_notifier_data(mocker: MockerFixture) -> MagicMock:
+    data: MagicMock = mocker.MagicMock()
     data.sc_spider_name = "TestSpider"
     data.stats.start_time = "2023-08-25 10:00:00"
     data.stats.finish_time = "2023-08-25 11:00:00"
@@ -35,17 +38,17 @@ def mock_notifier_data(mocker):
     return data
 
 
-def test_fail_if_no_topic_arn():
+def test_fail_if_no_topic_arn() -> None:
     with pytest.raises(NotConfigured):
         SendSNSNotification(topic_arn=None)
 
 
-def test_fail_if_no_aws_access_key():
+def test_fail_if_no_aws_access_key() -> None:
     with pytest.raises(NotConfigured):
         SendSNSNotification(topic_arn="arn:aws:sns:us-east-1:123456789012:MyTopic")
 
 
-def test_fail_if_no_aws_secret_key():
+def test_fail_if_no_aws_secret_key() -> None:
     with pytest.raises(NotConfigured):
         SendSNSNotification(
             topic_arn="arn:aws:sns:us-east-1:123456789012:MyTopic",
@@ -53,7 +56,17 @@ def test_fail_if_no_aws_secret_key():
         )
 
 
-def test_send_message(boto3_client, logger_info):
+def test_run_action_not_implemented() -> None:
+    notifier = SendSNSNotification(
+        topic_arn="arn:aws:sns:us-east-1:123456789012:MyTopic",
+        aws_access_key="ACCESS_KEY",
+        aws_secret_key="SECRET_KEY",
+    )
+    with pytest.raises(NotImplementedError):
+        notifier.run_action()
+
+
+def test_send_message(boto3_client: MockType, logger_info: MockType) -> None:
     notifier = SendSNSNotification(
         topic_arn="arn:aws:sns:us-east-1:123456789012:MyTopic",
         aws_access_key="ACCESS_KEY",
@@ -66,7 +79,9 @@ def test_send_message(boto3_client, logger_info):
     assert logger_info.call_count == 2
 
 
-def test_log_error_when_sns_returns_error(boto3_client, logger_error):
+def test_log_error_when_sns_returns_error(
+    boto3_client: MockType, logger_error: MockType
+) -> None:
     boto3_client.return_value.publish.side_effect = Exception("SNS Error")
     notifier = SendSNSNotification(
         topic_arn="arn:aws:sns:us-east-1:123456789012:MyTopic",
@@ -80,7 +95,9 @@ def test_log_error_when_sns_returns_error(boto3_client, logger_error):
     assert logger_error.call_count == 1
 
 
-def test_send_sns_notification_spider_started(mocker, mock_notifier_data):
+def test_send_sns_notification_spider_started(
+    mocker: MockerFixture, mock_notifier_data: MagicMock
+) -> None:
     notifier = SendSNSNotificationSpiderStarted(
         topic_arn="arn:aws:sns:us-east-1:123456789012:MyTopic",
         aws_access_key="ACCESS_KEY",
@@ -100,7 +117,9 @@ def test_send_sns_notification_spider_started(mocker, mock_notifier_data):
     mock_send_message.assert_called_once_with(expected_subject, expected_attributes)
 
 
-def test_send_sns_notification_spider_finished(mocker, mock_notifier_data):
+def test_send_sns_notification_spider_finished(
+    mocker: MockerFixture, mock_notifier_data: MagicMock
+) -> None:
     notifier = SendSNSNotificationSpiderFinished(
         topic_arn="arn:aws:sns:us-east-1:123456789012:MyTopic",
         aws_access_key="ACCESS_KEY",

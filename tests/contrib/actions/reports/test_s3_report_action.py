@@ -1,4 +1,7 @@
+from pathlib import Path
+
 import pytest
+from pytest_mock import MockerFixture, MockType
 
 pytest.importorskip("scrapy")
 
@@ -7,11 +10,11 @@ from spidermon.exceptions import NotConfigured
 
 
 @pytest.fixture
-def boto3_client(mocker):
+def boto3_client(mocker: MockerFixture) -> MockType:
     return mocker.patch("spidermon.contrib.actions.reports.s3.boto3.client")
 
 
-def test_uploader_uses_boto3_client(boto3_client):
+def test_uploader_uses_boto3_client(boto3_client: MockType) -> None:
     S3Uploader("ACCESS_KEY", "SECRET_KEY")
     boto3_client.assert_called_once_with(
         "s3",
@@ -20,7 +23,7 @@ def test_uploader_uses_boto3_client(boto3_client):
     )
 
 
-def test_upload_from_content(boto3_client):
+def test_upload_from_content(boto3_client: MockType) -> None:
     uploader = S3Uploader("ACCESS_KEY", "SECRET_KEY")
     uploader.upload_from_content(
         content="report content",
@@ -38,7 +41,7 @@ def test_upload_from_content(boto3_client):
     )
 
 
-def test_upload_from_file(boto3_client, tmp_path):
+def test_upload_from_file(boto3_client: MockType, tmp_path: Path) -> None:
     source_file = tmp_path / "report.html"
     source_file.write_text("report content")
     uploaded_body = []
@@ -60,7 +63,7 @@ def test_upload_from_file(boto3_client, tmp_path):
     assert "ACL" not in kwargs
 
 
-def test_fail_if_no_aws_access_key():
+def test_fail_if_no_aws_access_key() -> None:
     with pytest.raises(NotConfigured):
         CreateS3Report(
             template="report.jinja",
@@ -70,7 +73,7 @@ def test_fail_if_no_aws_access_key():
         )
 
 
-def test_fail_if_no_aws_secret_key():
+def test_fail_if_no_aws_secret_key() -> None:
     with pytest.raises(NotConfigured):
         CreateS3Report(
             template="report.jinja",
@@ -80,7 +83,7 @@ def test_fail_if_no_aws_secret_key():
         )
 
 
-def test_fail_if_no_s3_bucket():
+def test_fail_if_no_s3_bucket() -> None:
     with pytest.raises(NotConfigured):
         CreateS3Report(
             template="report.jinja",
@@ -90,7 +93,7 @@ def test_fail_if_no_s3_bucket():
         )
 
 
-def test_fail_if_no_s3_filename():
+def test_fail_if_no_s3_filename() -> None:
     with pytest.raises(NotConfigured):
         CreateS3Report(
             template="report.jinja",
@@ -100,7 +103,9 @@ def test_fail_if_no_s3_filename():
         )
 
 
-def test_after_render_report_uploads_to_s3(boto3_client, mocker):
+def test_after_render_report_uploads_to_s3(
+    boto3_client: MockType, mocker: MockerFixture
+) -> None:
     report = CreateS3Report(
         template="report.jinja",
         aws_access_key="ACCESS_KEY",
@@ -121,7 +126,7 @@ def test_after_render_report_uploads_to_s3(boto3_client, mocker):
     assert kwargs["ACL"] == "public-read"
 
 
-def test_get_s3_report_url(mocker):
+def test_get_s3_report_url(mocker: MockerFixture) -> None:
     report = CreateS3Report(
         template="report.jinja",
         aws_access_key="ACCESS_KEY",
@@ -133,3 +138,23 @@ def test_get_s3_report_url(mocker):
     url = report.get_s3_report_url()
     assert url.startswith("https://s3.amazonaws.com/my-bucket/reports/")
     assert url.endswith("/report.html")
+
+
+def test_get_meta_appends_report_url(mocker: MockerFixture) -> None:
+    report = CreateS3Report(
+        template="report.jinja",
+        aws_access_key="ACCESS_KEY",
+        aws_secret_key="SECRET_KEY",
+        s3_bucket="my-bucket",
+        s3_filename="report.html",
+    )
+    report.result = mocker.MagicMock()
+    report.data = mocker.MagicMock(
+        meta={"reports": ["https://example.com/previous.html"]}
+    )
+    assert report.get_meta() == {
+        "reports_links": [
+            "https://example.com/previous.html",
+            report.get_s3_report_url(),
+        ]
+    }

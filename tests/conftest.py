@@ -5,6 +5,7 @@ try:
 except ImportError:
     pass
 else:
+    from collections.abc import Callable
     from typing import Any
 
     import pytest
@@ -13,8 +14,8 @@ else:
     from scrapy.statscollectors import MemoryStatsCollector
 
     @pytest.fixture
-    def get_crawler():
-        def _crawler(extended_settings: dict[str, Any] | None = None):
+    def get_crawler() -> Callable[..., Crawler]:
+        def _crawler(extended_settings: dict[str, Any] | None = None) -> Crawler:
             extended_settings = extended_settings or {}
             settings = {
                 "SPIDERMON_ENABLED": True,

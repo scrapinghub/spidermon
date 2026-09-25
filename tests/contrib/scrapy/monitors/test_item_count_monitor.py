@@ -1,3 +1,6 @@
+from collections.abc import Callable
+from typing import Any
+
 import pytest
 
 pytest.importorskip("scrapy")
@@ -8,11 +11,13 @@ from spidermon.exceptions import NotConfigured
 
 
 @pytest.fixture
-def item_count_suite():
+def item_count_suite() -> MonitorSuite:
     return MonitorSuite(monitors=[ItemCountMonitor])
 
 
-def test_needs_to_configure_item_count_monitor(make_data, item_count_suite):
+def test_needs_to_configure_item_count_monitor(
+    make_data: Callable[..., dict[str, Any]], item_count_suite: MonitorSuite
+) -> None:
     data = make_data()
     runner = data.pop("runner")
     data["crawler"].stats.set_value("item_scraped_count", 10)
@@ -32,12 +37,12 @@ def test_needs_to_configure_item_count_monitor(make_data, item_count_suite):
     ],
 )
 def test_item_count_monitor_validation(
-    make_data,
-    item_count_suite,
-    value,
-    threshold,
-    expected_status,
-):
+    make_data: Callable[..., dict[str, Any]],
+    item_count_suite: MonitorSuite,
+    value: Any,
+    threshold: Any,
+    expected_status: Any,
+) -> None:
     data = make_data({ItemCountMonitor.threshold_setting: threshold})
     runner = data.pop("runner")
 

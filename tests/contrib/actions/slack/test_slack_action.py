@@ -1,6 +1,7 @@
 import ast
 
 import pytest
+from pytest_mock import MockerFixture, MockType
 
 pytest.importorskip("jinja2")
 
@@ -12,11 +13,11 @@ from spidermon.results.items import MonitorResult
 
 
 @pytest.fixture
-def logger_info(mocker):
+def logger_info(mocker: MockerFixture) -> MockType:
     return mocker.patch("spidermon.contrib.actions.slack.logger.info")
 
 
-def test_log_text_when_fake_set(logger_info):
+def test_log_text_when_fake_set(logger_info: MockType) -> None:
     text_to_be_logged = "text to be logged"
 
     manager = SlackMessageManager(
@@ -30,7 +31,7 @@ def test_log_text_when_fake_set(logger_info):
     assert text_to_be_logged in logger_info.call_args[0]
 
 
-def test_log_text_and_attachment_when_fake_set(logger_info):
+def test_log_text_and_attachment_when_fake_set(logger_info: MockType) -> None:
     text_to_be_logged = "text to be logged"
     attach_to_be_logged = "attachment content"
 
@@ -46,7 +47,7 @@ def test_log_text_and_attachment_when_fake_set(logger_info):
     assert attach_to_be_logged in logger_info.call_args_list[1][0]
 
 
-def test_do_not_log_text_when_fake_is_not_set(logger_info):
+def test_do_not_log_text_when_fake_is_not_set(logger_info: MockType) -> None:
     text_not_to_be_logged = "text not to be logged"
 
     manager = SlackMessageManager(
@@ -59,7 +60,7 @@ def test_do_not_log_text_when_fake_is_not_set(logger_info):
     assert logger_info.call_count == 0
 
 
-def test_do_not_log_text_and_attach_when_fake_is_not_set(logger_info):
+def test_do_not_log_text_and_attach_when_fake_is_not_set(logger_info: MockType) -> None:
     text_not_to_be_logged = "text not to be logged"
     attach_not_to_be_logged = "attachment content"
 
@@ -78,7 +79,9 @@ def test_do_not_log_text_and_attach_when_fake_is_not_set(logger_info):
 
 
 @patch("spidermon.contrib.actions.slack.WebClient")
-def test_pass_arbitrary_args_to_manager_send_message_channel(slack_mock):
+def test_pass_arbitrary_args_to_manager_send_message_channel(
+    slack_mock: MagicMock,
+) -> None:
     manager = SlackMessageManager(
         sender_token="anything",
         sender_name="@someone",
@@ -91,12 +94,14 @@ def test_pass_arbitrary_args_to_manager_send_message_channel(slack_mock):
         arbitrary_arg=True,
     )
 
-    _, kwargs = manager._client.chat_postMessage.call_args_list[0]
+    _, kwargs = slack_mock.return_value.chat_postMessage.call_args_list[0]
     assert "arbitrary_arg" in kwargs
 
 
 @patch("spidermon.contrib.actions.slack.WebClient")
-def test_pass_arbitrary_args_to_manager_send_message_user(slack_mock):
+def test_pass_arbitrary_args_to_manager_send_message_user(
+    slack_mock: MagicMock,
+) -> None:
     manager = SlackMessageManager(
         sender_token="anything",
         sender_name="@someone",
@@ -111,11 +116,11 @@ def test_pass_arbitrary_args_to_manager_send_message_user(slack_mock):
         arbitrary_arg=True,
     )
 
-    _, kwargs = manager._client.chat_postMessage.call_args_list[0]
+    _, kwargs = slack_mock.return_value.chat_postMessage.call_args_list[0]
     assert "arbitrary_arg" in kwargs
 
 
-def test_message_sender_pass_kwargs():
+def test_message_sender_pass_kwargs() -> None:
     sender = SendSlackMessage(
         sender_token="anything",
         sender_name="@someone",
@@ -123,16 +128,15 @@ def test_message_sender_pass_kwargs():
         a_new_arg="hello",
     )
 
-    sender.manager._client = MagicMock()
-    sender.get_message = MagicMock()
-    sender.get_attachments = MagicMock()
+    client = MagicMock()
+    sender.manager._client = client
+    with (
+        patch.object(sender, "get_message", return_value="a message"),
+        patch.object(sender, "get_attachments", return_value=None),
+    ):
+        sender.run_action()
 
-    sender.get_message.return_value = "a message"
-    sender.get_attachments.return_value = None
-
-    sender.run_action()
-
-    _, kwargs = sender.manager._client.chat_postMessage.call_args_list[0]
+    _, kwargs = client.chat_postMessage.call_args_list[0]
     assert "a_new_arg" in kwargs
 
 
@@ -143,12 +147,12 @@ class FakeMonitor:
 class FakeSuiteResult:
     all_monitors_passed = False
 
-    def __init__(self, failed_results):
-        self.monitors_passed_results = []
+    def __init__(self, failed_results: list[MonitorResult]) -> None:
+        self.monitors_passed_results: list[MonitorResult] = []
         self.monitors_failed_results = failed_results
 
 
-def test_failed_attachments_include_reason():
+def test_failed_attachments_include_reason() -> None:
     result = MonitorResult(FakeMonitor())
     result.reason = 'Field "name": expected in 5 items, got in 2'
 
@@ -158,10 +162,11 @@ def test_failed_attachments_include_reason():
         recipients=["user"],
         include_error_attachments=True,
     )
-    sender.result = FakeSuiteResult([result])
+    sender.result = FakeSuiteResult([result])  # type: ignore[assignment]
     sender.data = None
 
     attachments = sender.get_attachments()
+    assert attachments is not None
     parsed = ast.literal_eval(attachments)
 
     assert result.reason in parsed[0]["text"]

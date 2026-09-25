@@ -6,7 +6,7 @@ from spidermon.contrib.validation.translator import MessageTranslator
 
 
 @pytest.fixture
-def message_translator():
+def message_translator() -> MessageTranslator:
     class FixtureMessageTranslator(MessageTranslator):
         messages: ClassVar[dict[str, str]] = {
             r"Simple Message": "Translated Simple Message",
@@ -25,5 +25,9 @@ def message_translator():
         ("Options: a, b, c", "Translated With Options: a, b, c"),
     ],
 )
-def test_message_translator(message_translator, original_message, translated_message):
+def test_message_translator(
+    message_translator: MessageTranslator,
+    original_message: str,
+    translated_message: str,
+) -> None:
     assert message_translator.translate_message(original_message) == translated_message

@@ -1,10 +1,16 @@
+from __future__ import annotations
+
 import json
 import logging
+from typing import TYPE_CHECKING, Any
 
 import requests
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
+
+if TYPE_CHECKING:
+    from scrapy.crawler import Crawler
 
 logger = logging.getLogger(__name__)
 
@@ -12,10 +18,10 @@ logger = logging.getLogger(__name__)
 class SimplyTelegramClient:
     send_message_api = "https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&parse_mode=Markdown&text={text}"
 
-    def __init__(self, token):
+    def __init__(self, token: str) -> None:
         self.token = token
 
-    def send_message(self, message, recipient):
+    def send_message(self, message: str, recipient: str) -> None:
         api_url = self.send_message_api.format(
             token=self.token,
             chat_id=recipient,
@@ -32,7 +38,7 @@ class SimplyTelegramClient:
 class TelegramMessageManager:
     sender_token = None
 
-    def __init__(self, sender_token=None, fake=False):
+    def __init__(self, sender_token: str | None = None, fake: bool = False) -> None:
         sender_token = sender_token or self.sender_token
         if not sender_token:
             raise NotConfigured(
@@ -42,7 +48,7 @@ class TelegramMessageManager:
         self.fake = fake
         self._client = SimplyTelegramClient(sender_token)
 
-    def send_message(self, to, text):
+    def send_message(self, to: list[str], text: str) -> None:
         if self.fake:
             logger.info(text)
             return
@@ -59,12 +65,12 @@ class SendTelegramMessage(ActionWithTemplates):
 
     def __init__(
         self,
-        sender_token=None,
-        recipients=None,
-        message=None,
-        message_template=None,
-        fake=None,
-    ):
+        sender_token: str | None = None,
+        recipients: list[str] | None = None,
+        message: str | None = None,
+        message_template: str | None = None,
+        fake: bool | None = None,
+    ) -> None:
         super().__init__()
 
         self.fake = fake or self.fake
@@ -82,7 +88,7 @@ class SendTelegramMessage(ActionWithTemplates):
             )
 
     @classmethod
-    def from_crawler_kwargs(cls, crawler):
+    def from_crawler_kwargs(cls, crawler: Crawler) -> dict[str, Any]:
         return {
             "sender_token": crawler.settings.get("SPIDERMON_TELEGRAM_SENDER_TOKEN"),
             "recipients": crawler.settings.getlist("SPIDERMON_TELEGRAM_RECIPIENTS"),
@@ -93,10 +99,11 @@ class SendTelegramMessage(ActionWithTemplates):
             "fake": crawler.settings.getbool("SPIDERMON_TELEGRAM_FAKE"),
         }
 
-    def run_action(self):
+    def run_action(self) -> None:
+        assert self.recipients is not None
         self.manager.send_message(to=self.recipients, text=self.get_message())
 
-    def get_message(self):
+    def get_message(self) -> str:
         if self.message:
             return self.render_text_template(self.message)
         return self.render_template(self.message_template)

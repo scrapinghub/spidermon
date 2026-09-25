@@ -1,9 +1,18 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 import boto3
 
 from spidermon.exceptions import NotConfigured
 from spidermon.utils.settings import get_aws_credentials
 
 from . import SendEmail
+
+if TYPE_CHECKING:
+    from email.mime.multipart import MIMEMultipart
+
+    from scrapy.crawler import Crawler
 
 
 class SendSESEmail(SendEmail):
@@ -14,13 +23,13 @@ class SendSESEmail(SendEmail):
 
     def __init__(
         self,
-        aws_access_key=None,
-        aws_secret_key=None,
-        aws_region_name=None,
-        aws_return_path=None,
-        *args,
-        **kwargs,
-    ):
+        aws_access_key: str | None = None,
+        aws_secret_key: str | None = None,
+        aws_region_name: str | None = None,
+        aws_return_path: str | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
         self.aws_access_key = aws_access_key or self.aws_access_key
         self.aws_secret_key = aws_secret_key or self.aws_secret_key
@@ -36,7 +45,7 @@ class SendSESEmail(SendEmail):
             )
 
     @classmethod
-    def from_crawler_kwargs(cls, crawler):
+    def from_crawler_kwargs(cls, crawler: Crawler) -> dict[str, Any]:
         kwargs = super().from_crawler_kwargs(crawler)
         (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(
             crawler.settings,
@@ -51,8 +60,8 @@ class SendSESEmail(SendEmail):
         )
         return kwargs
 
-    def _get_recipients(self):
-        recipients = []
+    def _get_recipients(self) -> list[str]:
+        recipients: list[str] = []
         for recipient_subset in (self.to, self.cc, self.bcc):
             if not recipient_subset:
                 pass
@@ -62,7 +71,7 @@ class SendSESEmail(SendEmail):
                 recipients.extend(recipient_subset)
         return recipients
 
-    def send_message(self, message, **kwargs):
+    def send_message(self, message: MIMEMultipart, **kwargs: Any) -> None:
         client = boto3.client(
             service_name="ses",
             region_name=self.aws_region_name,

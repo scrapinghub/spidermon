@@ -1,11 +1,23 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
+
+if TYPE_CHECKING:
+    from scrapy.crawler import Crawler
 
 
 class CreateReport(ActionWithTemplates):
     template = None
 
-    def __init__(self, template=None, *args, **kwargs):
+    def __init__(
+        self,
+        template: str | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
         self.template = template or self.template
         self.report = ""
@@ -15,7 +27,7 @@ class CreateReport(ActionWithTemplates):
             )
 
     @classmethod
-    def from_crawler_kwargs(cls, crawler):
+    def from_crawler_kwargs(cls, crawler: Crawler) -> dict[str, Any]:
         kwargs = super().from_crawler_kwargs(crawler)
         kwargs.update(
             {
@@ -25,16 +37,17 @@ class CreateReport(ActionWithTemplates):
         )
         return kwargs
 
-    def run_action(self):
+    def run_action(self) -> None:
         self.before_render_report()
         self.render_report()
         self.after_render_report()
 
-    def before_render_report(self):
+    def before_render_report(self) -> None:
         pass
 
-    def render_report(self):
+    def render_report(self) -> None:
+        assert self.template is not None
         self.report = self.render_template(self.template)
 
-    def after_render_report(self):
+    def after_render_report(self) -> None:
         pass

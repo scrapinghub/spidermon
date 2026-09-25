@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import json
+from typing import TYPE_CHECKING, Any, cast
 
 from jsonschema import validate
 
@@ -9,6 +12,9 @@ from spidermon.exceptions import InvalidMonitor, NotConfigured
 from . import schemas
 from .interpreter import Interpreter
 
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable
+
 
 class PythonExpressionsMonitor(Monitor):
     _classes_counter = 0
@@ -16,28 +22,34 @@ class PythonExpressionsMonitor(Monitor):
     _test_methods_prefix = "test"
 
     @classmethod
-    def generate_class_name(cls):
+    def generate_class_name(cls) -> str:
         cls._classes_counter += 1
         return f"{cls.__name__}{cls._classes_counter}"
 
     @classmethod
-    def generate_method_name(cls):
+    def generate_method_name(cls) -> str:
         cls._test_methods_counter += 1
         return (
             f"{cls._test_methods_prefix}_python_expression_{cls._test_methods_counter}"
         )
 
-    def get_context_data(self):
+    def get_context_data(self) -> dict[str, Any]:
         raise NotConfigured("Context data needs to be set up")
 
 
-def create_monitor_class_from_json(monitor_json, monitor_class=None):
+def create_monitor_class_from_json(
+    monitor_json: str | bytes,
+    monitor_class: type[PythonExpressionsMonitor] | None = None,
+) -> type[PythonExpressionsMonitor]:
     monitor_dict = json.loads(monitor_json)
     validate(monitor_dict, schemas.MONITOR_SCHEMA)
     return create_monitor_class_from_dict(monitor_dict, monitor_class)
 
 
-def create_monitor_class_from_dict(monitor_dict, monitor_class=None):
+def create_monitor_class_from_dict(
+    monitor_dict: dict[str, Any],
+    monitor_class: type[PythonExpressionsMonitor] | None = None,
+) -> type[PythonExpressionsMonitor]:
     tests = [
         (
             test["expression"],
@@ -56,12 +68,18 @@ def create_monitor_class_from_dict(monitor_dict, monitor_class=None):
     return klass
 
 
-def _create_monitor_class(expressions, monitor_class=None):
+def _create_monitor_class(
+    expressions: Iterable[str | tuple[str, str | None, str | None, str | None]],
+    monitor_class: type[PythonExpressionsMonitor] | None = None,
+) -> type[PythonExpressionsMonitor]:
     monitor_class = monitor_class or PythonExpressionsMonitor
     if not issubclass(monitor_class, PythonExpressionsMonitor):
         msg = "Python expressions monitors must subclass PythonExpressionsMonitor"
         raise InvalidMonitor(msg)
-    klass = type(monitor_class.generate_class_name(), (monitor_class,), {})
+    klass = cast(
+        "type[PythonExpressionsMonitor]",
+        type(monitor_class.generate_class_name(), (monitor_class,), {}),
+    )
     for e in expressions:
         if isinstance(e, tuple):
             method = _create_test_method(*e)
@@ -71,8 +89,13 @@ def _create_monitor_class(expressions, monitor_class=None):
     return klass
 
 
-def _create_test_method(expression, name=None, description=None, fail_reason=None):
-    def _test_method(self):
+def _create_test_method(
+    expression: str,
+    name: str | None = None,
+    description: str | None = None,
+    fail_reason: str | None = None,
+) -> Callable[[PythonExpressionsMonitor], None]:
+    def _test_method(self: PythonExpressionsMonitor) -> None:
         interpreter = Interpreter()
         context = self.get_context_data()
         result = interpreter.eval(expression, context=context)
@@ -86,10 +109,10 @@ def _create_test_method(expression, name=None, description=None, fail_reason=Non
                 ),
             )
 
-    test_method = _test_method
+    test_method: Any = _test_method
     MonitorOptions.add_or_create(test_method)
     test_method.options.name = name or settings.MONITOR.DEFAULT_NAME
     test_method.options.description = (
         description or settings.MONITOR.DEFAULT_DESCRIPTION
     )
-    return test_method
+    return _test_method

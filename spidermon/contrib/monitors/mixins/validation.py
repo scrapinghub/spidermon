@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import warnings
+from typing import TYPE_CHECKING, Any, NoReturn
 
 from spidermon.contrib.scrapy.stats import STATS_DEFAULT_VALIDATION_PREFIX
 from spidermon.contrib.stats.analyzer import StatsAnalyzer
@@ -10,9 +13,12 @@ from spidermon.contrib.stats.counters import (
 
 from .stats import StatsMonitorMixin
 
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Mapping
+
 
 class MetaDictPercentCounter(DictPercentCounter):
-    def add_values(self, key, subkey, value):
+    def add_values(self, key: str, subkey: str, value: int) -> None:
         if key not in self._dict:
             self._create_item(key)
         self[key].add_value(subkey, value)
@@ -33,24 +39,26 @@ class FieldErrorsDictPercentCounter(AttributeDictPercentCounter):
 class FieldErrorsInfo(MetaDictPercentCounter):
     __items_class__ = FieldErrorsDictPercentCounter
 
-    def __init__(self, fields_count, items_count):
+    def __init__(self, fields_count: int, items_count: int) -> None:
         super().__init__(items_count)
         self._fields_count = fields_count
 
     @property
-    def count(self):
+    def count(self) -> int:
         return self._fields_count
 
 
 class ItemsInfo:
-    def __init__(self, items_count, items_with_errors, items_dropped):
+    def __init__(
+        self, items_count: int, items_with_errors: int, items_dropped: int
+    ) -> None:
         self.count = items_count
         self.errors = PercentCounter(count=items_with_errors, total=items_count)
         self.dropped = PercentCounter(count=items_dropped, total=items_count)
 
 
 class ValidationInfo:
-    def __init__(self, stats, prefix=None):
+    def __init__(self, stats: Mapping[str, Any], prefix: str | None = None) -> None:
         self.analyzer = StatsAnalyzer(
             stats=stats,
             prefix=prefix or STATS_DEFAULT_VALIDATION_PREFIX,
@@ -94,17 +102,23 @@ class ValidationMonitorMixin(StatsMonitorMixin):
 
     correct_field_list_handling = False
 
+    if TYPE_CHECKING:
+
+        def fail(self, msg: Any = None) -> NoReturn: ...
+
+        def assertLessEqual(self, a: Any, b: Any, msg: Any = None) -> None: ...
+
     @property
-    def validation(self):
+    def validation(self) -> ValidationInfo:
         if not hasattr(self, "_validation"):
             self._validation = ValidationInfo(self.stats)
         return self._validation
 
-    def _get_all_fields(self):
+    def _get_all_fields(self) -> list[str]:
         return sorted(self.validation.fields)
 
     @staticmethod
-    def _warn_list_handling():
+    def _warn_list_handling() -> None:
         warnings.warn(
             "ValidationMonitorMixin behavior with is deprecated, please switch to per-field thresholds and set the "
             '"correct_field_list_handling" class attribute',
@@ -112,7 +126,9 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             stacklevel=3,
         )
 
-    def check_missing_required_fields(self, field_names=None, allowed_count=0):
+    def check_missing_required_fields(
+        self, field_names: Iterable[str] | None = None, allowed_count: int = 0
+    ) -> None:
         """Check that the number of "missing_required_field" errors for the
         ``field_names`` fields is less or equal than ``allowed_count`` and
         raise an error with all problematic fields.
@@ -159,7 +175,9 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             msgs.insert(0, "Required fields are missing:")
             self.fail("\n".join(msgs))
 
-    def check_missing_required_field(self, field_name, allowed_count=0):
+    def check_missing_required_field(
+        self, field_name: str, allowed_count: int = 0
+    ) -> None:
         """Check that the number of "missing_required_field" errors for the
         ``field_name`` field is less or equal than ``allowed_count``."""
         missing_count = (
@@ -173,16 +191,18 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         self.assertLessEqual(missing_count, allowed_count, msg)
 
     @staticmethod
-    def _get_msg_for_missing_required_count(field_name, missing_count, allowed_count):
+    def _get_msg_for_missing_required_count(
+        field_name: str, missing_count: int, allowed_count: int
+    ) -> str:
         return f"Required field {field_name} is missing in {missing_count} items!" + (
             f" (maximum allowed {allowed_count})" if allowed_count > 0 else ""
         )
 
     def check_missing_required_fields_percent(
         self,
-        field_names=None,
-        allowed_percent=0,
-    ):
+        field_names: Iterable[str] | None = None,
+        allowed_percent: float = 0,
+    ) -> None:
         """Check that the number of "missing_required_field" errors for the
         ``field_names`` fields divided by the number of items is less or equal
         than ``allowed_percent`` and raise an error with all problematic
@@ -230,7 +250,9 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             msgs.insert(0, "Required fields are missing:")
             self.fail("\n".join(msgs))
 
-    def check_missing_required_field_percent(self, field_name, allowed_percent=0):
+    def check_missing_required_field_percent(
+        self, field_name: str, allowed_percent: float = 0
+    ) -> None:
         """Check that the number of "missing_required_field" errors for the
         ``field_name`` field divided by the number of items is less or equal
         than ``allowed_percent``."""
@@ -246,10 +268,10 @@ class ValidationMonitorMixin(StatsMonitorMixin):
 
     @staticmethod
     def _get_msg_for_missing_required_percent(
-        field_name,
-        missing_percent,
-        allowed_percent,
-    ):
+        field_name: str,
+        missing_percent: float,
+        allowed_percent: float,
+    ) -> str:
         return (
             f"{missing_percent * 100}% of required field {field_name} are missing!"
             + (
@@ -259,7 +281,12 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             )
         )
 
-    def check_fields_errors(self, field_names=None, errors=None, allowed_count=0):
+    def check_fields_errors(
+        self,
+        field_names: Iterable[str] | None = None,
+        errors: Iterable[str] | None = None,
+        allowed_count: int = 0,
+    ) -> None:
         """Check that the number of errors for the ``field_names`` fields is
         less or equal than ``allowed_count`` and raise an error with all
         problematic fields.
@@ -301,14 +328,20 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             msgs.insert(0, "There are field errors:")
             self.fail("\n".join(msgs))
 
-    def check_field_errors(self, field_name, errors=None, allowed_count=0):
+    def check_field_errors(
+        self,
+        field_name: str,
+        errors: Iterable[str] | None = None,
+        allowed_count: int = 0,
+    ) -> None:
         """Check that the number of errors for the ``field_name`` field is less
         or equal than ``allowed_count``."""
         errors_count = self._get_errors_count(errors, field_name)
         msg = self._get_msg_for_field_errors(field_name, errors_count, allowed_count)
         self.assertLessEqual(errors_count, allowed_count, msg)
 
-    def _get_errors_count(self, errors, field_name):
+    def _get_errors_count(self, errors: Iterable[str] | None, field_name: str) -> int:
+        errors_count: int
         if errors:
             errors_count = sum(
                 [self.validation.fields[field_name].errors[e].count for e in errors],
@@ -318,17 +351,19 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         return errors_count
 
     @staticmethod
-    def _get_msg_for_field_errors(field_name, errors_count, allowed_count):
+    def _get_msg_for_field_errors(
+        field_name: str, errors_count: int, allowed_count: int
+    ) -> str:
         return f"Field {field_name} has {errors_count} validation errors!" + (
             f" (maximum allowed {allowed_count})" if allowed_count > 0 else ""
         )
 
     def check_fields_errors_percent(
         self,
-        field_names=None,
-        errors=None,
-        allowed_percent=0,
-    ):
+        field_names: Iterable[str] | None = None,
+        errors: Iterable[str] | None = None,
+        allowed_percent: float = 0,
+    ) -> None:
         """Check that the number of errors for the ``field_names`` fields
         divided by the number of items is less or equal than
         ``allowed_percent`` and raise an error with all problematic fields.
@@ -371,7 +406,12 @@ class ValidationMonitorMixin(StatsMonitorMixin):
             msgs.insert(0, "There are field errors:")
             self.fail("\n".join(msgs))
 
-    def check_field_errors_percent(self, field_name, errors=None, allowed_percent=0):
+    def check_field_errors_percent(
+        self,
+        field_name: str,
+        errors: Iterable[str] | None = None,
+        allowed_percent: float = 0,
+    ) -> None:
         """
         Check that the number of errors for the ``field_name`` field divided by the number of items is less or equal
         than ``allowed_percent``.
@@ -384,7 +424,10 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         )
         self.assertLessEqual(errors_percent, allowed_percent, msg)
 
-    def _get_errors_percent(self, errors, field_name):
+    def _get_errors_percent(
+        self, errors: Iterable[str] | None, field_name: str
+    ) -> float:
+        errors_percent: float
         if errors:
             errors_percent = sum(
                 [self.validation.fields[field_name].errors[e].percent for e in errors],
@@ -394,7 +437,9 @@ class ValidationMonitorMixin(StatsMonitorMixin):
         return errors_percent
 
     @staticmethod
-    def _get_msg_for_field_errors_percent(field_name, errors_percent, allowed_percent):
+    def _get_msg_for_field_errors_percent(
+        field_name: str, errors_percent: float, allowed_percent: float
+    ) -> str:
         return "{percent}% of field {field} have validation errors!{threshold_info}".format(
             percent=errors_percent * 100,
             field=field_name,

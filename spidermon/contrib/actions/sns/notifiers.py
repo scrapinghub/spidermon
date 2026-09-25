@@ -2,7 +2,8 @@ from . import SendSNSNotification
 
 
 class SendSNSNotificationSpiderStarted(SendSNSNotification):
-    def run_action(self):
+    def run_action(self) -> None:
+        assert self.data is not None
         subject = "Spider Started"
         attributes = {
             "EventType": {"DataType": "String", "StringValue": "SpiderStarted"},
@@ -19,7 +20,8 @@ class SendSNSNotificationSpiderStarted(SendSNSNotification):
 
 
 class SendSNSNotificationSpiderFinished(SendSNSNotification):
-    def run_action(self):
+    def run_action(self) -> None:
+        assert self.data is not None
         subject = "Spider Finished"
         attributes = {
             "EventType": {"DataType": "String", "StringValue": "SpiderFinished"},

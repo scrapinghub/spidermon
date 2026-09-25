@@ -1,3 +1,6 @@
+from collections.abc import Callable
+from typing import Any
+
 import pytest
 
 pytest.importorskip("scrapy")
@@ -33,12 +36,12 @@ from spidermon.exceptions import NotConfigured
     ],
 )
 def test_base_stat_monitor_assertion_types(
-    make_data,
-    assertion_type,
-    stat_value,
-    threshold,
-    expected_status,
-):
+    make_data: Callable[..., dict[str, Any]],
+    assertion_type: Any,
+    stat_value: Any,
+    threshold: Any,
+    expected_status: Any,
+) -> None:
     class TestBaseStatMonitor(BaseStatMonitor):
         stat_name = "test_statistic"
         threshold_setting = "THRESHOLD_SETTING"
@@ -53,7 +56,9 @@ def test_base_stat_monitor_assertion_types(
     assert runner.result.monitor_results[0].status == expected_status
 
 
-def test_base_stat_monitor_raise_not_configured_if_setting_not_provided(make_data):
+def test_base_stat_monitor_raise_not_configured_if_setting_not_provided(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     class TestBaseStatMonitor(BaseStatMonitor):
         stat_name = "test_statistic"
         threshold_setting = "THRESHOLD_SETTING"
@@ -68,7 +73,9 @@ def test_base_stat_monitor_raise_not_configured_if_setting_not_provided(make_dat
         runner.run(monitor_suite, **data)
 
 
-def test_not_configured_without_threshold_setting_or_method(make_data):
+def test_not_configured_without_threshold_setting_or_method(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     class TestBaseStatMonitor(BaseStatMonitor):
         stat_name = "test_statistic"
         assert_type = "=="
@@ -82,12 +89,14 @@ def test_not_configured_without_threshold_setting_or_method(make_data):
         runner.run(monitor_suite, **data)
 
 
-def test_base_stat_monitor_using_get_threshold_method(make_data):
+def test_base_stat_monitor_using_get_threshold_method(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     class TestBaseStatMonitor(BaseStatMonitor):
         stat_name = "test_statistic"
         assert_type = "=="
 
-        def get_threshold(self):
+        def get_threshold(self) -> int:
             return 100
 
     data = make_data()
@@ -99,7 +108,9 @@ def test_base_stat_monitor_using_get_threshold_method(make_data):
     assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.SUCCESS
 
 
-def test_failure_message_describe_values_expected(make_data):
+def test_failure_message_describe_values_expected(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     class TestBaseStatMonitor(BaseStatMonitor):
         stat_name = "test_statistic"
         threshold_setting = "THRESHOLD_SETTING"
@@ -121,7 +132,9 @@ def test_failure_message_describe_values_expected(make_data):
     )
 
 
-def test_fail_if_stat_can_not_be_found(make_data):
+def test_fail_if_stat_can_not_be_found(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     class TestBaseStatMonitor(BaseStatMonitor):
         stat_name = "test_statistic"
         threshold_setting = "THRESHOLD_SETTING"
@@ -137,8 +150,8 @@ def test_fail_if_stat_can_not_be_found(make_data):
 
 
 def test_success_if_stat_can_not_be_found_but_monitor_configured_to_not_ignore_it(
-    make_data,
-):
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     class TestBaseStatMonitor(BaseStatMonitor):
         stat_name = "test_statistic"
         threshold_setting = "THRESHOLD_SETTING"
@@ -155,8 +168,8 @@ def test_success_if_stat_can_not_be_found_but_monitor_configured_to_not_ignore_i
 
 
 def test_skipped_if_stat_can_not_be_found_but_monitor_configured_to_be_ignore(
-    make_data,
-):
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     class TestBaseStatMonitor(BaseStatMonitor):
         stat_name = "test_statistic"
         threshold_setting = "THRESHOLD_SETTING"
@@ -172,7 +185,9 @@ def test_skipped_if_stat_can_not_be_found_but_monitor_configured_to_be_ignore(
     assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.SKIPPED
 
 
-def test_base_stat_monitor_correctly_converts_string_thresholds_float(make_data):
+def test_base_stat_monitor_correctly_converts_string_thresholds_float(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     class TestBaseStatMonitor(BaseStatMonitor):
         stat_name = "test_statistic"
         threshold_setting = "THRESHOLD_SETTING"
@@ -187,7 +202,9 @@ def test_base_stat_monitor_correctly_converts_string_thresholds_float(make_data)
     assert runner.result.monitor_results[0].status == settings.MONITOR.STATUS.SUCCESS
 
 
-def test_base_stat_monitor_correctly_converts_string_thresholds_int(make_data):
+def test_base_stat_monitor_correctly_converts_string_thresholds_int(
+    make_data: Callable[..., dict[str, Any]],
+) -> None:
     class TestBaseStatMonitor(BaseStatMonitor):
         stat_name = "test_statistic"
         threshold_setting = "THRESHOLD_SETTING"
