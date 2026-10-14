@@ -1,5 +1,6 @@
 from collections import defaultdict
 from dataclasses import dataclass
+from typing import Any
 
 import pytest
 
@@ -15,7 +16,7 @@ from spidermon.contrib.scrapy.pipelines import (
 
 
 @pytest.fixture
-def spidermon_enabled_settings():
+def spidermon_enabled_settings() -> dict[str, Any]:
     return {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -23,7 +24,7 @@ def spidermon_enabled_settings():
 
 
 @pytest.fixture
-def dummy_schema():
+def dummy_schema() -> dict[str, Any]:
     return {
         "$schema": "http://json-schema.org/draft-07/schema",
         "type": "object",
@@ -35,7 +36,7 @@ def dummy_schema():
     }
 
 
-def test_spidermon_enabled_return_item_validation_pipeline():
+def test_spidermon_enabled_return_item_validation_pipeline() -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -46,7 +47,7 @@ def test_spidermon_enabled_return_item_validation_pipeline():
     assert isinstance(pipeline, ItemValidationPipeline)
 
 
-def test_spidermon_disabled_return_pass_through_pipeline():
+def test_spidermon_disabled_return_pass_through_pipeline() -> None:
     settings = {
         "SPIDERMON_ENABLED": False,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -57,7 +58,9 @@ def test_spidermon_disabled_return_pass_through_pipeline():
     assert isinstance(pipeline, PassThroughPipeline)
 
 
-def test_return_pass_through_pipeline_if_spidermon_enabled_setting_is_not_provided():
+def test_return_pass_through_pipeline_if_spidermon_enabled_setting_is_not_provided() -> (
+    None
+):
     settings = {
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
         "SPIDERMON_VALIDATION_SCHEMAS": [{"dummy": "schema"}],
@@ -67,13 +70,13 @@ def test_return_pass_through_pipeline_if_spidermon_enabled_setting_is_not_provid
     assert isinstance(pipeline, PassThroughPipeline)
 
 
-def test_pass_through_pipeline():
+def test_pass_through_pipeline() -> None:
     pipeline = PassThroughPipeline()
     item = pipeline.process_item({"original": "item"})
     assert item == {"original": "item"}
 
 
-def test_jsonschema_validation(dummy_schema):
+def test_jsonschema_validation(dummy_schema: dict[str, Any]) -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "SPIDERMON_VALIDATION_SCHEMAS": [dummy_schema],
@@ -95,7 +98,7 @@ def test_jsonschema_validation(dummy_schema):
     assert result_item["_validation"]["foo"] == ["Missing required field"]
 
 
-def test_validation_errors_field(dummy_schema):
+def test_validation_errors_field(dummy_schema: dict[str, Any]) -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "SPIDERMON_VALIDATION_SCHEMAS": [dummy_schema],
@@ -107,7 +110,7 @@ def test_validation_errors_field(dummy_schema):
     pipeline = ItemValidationPipeline.from_crawler(crawler)
 
     # Instantiate validation field if not defined
-    item = {"no": "schema"}
+    item: dict[str, Any] = {"no": "schema"}
     item = pipeline.process_item(item, None)
     assert "custom_validation_field" in item
 
@@ -117,7 +120,9 @@ def test_validation_errors_field(dummy_schema):
     assert item["custom_validation_field"] is not None
 
 
-def test_add_error_to_items_undefined_validation_field(dummy_schema):
+def test_add_error_to_items_undefined_validation_field(
+    dummy_schema: dict[str, Any],
+) -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS": True,
@@ -129,7 +134,7 @@ def test_add_error_to_items_undefined_validation_field(dummy_schema):
     pipeline = ItemValidationPipeline.from_crawler(crawler)
 
     # Extensible classes like dict support adding additional field
-    item = {"foo": "invalid"}
+    item: Any = {"foo": "invalid"}
     item = pipeline.process_item(item, None)
     assert "custom_validation_field" in item
 
@@ -155,7 +160,7 @@ def test_add_error_to_items_undefined_validation_field(dummy_schema):
         item = pipeline.process_item(item, None)
 
 
-def test_misconfigured():
+def test_misconfigured() -> None:
     # No validators
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -192,7 +197,7 @@ def test_misconfigured():
         ItemValidationPipeline.from_crawler(crawler)
 
 
-def test_drop_invalid_item(dummy_schema):
+def test_drop_invalid_item(dummy_schema: dict[str, Any]) -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS": True,
@@ -209,7 +214,7 @@ def test_drop_invalid_item(dummy_schema):
         pipeline.process_item(item, None)
 
 
-def test_ignore_classes_without_schema(dummy_schema):
+def test_ignore_classes_without_schema(dummy_schema: dict[str, Any]) -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "SPIDERMON_VALIDATION_ADD_ERRORS_TO_ITEMS": True,

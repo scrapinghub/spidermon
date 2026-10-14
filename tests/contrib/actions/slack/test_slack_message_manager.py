@@ -1,4 +1,7 @@
+from typing import Any
+
 import pytest
+from pytest_mock import MockerFixture, MockType
 
 pytest.importorskip("scrapy")
 
@@ -11,24 +14,24 @@ from spidermon.contrib.actions.slack import SendSlackMessage, SlackMessageManage
 
 
 @pytest.fixture
-def logger_error(mocker):
+def logger_error(mocker: MockerFixture) -> MockType:
     return mocker.patch("spidermon.contrib.actions.slack.logger.error")
 
 
 @pytest.fixture
-def mock_webclient(mocker):
+def mock_webclient(mocker: MockerFixture) -> MockType:
     return mocker.patch("spidermon.contrib.actions.slack.WebClient")
 
 
 @pytest.mark.parametrize("recipients", ["foo,bar", ["foo", "bar"]])
-def test_load_recipients_list_from_crawler_settings(recipients):
+def test_load_recipients_list_from_crawler_settings(recipients: Any) -> None:
     settings = {"SPIDERMON_SLACK_RECIPIENTS": recipients}
     crawler = get_crawler(settings_dict=settings)
     kwargs = SendSlackMessage.from_crawler_kwargs(crawler)
     assert kwargs["recipients"] == ["foo", "bar"]
 
 
-def test_get_valid_icon_url(mock_webclient):
+def test_get_valid_icon_url(mock_webclient: MockType) -> None:
     mock_webclient().users_list.return_value = {
         "members": [{"name": "test_valid_user", "profile": {"image_48": "fake.jpg"}}],
     }
@@ -37,7 +40,7 @@ def test_get_valid_icon_url(mock_webclient):
     assert url == "fake.jpg"
 
 
-def test_get_invalid_user_icon_url(mock_webclient):
+def test_get_invalid_user_icon_url(mock_webclient: MockType) -> None:
     mock_webclient().users_list.return_value = {
         "members": [{"name": "test_valid_user", "profile": {"image_48": "fake.jpg"}}],
     }
@@ -46,25 +49,25 @@ def test_get_invalid_user_icon_url(mock_webclient):
     assert url is None
 
 
-def test_get_invalid_permissions_icon_url(mock_webclient):
+def test_get_invalid_permissions_icon_url(mock_webclient: MockType) -> None:
     class FakeResponse:
         data: ClassVar[dict[str, str]] = {
             "error": "missing_scope",
             "needed": "users:read",
         }
 
-    fake_error = SlackApiError("message", FakeResponse())
+    fake_error = SlackApiError("message", FakeResponse())  # type: ignore[no-untyped-call]
     mock_webclient().users_list.side_effect = fake_error
     manager = SlackMessageManager(sender_token="Fake", sender_name="test_invalid_bot")
     url = manager._get_icon_url()
     assert url is None
 
 
-def test_get_invalid_unknown_slack_error_icon_url(mock_webclient):
+def test_get_invalid_unknown_slack_error_icon_url(mock_webclient: MockType) -> None:
     class FakeResponse:
         data: ClassVar[dict[str, str]] = {"error": "unknown", "needed": "unknown"}
 
-    fake_error = SlackApiError("mocked error", FakeResponse())
+    fake_error = SlackApiError("mocked error", FakeResponse())  # type: ignore[no-untyped-call]
     mock_webclient().users_list.side_effect = fake_error
     manager = SlackMessageManager(sender_token="Fake", sender_name="test_invalid_bot")
     with pytest.raises(SlackApiError) as excinfo:

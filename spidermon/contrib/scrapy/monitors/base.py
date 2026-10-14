@@ -1,15 +1,24 @@
+from __future__ import annotations
+
 import logging
 import operator
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from spidermon import Monitor
 from spidermon.contrib.monitors.mixins.spider import SpiderMonitorMixin
 from spidermon.exceptions import NotConfigured
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from unittest import TestResult
+
+    from spidermon.data import Data
+
 logger = logging.getLogger(__name__)
 
 
 class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
+    data: Data
     longMessage = False
     ops: ClassVar[dict[str, Any]] = {
         ">": operator.gt,
@@ -21,19 +30,19 @@ class BaseScrapyMonitor(Monitor, SpiderMonitorMixin):
     }
 
     @property
-    def monitor_description(self):
+    def monitor_description(self) -> str:
         if self.__class__.__doc__:
             return self.__class__.__doc__.split("\n")[0]
         return super().monitor_description
 
-    def run(self, result):
+    def run(self, result: TestResult | None = None) -> TestResult | None:
         if self.check_if_skip_rule_met():
             logger.info(f"Skipping {self.name} monitor")
             return None
 
         return super().run(result)
 
-    def check_if_skip_rule_met(self):
+    def check_if_skip_rule_met(self) -> bool:
         crawler = self.data.get("crawler")
         if not crawler:
             return False
@@ -120,11 +129,14 @@ class BaseStatMonitor(BaseScrapyMonitor):
             fail_if_stat_missing = False
     """
 
+    stat_name: str
+    threshold_setting: str
+    assert_type: str
     fail_if_stat_missing = True
-    threshold_datatype = float
+    threshold_datatype: type[int | float] = float
 
     @property
-    def _get_threshold_setting(self):
+    def _get_threshold_setting(self) -> Callable[[str], float]:
         datatype_to_function = {
             int: self.crawler.settings.getint,
             float: self.crawler.settings.getfloat,
@@ -132,7 +144,7 @@ class BaseStatMonitor(BaseScrapyMonitor):
 
         return datatype_to_function[self.threshold_datatype]
 
-    def run(self, result):
+    def run(self, result: TestResult | None = None) -> TestResult | None:
         has_threshold_config = any(
             [hasattr(self, "threshold_setting"), hasattr(self, "get_threshold")],
         )
@@ -154,13 +166,13 @@ class BaseStatMonitor(BaseScrapyMonitor):
 
         return super().run(result)
 
-    def _get_threshold_value(self):
+    def _get_threshold_value(self) -> Any:
         if hasattr(self, "get_threshold"):
             return self.get_threshold()
         return self._get_threshold_setting(self.threshold_setting)
 
-    def test_stat_monitor(self):
-        assertions = {
+    def test_stat_monitor(self) -> None:
+        assertions: dict[str, Callable[..., None]] = {
             ">": self.assertGreater,
             ">=": self.assertGreaterEqual,
             "<": self.assertLess,
@@ -177,9 +189,9 @@ class BaseStatMonitor(BaseScrapyMonitor):
             else:
                 self.skipTest(message)
 
-        value = float(self.stats.get(self.stat_name))
+        value = float(self.stats[self.stat_name])
 
-        assertion_method = assertions.get(self.assert_type)
+        assertion_method = assertions[self.assert_type]
 
         assertion_method(
             value,

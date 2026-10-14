@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 from unittest import TestCase
 
 from slugify import slugify
@@ -8,11 +8,16 @@ from slugify import slugify
 from spidermon.contrib.validation import JSONSchemaValidator, messages
 from spidermon.contrib.validation.jsonschema.formats import is_email, is_url
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 
 class SchemaTestCaseMetaclass(type):
-    def __new__(mcs, name, bases, attrs):
-        def _test_function(data_test):
-            def _function(self):
+    def __new__(
+        mcs, name: str, bases: tuple[type, ...], attrs: dict[str, Any]
+    ) -> SchemaTestCaseMetaclass:
+        def _test_function(data_test: DataTest) -> Callable[[SchemaTest], None]:
+            def _function(self: SchemaTest) -> None:
                 validator = JSONSchemaValidator(data_test.schema or self.schema)
                 assert validator.validate(data_test.data) == (
                     data_test.valid,
@@ -30,11 +35,18 @@ class SchemaTestCaseMetaclass(type):
 
 class SchemaTest(TestCase, metaclass=SchemaTestCaseMetaclass):
     schema: ClassVar[dict[str, Any]] = {}
-    data_tests: ClassVar[list] = []
+    data_tests: ClassVar[list[DataTest]] = []
 
 
 class DataTest:
-    def __init__(self, name, data, valid, expected_errors=None, schema=None):
+    def __init__(
+        self,
+        name: str,
+        data: Any,
+        valid: bool,
+        expected_errors: dict[str, Any] | None = None,
+        schema: dict[str, Any] | None = None,
+    ) -> None:
         self.name = name
         self.data = data
         self.valid = valid
@@ -45,12 +57,12 @@ class DataTest:
 
 
 class Formats(TestCase):
-    def test_is_email(self):
+    def test_is_email(self) -> None:
         assert is_email(None)
         assert is_email("mail@mail.com")
         assert not is_email("not_mail")
 
-    def test_is_url(self):
+    def test_is_url(self) -> None:
         assert is_url(None)
         assert is_url("https://website.com")
         assert not is_url("htttps://website.com")
@@ -63,13 +75,13 @@ class CustomTypes(TestCase):
         "properties": {"v": {"type": "custom"}},
     }
 
-    def test_accepts_matching_type(self):
+    def test_accepts_matching_type(self) -> None:
         validator = JSONSchemaValidator(
             self.schema, types={"custom": lambda checker, instance: instance == 42}
         )
         assert validator.validate({"v": 42}) == (True, {})
 
-    def test_rejects_non_matching_type(self):
+    def test_rejects_non_matching_type(self) -> None:
         validator = JSONSchemaValidator(
             self.schema, types={"custom": lambda checker, instance: instance == 42}
         )
@@ -79,7 +91,7 @@ class CustomTypes(TestCase):
 
 
 class AdditionalItems(SchemaTest):
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name="additionalItems as schema, additional items match schema",
             schema={"items": [{}], "additionalItems": {"type": "integer"}},
@@ -178,7 +190,7 @@ class AdditionalProperties(SchemaTest):
         "additionalProperties": {"type": "boolean"}
     }
     schema_no: ClassVar[dict[str, Any]] = {"properties": {"foo": {}, "bar": {}}}
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name="schema_false, no additional properties is valid",
             schema=schema_false,
@@ -257,7 +269,7 @@ class AllOf(SchemaTest):
         "properties": {"A": {"type": "boolean"}, "B": {"type": "boolean"}},
         "allOf": [{"required": ["A"]}, {"required": ["B"]}],
     }
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name="Empty object",
             data={},
@@ -304,7 +316,7 @@ class AnyOf(SchemaTest):
         "properties": {"A": {"type": "boolean"}, "B": {"type": "boolean"}},
         "anyOf": [{"required": ["A"]}, {"required": ["B"]}],
     }
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name="Empty object",
             data={},
@@ -344,7 +356,7 @@ class Dependencies(SchemaTest):
             },
         },
     }
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(name="single, neither", schema=schema_single, data={}, valid=True),
         DataTest(
             name="single, nondependant",
@@ -459,7 +471,7 @@ class Enum(SchemaTest):
         "properties": {"foo": {"enum": ["foo"]}, "bar": {"enum": ["bar"]}},
         "required": ["bar"],
     }
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(name="simple, valid", schema=schema_simple, data=1, valid=True),
         DataTest(
             name="simple, invalid",
@@ -539,7 +551,7 @@ class Format(SchemaTest):
             },
         },
     }
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name="datetime. valid",
             data={
@@ -791,7 +803,7 @@ class Items(SchemaTest):
     schema_array: ClassVar[dict[str, Any]] = {
         "items": [{"type": "integer"}, {"type": "string"}]
     }
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name="schema_items. valid items",
             schema=schema_items,
@@ -832,7 +844,7 @@ class Items(SchemaTest):
 
 class MaxItems(SchemaTest):
     schema: ClassVar[dict[str, Any]] = {"maxItems": 2}
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(name="shorter is valid", data=[1], valid=True),
         DataTest(name="exact length is valid", data=[1, 2], valid=True),
         DataTest(
@@ -847,7 +859,7 @@ class MaxItems(SchemaTest):
 
 class MaxLength(SchemaTest):
     schema: ClassVar[dict[str, Any]] = {"maxLength": 2}
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(name="shorter is valid", data="f", valid=True),
         DataTest(name="exact length is valid", data="fo", valid=True),
         DataTest(
@@ -862,7 +874,7 @@ class MaxLength(SchemaTest):
 
 class MaxProperties(SchemaTest):
     schema: ClassVar[dict[str, Any]] = {"maxProperties": 2}
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(name="shorter is valid", data={"foo": 1}, valid=True),
         DataTest(name="exact length is valid", data={"foo": 1, "bar": 2}, valid=True),
         DataTest(
@@ -889,7 +901,7 @@ class Maximum(SchemaTest):
         "exclusiveMaximum": 3.0,
     }
 
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(name="below", data=2.6, valid=True),
         DataTest(
             name="above",
@@ -947,7 +959,7 @@ class Maximum(SchemaTest):
 
 class MinItems(SchemaTest):
     schema: ClassVar[dict[str, Any]] = {"minItems": 2}
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(name="longer is valid", data=[1, 2, 3], valid=True),
         DataTest(name="exact length is valid", data=[1, 2], valid=True),
         DataTest(
@@ -962,7 +974,7 @@ class MinItems(SchemaTest):
 
 class EmptyItems(SchemaTest):
     schema: ClassVar[dict[str, Any]] = {"minItems": 1}
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name="empty is invalid",
             data=[],
@@ -974,7 +986,7 @@ class EmptyItems(SchemaTest):
 
 class MinProperties(SchemaTest):
     schema: ClassVar[dict[str, Any]] = {"minProperties": 2}
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name="longer is valid",
             data={"foo": 1, "bar": 2, "foobar": 3},
@@ -993,7 +1005,7 @@ class MinProperties(SchemaTest):
 
 class EmptyProperties(SchemaTest):
     schema: ClassVar[dict[str, Any]] = {"minProperties": 1}
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name="empty is invalid",
             data={},
@@ -1017,7 +1029,7 @@ class Minimum(SchemaTest):
         "exclusiveMinimum": 1.1,
     }
 
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(name="above", data=2.6, valid=True),
         DataTest(
             name="below",
@@ -1073,7 +1085,7 @@ class MultipleOf(SchemaTest):
     schema_int: ClassVar[dict[str, Any]] = {"multipleOf": 2}
     schema_number: ClassVar[dict[str, Any]] = {"multipleOf": 1.5}
     schema_small_number: ClassVar[dict[str, Any]] = {"multipleOf": 0.0001}
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(name="int. valid", schema=schema_int, data=10, valid=True),
         DataTest(name="int. valid float", schema=schema_int, data=10.0, valid=True),
         DataTest(
@@ -1123,7 +1135,7 @@ class Not(SchemaTest):
         "not": {"type": "object", "properties": {"foo": {"type": "string"}}},
     }
     schema_forbidden: ClassVar[dict[str, Any]] = {"properties": {"foo": {"not": {}}}}
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(name="not. allowed", schema=schema_not, data="foo", valid=True),
         DataTest(
             name="not. disallowed",
@@ -1188,7 +1200,7 @@ class OneOf(SchemaTest):
         "properties": {"A": {"type": "boolean"}, "B": {"type": "boolean"}},
         "oneOf": [{"required": ["A"]}, {"required": ["B"]}],
     }
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name="Empty object",
             data={},
@@ -1227,7 +1239,7 @@ class OneOf(SchemaTest):
 
 class Pattern(SchemaTest):
     schema: ClassVar[dict[str, Any]] = {"pattern": "^a*$"}
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(name="valid", data="aaa", valid=True),
         DataTest(
             name="invalid",
@@ -1252,7 +1264,7 @@ class PatternProperties(SchemaTest):
             "X_": {"type": "string"},
         },
     }
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name="single. valid",
             schema=schema_single,
@@ -1371,7 +1383,7 @@ class Properties(SchemaTest):
         "patternProperties": {"f.o": {"minItems": 2}},
         "additionalProperties": {"type": "integer"},
     }
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(name="both present", data={"foo": 1, "bar": "baz"}, valid=True),
         DataTest(
             name="one invalid",
@@ -1474,7 +1486,7 @@ class Ref(SchemaTest):
         },
         "$ref": "#/definitions/c",
     }
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name="root. match",
             schema=schema_root,
@@ -1588,7 +1600,7 @@ class Required(SchemaTest):
         "required": ["foo"],
     }
     schema_default: ClassVar[dict[str, Any]] = {"properties": {"foo": {}}}
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(name="valid", data={"foo": 1}, valid=True),
         DataTest(
             name="invalid",
@@ -1606,7 +1618,7 @@ class Required(SchemaTest):
 
 
 class Type(SchemaTest):
-    type_tests: ClassVar[list] = [
+    type_tests: ClassVar[list[tuple[str, Any, str | None]]] = [
         # -------------------------------------------------------
         # type          data        expected error
         # -------------------------------------------------------
@@ -1672,7 +1684,7 @@ class Type(SchemaTest):
         ("string", [], messages.INVALID_STRING),
         ("string", {}, messages.INVALID_STRING),
     ]
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(
             name=f"{i + 1:02d}_{data_type}",
             data=data,
@@ -1686,7 +1698,7 @@ class Type(SchemaTest):
 
 class Unique(SchemaTest):
     schema: ClassVar[dict[str, Any]] = {"uniqueItems": True}
-    data_tests: ClassVar[list] = [
+    data_tests: ClassVar[list[DataTest]] = [
         DataTest(name="unique array", data=[1, 2], valid=True),
         DataTest(
             name="non-unique array",

@@ -13,26 +13,26 @@ from spidermon.core.actions import Action
 
 class LowLevelFailingMonitor(Monitor):
     @monitors.level.low
-    def test_fails(self):
+    def test_fails(self) -> None:
         self.fail("low level failure")
 
 
 class DefaultLevelFailingMonitor(Monitor):
-    def test_fails(self):
+    def test_fails(self) -> None:
         self.fail("default level failure")
 
 
 class PassingMonitor(Monitor):
-    def test_passes(self):
+    def test_passes(self) -> None:
         pass
 
 
 class FailingAction(Action):
-    def run_action(self):
+    def run_action(self) -> None:
         raise RuntimeError("action failure")
 
 
-def _run(suite, caplog):
+def _run(suite: MonitorSuite, caplog: pytest.LogCaptureFixture) -> dict[str, int]:
     with caplog.at_level(logging.DEBUG):
         SpiderMonitorRunner(spider=Spider("dummy")).run(suite, stats={})
     return {
@@ -43,7 +43,7 @@ def _run(suite, caplog):
     }
 
 
-def test_write_errors_uses_monitor_level(caplog):
+def test_write_errors_uses_monitor_level(caplog: pytest.LogCaptureFixture) -> None:
     suite = MonitorSuite(monitors=[LowLevelFailingMonitor, DefaultLevelFailingMonitor])
     assert _run(suite, caplog) == {
         "low level failure": logging.WARNING,
@@ -51,7 +51,9 @@ def test_write_errors_uses_monitor_level(caplog):
     }
 
 
-def test_write_errors_logs_action_errors_as_errors(caplog):
+def test_write_errors_logs_action_errors_as_errors(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     suite = MonitorSuite(
         monitors=[PassingMonitor],
         monitors_finished_actions=[FailingAction],

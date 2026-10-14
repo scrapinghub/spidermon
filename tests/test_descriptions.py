@@ -53,16 +53,16 @@ METHOD_DESCRIPTIONS = [
 ]
 
 
-def test_monitor_descriptions():
+def test_monitor_descriptions() -> None:
     for monitor_class, description in MONITOR_DESCRIPTIONS:
         assert monitor_class().monitor_description == description
 
 
-def test_suite_descriptions():
+def test_suite_descriptions() -> None:
     for suite_class, description in SUITE_DESCRIPTIONS:
         assert suite_class().description == description
 
 
-def test_method_descriptions():
+def test_method_descriptions() -> None:
     for monitor_class, method_name, description in METHOD_DESCRIPTIONS:
         assert monitor_class(method_name).method_description == description

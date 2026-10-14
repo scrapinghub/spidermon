@@ -1,9 +1,19 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 from spidermon.contrib.stats.analyzer import StatsAnalyzer
 from spidermon.contrib.stats.counters import DictPercentCounter, PercentCounter
 from spidermon.exceptions import NotConfigured
 
 from .job import JobMonitorMixin
 from .stats import StatsMonitorMixin
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+
+    from scrapy import Spider
+    from scrapy.crawler import Crawler
 
 DOWNLOADER_RESPONSE_COUNT = "downloader/response_count"
 DOWNLOADER_RESPONSE_STATUS = "downloader/response_status_count/"
@@ -30,9 +40,11 @@ class ResponsesInfo:
     a ``PercentCounter``, e.g. ``responses.successful["200"].percent``.
     """
 
-    def __init__(self, stats):
+    def __init__(self, stats: Mapping[str, Any]) -> None:
         self._stats_analyzer = StatsAnalyzer(stats=stats)
-        self.count = self._stats_analyzer.search(DOWNLOADER_RESPONSE_COUNT + "$").get(
+        self.count: int = self._stats_analyzer.search(
+            DOWNLOADER_RESPONSE_COUNT + "$"
+        ).get(
             DOWNLOADER_RESPONSE_COUNT,
             0,
         )
@@ -90,18 +102,22 @@ class ResponsesInfo:
             target=self.errors,
         )
 
-    def _add_status_codes(self, pattern, target):
+    def _add_status_codes(
+        self, pattern: list[str] | None, target: DictPercentCounter
+    ) -> None:
         for code, counter in self._get_response_codes(pattern).items():
             target.add_value(code, counter.count)
 
-    def _get_response_codes(self, codes=None):
+    def _get_response_codes(
+        self, codes: list[str] | None = None
+    ) -> dict[str, PercentCounter]:
         codes = codes or ["[^/]+"]
-        return_codes = {}
+        return_codes: dict[str, PercentCounter] = {}
         for code in codes:
             return_codes.update(self._get_response_code(code))
         return return_codes
 
-    def _get_response_code(self, code):
+    def _get_response_code(self, code: str) -> dict[str, PercentCounter]:
         return {
             code: PercentCounter(count, self.count)
             for count, code in self._stats_analyzer.search(
@@ -116,21 +132,23 @@ class SpiderMonitorMixin(StatsMonitorMixin, JobMonitorMixin):
     for monitors that check a Scrapy spider run."""
 
     @property
-    def crawler(self):
+    def crawler(self) -> Crawler:
         """The Crawler instance running the spider being monitored."""
         if not self.data.crawler:
             raise NotConfigured("Crawler not available!")
-        return self.data.crawler
+        crawler: Crawler = self.data.crawler
+        return crawler
 
     @property
-    def spider(self):
+    def spider(self) -> Spider:
         """The Spider instance being monitored."""
         if not self.data.spider:
             raise NotConfigured("Spider not available!")
-        return self.data.spider
+        spider: Spider = self.data.spider
+        return spider
 
     @property
-    def responses(self):
+    def responses(self) -> ResponsesInfo:
         """A :class:`ResponsesInfo` with a breakdown of the response status
         codes seen during the crawl."""
         if not hasattr(self, "_responses"):

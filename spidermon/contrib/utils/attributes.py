@@ -23,7 +23,7 @@ def traverse_nested(obj: ItemAdapter, keys: list[str]) -> ItemAdapter:
     return current_obj
 
 
-def get_nested_attribute(item: ItemAdapter, attribute_path: str):
+def get_nested_attribute(item: ItemAdapter, attribute_path: str) -> Any:
     """
     Get the value of a nested attribute within an ItemAdapter.
 
@@ -35,7 +35,7 @@ def get_nested_attribute(item: ItemAdapter, attribute_path: str):
     return nested_obj.get(last_key)
 
 
-def set_nested_attribute(item: ItemAdapter, attribute_path: str, value: Any):
+def set_nested_attribute(item: ItemAdapter, attribute_path: str, value: Any) -> None:
     """
     Set the value of a nested attribute within an ItemAdapter.
 

@@ -5,7 +5,7 @@ from spidermon import Monitor, MonitorSuite, monitors
 
 
 class DummyMonitor(Monitor):
-    def runTest(self):
+    def runTest(self) -> None:
         pass
 
 
@@ -56,39 +56,39 @@ class Ordered:
 # Methods ordering
 # ----------------------------------
 class UnorderedMethodsMonitor(Monitor):
-    def test_a(self):
+    def test_a(self) -> None:
         pass
 
-    def test_b(self):
+    def test_b(self) -> None:
         pass
 
-    def test_c(self):
+    def test_c(self) -> None:
         pass
 
 
 class OrderedMethodsMonitor(Monitor):
     @monitors.order(3)
-    def test_a(self):
+    def test_a(self) -> None:
         pass
 
     @monitors.order(2)
-    def test_b(self):
+    def test_b(self) -> None:
         pass
 
     @monitors.order(1)
-    def test_c(self):
+    def test_c(self) -> None:
         pass
 
 
 class EqualOrderedMethodsMonitor(Monitor):
     @monitors.order(5)
-    def test_a(self):
+    def test_a(self) -> None:
         pass
 
     @monitors.order(5)
-    def test_b(self):
+    def test_b(self) -> None:
         pass
 
     @monitors.order(5)
-    def test_c(self):
+    def test_c(self) -> None:
         pass

@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 pytest.importorskip("scrapy")
@@ -15,7 +17,7 @@ class TestItem(Item):
 
 
 @pytest.fixture
-def spider():
+def spider() -> Spider:
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -26,7 +28,7 @@ def spider():
     return Spider.from_crawler(crawler, "example.com")
 
 
-async def send_item_scraped(spider, item):
+async def send_item_scraped(spider: Spider, item: Any) -> None:
     if hasattr(spider.crawler.signals, "send_catch_log_async"):
         await spider.crawler.signals.send_catch_log_async(
             signal=signals.item_scraped,
@@ -44,7 +46,7 @@ async def send_item_scraped(spider, item):
 
 
 @deferred_f_from_coro_f
-async def test_add_stats_item_scraped_count_by_item_type(spider):
+async def test_add_stats_item_scraped_count_by_item_type(spider: Spider) -> None:
     for _ in range(15):
         await send_item_scraped(spider, {"_type": "regular_dict"})
 
@@ -63,7 +65,7 @@ async def test_add_stats_item_scraped_count_by_item_type(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_single_field(spider):
+async def test_item_scraped_count_single_field(spider: Spider) -> None:
     returned_items = [{"field1": "value1"}]
 
     for item in returned_items:
@@ -74,7 +76,7 @@ async def test_item_scraped_count_single_field(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_multiple_field(spider):
+async def test_item_scraped_count_multiple_field(spider: Spider) -> None:
     returned_items = [{"field1": "value1", "field2": "value2"}]
 
     for item in returned_items:
@@ -86,7 +88,7 @@ async def test_item_scraped_count_multiple_field(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_multiple_items(spider):
+async def test_item_scraped_count_multiple_items(spider: Spider) -> None:
     returned_items = [
         {"field1": "value1", "field2": "value2"},
         {"field1": "value1", "field2": "value2"},
@@ -101,7 +103,7 @@ async def test_item_scraped_count_multiple_items(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_multiple_items_field_missing(spider):
+async def test_item_scraped_count_multiple_items_field_missing(spider: Spider) -> None:
     returned_items = [
         {"field1": "value1", "field2": "value2"},
         {
@@ -118,7 +120,7 @@ async def test_item_scraped_count_multiple_items_field_missing(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_single_nested_field(spider):
+async def test_item_scraped_count_single_nested_field(spider: Spider) -> None:
     returned_items = [{"field1": {"field1.1": "value1.1"}}]
 
     for item in returned_items:
@@ -131,7 +133,7 @@ async def test_item_scraped_count_single_nested_field(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_multiple_nested_field(spider):
+async def test_item_scraped_count_multiple_nested_field(spider: Spider) -> None:
     returned_items = [
         {
             "field1": {"field1.1": "value1.1"},
@@ -185,7 +187,7 @@ async def test_item_scraped_count_multiple_nested_field(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_multiple_nested_field_with_limit():
+async def test_item_scraped_count_multiple_nested_field_with_limit() -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -243,7 +245,7 @@ async def test_item_scraped_count_multiple_nested_field_with_limit():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_multiple_nested_field_with_two_levels_limit():
+async def test_item_scraped_count_multiple_nested_field_with_two_levels_limit() -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -299,7 +301,7 @@ async def test_item_scraped_count_multiple_nested_field_with_two_levels_limit():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_multiple_nested_field_with_no_nested_levels():
+async def test_item_scraped_count_multiple_nested_field_with_no_nested_levels() -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -357,7 +359,9 @@ async def test_item_scraped_count_multiple_nested_field_with_no_nested_levels():
 
 
 @deferred_f_from_coro_f
-async def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field_coverage_settings():
+async def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field_coverage_settings() -> (
+    None
+):
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -384,7 +388,9 @@ async def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field
 
 
 @deferred_f_from_coro_f
-async def test_add_field_coverage_when_spider_closes_if_have_field_coverage_settings():
+async def test_add_field_coverage_when_spider_closes_if_have_field_coverage_settings() -> (
+    None
+):
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -411,7 +417,7 @@ async def test_add_field_coverage_when_spider_closes_if_have_field_coverage_sett
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_ignore_none_values():
+async def test_item_scraped_count_ignore_none_values() -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -437,7 +443,7 @@ async def test_item_scraped_count_ignore_none_values():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_do_not_ignore_none_values():
+async def test_item_scraped_count_do_not_ignore_none_values() -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -462,7 +468,9 @@ async def test_item_scraped_count_do_not_ignore_none_values():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_do_not_ignore_none_values_by_default(spider):
+async def test_item_scraped_count_do_not_ignore_none_values_by_default(
+    spider: Spider,
+) -> None:
     returned_items = [
         {"field1": "value1", "field2": "value2"},
         {"field1": "value1", "field2": None},
@@ -478,7 +486,7 @@ async def test_item_scraped_count_do_not_ignore_none_values_by_default(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_ignore_custom_skip_values():
+async def test_item_scraped_count_ignore_custom_skip_values() -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -506,7 +514,7 @@ async def test_item_scraped_count_ignore_custom_skip_values():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_ignore_default_skip_values():
+async def test_item_scraped_count_ignore_default_skip_values() -> None:
     """Test that default skip values (empty string, empty list, empty dict, N/A, -) are applied"""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -539,7 +547,9 @@ async def test_item_scraped_count_ignore_default_skip_values():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_do_not_ignore_custom_skip_values_when_empty_list():
+async def test_item_scraped_count_do_not_ignore_custom_skip_values_when_empty_list() -> (
+    None
+):
     """Empty skip list removes default sentinels but does not disable falsy skipping."""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -567,7 +577,7 @@ async def test_item_scraped_count_do_not_ignore_custom_skip_values_when_empty_li
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_empty_json_skip_values_keeps_falsy_skipping():
+async def test_item_scraped_count_empty_json_skip_values_keeps_falsy_skipping() -> None:
     """Explicit JSON '[]' normalizes to no skip values but keeps falsy skipping on."""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -595,7 +605,7 @@ async def test_item_scraped_count_empty_json_skip_values_keeps_falsy_skipping():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_skip_values_type_sensitive():
+async def test_item_scraped_count_skip_values_type_sensitive() -> None:
     """Test that skip_values matching is type-sensitive (string "0" != int 0)"""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -623,7 +633,7 @@ async def test_item_scraped_count_skip_values_type_sensitive():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_skip_values_bool_distinct_from_int_zero():
+async def test_item_scraped_count_skip_values_bool_distinct_from_int_zero() -> None:
     """Integer 0 in SKIP_VALUES does not skip bool False (unlike plain ``in`` / ``==``)."""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -651,7 +661,7 @@ async def test_item_scraped_count_skip_values_bool_distinct_from_int_zero():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_skip_values_bool_distinct_from_int_one():
+async def test_item_scraped_count_skip_values_bool_distinct_from_int_one() -> None:
     """Integer 1 in SKIP_VALUES does not skip bool True (``True == 1`` without type check)."""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -679,7 +689,7 @@ async def test_item_scraped_count_skip_values_bool_distinct_from_int_one():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_skip_integer_values():
+async def test_item_scraped_count_skip_integer_values() -> None:
     """Test that integer values like 0 and -1 can be skipped"""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -707,7 +717,7 @@ async def test_item_scraped_count_skip_integer_values():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_skip_values_with_json_string():
+async def test_item_scraped_count_skip_values_with_json_string() -> None:
     """Test that JSON string format preserves types for non-string values"""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -736,7 +746,7 @@ async def test_item_scraped_count_skip_values_with_json_string():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_skip_values_comma_separated_string():
+async def test_item_scraped_count_skip_values_comma_separated_string() -> None:
     """Non-JSON string falls back to Scrapy getlist (comma-separated)."""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -764,7 +774,7 @@ async def test_item_scraped_count_skip_values_comma_separated_string():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_skip_values_json_non_list_uses_getlist():
+async def test_item_scraped_count_skip_values_json_non_list_uses_getlist() -> None:
     """JSON that parses to a non-list uses getlist on the original string."""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -791,7 +801,7 @@ async def test_item_scraped_count_skip_values_json_non_list_uses_getlist():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_skip_values_tuple_setting():
+async def test_item_scraped_count_skip_values_tuple_setting() -> None:
     """Tuple setting is normalized via list(value) so numeric skips stay typed."""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -818,7 +828,7 @@ async def test_item_scraped_count_skip_values_tuple_setting():
     assert stats.get("spidermon_item_scraped_count/dict/field3") == 2
 
 
-def test_count_item_skip_values_none_defaults_to_empty_list():
+def test_count_item_skip_values_none_defaults_to_empty_list() -> None:
     """Recursive callers pass skip_values; None is supported defensively."""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -840,7 +850,7 @@ def test_count_item_skip_values_none_defaults_to_empty_list():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_skip_falsy_uses_python_truthiness():
+async def test_item_scraped_count_skip_falsy_uses_python_truthiness() -> None:
     """0, False, and empty tuple are skipped; None is not (use SKIP_NONE); N/A via skip values."""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -883,7 +893,7 @@ async def test_item_scraped_count_skip_falsy_uses_python_truthiness():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_falsy_not_skipped_when_skip_falsy_false():
+async def test_item_scraped_count_falsy_not_skipped_when_skip_falsy_false() -> None:
     """With SKIP_FALSY off and SKIP_VALUES not listing empties, falsy values count."""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -926,7 +936,7 @@ async def test_item_scraped_count_falsy_not_skipped_when_skip_falsy_false():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_skip_values_works_with_nested_fields():
+async def test_item_scraped_count_skip_values_works_with_nested_fields() -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -953,7 +963,7 @@ async def test_item_scraped_count_skip_values_works_with_nested_fields():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_skip_values_works_with_skip_falsy():
+async def test_item_scraped_count_skip_values_works_with_skip_falsy() -> None:
     """Test that skip_values works alongside skip_falsy"""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -982,7 +992,7 @@ async def test_item_scraped_count_skip_values_works_with_skip_falsy():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_list_of_dicts_disabled(spider):
+async def test_item_scraped_count_list_of_dicts_disabled(spider: Spider) -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -1078,7 +1088,9 @@ async def test_item_scraped_count_list_of_dicts_disabled(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_list_of_dicts_one_nesting_level(spider):
+async def test_item_scraped_count_list_of_dicts_one_nesting_level(
+    spider: Spider,
+) -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -1170,7 +1182,9 @@ async def test_item_scraped_count_list_of_dicts_one_nesting_level(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_list_of_dicts_two_nesting_levels(spider):
+async def test_item_scraped_count_list_of_dicts_two_nesting_levels(
+    spider: Spider,
+) -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -1208,7 +1222,7 @@ async def test_item_scraped_count_list_of_dicts_two_nesting_levels(spider):
         },
     ]
 
-    async def send_signal(item):
+    async def send_signal(item: dict[str, Any]) -> None:
         if hasattr(spider.crawler.signals, "send_catch_log_async"):
             await spider.crawler.signals.send_catch_log_async(
                 signal=signals.item_scraped,
@@ -1278,7 +1292,7 @@ async def test_item_scraped_count_list_of_dicts_two_nesting_levels(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_per_field_dict_levels():
+async def test_item_scraped_count_per_field_dict_levels() -> None:
     """Per-field SPIDERMON_DICT_FIELDS_COVERAGE_LEVELS: field1 uses level 0 (no nesting),
     all others fall back to wildcard level 1."""
     settings = {
@@ -1338,7 +1352,7 @@ async def test_item_scraped_count_per_field_dict_levels():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_per_field_dict_levels_no_default():
+async def test_item_scraped_count_per_field_dict_levels_no_default() -> None:
     """Per-field config without '*' key: unlisted fields fall back to -1 (unlimited)."""
     settings = {
         "SPIDERMON_ENABLED": True,
@@ -1377,7 +1391,9 @@ async def test_item_scraped_count_per_field_dict_levels_no_default():
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_per_field_dict_levels_specific_field_higher_level():
+async def test_item_scraped_count_per_field_dict_levels_specific_field_higher_level() -> (
+    None
+):
     """Per-field config: specific field uses a higher level than the default."""
     settings = {
         "SPIDERMON_ENABLED": True,

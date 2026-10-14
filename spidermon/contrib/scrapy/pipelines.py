@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 from collections import defaultdict
 from functools import partial
+from typing import TYPE_CHECKING, Any
 
 from itemadapter import ItemAdapter
 from scrapy import Item
@@ -15,43 +18,55 @@ from spidermon.contrib.validation.jsonschema.tools import get_schema_from
 
 from .stats import ValidationStatsManager
 
+if TYPE_CHECKING:
+    from collections.abc import Callable, Mapping
+
+    from scrapy import Spider
+    from scrapy.crawler import Crawler
+    from scrapy.statscollectors import StatsCollector
+
+    from spidermon.contrib.validation.validator import Validator
+
 DEFAULT_ERRORS_FIELD = "_validation"
 DEFAULT_ADD_ERRORS_TO_ITEM = False
 DEFAULT_DROP_ITEMS_WITH_ERRORS = False
 
 
 class PassThroughPipeline:
-    def process_item(self, item, *args):
+    def process_item(self, item: Any, *args: Any) -> Any:
         return item
 
 
 class ItemValidationPipeline:
     def __init__(
         self,
-        validators,
-        stats,
-        drop_items_with_errors=DEFAULT_DROP_ITEMS_WITH_ERRORS,
-        add_errors_to_items=DEFAULT_ADD_ERRORS_TO_ITEM,
-        errors_field=None,
-    ):
+        validators: Mapping[str, list[Validator]],
+        stats: StatsCollector,
+        drop_items_with_errors: bool = DEFAULT_DROP_ITEMS_WITH_ERRORS,
+        add_errors_to_items: bool = DEFAULT_ADD_ERRORS_TO_ITEM,
+        errors_field: str | None = None,
+    ) -> None:
         self.drop_items_with_errors = drop_items_with_errors
         self.add_errors_to_items = add_errors_to_items or DEFAULT_ADD_ERRORS_TO_ITEM
         self.errors_field = errors_field or DEFAULT_ERRORS_FIELD
         self.validators = validators
         self.stats = ValidationStatsManager(stats)
         for _type, vals in validators.items():
-            [self.stats.add_validator(_type, val.name) for val in vals]
+            for val in vals:
+                self.stats.add_validator(_type, val.name)
 
     @classmethod
-    def from_crawler(cls, crawler):
+    def from_crawler(
+        cls, crawler: Crawler
+    ) -> ItemValidationPipeline | PassThroughPipeline:
         spidermon_enabled = crawler.settings.getbool("SPIDERMON_ENABLED")
         if not spidermon_enabled:
             return PassThroughPipeline()
 
-        validators = defaultdict(list)
+        validators: defaultdict[str, list[Validator]] = defaultdict(list)
         allowed_types = (list, tuple, dict)
 
-        def set_validators(loader, schema):
+        def set_validators(loader: Callable[[Any], Validator], schema: Any) -> None:
             if type(schema) in (list, tuple):
                 schema = {Item: schema}
             for obj, paths_value in schema.items():
@@ -98,7 +113,11 @@ class ItemValidationPipeline:
         )
 
     @classmethod
-    def _load_jsonschema_validator(cls, schema, types=None):
+    def _load_jsonschema_validator(
+        cls,
+        schema: Any,
+        types: Mapping[str, Callable[[Any, Any], bool]] | None = None,
+    ) -> JSONSchemaValidator:
         if isinstance(schema, str):
             schema = get_schema_from(schema)
         if not isinstance(schema, dict):
@@ -111,7 +130,7 @@ class ItemValidationPipeline:
             )
         return JSONSchemaValidator(schema, types=types)
 
-    def process_item(self, item, spider=None):
+    def process_item(self, item: Any, spider: Spider | None = None) -> Any:
         validators = self.find_validators(item)
         if not validators:
             # No validators match this specific item type
@@ -131,13 +150,15 @@ class ItemValidationPipeline:
                     self._drop_item(item, errors)
         return item
 
-    def find_validators(self, item):
-        def find(x):
+    def find_validators(self, item: Any) -> list[Validator]:
+        def find(x: type) -> list[Validator]:
             return self.validators.get(x.__name__, [])
 
         return find(item.__class__) or find(Item)
 
-    def _add_errors_to_item(self, item: ItemAdapter, errors: dict[str, str]):
+    def _add_errors_to_item(
+        self, item: ItemAdapter, errors: dict[str, list[str]]
+    ) -> None:
         errors_field_instance = get_nested_attribute(item, self.errors_field)
 
         if errors_field_instance is None:
@@ -149,7 +170,7 @@ class ItemValidationPipeline:
         # change defaultdict to dict for errors_field_instance
         set_nested_attribute(item, self.errors_field, dict(errors_field_instance))
 
-    def _drop_item(self, item, errors):
+    def _drop_item(self, item: Any, errors: dict[str, list[str]]) -> None:
         """
         Drop the item after detecting validation errors. Note that you could
         override it to add more details about the item that is being dropped
@@ -158,7 +179,7 @@ class ItemValidationPipeline:
         self.stats.add_dropped_item()
         raise DropItem("Validation failed!")
 
-    def _add_error_stats(self, errors):
+    def _add_error_stats(self, errors: dict[str, list[str]]) -> None:
         """
         Add validation error stats that can be later used to detect alert
         conditions in the monitors.

@@ -1,17 +1,24 @@
+from __future__ import annotations
+
 import logging
 import os
 from collections import deque
+from typing import TYPE_CHECKING, Any
 
 import scrapinghub
 from sh_scrapy.stats import HubStorageStatsCollector
 
 from spidermon.contrib.utils.spider import get_spider_name
 
+if TYPE_CHECKING:
+    from scrapy import Spider
+    from scrapy.statscollectors import StatsT
+
 logger = logging.getLogger(__name__)
 
 
-class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
-    def _open_collection(self, spider):
+class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):  # type: ignore[misc]
+    def _open_collection(self, spider: Spider) -> Any:
         sh_client = scrapinghub.ScrapinghubClient()
         proj_id = os.environ.get("SCRAPY_PROJECT_ID")
         if proj_id is None:
@@ -24,7 +31,7 @@ class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
         stats_location = f"{spider_name}_stats_history"
         return collections.get_store(stats_location)
 
-    def open_spider(self, spider=None):
+    def open_spider(self, spider: Spider | None = None) -> None:
         args = [spider] if spider else []
         super().open_spider(*args)
         spider = spider or self._crawler.spider
@@ -39,19 +46,20 @@ class ScrapyCloudCollectionsStatsHistoryCollector(HubStorageStatsCollector):
         )
 
         try:
-            stats_history = [d.get("value") for d in self.store.iter()]
-            stats_history = deque(stats_history, maxlen=max_stored_stats)
+            stats_history = deque(
+                [d.get("value") for d in self.store.iter()], maxlen=max_stored_stats
+            )
         except scrapinghub.client.exceptions.NotFound:
             # this happens if the stats store has not been created yet
             stats_history = deque(maxlen=max_stored_stats)
 
-        spider.stats_history = stats_history
+        spider.stats_history = stats_history  # type: ignore[union-attr]
 
-    def _persist_stats(self, stats, spider=None):
+    def _persist_stats(self, stats: StatsT, spider: Spider | None = None) -> None:
         if self.store is None:
             return
         spider = spider or self._crawler.spider
-        stats_history = spider.stats_history
+        stats_history = spider.stats_history  # type: ignore[union-attr]
         stats_history.appendleft(self._stats)
         for index, data in enumerate(stats_history):
             if index == 0:

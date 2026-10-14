@@ -1,25 +1,27 @@
 import sys
 from importlib import reload
+from types import ModuleType
 from unittest import mock
 
 import pytest
 
 pytest.importorskip("scrapy")
 
+from scrapy.settings import Settings
 from scrapy.utils.test import get_crawler
 
 from spidermon.utils import zyte
 
 
 @pytest.fixture
-def no_env_mock_module(monkeypatch):
+def no_env_mock_module(monkeypatch: pytest.MonkeyPatch) -> ModuleType:
     monkeypatch.delenv("SHUB_JOBKEY", raising=False)
     monkeypatch.setattr(zyte, "ScrapinghubClient", mock.MagicMock())
     return zyte
 
 
 @pytest.fixture
-def mock_module(monkeypatch):
+def mock_module(monkeypatch: pytest.MonkeyPatch) -> ModuleType:
     monkeypatch.setenv("SHUB_JOBKEY", "123/456/789")
     monkeypatch.setenv("SH_APIKEY", "foobar")
     monkeypatch.setattr(zyte, "ScrapinghubClient", mock.MagicMock())
@@ -27,11 +29,13 @@ def mock_module(monkeypatch):
 
 
 @pytest.fixture
-def settings():
+def settings() -> Settings:
     return get_crawler().settings
 
 
-def test_client_creation_no_env(no_env_mock_module, settings):
+def test_client_creation_no_env(
+    no_env_mock_module: ModuleType, settings: Settings
+) -> None:
     client = no_env_mock_module.Client(settings)
     assert client.available is False
     assert client.project_id is None
@@ -42,7 +46,7 @@ def test_client_creation_no_env(no_env_mock_module, settings):
         client._apikey()
 
 
-def test_client_creation(mock_module, settings):
+def test_client_creation(mock_module: ModuleType, settings: Settings) -> None:
     client = mock_module.Client(settings)
     assert client.available
     assert client.project_id == 123
@@ -50,7 +54,7 @@ def test_client_creation(mock_module, settings):
     assert client.job_id == 789
 
 
-def test_client_property_project(mock_module, settings):
+def test_client_property_project(mock_module: ModuleType, settings: Settings) -> None:
     client = mock_module.Client(settings)
 
     assert client._project is None
@@ -59,7 +63,7 @@ def test_client_property_project(mock_module, settings):
     client._client.get_project.assert_called_with("123")
 
 
-def test_client_property_job(mock_module, settings):
+def test_client_property_job(mock_module: ModuleType, settings: Settings) -> None:
     client = mock_module.Client(settings)
 
     assert client._job is None
@@ -68,7 +72,7 @@ def test_client_property_job(mock_module, settings):
     client._client.get_job.assert_called_with("123/456/789")
 
 
-def test_client_property_spider(mock_module, settings):
+def test_client_property_spider(mock_module: ModuleType, settings: Settings) -> None:
     client = mock_module.Client(settings)
     client._job = mock.Mock()
     client._job.metadata.get.return_value = "my_awesome_spider"
@@ -83,7 +87,7 @@ def test_client_property_spider(mock_module, settings):
     client._project.spiders.get.assert_called_with("my_awesome_spider")
 
 
-def test_client_close(mock_module, settings):
+def test_client_close(mock_module: ModuleType, settings: Settings) -> None:
     client = mock_module.Client(settings)
     assert client.client is not None
     client.close()
@@ -91,7 +95,7 @@ def test_client_close(mock_module, settings):
 
 
 @pytest.mark.parametrize("expected", [False, True])
-def test_has_client(monkeypatch, expected):
+def test_has_client(monkeypatch: pytest.MonkeyPatch, expected: bool) -> None:
 
     if not expected:
         monkeypatch.setitem(sys.modules, "scrapinghub", None)
@@ -100,7 +104,9 @@ def test_has_client(monkeypatch, expected):
     assert expected == zyte.HAS_CLIENT
 
 
-def test_client_settings_priority(mock_module, monkeypatch):
+def test_client_settings_priority(
+    mock_module: ModuleType, monkeypatch: pytest.MonkeyPatch
+) -> None:
     shub_apikey = "SHUB_APIKEY"
     shub_jobauth = "SHUB_JOBAUTH"
     monkeypatch.setenv("SHUB_JOBAUTH", shub_jobauth)

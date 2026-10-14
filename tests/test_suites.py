@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from spidermon import Monitor, MonitorSuite
@@ -14,7 +16,12 @@ from .fixtures.suites import EmptySuite, Suite01, Suite02, Suite03, Suite04
 
 
 class SuiteDefinition:
-    def __init__(self, suite_class, monitors=None, expected_number_of_monitors=0):
+    def __init__(
+        self,
+        suite_class: type[MonitorSuite],
+        monitors: Any = None,
+        expected_number_of_monitors: int = 0,
+    ) -> None:
         self.suite_class = suite_class
         self.monitors = monitors or []
         self.expected_number_of_monitors = expected_number_of_monitors
@@ -76,47 +83,47 @@ INVALID_SUITE_DEFINITIONS = [
 ]
 
 
-def test_creation_error_non_iterable():
+def test_creation_error_non_iterable() -> None:
     with pytest.raises(InvalidMonitorIterable):
         _test_creation_from_init(INVALID_SUITE_DEFINITION_NON_ITERABLE)
     with pytest.raises(InvalidMonitorIterable):
         _test_creation_from_add_monitors(INVALID_SUITE_DEFINITION_NON_ITERABLE)
 
 
-def test_creation_error_invalid_from_init():
+def test_creation_error_invalid_from_init() -> None:
     for definition, exception_to_raise in INVALID_SUITE_DEFINITIONS:
         with pytest.raises(exception_to_raise):
             _test_creation_from_init(definition)
 
 
-def test_creation_error_invalid_from_add_monitors():
+def test_creation_error_invalid_from_add_monitors() -> None:
     for definition, exception_to_raise in INVALID_SUITE_DEFINITIONS:
         with pytest.raises(exception_to_raise):
             _test_creation_from_add_monitors(definition)
 
 
-def test_creation_error_invalid_from_add_monitor():
+def test_creation_error_invalid_from_add_monitor() -> None:
     for definition, exception_to_raise in INVALID_SUITE_DEFINITIONS:
         with pytest.raises(exception_to_raise):
             _test_creation_from_add_monitor(definition)
 
 
-def test_creation_from_init():
+def test_creation_from_init() -> None:
     for definition in CLASS_SUITE_DEFINITIONS:
         _test_creation_from_init(definition)
 
 
-def test_creation_from_add_monitors():
+def test_creation_from_add_monitors() -> None:
     for definition in CLASS_SUITE_DEFINITIONS:
         _test_creation_from_add_monitors(definition)
 
 
-def test_creation_from_add_monitor():
+def test_creation_from_add_monitor() -> None:
     for definition in CLASS_SUITE_DEFINITIONS:
         _test_creation_from_add_monitor(definition)
 
 
-def _test_creation_from_init(definition):
+def _test_creation_from_init(definition: SuiteDefinition) -> None:
     suite = definition.suite_class(monitors=definition.monitors)
     check_suite(
         suite=suite,
@@ -124,7 +131,7 @@ def _test_creation_from_init(definition):
     )
 
 
-def test_not_allowed_methods():
+def test_not_allowed_methods() -> None:
     suite = EmptySuite()
     with pytest.raises(NotAllowedMethod):
         suite.addTest()
@@ -132,7 +139,7 @@ def test_not_allowed_methods():
         suite.addTests()
 
 
-def test_debug_monitors():
+def test_debug_monitors() -> None:
     suite = EmptySuite(monitors=[Monitor01])
     output = suite.debug_monitors()
     assert "MONITOR: Monitor01" in output
@@ -140,7 +147,7 @@ def test_debug_monitors():
     assert "LEVEL: ERROR" in output
 
 
-def _test_creation_from_add_monitors(definition):
+def _test_creation_from_add_monitors(definition: SuiteDefinition) -> None:
     suite = definition.suite_class()
     suite.add_monitors(definition.monitors)
     check_suite(
@@ -149,7 +156,7 @@ def _test_creation_from_add_monitors(definition):
     )
 
 
-def _test_creation_from_add_monitor(definition):
+def _test_creation_from_add_monitor(definition: SuiteDefinition) -> None:
     suite = definition.suite_class()
     for monitor in definition.monitors:
         suite.add_monitor(monitor)
@@ -159,7 +166,7 @@ def _test_creation_from_add_monitor(definition):
     )
 
 
-def check_suite(suite, expected_number_of_monitors):
+def check_suite(suite: MonitorSuite, expected_number_of_monitors: int) -> None:
     # print
     # print suite.debug_tree()
     # print

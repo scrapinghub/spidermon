@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import json
+from typing import TYPE_CHECKING, Any
 
 from itemadapter import ItemAdapter
 from scrapy import signals
@@ -13,20 +16,28 @@ from spidermon.python.monitors import ExpressionsMonitor
 from spidermon.utils.field_coverage import calculate_field_coverage
 from spidermon.utils.zyte import Client
 
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from scrapy import Spider
+    from scrapy.crawler import Crawler
+    from scrapy.http import Response
+    from scrapy.settings import BaseSettings
+
 
 class Spidermon:
     def __init__(  # noqa: PLR0913, PLR0917
         self,
-        crawler,
-        spider_opened_suites=None,
-        spider_closed_suites=None,
-        engine_stopped_suites=None,
-        spider_opened_expression_suites=None,
-        spider_closed_expression_suites=None,
-        engine_stopped_expression_suites=None,
-        expressions_monitor_class=None,
-        periodic_suites=None,
-    ):
+        crawler: Crawler,
+        spider_opened_suites: list[str | type[MonitorSuite]] | None = None,
+        spider_closed_suites: list[str | type[MonitorSuite]] | None = None,
+        engine_stopped_suites: list[str | type[MonitorSuite]] | None = None,
+        spider_opened_expression_suites: list[dict[str, Any]] | None = None,
+        spider_closed_expression_suites: list[dict[str, Any]] | None = None,
+        engine_stopped_expression_suites: list[dict[str, Any]] | None = None,
+        expressions_monitor_class: str | type[ExpressionsMonitor] | None = None,
+        periodic_suites: dict[str | type[MonitorSuite], float] | None = None,
+    ) -> None:
         if not crawler.settings.getbool("SPIDERMON_ENABLED"):
             raise NotConfigured
         self.crawler = crawler
@@ -56,11 +67,11 @@ class Spidermon:
         ]
 
         self.periodic_suites = periodic_suites or {}
-        self.periodic_tasks = {}
+        self.periodic_tasks: dict[Spider, list[LoopingCall]] = {}
         self.client = Client(self.crawler.settings)
 
     @staticmethod
-    def _get_default_skip_values():
+    def _get_default_skip_values() -> list[Any]:
         """Default ``SPIDERMON_FIELD_COVERAGE_SKIP_VALUES`` when the setting is unset.
 
         Includes values that are also Python-falsy (``""``, ``[]``, ``{}``) and
@@ -70,17 +81,17 @@ class Spidermon:
         return ["", [], {}, "N/A", "-"]
 
     @staticmethod
-    def _value_matches_skip_entry(value, candidate):
+    def _value_matches_skip_entry(value: Any, candidate: Any) -> bool:
         """Exact match for skip list: same type and equal value.
 
         Plain ``==`` / ``in`` would conflate ``bool`` with ``int`` (``False == 0``).
         """
         return type(value) is type(candidate) and value == candidate
 
-    def _value_in_skip_values(self, value, skip_values):
+    def _value_in_skip_values(self, value: Any, skip_values: Iterable[Any]) -> bool:
         return any(self._value_matches_skip_entry(value, s) for s in skip_values)
 
-    def _get_skip_values_list(self, settings):
+    def _get_skip_values_list(self, settings: BaseSettings) -> list[Any]:
         """Get skip values list, supporting Python lists, JSON strings, and
         comma-separated strings.
 
@@ -121,30 +132,34 @@ class Spidermon:
         # For any other type, try to convert to list
         return list(value) if value else []
 
-    def load_suite(self, suite_to_load):
+    def load_suite(self, suite_to_load: str | type[MonitorSuite]) -> MonitorSuite:
         suite_class = load_object(suite_to_load)
         if not issubclass(suite_class, MonitorSuite):
             raise TypeError(f"{suite_to_load} is not a MonitorSuite subclass")
-        return suite_class(crawler=self.crawler)
+        suite: MonitorSuite = suite_class(crawler=self.crawler)
+        return suite
 
-    def load_expression_suite(self, suite_to_load, monitor_class=None):
-        if monitor_class:
-            monitor_class = load_object(monitor_class)
-        else:
-            monitor_class = ExpressionsMonitor
+    def load_expression_suite(
+        self,
+        suite_to_load: dict[str, Any],
+        monitor_class: str | type[ExpressionsMonitor] | None = None,
+    ) -> MonitorSuite:
+        monitor_cls: type[ExpressionsMonitor] = (
+            load_object(monitor_class) if monitor_class else ExpressionsMonitor
+        )
 
         from spidermon.python import factory  # noqa: PLC0415
 
         monitor = factory.create_monitor_class_from_dict(
             monitor_dict=suite_to_load,
-            monitor_class=monitor_class,
+            monitor_class=monitor_cls,
         )
         suite = MonitorSuite(crawler=self.crawler)
         suite.add_monitor(monitor)
         return suite
 
     @classmethod
-    def from_crawler(cls, crawler):
+    def from_crawler(cls, crawler: Crawler) -> Spidermon:
         ext = cls(
             crawler=crawler,
             spider_opened_suites=crawler.settings.getlist(
@@ -181,7 +196,7 @@ class Spidermon:
 
         return ext
 
-    def spider_opened(self, spider):
+    def spider_opened(self, spider: Spider) -> None:
         self._run_suites(spider, self.spider_opened_suites)
         self.periodic_tasks[spider] = []
         for suite, time in self.periodic_suites.items():
@@ -189,7 +204,7 @@ class Spidermon:
             self.periodic_tasks[spider].append(task)
             task.start(time, now=False)
 
-    def spider_closed(self, spider):
+    def spider_closed(self, spider: Spider) -> None:
         self._add_field_coverage_to_stats()
 
         self._run_suites(spider, self.spider_closed_suites)
@@ -197,22 +212,23 @@ class Spidermon:
             if task.running:
                 task.stop()
 
-    def engine_stopped(self):
+    def engine_stopped(self) -> None:
         spider = self.crawler.spider
+        assert spider is not None
         self._run_suites(spider, self.engine_stopped_suites)
 
     def _count_item(  # noqa: PLR0913,PLR0912,PLR0917
         self,
-        item,
-        skip_none_values,
-        skip_falsy_values,
-        skip_values=None,
-        item_count_stat=None,
-        max_list_nesting_level=0,
-        max_dict_nesting_level=-1,
-        nesting_level=0,
-        per_field_dict_levels=None,
-    ):
+        item: Any,
+        skip_none_values: bool,
+        skip_falsy_values: bool,
+        skip_values: list[Any] | None = None,
+        item_count_stat: str | None = None,
+        max_list_nesting_level: int = 0,
+        max_dict_nesting_level: int = -1,
+        nesting_level: int = 0,
+        per_field_dict_levels: dict[str, Any] | None = None,
+    ) -> None:
         if item_count_stat is None:
             item_type = type(item).__name__
             item_count_stat = f"spidermon_item_scraped_count/{item_type}"
@@ -296,12 +312,14 @@ class Spidermon:
                         )
                         continue
 
-    def _add_field_coverage_to_stats(self):
+    def _add_field_coverage_to_stats(self) -> None:
         stats = self.crawler.stats.get_stats()
         coverage_stats = calculate_field_coverage(stats)
         stats.update(coverage_stats)
 
-    def item_scraped(self, item, response, spider):
+    def item_scraped(
+        self, item: Any, response: Response | None, spider: Spider
+    ) -> None:
         skip_none_values = spider.crawler.settings.getbool(
             "SPIDERMON_FIELD_COVERAGE_SKIP_NONE",
             False,
@@ -336,17 +354,18 @@ class Spidermon:
             per_field_dict_levels=per_field_dict_levels,
         )
 
-    def _run_periodic_suites(self, spider, suites):
-        suites = [self.load_suite(s) for s in suites]
-        self._run_suites(spider, suites)
+    def _run_periodic_suites(
+        self, spider: Spider, suites: list[str | type[MonitorSuite]]
+    ) -> None:
+        self._run_suites(spider, [self.load_suite(s) for s in suites])
 
-    def _run_suites(self, spider, suites):
+    def _run_suites(self, spider: Spider, suites: list[MonitorSuite]) -> None:
         data = self._generate_data_for_spider(spider)
         for suite in suites:
             runner = SpiderMonitorRunner(spider=spider)
             runner.run(suite, **data)
 
-    def _generate_data_for_spider(self, spider):
+    def _generate_data_for_spider(self, spider: Spider) -> dict[str, Any]:
         return {
             "stats": self.crawler.stats.get_stats(),
             "stats_history": (

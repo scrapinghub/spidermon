@@ -1,8 +1,13 @@
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import pytest
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from pytest_mock import MockerFixture
 
 pytest.importorskip("scrapy")
 
@@ -53,9 +58,9 @@ class PipelineTestCaseMetaclass(type):
         ]
     """
 
-    def __new__(mcs, name, bases, attrs):
-        def _test_function(data_test):
-            def _function(self):
+    def __new__(mcs, name: str, bases: tuple[type, ...], attrs: dict[str, Any]) -> type:
+        def _test_function(data_test: DataTest) -> Callable[[TestCase], None]:
+            def _function(self: TestCase) -> None:
                 crawler = get_crawler(settings_dict=data_test.settings)
                 pipe = ItemValidationPipeline.from_crawler(crawler)
                 pipe.process_item(data_test.item, None)
@@ -78,7 +83,14 @@ class PipelineTest(TestCase, metaclass=PipelineTestCaseMetaclass):
 
 
 class DataTest:
-    def __init__(self, name, item, cases, settings=None, spidermon_enabled=True):
+    def __init__(
+        self,
+        name: Any,
+        item: Any,
+        cases: Any,
+        settings: Any = None,
+        spidermon_enabled: Any = True,
+    ) -> None:
         self.name = name
         self.item = item
         self.cases = cases
@@ -86,7 +98,7 @@ class DataTest:
         self.settings["SPIDERMON_ENABLED"] = spidermon_enabled
 
 
-def assert_type_in_stats(validator_type, obj):
+def assert_type_in_stats(validator_type: str, obj: type) -> str:
     return f"'{STATS_TYPES.format(obj.__name__.lower(), validator_type)}' in {{stats}}"
 
 
@@ -206,7 +218,7 @@ class PipelineJSONSchemaValidator(PipelineTest):
     ]
 
 
-def test_validator_from_url(mocker):
+def test_validator_from_url(mocker: MockerFixture) -> None:
     mocker.patch(
         "spidermon.contrib.validation.jsonschema.tools.get_contents",
         return_value=test_schema_string,
@@ -218,6 +230,7 @@ def test_validator_from_url(mocker):
     test_item = TestItem()
     crawler = get_crawler(settings_dict=settings)
     pipe = ItemValidationPipeline.from_crawler(crawler)
+    assert isinstance(pipe, ItemValidationPipeline)
     pipe.process_item(test_item, None)
     stats = pipe.stats.stats.get_stats()
     assert "spidermon/validation/items/errors" in stats
@@ -228,7 +241,7 @@ def test_validator_from_url(mocker):
     "schema_types",
     [custom_types, "tests.fixtures.validators.custom_types"],
 )
-def test_schema_types_setting(schema_types):
+def test_schema_types_setting(schema_types: Any) -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         SETTING_SCHEMAS: [custom_type_schema],
@@ -236,6 +249,7 @@ def test_schema_types_setting(schema_types):
     }
     crawler = get_crawler(settings_dict=settings)
     pipe = ItemValidationPipeline.from_crawler(crawler)
+    assert isinstance(pipe, ItemValidationPipeline)
 
     pipe.process_item(TestItem({"title": "ok"}), None)
     assert "spidermon/validation/items/errors" not in pipe.stats.stats.get_stats()
@@ -244,7 +258,7 @@ def test_schema_types_setting(schema_types):
     assert "spidermon/validation/items/errors" in pipe.stats.stats.get_stats()
 
 
-def test_process_item_without_spider_argument():
+def test_process_item_without_spider_argument() -> None:
     settings = {
         "SPIDERMON_ENABLED": True,
         SETTING_SCHEMAS: [test_schema],
@@ -257,7 +271,7 @@ def test_process_item_without_spider_argument():
 
 
 class TestAddErrors:
-    def _run_pipeline(self, test_item):
+    def _run_pipeline(self, test_item: Any) -> Any:
         settings = {
             "SPIDERMON_ENABLED": True,
             "SPIDERMON_VALIDATION_ERRORS_FIELD": "error_test",
@@ -266,20 +280,21 @@ class TestAddErrors:
         test_errors = {"some_error": ["some_message"]}
         crawler = get_crawler(settings_dict=settings)
         pipe = ItemValidationPipeline.from_crawler(crawler)
+        assert isinstance(pipe, ItemValidationPipeline)
         pipe._add_errors_to_item(ItemAdapter(test_item), test_errors)
         return test_item
 
-    def test_add_errors_to_item(self):
+    def test_add_errors_to_item(self) -> None:
         test_item = TestItem({"url": "http://example.com"})
         self._run_pipeline(test_item)
-        assert test_item.get("error_test")["some_error"] == ["some_message"]
+        assert test_item["error_test"]["some_error"] == ["some_message"]
 
-    def test_add_errors_to_item_prefilled(self):
+    def test_add_errors_to_item_prefilled(self) -> None:
         test_item = TestItem(
             {"url": "http://example.com", "error_test": {"some_error": ["prefilled"]}},
         )
         self._run_pipeline(test_item)
-        assert test_item.get("error_test")["some_error"] == [
+        assert test_item["error_test"]["some_error"] == [
             "prefilled",
             "some_message",
         ]

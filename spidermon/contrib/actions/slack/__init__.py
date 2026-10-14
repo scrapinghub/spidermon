@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import ast
 import json
 import logging
+from typing import TYPE_CHECKING, Any
 
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
@@ -9,6 +12,9 @@ from slack_sdk.http_retry.builtin_handlers import RateLimitErrorRetryHandler
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
 
+if TYPE_CHECKING:
+    from scrapy.crawler import Crawler
+
 logger = logging.getLogger(__name__)
 
 
@@ -16,7 +22,12 @@ class SlackMessageManager:
     sender_token = None
     sender_name = None
 
-    def __init__(self, sender_token=None, sender_name=None, fake=False):
+    def __init__(
+        self,
+        sender_token: str | None = None,
+        sender_name: str | None = None,
+        fake: bool = False,
+    ) -> None:
         sender_token = sender_token or self.sender_token
         if not sender_token:
             raise NotConfigured(
@@ -32,30 +43,31 @@ class SlackMessageManager:
         self.fake = fake
         self._client = WebClient(sender_token)
         self._client.retry_handlers.append(RateLimitErrorRetryHandler())
-        self._users = None
+        self._users: dict[str, Any] | None = None
 
     @property
-    def users(self):
+    def users(self) -> dict[str, Any]:
         if self._users is None:
             self._users = self._get_users_info()
         return self._users
 
     def send_message(  # noqa: PLR0913, PLR0917
         self,
-        to,
-        text,
-        parse=None,
-        link_names=1,
-        attachments=None,
-        use_mention=False,
-        **kwargs,
-    ):
+        to: str | list[str] | None,
+        text: str | None,
+        parse: str | None = None,
+        link_names: int = 1,
+        attachments: str | None = None,
+        use_mention: bool = False,
+        **kwargs: Any,
+    ) -> list[Any] | None:
         if self.fake:
             logger.info(text)
             if attachments:
                 logger.info(attachments)
             return None
 
+        assert to is not None
         if isinstance(to, list):
             return [
                 self.send_message(
@@ -70,7 +82,7 @@ class SlackMessageManager:
                 for recipient in to
             ]
         if to.startswith("@"):
-            return self._send_user_message(
+            self._send_user_message(
                 username=to,
                 text=text,
                 parse=parse,
@@ -78,9 +90,11 @@ class SlackMessageManager:
                 attachments=attachments,
                 **kwargs,
             )
+            return None
         if use_mention:
+            assert text is not None
             text = "@channel: " + text if to.startswith("#") else "@group: " + text
-        return self._send_channel_message(
+        self._send_channel_message(
             channel=to,
             text=text,
             parse=parse,
@@ -88,13 +102,14 @@ class SlackMessageManager:
             attachments=attachments,
             **kwargs,
         )
+        return None
 
-    def _get_user_id(self, username):
+    def _get_user_id(self, username: str) -> str | None:
         name = username.removeprefix("@")
         user = self.users.get(name, None)
         return user["id"] if user else None
 
-    def _get_users_info(self):
+    def _get_users_info(self) -> dict[str, Any]:
         return {
             member["name"].lower(): member
             for member in self._client.users_list()["members"]
@@ -102,16 +117,16 @@ class SlackMessageManager:
 
     def _send_user_message(
         self,
-        username,
-        text,
-        parse="full",
-        link_names=1,
-        attachments=None,
-        **kwargs,
-    ):
+        username: str,
+        text: str | None,
+        parse: str | None = "full",
+        link_names: int = 1,
+        attachments: str | None = None,
+        **kwargs: Any,
+    ) -> None:
         user_id = self._get_user_id(username)
         if user_id:
-            return self._send_channel_message(
+            self._send_channel_message(
                 channel=user_id,
                 text=text,
                 parse=parse,
@@ -119,29 +134,28 @@ class SlackMessageManager:
                 attachments=attachments,
                 **kwargs,
             )
-        return None
 
     def _send_channel_message(
         self,
-        channel,
-        text,
-        parse="full",
-        link_names=1,
-        attachments=None,
-        **kwargs,
-    ):
+        channel: str,
+        text: str | None,
+        parse: str | None = "full",
+        link_names: int = 1,
+        attachments: str | None = None,
+        **kwargs: Any,
+    ) -> None:
         self._client.chat_postMessage(
             channel=channel,
             text=text,
             parse=parse,
-            link_names=link_names,
+            link_names=link_names,  # type: ignore[arg-type]
             attachments=self._parse_attachments(attachments),
             username=self.sender_name,
             icon_url=self._get_icon_url(),
             **kwargs,
         )
 
-    def _get_icon_url(self):
+    def _get_icon_url(self) -> str | None:
         """Look up the icon url for the user set as the message sender.
 
         This will only return a URL if the slack app has users:read permission and
@@ -149,8 +163,9 @@ class SlackMessageManager:
         just send messages is not likely to fulfill these criteria, so it returns
         None in this situation, which will result in slack using the bot's App Icon.
         """
+        assert self.sender_name is not None
         try:
-            icon_url = self.users[self.sender_name]["profile"]["image_48"]
+            icon_url: str | None = self.users[self.sender_name]["profile"]["image_48"]
         except SlackApiError as e:
             if (
                 e.response.data.get("error") == "missing_scope"
@@ -172,7 +187,7 @@ class SlackMessageManager:
             icon_url = None
         return icon_url
 
-    def _parse_attachments(self, attachments):
+    def _parse_attachments(self, attachments: str | None) -> str | None:
         if not attachments:
             return None
         python_attachments = ast.literal_eval(attachments)
@@ -193,18 +208,18 @@ class SendSlackMessage(ActionWithTemplates):
 
     def __init__(  # noqa: PLR0913, PLR0917
         self,
-        sender_token=None,
-        sender_name=None,
-        recipients=None,
-        message=None,
-        message_template=None,
-        include_message=None,
-        attachments=None,
-        attachments_template=None,
-        include_attachments=None,
-        fake=None,
-        **kwargs,
-    ):
+        sender_token: str | None = None,
+        sender_name: str | None = None,
+        recipients: str | list[str] | None = None,
+        message: str | None = None,
+        message_template: str | None = None,
+        include_message: bool | None = None,
+        attachments: str | None = None,
+        attachments_template: str | None = None,
+        include_attachments: bool | None = None,
+        fake: bool | None = None,
+        **kwargs: Any,
+    ) -> None:
         super().__init__()
 
         self.fake = fake or self.fake
@@ -235,7 +250,7 @@ class SendSlackMessage(ActionWithTemplates):
             )
 
     @classmethod
-    def from_crawler_kwargs(cls, crawler):
+    def from_crawler_kwargs(cls, crawler: Crawler) -> dict[str, Any]:
         return {
             "sender_token": crawler.settings.get("SPIDERMON_SLACK_SENDER_TOKEN"),
             "sender_name": crawler.settings.get("SPIDERMON_SLACK_SENDER_NAME"),
@@ -255,7 +270,7 @@ class SendSlackMessage(ActionWithTemplates):
             "fake": crawler.settings.getbool("SPIDERMON_SLACK_FAKE"),
         }
 
-    def run_action(self):
+    def run_action(self) -> None:
         self.manager.send_message(
             to=self.recipients,
             text=self.get_message(),
@@ -263,14 +278,14 @@ class SendSlackMessage(ActionWithTemplates):
             **self.kwargs,
         )
 
-    def get_message(self):
+    def get_message(self) -> str | None:
         if self.include_message:
             if self.message:
                 return self.render_text_template(self.message)
             return self.render_template(self.message_template)
         return None
 
-    def get_attachments(self):
+    def get_attachments(self) -> str | None:
         if self.include_attachments:
             if self.attachments:
                 return self.render_text_template(self.attachments)

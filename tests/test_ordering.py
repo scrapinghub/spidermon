@@ -1,3 +1,5 @@
+from typing import Any
+
 from spidermon import MonitorSuite
 
 from .fixtures.ordering import (
@@ -8,7 +10,7 @@ from .fixtures.ordering import (
     UnorderedMethodsMonitor,
 )
 
-SUITE_SEQUENCES = [
+SUITE_SEQUENCES: list[tuple[Any, list[Any]]] = [
     # ------------------------------------------------------------------------------------------------------------
     # monitor sequence                                      expected sequence
     # ------------------------------------------------------------------------------------------------------------
@@ -74,7 +76,7 @@ METHOD_SEQUENCES = [
 ]
 
 
-def test_suite_ordering():
+def test_suite_ordering() -> None:
     for monitors_sequence, expected_sequence in SUITE_SEQUENCES:
         suite = MonitorSuite()
         suite.add_monitors(monitors_sequence)
@@ -82,7 +84,7 @@ def test_suite_ordering():
         assert sequence == expected_sequence
 
 
-def test_method_ordering():
+def test_method_ordering() -> None:
     for monitor_class, expected_sequence in METHOD_SEQUENCES:
         suite = MonitorSuite()
         suite.add_monitor(monitor_class)
@@ -90,7 +92,7 @@ def test_method_ordering():
         assert sequence == expected_sequence
 
 
-def _extract_monitor_class(suite):
+def _extract_monitor_class(suite: Any) -> Any:
     if suite.__class__ == MonitorSuite:
         return _extract_monitor_class(suite._tests[0])
     return suite.__class__

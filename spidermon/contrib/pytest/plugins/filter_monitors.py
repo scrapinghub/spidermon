@@ -3,12 +3,14 @@ import pytest
 from spidermon import Monitor
 
 
-def pytest_report_header(config):
+def pytest_report_header(config: pytest.Config) -> str:
     return "Spidermon monitor filtering"
 
 
 @pytest.hookimpl(trylast=True)
-def pytest_collection_modifyitems(session, config, items):
+def pytest_collection_modifyitems(
+    session: pytest.Session, config: pytest.Config, items: list[pytest.Item]
+) -> None:
     items[:] = [
         item
         for item in items

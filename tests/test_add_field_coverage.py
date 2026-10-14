@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 pytest.importorskip("scrapy")
@@ -13,7 +15,7 @@ class TestItem(Item):
 
 
 @pytest.fixture
-def spider():
+def spider() -> Spider:
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -24,7 +26,7 @@ def spider():
     return Spider.from_crawler(crawler, "example.com")
 
 
-async def send_item_scraped(spider, item):
+async def send_item_scraped(spider: Spider, item: Any) -> None:
     if hasattr(spider.crawler.signals, "send_catch_log_async"):
         await spider.crawler.signals.send_catch_log_async(
             signal=signals.item_scraped,
@@ -42,7 +44,7 @@ async def send_item_scraped(spider, item):
 
 
 @deferred_f_from_coro_f
-async def test_add_stats_item_scraped_count_by_item_type(spider):
+async def test_add_stats_item_scraped_count_by_item_type(spider: Spider) -> None:
     for _ in range(15):
         await send_item_scraped(spider, {"_type": "regular_dict"})
 
@@ -61,7 +63,7 @@ async def test_add_stats_item_scraped_count_by_item_type(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_single_field(spider):
+async def test_item_scraped_count_single_field(spider: Spider) -> None:
     returned_items = [{"field1": "value1"}]
 
     for item in returned_items:
@@ -72,7 +74,7 @@ async def test_item_scraped_count_single_field(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_multiple_field(spider):
+async def test_item_scraped_count_multiple_field(spider: Spider) -> None:
     returned_items = [{"field1": "value1", "field2": "value2"}]
 
     for item in returned_items:
@@ -84,7 +86,7 @@ async def test_item_scraped_count_multiple_field(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_multiple_items(spider):
+async def test_item_scraped_count_multiple_items(spider: Spider) -> None:
     returned_items = [
         {"field1": "value1", "field2": "value2"},
         {"field1": "value1", "field2": "value2"},
@@ -99,7 +101,7 @@ async def test_item_scraped_count_multiple_items(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_multiple_items_field_missing(spider):
+async def test_item_scraped_count_multiple_items_field_missing(spider: Spider) -> None:
     returned_items = [
         {"field1": "value1", "field2": "value2"},
         {
@@ -116,7 +118,7 @@ async def test_item_scraped_count_multiple_items_field_missing(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_single_nested_field(spider):
+async def test_item_scraped_count_single_nested_field(spider: Spider) -> None:
     returned_items = [{"field1": {"field1.1": "value1.1"}}]
 
     for item in returned_items:
@@ -129,7 +131,7 @@ async def test_item_scraped_count_single_nested_field(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_multiple_nested_field(spider):
+async def test_item_scraped_count_multiple_nested_field(spider: Spider) -> None:
     returned_items = [
         {
             "field1": {"field1.1": "value1.1"},
@@ -159,7 +161,7 @@ async def test_item_scraped_count_multiple_nested_field(spider):
 
 
 @deferred_f_from_coro_f
-async def test_item_scraped_count_with_slash_on_field_name(spider):
+async def test_item_scraped_count_with_slash_on_field_name(spider: Spider) -> None:
     returned_items = [{"field1/with/slash": "value1", "field2": "value2"}]
 
     for item in returned_items:
@@ -171,7 +173,9 @@ async def test_item_scraped_count_with_slash_on_field_name(spider):
 
 
 @deferred_f_from_coro_f
-async def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field_coverage_settings():
+async def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field_coverage_settings() -> (
+    None
+):
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
@@ -198,7 +202,9 @@ async def test_do_not_add_field_coverage_when_spider_closes_if_do_not_have_field
 
 
 @deferred_f_from_coro_f
-async def test_add_field_coverage_when_spider_closes_if_have_field_coverage_settings():
+async def test_add_field_coverage_when_spider_closes_if_have_field_coverage_settings() -> (
+    None
+):
     settings = {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},

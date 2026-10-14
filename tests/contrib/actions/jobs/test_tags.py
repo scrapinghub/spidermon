@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -11,19 +12,19 @@ from spidermon.exceptions import NotConfigured
 
 
 @pytest.fixture
-def test_settings():
+def test_settings() -> dict[str, Any]:
     return {
         "SPIDERMON_JOB_TAGS_TO_ADD": ["add_foo", "add_bar"],
         "SPIDERMON_JOB_TAGS_TO_REMOVE": ["remove_foo", "remove_bar"],
     }
 
 
-class SettableDict(dict):
-    def set(self, key, value):
+class SettableDict(dict[str, Any]):
+    def set(self, key: str, value: Any) -> None:
         self[key] = value
 
 
-def test_run_action(test_settings):
+def test_run_action(test_settings: dict[str, Any]) -> None:
     crawler = get_crawler(settings_dict=test_settings)
     job_tags_action = JobTagsAction.from_crawler(crawler)
 
@@ -38,7 +39,7 @@ def test_run_action(test_settings):
         job_tags_action.run_action()
 
 
-def test_add_job_tags(test_settings):
+def test_add_job_tags(test_settings: dict[str, Any]) -> None:
     crawler = get_crawler(settings_dict=test_settings)
     add_job_tags = AddJobTags.from_crawler(crawler)
 
@@ -50,7 +51,7 @@ def test_add_job_tags(test_settings):
     assert add_job_tags.data.job.metadata.get("tags") == ["add_foo", "add_bar"]
 
 
-def test_remove_job_tags(test_settings):
+def test_remove_job_tags(test_settings: dict[str, Any]) -> None:
     crawler = get_crawler(settings_dict=test_settings)
     remove_job_tags = RemoveJobTags.from_crawler(crawler)
 

@@ -1,5 +1,7 @@
 import pytest
 
+from spidermon import MonitorSuite
+
 from .fixtures.names import NamedTopSuite, UnnamedTopSuite
 
 NAMES = [
@@ -179,16 +181,18 @@ FULL_NAMES_NAMED_SUITE = [
 
 
 @pytest.fixture
-def named_top_suite():
+def named_top_suite() -> NamedTopSuite:
     return NamedTopSuite()
 
 
 @pytest.fixture
-def unnamed_top_suite():
+def unnamed_top_suite() -> UnnamedTopSuite:
     return UnnamedTopSuite()
 
 
-def test_names(named_top_suite, unnamed_top_suite):
+def test_names(
+    named_top_suite: NamedTopSuite, unnamed_top_suite: UnnamedTopSuite
+) -> None:
     _check_names(generated_names=_generate_names(named_top_suite), expected_names=NAMES)
     _check_names(
         generated_names=_generate_names(unnamed_top_suite),
@@ -196,7 +200,9 @@ def test_names(named_top_suite, unnamed_top_suite):
     )
 
 
-def test_monitor_names(named_top_suite, unnamed_top_suite):
+def test_monitor_names(
+    named_top_suite: NamedTopSuite, unnamed_top_suite: UnnamedTopSuite
+) -> None:
     _check_names(
         generated_names=_generate_monitor_names(named_top_suite),
         expected_names=MONITOR_NAMES,
@@ -207,7 +213,9 @@ def test_monitor_names(named_top_suite, unnamed_top_suite):
     )
 
 
-def test_method_names(named_top_suite, unnamed_top_suite):
+def test_method_names(
+    named_top_suite: NamedTopSuite, unnamed_top_suite: UnnamedTopSuite
+) -> None:
     _check_names(
         generated_names=_generate_method_names(named_top_suite),
         expected_names=METHOD_NAMES,
@@ -218,7 +226,9 @@ def test_method_names(named_top_suite, unnamed_top_suite):
     )
 
 
-def test_full_names(named_top_suite, unnamed_top_suite):
+def test_full_names(
+    named_top_suite: NamedTopSuite, unnamed_top_suite: UnnamedTopSuite
+) -> None:
     _check_names(
         generated_names=_generate_full_names(named_top_suite),
         expected_names=FULL_NAMES_NAMED_SUITE,
@@ -229,23 +239,23 @@ def test_full_names(named_top_suite, unnamed_top_suite):
     )
 
 
-def _generate_names(suite):
+def _generate_names(suite: MonitorSuite) -> list[str]:
     return [test.name for test in suite.all_monitors]
 
 
-def _generate_monitor_names(suite):
+def _generate_monitor_names(suite: MonitorSuite) -> list[str]:
     return [test.monitor_name for test in suite.all_monitors]
 
 
-def _generate_method_names(suite):
+def _generate_method_names(suite: MonitorSuite) -> list[str]:
     return [test.method_name for test in suite.all_monitors]
 
 
-def _generate_full_names(suite):
+def _generate_full_names(suite: MonitorSuite) -> list[str]:
     return [test.full_name for test in suite.all_monitors]
 
 
-def _check_names(generated_names, expected_names):
+def _check_names(generated_names: list[str], expected_names: list[str]) -> None:
     assert len(generated_names) == len(expected_names)
     for generated_name, expected_name in zip(
         generated_names, expected_names, strict=True

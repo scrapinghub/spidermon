@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import secrets
 from pathlib import Path
+from typing import IO, TYPE_CHECKING, Any
 
 import boto3
 
@@ -8,6 +11,11 @@ from spidermon.utils.settings import get_aws_credentials
 
 from . import CreateReport
 
+if TYPE_CHECKING:
+    from os import PathLike
+
+    from scrapy.crawler import Crawler
+
 DEFAULT_S3_REGION_ENDPOINT = "s3.amazonaws.com"
 DEFAULT_S3_CONTENT_TYPE = "text/html"
 
@@ -15,7 +23,7 @@ _HEADER_TO_EXTRA_ARG = {"Content-Type": "ContentType"}
 
 
 class S3Uploader:
-    def __init__(self, aws_key, aws_secret):
+    def __init__(self, aws_key: str | None, aws_secret: str | None) -> None:
         self.client = boto3.client(
             "s3",
             aws_access_key_id=aws_key,
@@ -24,12 +32,12 @@ class S3Uploader:
 
     def upload_from_file(
         self,
-        source_filename,
-        s3_bucket,
-        s3_filename,
-        headers=None,
-        make_public=False,
-    ):
+        source_filename: str | PathLike[str],
+        s3_bucket: str,
+        s3_filename: str,
+        headers: dict[str, str] | None = None,
+        make_public: bool = False,
+    ) -> None:
         with Path(source_filename).open("rb") as f:
             self._upload(
                 bucket=s3_bucket,
@@ -41,12 +49,12 @@ class S3Uploader:
 
     def upload_from_content(
         self,
-        content,
-        s3_bucket,
-        s3_filename,
-        headers=None,
-        make_public=False,
-    ):
+        content: str | bytes,
+        s3_bucket: str,
+        s3_filename: str,
+        headers: dict[str, str] | None = None,
+        make_public: bool = False,
+    ) -> None:
         if isinstance(content, str):
             content = content.encode("utf-8")
         self._upload(
@@ -57,8 +65,15 @@ class S3Uploader:
             make_public=make_public,
         )
 
-    def _upload(self, bucket, filename, body, headers=None, make_public=False):
-        extra_args = {
+    def _upload(
+        self,
+        bucket: str,
+        filename: str,
+        body: bytes | IO[bytes],
+        headers: dict[str, str] | None = None,
+        make_public: bool = False,
+    ) -> None:
+        extra_args: dict[str, Any] = {
             _HEADER_TO_EXTRA_ARG[name]: value
             for name, value in (headers or {}).items()
             if name in _HEADER_TO_EXTRA_ARG
@@ -79,16 +94,16 @@ class CreateS3Report(CreateReport):
 
     def __init__(  # noqa: PLR0913, PLR0917
         self,
-        aws_access_key=None,
-        aws_secret_key=None,
-        s3_bucket=None,
-        s3_filename=None,
-        s3_region_endpoint=None,
-        make_public=False,
-        content_type=None,
-        *args,
-        **kwargs,
-    ):
+        aws_access_key: str | None = None,
+        aws_secret_key: str | None = None,
+        s3_bucket: str | None = None,
+        s3_filename: str | None = None,
+        s3_region_endpoint: str | None = None,
+        make_public: bool = False,
+        content_type: str | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
 
         self.aws_access_key = aws_access_key or self.aws_access_key
@@ -117,7 +132,7 @@ class CreateS3Report(CreateReport):
             )
 
     @classmethod
-    def from_crawler_kwargs(cls, crawler):
+    def from_crawler_kwargs(cls, crawler: Crawler) -> dict[str, Any]:
         kwargs = super().from_crawler_kwargs(crawler)
         (aws_access_key_id, aws_secret_access_key) = get_aws_credentials(
             crawler.settings,
@@ -139,7 +154,8 @@ class CreateS3Report(CreateReport):
         )
         return kwargs
 
-    def after_render_report(self):
+    def after_render_report(self) -> None:
+        assert self.s3_bucket is not None
         s3 = S3Uploader(self.aws_access_key, self.aws_secret_key)
         s3.upload_from_content(
             content=self.report,
@@ -149,15 +165,17 @@ class CreateS3Report(CreateReport):
             make_public=self.make_public,
         )
 
-    def get_s3_filename(self):
+    def get_s3_filename(self) -> str:
+        assert self.s3_filename is not None
         return f"reports/{self.get_url_secret()}/{self.render_text_template(self.s3_filename)}"
 
-    def get_s3_report_url(self):
+    def get_s3_report_url(self) -> str:
         return f"https://{self.s3_region_endpoint}/{self.s3_bucket}/{self.get_s3_filename()}"
 
-    def get_url_secret(self):
+    def get_url_secret(self) -> str:
         return self._url_secret
 
-    def get_meta(self):
+    def get_meta(self) -> dict[str, Any]:
+        assert self.data is not None
         report_url = self.get_s3_report_url()
         return {"reports_links": [*self.data.meta.get("reports", []), report_url]}

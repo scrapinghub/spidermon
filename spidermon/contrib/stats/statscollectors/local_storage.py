@@ -13,15 +13,16 @@ from spidermon.contrib.utils.spider import get_spider_name
 
 if TYPE_CHECKING:
     from scrapy import Spider
+    from scrapy.statscollectors import StatsT
 
 
 class LocalStorageStatsHistoryCollector(StatsCollector):
-    def _stats_location(self, spider):
+    def _stats_location(self, spider: Spider) -> Path:
         statsdir = data_path("stats", createdir=True)
         spider_name = get_spider_name(spider)
         return Path(statsdir) / f"{spider_name}_stats_history"
 
-    def open_spider(self, spider: Spider | None = None):
+    def open_spider(self, spider: Spider | None = None) -> None:
         spider = spider or self._crawler.spider
 
         assert spider
@@ -52,10 +53,12 @@ class LocalStorageStatsHistoryCollector(StatsCollector):
 
         spider.stats_history = _stats_history  # type: ignore[attr-defined]
 
-    def _persist_stats(self, stats, spider=None):
+    def _persist_stats(self, stats: StatsT, spider: Spider | None = None) -> None:
         spider = spider or self._crawler.spider
+        assert spider
         stats_location = self._stats_location(spider)
 
-        spider.stats_history.appendleft(self._stats)
+        stats_history = spider.stats_history  # type: ignore[attr-defined]
+        stats_history.appendleft(self._stats)
         with stats_location.open("wb") as stats_file:
-            pickle.dump(spider.stats_history, stats_file)
+            pickle.dump(stats_history, stats_file)

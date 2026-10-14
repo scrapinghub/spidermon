@@ -1,11 +1,16 @@
+from pathlib import Path
+
 import pytest
+from pytest_mock import MockerFixture
 
 pytest.importorskip("scrapy")
 
 import spidermon.contrib.validation.jsonschema.tools as schema_tools
 
 
-def test_get_schema_from_url_fails(caplog, mocker):
+def test_get_schema_from_url_fails(
+    caplog: pytest.LogCaptureFixture, mocker: MockerFixture
+) -> None:
     mocker.patch(
         "spidermon.contrib.validation.jsonschema.tools.get_contents",
         return_value={'"schema":'},
@@ -17,7 +22,9 @@ def test_get_schema_from_url_fails(caplog, mocker):
     )
 
 
-def test_get_schema_from_file_fails(caplog, mocker):
+def test_get_schema_from_file_fails(
+    caplog: pytest.LogCaptureFixture, mocker: MockerFixture
+) -> None:
     path = "tests/fixtures/bad_schema.json"
     schema_tools.get_schema_from(path)
     assert f"Could not parse schema in {path!r}" in caplog.record_tuples[0][2]
@@ -33,11 +40,13 @@ def test_get_schema_from_file_fails(caplog, mocker):
         ("s3://bucket/file.json", True),
     ],
 )
-def test_is_schema_url(url, expected_result):
+def test_is_schema_url(url: str, expected_result: bool) -> None:
     assert schema_tools.is_schema_url(url) == expected_result
 
 
-def test_get_contents_fails(mocker, caplog):
+def test_get_contents_fails(
+    mocker: MockerFixture, caplog: pytest.LogCaptureFixture
+) -> None:
     cm = mocker.MagicMock()
     cm.__enter__.return_value = cm
     cm.read.side_effect = ValueError("'ValueError' object has no attribute 'decode'")
@@ -54,3 +63,9 @@ def test_get_contents_fails(mocker, caplog):
             "Failed to get 'https://example.com/schema.json'",
         ),
     ]
+
+
+def test_get_contents(tmp_path: Path) -> None:
+    path = tmp_path / "schema.json"
+    path.write_text('{"type": "object"}')
+    assert schema_tools.get_contents(path.as_uri()) == '{"type": "object"}'

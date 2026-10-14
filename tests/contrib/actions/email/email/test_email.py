@@ -1,4 +1,7 @@
+from typing import Any
+
 import pytest
+from pytest_mock import MockerFixture
 
 pytest.importorskip("scrapy")
 
@@ -8,7 +11,7 @@ from spidermon.contrib.actions.email import SendEmail
 
 
 @pytest.fixture
-def mock_render_template(mocker):
+def mock_render_template(mocker: MockerFixture) -> None:
     """Mock functions that render templates to return the raw value"""
     mocker.patch.object(SendEmail, "get_subject", lambda s: s.subject)
     mocker.patch.object(SendEmail, "get_body_text", lambda s: s.body_text)
@@ -37,7 +40,9 @@ def mock_render_template(mocker):
         ),
     ],
 )
-def test_email_message_to(mock_render_template, settings_to, expected_to):
+def test_email_message_to(
+    mock_render_template: None, settings_to: Any, expected_to: Any
+) -> None:
     crawler = get_crawler(
         settings_dict={
             "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
@@ -77,7 +82,9 @@ def test_email_message_to(mock_render_template, settings_to, expected_to):
         ),
     ],
 )
-def test_email_message_cc(mock_render_template, settings_cc, expected_cc):
+def test_email_message_cc(
+    mock_render_template: None, settings_cc: Any, expected_cc: Any
+) -> None:
     crawler = get_crawler(
         settings_dict={
             "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",
@@ -118,7 +125,9 @@ def test_email_message_cc(mock_render_template, settings_cc, expected_cc):
         ),
     ],
 )
-def test_email_message_bcc(mock_render_template, settings_bcc, expected_bcc):
+def test_email_message_bcc(
+    mock_render_template: None, settings_bcc: Any, expected_bcc: Any
+) -> None:
     crawler = get_crawler(
         settings_dict={
             "SPIDERMON_EMAIL_SENDER": "from.someone@somewhere.com",

@@ -1,4 +1,5 @@
 import datetime
+from typing import Any
 
 import pytest
 
@@ -8,9 +9,9 @@ from spidermon.contrib.actions.reports import CreateReport
 from spidermon.data import Data
 
 
-def _report(stats):
+def _report(stats: dict[str, Any]) -> str:
     report = CreateReport(template="reports/email/monitors/result.jinja")
-    report.result = Data(
+    report.result = Data(  # type: ignore[assignment]
         {
             "monitor_results": [],
             "monitors_passed_results": [],
@@ -36,7 +37,7 @@ pytestmark = pytest.mark.filterwarnings(
 )
 
 
-def test_render_report_while_spider_is_still_running():
+def test_render_report_while_spider_is_still_running() -> None:
     # `finish_time` is only present in stats once the spider closes, e.g.
     # a periodic monitor can run while the spider is still going. Scrapy
     # stores these timestamps as naive UTC datetimes.
@@ -45,7 +46,7 @@ def test_render_report_while_spider_is_still_running():
     assert "myspider" in report
 
 
-def test_render_report_after_spider_finished():
+def test_render_report_after_spider_finished() -> None:
     stats = {
         "start_time": datetime.datetime(2024, 1, 1, 12, 0, 0),  # noqa: DTZ001
         "finish_time": datetime.datetime(2024, 1, 1, 12, 5, 0),  # noqa: DTZ001

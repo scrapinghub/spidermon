@@ -1,7 +1,10 @@
+from typing import Any
+
 import pytest
 
 pytest.importorskip("scrapy")
 
+from pytest_mock import MockerFixture
 from scrapy import signals
 from scrapy.spiders import Spider
 from scrapy.utils.test import get_crawler
@@ -10,14 +13,16 @@ from spidermon.contrib.scrapy.extensions import Spidermon
 
 
 @pytest.fixture
-def spidermon_enabled_settings():
+def spidermon_enabled_settings() -> dict[str, Any]:
     return {
         "SPIDERMON_ENABLED": True,
         "EXTENSIONS": {"spidermon.contrib.scrapy.extensions.Spidermon": 100},
     }
 
 
-def test_spider_opened_connect_signal(mocker, spidermon_enabled_settings):
+def test_spider_opened_connect_signal(
+    mocker: MockerFixture, spidermon_enabled_settings: dict[str, Any]
+) -> None:
     spider_opened_method = mocker.patch.object(Spidermon, "spider_opened")
 
     crawler = get_crawler(settings_dict=spidermon_enabled_settings)
@@ -27,7 +32,9 @@ def test_spider_opened_connect_signal(mocker, spidermon_enabled_settings):
     assert spider_opened_method.called, "spider_opened not called"
 
 
-def test_spider_closed_connect_signal(mocker, spidermon_enabled_settings):
+def test_spider_closed_connect_signal(
+    mocker: MockerFixture, spidermon_enabled_settings: dict[str, Any]
+) -> None:
     spider_closed_method = mocker.patch.object(Spidermon, "spider_closed")
 
     crawler = get_crawler(settings_dict=spidermon_enabled_settings)
@@ -41,7 +48,9 @@ def test_spider_closed_connect_signal(mocker, spidermon_enabled_settings):
     assert spider_closed_method.called, "spider_closed not called"
 
 
-def test_engine_stopped_connect_signal(mocker, spidermon_enabled_settings):
+def test_engine_stopped_connect_signal(
+    mocker: MockerFixture, spidermon_enabled_settings: dict[str, Any]
+) -> None:
     engine_stopped = mocker.patch.object(Spidermon, "engine_stopped")
 
     crawler = get_crawler(settings_dict=spidermon_enabled_settings)
@@ -56,9 +65,9 @@ def test_engine_stopped_connect_signal(mocker, spidermon_enabled_settings):
 
 
 def test_item_scraped_connect_signal_if_field_coverage_settings_enabled(
-    mocker,
-    spidermon_enabled_settings,
-):
+    mocker: MockerFixture,
+    spidermon_enabled_settings: dict[str, Any],
+) -> None:
     item_scraped_method = mocker.patch.object(Spidermon, "item_scraped")
 
     spidermon_enabled_settings["SPIDERMON_ADD_FIELD_COVERAGE"] = True
@@ -71,9 +80,9 @@ def test_item_scraped_connect_signal_if_field_coverage_settings_enabled(
 
 
 def test_item_scraped_do_not_connect_signal_if_field_coverage_settings_disabled(
-    mocker,
-    spidermon_enabled_settings,
-):
+    mocker: MockerFixture,
+    spidermon_enabled_settings: dict[str, Any],
+) -> None:
     item_scraped_method = mocker.patch.object(Spidermon, "item_scraped")
 
     spidermon_enabled_settings["SPIDERMON_ADD_FIELD_COVERAGE"] = False
@@ -87,9 +96,9 @@ def test_item_scraped_do_not_connect_signal_if_field_coverage_settings_disabled(
 
 
 def test_item_scraped_do_not_connect_signal_if_do_not_have_field_coverage_settings(
-    mocker,
-    spidermon_enabled_settings,
-):
+    mocker: MockerFixture,
+    spidermon_enabled_settings: dict[str, Any],
+) -> None:
     item_scraped_method = mocker.patch.object(Spidermon, "item_scraped")
 
     crawler = get_crawler(settings_dict=spidermon_enabled_settings)

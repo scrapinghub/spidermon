@@ -1,3 +1,6 @@
+from collections.abc import Callable
+from typing import Any
+
 import pytest
 
 pytest.importorskip("scrapy")
@@ -8,11 +11,13 @@ from spidermon.exceptions import NotConfigured
 
 
 @pytest.fixture
-def item_validation_suite():
+def item_validation_suite() -> MonitorSuite:
     return MonitorSuite(monitors=[ItemValidationMonitor])
 
 
-def test_needs_to_configure_item_validation_monitor(make_data, item_validation_suite):
+def test_needs_to_configure_item_validation_monitor(
+    make_data: Callable[..., dict[str, Any]], item_validation_suite: MonitorSuite
+) -> None:
     data = make_data()
     runner = data.pop("runner")
     data["crawler"].stats.set_value(ItemValidationMonitor.stat_name, 10)
@@ -20,7 +25,9 @@ def test_needs_to_configure_item_validation_monitor(make_data, item_validation_s
         runner.run(item_validation_suite, **data)
 
 
-def test_skip_monitor_if_stat_not_in_job_stats(make_data, item_validation_suite):
+def test_skip_monitor_if_stat_not_in_job_stats(
+    make_data: Callable[..., dict[str, Any]], item_validation_suite: MonitorSuite
+) -> None:
     data = make_data({ItemValidationMonitor.threshold_setting: 100})
     runner = data.pop("runner")
     data["crawler"].stats.set_value("item_scraped_count", 10)
@@ -44,12 +51,12 @@ def test_skip_monitor_if_stat_not_in_job_stats(make_data, item_validation_suite)
     ],
 )
 def test_item_validation_monitor_validation(
-    make_data,
-    item_validation_suite,
-    value,
-    threshold,
-    expected_status,
-):
+    make_data: Callable[..., dict[str, Any]],
+    item_validation_suite: MonitorSuite,
+    value: Any,
+    threshold: Any,
+    expected_status: Any,
+) -> None:
     data = make_data({ItemValidationMonitor.threshold_setting: threshold})
     runner = data.pop("runner")
 

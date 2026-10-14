@@ -15,6 +15,9 @@ the `run_action` method.
             # Include here the logic of your action
             ...
 
+.. autoclass:: spidermon.core.actions.Action
+    :members: run_action, data, monitors_passed, monitors_failed, fallback
+
 
 Fallback Actions
 ================

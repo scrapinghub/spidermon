@@ -3,6 +3,9 @@ try:
 except ImportError:
     pass
 else:
+    from collections.abc import Callable
+    from typing import Any
+
     import pytest
     from scrapy import Spider
     from scrapy.crawler import Crawler
@@ -11,8 +14,10 @@ else:
     from spidermon.contrib.scrapy.runners import SpiderMonitorRunner
 
     @pytest.fixture
-    def make_data(request):
-        def _make_data(settings=None):
+    def make_data(
+        request: pytest.FixtureRequest,
+    ) -> Callable[..., dict[str, Any]]:
+        def _make_data(settings: dict[str, Any] | None = None) -> dict[str, Any]:
             crawler = Crawler(Spider, settings=settings)
             crawler.stats = MemoryStatsCollector(crawler)
             spider = Spider("dummy")

@@ -1,4 +1,8 @@
+from typing import Any
+from unittest.mock import MagicMock
+
 import pytest
+from pytest_mock import MockerFixture
 
 pytest.importorskip("scrapy")
 
@@ -14,7 +18,7 @@ from spidermon.exceptions import NotConfigured
 
 
 @pytest.fixture
-def mock_render_template(mocker):
+def mock_render_template(mocker: MockerFixture) -> None:
     """Mock functions that render templates to return the raw value"""
     mocker.patch.object(SendSmtpEmail, "get_subject", lambda s: s.subject)
     mocker.patch.object(SendSmtpEmail, "get_body_text", lambda s: s.body_text)
@@ -22,13 +26,13 @@ def mock_render_template(mocker):
 
 
 @pytest.fixture(autouse=True)
-def mock_smtp(mocker):
+def mock_smtp(mocker: MockerFixture) -> Any:
     mock_smtp_cls = mocker.patch("spidermon.contrib.actions.email.smtp.smtplib.SMTP")
     return mock_smtp_cls.return_value.__enter__.return_value
 
 
 @pytest.fixture
-def smtp_action_settings():
+def smtp_action_settings() -> dict[str, Any]:
     return {
         "SPIDERMON_SMTP_HOST": "smtp.example.com",
         "SPIDERMON_SMTP_USER": "smtp_user",
@@ -46,7 +50,9 @@ def smtp_action_settings():
     }
 
 
-def test_use_default_smtp_port_if_not_provided(smtp_action_settings):
+def test_use_default_smtp_port_if_not_provided(
+    smtp_action_settings: dict[str, Any],
+) -> None:
     del smtp_action_settings["SPIDERMON_SMTP_PORT"]
     crawler = get_crawler(settings_dict=smtp_action_settings)
     send_smtp_email_action = SendSmtpEmail.from_crawler(crawler)
@@ -54,7 +60,9 @@ def test_use_default_smtp_port_if_not_provided(smtp_action_settings):
     assert send_smtp_email_action.smtp_port == DEFAULT_SMTP_PORT
 
 
-def test_use_configured_smtp_port_when_provided(smtp_action_settings):
+def test_use_configured_smtp_port_when_provided(
+    smtp_action_settings: dict[str, Any],
+) -> None:
     smtp_action_settings["SPIDERMON_SMTP_PORT"] = 465
     crawler = get_crawler(settings_dict=smtp_action_settings)
     send_smtp_email_action = SendSmtpEmail.from_crawler(crawler)
@@ -62,7 +70,9 @@ def test_use_configured_smtp_port_when_provided(smtp_action_settings):
     assert send_smtp_email_action.smtp_port == 465
 
 
-def test_use_default_smtp_enforce_tls_if_not_provided(smtp_action_settings):
+def test_use_default_smtp_enforce_tls_if_not_provided(
+    smtp_action_settings: dict[str, Any],
+) -> None:
     del smtp_action_settings["SPIDERMON_SMTP_ENFORCE_TLS"]
     crawler = get_crawler(settings_dict=smtp_action_settings)
     send_smtp_email_action = SendSmtpEmail.from_crawler(crawler)
@@ -70,7 +80,9 @@ def test_use_default_smtp_enforce_tls_if_not_provided(smtp_action_settings):
     assert send_smtp_email_action.smtp_enforce_tls == DEFAULT_SMTP_ENFORCE_TLS
 
 
-def test_use_configured_smtp_enforce_tls_when_provided(smtp_action_settings):
+def test_use_configured_smtp_enforce_tls_when_provided(
+    smtp_action_settings: dict[str, Any],
+) -> None:
     not_default_smtp_enforce_tls = not DEFAULT_SMTP_ENFORCE_TLS
 
     smtp_action_settings["SPIDERMON_SMTP_ENFORCE_TLS"] = not_default_smtp_enforce_tls
@@ -80,7 +92,9 @@ def test_use_configured_smtp_enforce_tls_when_provided(smtp_action_settings):
     assert send_smtp_email_action.smtp_enforce_tls == not_default_smtp_enforce_tls
 
 
-def test_use_default_smtp_enforce_ssl_if_not_provided(smtp_action_settings):
+def test_use_default_smtp_enforce_ssl_if_not_provided(
+    smtp_action_settings: dict[str, Any],
+) -> None:
     del smtp_action_settings["SPIDERMON_SMTP_ENFORCE_SSL"]
     crawler = get_crawler(settings_dict=smtp_action_settings)
     send_smtp_email_action = SendSmtpEmail.from_crawler(crawler)
@@ -88,7 +102,9 @@ def test_use_default_smtp_enforce_ssl_if_not_provided(smtp_action_settings):
     assert send_smtp_email_action.smtp_enforce_ssl == DEFAULT_SMTP_ENFORCE_SSL
 
 
-def test_use_configured_smtp_enforce_ssl_when_provided(smtp_action_settings):
+def test_use_configured_smtp_enforce_ssl_when_provided(
+    smtp_action_settings: dict[str, Any],
+) -> None:
     not_default_smtp_enforce_ssl = not DEFAULT_SMTP_ENFORCE_SSL
 
     smtp_action_settings["SPIDERMON_SMTP_ENFORCE_SSL"] = not_default_smtp_enforce_ssl
@@ -108,7 +124,9 @@ def test_use_configured_smtp_enforce_ssl_when_provided(smtp_action_settings):
         ("SPIDERMON_SMTP_ENFORCE_SSL", "smtp_enforce_ssl"),
     ],
 )
-def test_set_provided_smtp_settings(setting, attribute, smtp_action_settings):
+def test_set_provided_smtp_settings(
+    setting: str, attribute: str, smtp_action_settings: dict[str, Any]
+) -> None:
     crawler = get_crawler(settings_dict=smtp_action_settings)
     send_smtp_email = SendSmtpEmail.from_crawler(crawler)
     assert getattr(send_smtp_email, attribute) == smtp_action_settings[setting]
@@ -125,12 +143,12 @@ def test_set_provided_smtp_settings(setting, attribute, smtp_action_settings):
     ],
 )
 def test_email_sent(
-    mock_render_template,
-    mock_smtp,
-    settings_subject,
-    expected_subject,
-    smtp_action_settings,
-):
+    mock_render_template: None,
+    mock_smtp: MagicMock,
+    settings_subject: str,
+    expected_subject: str,
+    smtp_action_settings: dict[str, Any],
+) -> None:
     smtp_action_settings["SPIDERMON_EMAIL_SUBJECT"] = settings_subject
 
     crawler = get_crawler(settings_dict=smtp_action_settings)
@@ -142,10 +160,10 @@ def test_email_sent(
 
 
 def test_starttls_called_when_enforce_tls(
-    mock_render_template,
-    mock_smtp,
-    smtp_action_settings,
-):
+    mock_render_template: None,
+    mock_smtp: MagicMock,
+    smtp_action_settings: dict[str, Any],
+) -> None:
     smtp_action_settings["SPIDERMON_SMTP_ENFORCE_TLS"] = True
 
     crawler = get_crawler(settings_dict=smtp_action_settings)
@@ -156,10 +174,10 @@ def test_starttls_called_when_enforce_tls(
 
 
 def test_uses_smtp_ssl_when_enforce_ssl(
-    mock_render_template,
-    mocker,
-    smtp_action_settings,
-):
+    mock_render_template: None,
+    mocker: MockerFixture,
+    smtp_action_settings: dict[str, Any],
+) -> None:
     smtp_action_settings["SPIDERMON_SMTP_ENFORCE_SSL"] = True
     mock_smtp_ssl_cls = mocker.patch(
         "spidermon.contrib.actions.email.smtp.smtplib.SMTP_SSL",
@@ -182,9 +200,9 @@ def test_uses_smtp_ssl_when_enforce_ssl(
     ],
 )
 def test_raise_not_configured_if_required_setting_not_provided(
-    smtp_action_settings,
-    missing_setting,
-):
+    smtp_action_settings: dict[str, Any],
+    missing_setting: str,
+) -> None:
     # Remove requred setting so we can test if exception is raised
     del smtp_action_settings[missing_setting]
 

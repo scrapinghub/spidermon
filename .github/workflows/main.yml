@@ -21,8 +21,10 @@ jobs:
         include:
         - python-version: "3.10"
           tox: mypy
-        - python-version: "3.13"  # https://github.com/scrapy/scrapy/issues/7087
+        - python-version: "3.14"
           tox: docs
+        - python-version: "3.14"
+          tox: docs-links
         - python-version: "3.14"
           tox: twinecheck
         - python-version: "3.10"
@@ -33,7 +35,10 @@ jobs:
         - python-version: "3.12"
         - python-version: "3.13"
         - python-version: "3.14"
-        - python-version: "3.13"  # https://github.com/scrapy/scrapy/issues/7087
+        - python-version: "3.14"
+          tox: monitoring
+        - python-version: "3.15"
+        - python-version: "3.15"
           tox: monitoring
     steps:
       - uses: actions/checkout@v6
@@ -41,6 +46,7 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip

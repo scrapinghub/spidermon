@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -11,7 +12,7 @@ from spidermon.contrib.actions.email.ses import SendSESEmail
 
 
 @pytest.fixture
-def test_settings():
+def test_settings() -> dict[str, Any]:
     return {
         "SPIDERMON_AWS_REGION_NAME": "fake",
         "SPIDERMON_AWS_ACCESS_KEY_ID": "fake",
@@ -22,7 +23,7 @@ def test_settings():
     }
 
 
-def run_mailer(test_settings):
+def run_mailer(test_settings: dict[str, Any]) -> None:
     mock_spider = MagicMock()
     mock_spider.name = "test"
 
@@ -32,7 +33,9 @@ def run_mailer(test_settings):
 
 
 @patch("spidermon.contrib.actions.email.ses.boto3")
-def test_ses_no_return_path(mock_boto3, test_settings):
+def test_ses_no_return_path(
+    mock_boto3: MagicMock, test_settings: dict[str, Any]
+) -> None:
     run_mailer(test_settings)
 
     mock_boto3.client().send_raw_email.assert_called()
@@ -43,7 +46,7 @@ def test_ses_no_return_path(mock_boto3, test_settings):
 
 
 @patch("spidermon.contrib.actions.email.ses.boto3")
-def test_ses_return_path(mock_boto3, test_settings):
+def test_ses_return_path(mock_boto3: MagicMock, test_settings: dict[str, Any]) -> None:
     test_settings["SPIDERMON_AWS_RETURN_PATH"] = "return@path.com"
     run_mailer(test_settings)
 

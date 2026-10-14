@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING, Any
 
 from sentry_sdk import configure_scope
 from sentry_sdk.client import Client
@@ -7,24 +10,28 @@ from slugify import slugify
 from spidermon import Action
 from spidermon.exceptions import NotConfigured
 
+if TYPE_CHECKING:
+    from scrapy.crawler import Crawler
+    from sentry_sdk._types import LogLevelStr
+
 logger = logging.getLogger(__name__)
 
 
 class SendSentryMessage(Action):
     sentry_dsn = None
     fake = False
-    sentry_log_level = "error"
+    sentry_log_level: LogLevelStr = "error"
     project_name = ""
     environment = "Development"
 
     def __init__(
         self,
-        sentry_dsn=None,
-        fake=None,
-        sentry_log_level=None,
-        project_name="",
-        environment="",
-    ):
+        sentry_dsn: str | None = None,
+        fake: bool | None = None,
+        sentry_log_level: LogLevelStr | None = None,
+        project_name: str = "",
+        environment: str = "",
+    ) -> None:
         super().__init__()
         self.fake = fake or self.fake
         self.sentry_log_level = sentry_log_level or self.sentry_log_level
@@ -44,7 +51,7 @@ class SendSentryMessage(Action):
             )
 
     @classmethod
-    def from_crawler_kwargs(cls, crawler):
+    def from_crawler_kwargs(cls, crawler: Crawler) -> dict[str, Any]:
         return {
             "fake": crawler.settings.getbool("SPIDERMON_SENTRY_FAKE"),
             "sentry_dsn": crawler.settings.get("SPIDERMON_SENTRY_DSN"),
@@ -53,19 +60,21 @@ class SendSentryMessage(Action):
             "environment": crawler.settings.get("SPIDERMON_SENTRY_ENVIRONMENT_TYPE"),
         }
 
-    def run_action(self):
+    def run_action(self) -> None:
         message = self.get_message()
         if self.fake:
             logger.info(message)
         else:
             self.send_message(message)
 
-    def get_title(self):
+    def get_title(self) -> str:
+        assert self.data is not None
         return f"{self.project_name} | {self.environment} | Spider {self.data.sc_spider_name} notification"
 
-    def get_message(self):
+    def get_message(self) -> dict[str, Any]:
         """Return the message dictionary."""
-        message = {}
+        assert self.data is not None
+        message: dict[str, Any] = {}
 
         message["title"] = self.get_title()
         if self.data.job:
@@ -86,6 +95,7 @@ class SendSentryMessage(Action):
 
             for result in self.result.monitors_failed_results:
                 failed_monitors.append(result.monitor.name)
+                assert result.error is not None
                 failure_reasons.append(result.error)
 
             message["failure_reasons"] = "\n".join(failure_reasons)
@@ -93,8 +103,8 @@ class SendSentryMessage(Action):
 
         return message
 
-    def get_tags(self, message):
-        tags = {
+    def get_tags(self, message: dict[str, Any]) -> dict[str, Any]:
+        tags: dict[str, Any] = {
             "spider_name": message.get("spider_name", ""),
             "project_name": self.project_name,
         }
@@ -103,7 +113,7 @@ class SendSentryMessage(Action):
             tags[key] = 1
         return tags
 
-    def send_message(self, message):
+    def send_message(self, message: dict[str, Any]) -> None:
         sentry_client = Client(dsn=self.sentry_dsn, environment=self.environment)
 
         with configure_scope() as scope:
@@ -133,7 +143,7 @@ class SendSentryMessage(Action):
                         description=message.get("failure_reasons", ""),
                     ),
                     "level": self.sentry_log_level,
-                    "fingerprint": [message.get("title")],
+                    "fingerprint": [message["title"]],
                 },
                 scope=scope,
             )

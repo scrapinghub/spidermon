@@ -1,11 +1,18 @@
+from __future__ import annotations
+
 import logging
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from typing import TYPE_CHECKING, Any
 
 from premailer import transform
 
 from spidermon.contrib.actions.templates import ActionWithTemplates
 from spidermon.exceptions import NotConfigured
+
+if TYPE_CHECKING:
+    from scrapy.crawler import Crawler
+    from scrapy.settings import BaseSettings
 
 logger = logging.getLogger(__name__)
 
@@ -26,21 +33,21 @@ class SendEmail(ActionWithTemplates):
 
     def __init__(  # noqa: PLR0913, PLR0917
         self,
-        sender,
-        to,
-        cc=None,
-        bcc=None,
-        reply_to=None,
-        subject=None,
-        subject_template=None,
-        body_text=None,
-        body_text_template=None,
-        body_html=None,
-        body_html_template=None,
-        fake=None,
-        *args,
-        **kwargs,
-    ):
+        sender: str | None,
+        to: list[str] | None,
+        cc: list[str] | None = None,
+        bcc: list[str] | None = None,
+        reply_to: str | None = None,
+        subject: str | None = None,
+        subject_template: str | None = None,
+        body_text: str | None = None,
+        body_text_template: str | None = None,
+        body_html: str | None = None,
+        body_html_template: str | None = None,
+        fake: bool | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
         self.sender = sender or self.sender
         self.subject = subject or self.subject
@@ -77,7 +84,7 @@ class SendEmail(ActionWithTemplates):
             )
 
     @classmethod
-    def from_crawler_kwargs(cls, crawler):
+    def from_crawler_kwargs(cls, crawler: Crawler) -> dict[str, Any]:
         return {
             "sender": crawler.settings.get("SPIDERMON_EMAIL_SENDER"),
             "subject": crawler.settings.get("SPIDERMON_EMAIL_SUBJECT"),
@@ -97,31 +104,31 @@ class SendEmail(ActionWithTemplates):
         }
 
     @staticmethod
-    def getlist(settings, entry):
+    def getlist(settings: BaseSettings, entry: str) -> list[str]:
         return [v.strip() for v in settings.getlist(entry)]
 
-    def run_action(self):
+    def run_action(self) -> None:
         message = self.get_message()
         if self.fake:
             logger.info(message.as_string())
         else:
             self.send_message(message)
 
-    def get_subject(self):
+    def get_subject(self) -> str:
         if self.subject:
             return self.render_text_template(self.subject)
         if self.subject_template:
             return self.render_template(self.subject_template)
         return ""
 
-    def get_body_text(self):
+    def get_body_text(self) -> str:
         if self.body_text:
             return self.render_text_template(self.body_text)
         if self.body_text_template:
             return self.render_template(self.body_text_template)
         return ""
 
-    def get_body_html(self):
+    def get_body_html(self) -> str:
         html = ""
         if self.body_html:
             html = transform(self.render_text_template(self.body_html))
@@ -129,7 +136,7 @@ class SendEmail(ActionWithTemplates):
             html = transform(self.render_template(self.body_html_template))
         return html
 
-    def get_message(self):
+    def get_message(self) -> MIMEMultipart:
         subject = self.get_subject()
         body_text = self.get_body_text()
         body_html = self.get_body_html()
@@ -138,8 +145,8 @@ class SendEmail(ActionWithTemplates):
         message.set_charset("UTF-8")
 
         message["Subject"] = subject
-        message["From"] = self.sender
-        message["To"] = ", ".join(self.to)
+        message["From"] = self.sender or ""
+        message["To"] = ", ".join(self.to or [])
         if self.cc:
             message["Cc"] = ", ".join(self.cc)
         if self.bcc:
@@ -153,5 +160,5 @@ class SendEmail(ActionWithTemplates):
 
         return message
 
-    def send_message(self, message, **kwargs):
+    def send_message(self, message: MIMEMultipart, **kwargs: Any) -> None:
         raise NotImplementedError

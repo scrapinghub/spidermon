@@ -1,16 +1,18 @@
 import re
+from collections.abc import Mapping
+from typing import Any
 
 
 class StatsAnalyzer:
-    def __init__(self, stats, prefix=None):
+    def __init__(self, stats: Mapping[str, Any], prefix: str | None = None) -> None:
         self.stats = stats
         self.prefix = prefix or ""
 
-    def search(self, pattern, include_matches=False):
-        pattern = re.compile(self._get_pattern(pattern))
-        results = {}
+    def search(self, pattern: str, include_matches: bool = False) -> dict[str, Any]:
+        compiled_pattern = re.compile(self._get_pattern(pattern))
+        results: dict[str, Any] = {}
         for key, count in self.stats.items():
-            match = pattern.match(key)
+            match = compiled_pattern.match(key)
             if match:
                 if include_matches:
                     results[key] = (
@@ -21,7 +23,7 @@ class StatsAnalyzer:
                     results[key] = count
         return results
 
-    def _get_pattern(self, pattern):
+    def _get_pattern(self, pattern: str) -> str:
         if self.prefix:
             return f"{self.prefix}/{pattern}"
         return pattern
