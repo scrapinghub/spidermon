@@ -36,5 +36,3 @@ class MonitorLoader(TestLoader):
         if self.sortTestMethodsUsing:
             test_function_names.sort(key=_cmp_to_key(self.sortTestMethodsUsing))
         return test_function_names
-
-    # TODO: hide methods?
