@@ -49,7 +49,7 @@ monitoring = [
     "scrapinghub>=2.4.0",
     "scrapinghub-entrypoint-scrapy>=0.11.2",
     "scrapy>=2.7.0",
-    "sentry_sdk",
+    "sentry_sdk>=1.0.0",
     "slack_sdk>=3.9.0",
 ]
 
