@@ -2,6 +2,7 @@ import pytest
 
 pytest.importorskip("scrapy")
 
+import scrapy
 from scrapy import Item, signals
 from scrapy.spiders import Spider
 from scrapy.utils.defer import deferred_f_from_coro_f
@@ -156,6 +157,22 @@ async def test_item_scraped_count_multiple_nested_field(spider):
     assert stats.get("spidermon_item_scraped_count/dict/field1/field1.2") == 1
     assert stats.get("spidermon_item_scraped_count/dict/field2") == 2
     assert stats.get("spidermon_item_scraped_count/dict/field3") == 1
+
+
+@deferred_f_from_coro_f
+async def test_item_scraped_count_nested_scrapy_item(spider):
+    class LicenseItem(Item):
+        description = scrapy.Field()
+
+    returned_items = [{"field1": LicenseItem(description="value1.1")}]
+
+    for item in returned_items:
+        await send_item_scraped(spider, item)
+
+    stats = spider.crawler.stats.get_stats()
+    assert stats.get("spidermon_item_scraped_count/dict") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field1") == 1
+    assert stats.get("spidermon_item_scraped_count/dict/field1/description") == 1
 
 
 @deferred_f_from_coro_f
