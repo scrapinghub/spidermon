@@ -190,12 +190,16 @@ class AdditionalProperties(SchemaTest):
             schema=schema_false,
             data={"foo": 1, "bar": 2, "quux": "boom"},
             valid=False,
+            expected_errors={"quux": [messages.UNEXPECTED_FIELD]},
+        ),
+        DataTest(
+            name="schema_false, several additional properties are invalid",
+            schema=schema_false,
+            data={"foo": 1, "vroom": 2, "quux": "boom", "zap": None},
+            valid=False,
             expected_errors={
-                # Used with jsonschema 2.4.0:
-                # '': [messages.UNEXPECTED_FIELD],
-                # This changed in jsonschema 2.6.0:
-                # https://github.com/Julian/jsonschema/pull/317
-                "": [messages.REGEX_NOT_MATCHED],
+                "quux": [messages.UNEXPECTED_FIELD],
+                "zap": [messages.UNEXPECTED_FIELD],
             },
         ),
         DataTest(
@@ -1492,26 +1496,14 @@ class Ref(SchemaTest):
             schema=schema_root,
             data={"bar": False},
             valid=False,
-            expected_errors={
-                "": [
-                    messages.UNEXPECTED_FIELDS.format(
-                        unexpected_fields="('bar' was unexpected)",
-                    ),
-                ],
-            },
+            expected_errors={"bar": [messages.UNEXPECTED_FIELD]},
         ),
         DataTest(
             name="root. recursive mismatch",
             schema=schema_root,
             data={"foo": {"bar": False}},
             valid=False,
-            expected_errors={
-                "foo": [
-                    messages.UNEXPECTED_FIELDS.format(
-                        unexpected_fields="('bar' was unexpected)",
-                    ),
-                ],
-            },
+            expected_errors={"foo.bar": [messages.UNEXPECTED_FIELD]},
         ),
         DataTest(
             name="relative. match",
